@@ -115,7 +115,7 @@
       </Command>
     </PostBuildEvent>
     <PreBuildEvent>
-      <Command>copy "$(ProjectDir)*.hlsl" "$(OutDir)"</Command>
+      <Command>copy "$(ProjectDir)Assets\*" "$(OutDir)"</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Durango'">
@@ -144,7 +144,7 @@
       </Command>
     </PostBuildEvent>
     <PreBuildEvent>
-      <Command>copy "$(ProjectDir)*.hlsl" "$(OutDir)"</Command>
+      <Command>copy "$(ProjectDir)Assets\*" "$(OutDir)"</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Durango'">
@@ -168,7 +168,7 @@
       </Command>
     </PostBuildEvent>
     <PreBuildEvent>
-      <Command>copy "$(ProjectDir)*.hlsl" "$(OutDir)"</Command>
+      <Command>copy "$(ProjectDir)Assets\*" "$(OutDir)"</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -195,10 +195,7 @@
     <Image Include="StoreLogo.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="HelloTriangle.hlsl">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Durango'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Durango'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Profile|Durango'">false</ExcludedFromBuild>
+    <None Include="Assets\HelloTriangle.hlsl">
       <FileType>Document</FileType>
     </None>
   </ItemGroup>
