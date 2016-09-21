@@ -12,6 +12,7 @@
 #include <wrl.h>
 #include <d3d12_x.h>
 #include <d3dx12_x.h>
+#include <d3dcompiler_x.h>
 #include <DirectXMath.h>
 #include <DirectXColors.h>
 

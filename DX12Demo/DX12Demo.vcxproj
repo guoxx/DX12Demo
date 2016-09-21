@@ -91,7 +91,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Durango'">
     <Link>
-      <AdditionalDependencies>d3d12_x.lib;combase.lib;kernelx.lib;uuid.lib;$(XboxExtensionsDependencies);</AdditionalDependencies>
+      <AdditionalDependencies>d3d12_x.lib;d3dcompiler.lib;combase.lib;kernelx.lib;uuid.lib;$(XboxExtensionsDependencies)</AdditionalDependencies>
       <EntryPointSymbol>
       </EntryPointSymbol>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -110,10 +110,17 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
     </ClCompile>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>copy "$(ProjectDir)*.hlsl" "$(OutDir)"</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Durango'">
     <Link>
-      <AdditionalDependencies>pixEvt.lib;d3d12_x.lib;combase.lib;kernelx.lib;uuid.lib;$(XboxExtensionsDependencies);</AdditionalDependencies>
+      <AdditionalDependencies>pixEvt.lib;d3d12_x.lib;d3dcompiler.lib;combase.lib;kernelx.lib;uuid.lib;$(XboxExtensionsDependencies)</AdditionalDependencies>
       <EntryPointSymbol>
       </EntryPointSymbol>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -132,10 +139,17 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
     </ClCompile>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>copy "$(ProjectDir)*.hlsl" "$(OutDir)"</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Durango'">
     <Link>
-      <AdditionalDependencies>pixEvt.lib;d3d12_x.lib;combase.lib;kernelx.lib;uuid.lib;$(XboxExtensionsDependencies);</AdditionalDependencies>
+      <AdditionalDependencies>pixEvt.lib;d3d12_x.lib;d3dcompiler.lib;combase.lib;kernelx.lib;uuid.lib;$(XboxExtensionsDependencies)</AdditionalDependencies>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <GenerateWindowsMetadata>false</GenerateWindowsMetadata>
@@ -149,6 +163,13 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;__WRL_NO_DEFAULT_LIB__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>copy "$(ProjectDir)*.hlsl" "$(OutDir)"</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="StepTimer.h" />
@@ -172,6 +193,14 @@
     <Image Include="SmallLogo.png" />
     <Image Include="SplashScreen.png" />
     <Image Include="StoreLogo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="HelloTriangle.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Durango'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Durango'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Profile|Durango'">false</ExcludedFromBuild>
+      <FileType>Document</FileType>
+    </None>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

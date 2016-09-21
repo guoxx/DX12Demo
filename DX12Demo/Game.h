@@ -6,6 +6,7 @@
 
 #include "StepTimer.h"
 
+using Microsoft::WRL::ComPtr;
 
 // A basic game implementation that creates a D3D12 device and
 // provides a game loop.
@@ -21,6 +22,7 @@ public:
     // Basic game loop
     void Tick();
     void Render();
+	void DrawScene();
 
     // Rendering helpers
     void Clear();
@@ -36,6 +38,7 @@ private:
 
     void CreateDevice();
     void CreateResources();
+	void LoadAssets();
 
     void WaitForGpu();
     void MoveToNextFrame();
@@ -65,6 +68,15 @@ private:
     Microsoft::WRL::ComPtr<IDXGISwapChain1>             m_swapChain;
     Microsoft::WRL::ComPtr<ID3D12Resource>              m_renderTargets[c_swapBufferCount];
     Microsoft::WRL::ComPtr<ID3D12Resource>              m_depthStencil;
+
+	ComPtr<ID3D12RootSignature>							m_rootSignature;
+	ComPtr<ID3D12PipelineState>							m_PSO;
+	ComPtr<ID3D12Resource>								m_vertexBuffer;
+	ComPtr<ID3D12Resource>								m_indexBuffer;
+	D3D12_VERTEX_BUFFER_VIEW							m_vertexBufferView;
+	D3D12_INDEX_BUFFER_VIEW								m_indexBufferView;
+
+	float												m_offsetX;
 
     // Game state
     INT64                                               m_frame;

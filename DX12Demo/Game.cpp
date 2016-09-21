@@ -11,6 +11,19 @@ using namespace Windows::Foundation::Collections;
 
 using Microsoft::WRL::ComPtr;
 
+void CompileShaderFromFile(wchar_t* filepath, char* entry, char* profile, ID3DBlob** shaderBlob)
+{
+	ComPtr<ID3DBlob> errBlob;
+
+	uint32_t compileFlags = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
+	D3DCompileFromFile(filepath, nullptr, nullptr, entry, profile, compileFlags, 0, shaderBlob, &errBlob);
+	if (errBlob != nullptr && errBlob->GetBufferPointer() > 0)
+	{
+		char* errMsg = static_cast<char*>(errBlob->GetBufferPointer());
+		printf("%s\n", errMsg);
+	}
+}
+
 Game::Game() :
     m_window(0),
     m_outputWidth(1920),
@@ -20,6 +33,7 @@ Game::Game() :
     m_frame(0),
     m_fenceValues{}
 {
+	m_offsetX = 0;
 }
 
 // Initialize the Direct3D resources required to run.
@@ -29,6 +43,7 @@ void Game::Initialize(IUnknown* window)
 
     CreateDevice();
     CreateResources();
+	LoadAssets();
 
     // TODO: Change the timer settings if you want something other than the default variable timestep mode.
     // e.g. for 60 FPS fixed timestep update logic, call:
@@ -77,6 +92,12 @@ void Game::Update(DX::StepTimer const& timer)
     // TODO: Add your game logic here.
     elapsedTime;
 
+	m_offsetX += 0.001;
+	if (m_offsetX > 0.5)
+	{
+		m_offsetX = -0.5;
+	}
+
     PIXEndEvent();
 }
 
@@ -94,11 +115,26 @@ void Game::Render()
     // Prepare the command list to render a new frame.
     Clear();
 
-    // TODO: Add your rendering code here.
+	DrawScene();
 
     Present();
 
     PIXEndEvent();
+}
+
+void Game::DrawScene()
+{
+	m_commandList->SetGraphicsRootSignature(m_rootSignature.Get());
+
+	m_commandList->SetGraphicsRoot32BitConstants(0, 1, &m_offsetX, 0);
+
+	m_commandList->IASetVertexBuffers(0, 1, &m_vertexBufferView);
+	m_commandList->IASetIndexBuffer(&m_indexBufferView);
+	m_commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	m_commandList->SetPipelineState(m_PSO.Get());
+
+	m_commandList->DrawIndexedInstanced(3, 1, 0, 0, 0);
 }
 
 // Helper method to prepare the command list for rendering and clear the back buffers.
@@ -170,7 +206,7 @@ void Game::OnResuming()
 // These are the resources that depend on the device.
 void Game::CreateDevice()
 {
-#if defined(_DEBUG)
+//#if defined(_DEBUG)
     // Enable the D3D12 debug layer.
     {
         ComPtr<ID3D12Debug> debugController;
@@ -179,7 +215,7 @@ void Game::CreateDevice()
             debugController->EnableDebugLayer();
         }
     }
-#endif
+//#endif
 
     // Create the DX12 API device object.
     DX::ThrowIfFailed(D3D12CreateDevice(
@@ -242,7 +278,7 @@ void Game::CreateResources()
         m_fenceValues[n] = m_fenceValues[m_backBufferIndex];
     }
 
-    DXGI_FORMAT backBufferFormat = DXGI_FORMAT_B8G8R8A8_UNORM_SRGB;
+    DXGI_FORMAT backBufferFormat = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
     DXGI_FORMAT depthBufferFormat = DXGI_FORMAT_D32_FLOAT;
     UINT backBufferWidth = static_cast<UINT>(m_outputWidth);
     UINT backBufferHeight = static_cast<UINT>(m_outputHeight);
@@ -337,6 +373,124 @@ void Game::CreateResources()
     m_d3dDevice->CreateDepthStencilView(m_depthStencil.Get(), &dsvDesc, m_dsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart());
 
     // TODO: Initialize windows-size dependent objects here.
+}
+
+void Game::LoadAssets()
+{
+    DX::ThrowIfFailed(m_commandAllocators[m_backBufferIndex]->Reset());
+    DX::ThrowIfFailed(m_commandList->Reset(m_commandAllocators[m_backBufferIndex].Get(), nullptr));
+
+	D3D12_ROOT_PARAMETER params[1];
+	params[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_32BIT_CONSTANTS;
+	params[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
+	params[0].Constants.ShaderRegister = 0;
+	params[0].Constants.RegisterSpace = 0;
+	params[0].Constants.Num32BitValues = 1;
+
+	D3D12_ROOT_SIGNATURE_DESC rootSignatureDesc;	
+	rootSignatureDesc.NumParameters = 1;
+	rootSignatureDesc.pParameters = params;
+	rootSignatureDesc.NumStaticSamplers = 0;
+	rootSignatureDesc.pStaticSamplers = nullptr;
+	rootSignatureDesc.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
+
+	ComPtr<ID3DBlob> rootSignatureBlob;
+	ComPtr<ID3DBlob> errBlob;
+	D3D12SerializeRootSignature(&rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1, &rootSignatureBlob, &errBlob);
+	m_d3dDevice->CreateRootSignature(0, rootSignatureBlob->GetBufferPointer(), rootSignatureBlob->GetBufferSize(), IID_GRAPHICS_PPV_ARGS(m_rootSignature.ReleaseAndGetAddressOf()));
+
+	ComPtr<ID3DBlob> vertexShader;
+	ComPtr<ID3DBlob> pixelShader;
+
+	CompileShaderFromFile(L"HelloTriangle.hlsl", "VSMain", "vs_5_0", &vertexShader);
+	CompileShaderFromFile(L"HelloTriangle.hlsl", "PSMain", "ps_5_0", &pixelShader);
+
+	D3D12_INPUT_ELEMENT_DESC inputElemDesc[] = {
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
+	};
+	D3D12_INPUT_LAYOUT_DESC inputLayoutDesc = { inputElemDesc, _countof(inputElemDesc) };
+
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC  psoDesc = {};
+	psoDesc.pRootSignature = m_rootSignature.Get();
+	psoDesc.VS = { vertexShader->GetBufferPointer(), vertexShader->GetBufferSize() };
+	psoDesc.PS = { pixelShader->GetBufferPointer(), pixelShader->GetBufferSize() };
+	psoDesc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
+	psoDesc.SampleMask = UINT_MAX;
+	psoDesc.RasterizerState = CD3DX12_RASTERIZER_DESC( D3D12_DEFAULT);
+	psoDesc.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
+	psoDesc.InputLayout = inputLayoutDesc;
+	psoDesc.IBStripCutValue = D3D12_INDEX_BUFFER_STRIP_CUT_VALUE_DISABLED;
+	psoDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+	psoDesc.NumRenderTargets = 1;
+	psoDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+	psoDesc.DSVFormat = DXGI_FORMAT_D32_FLOAT;
+	psoDesc.SampleDesc = { 1, 0 };
+	psoDesc.NodeMask = 0;
+	psoDesc.Flags = D3D12_PIPELINE_STATE_FLAG_TOOL_DEBUG;
+	m_d3dDevice->CreateGraphicsPipelineState(&psoDesc, IID_GRAPHICS_PPV_ARGS(m_PSO.ReleaseAndGetAddressOf()));
+
+	struct Vertex
+	{
+		DirectX::XMFLOAT3 m_Position;
+	};
+	Vertex verts[] = {
+		{ DirectX::XMFLOAT3(-0.5, -0.5, 0) },
+		{ DirectX::XMFLOAT3( 0.5, -0.5, 0) },
+		{ DirectX::XMFLOAT3( 0.0,  0.5, 0) },
+	};
+	uint32_t indices[] = { 0, 2, 1 };
+
+	m_d3dDevice->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
+		D3D12_HEAP_FLAG_NONE,
+		&CD3DX12_RESOURCE_DESC::Buffer(D3D12_RESOURCE_ALLOCATION_INFO{ sizeof(verts), 0 }),
+		D3D12_RESOURCE_STATE_COPY_DEST,
+		nullptr,
+		IID_GRAPHICS_PPV_ARGS(m_vertexBuffer.ReleaseAndGetAddressOf()));
+
+	ComPtr<ID3D12Resource> vertexBufferUploadHeap;
+	void* vertexBufferUploadPtr = nullptr;
+	m_d3dDevice->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
+		D3D12_HEAP_FLAG_NONE,
+		&CD3DX12_RESOURCE_DESC::Buffer(D3D12_RESOURCE_ALLOCATION_INFO{ sizeof(verts), 0 }),
+		D3D12_RESOURCE_STATE_GENERIC_READ,
+		nullptr,
+		IID_GRAPHICS_PPV_ARGS(vertexBufferUploadHeap.ReleaseAndGetAddressOf()));
+	vertexBufferUploadHeap->Map(0, nullptr, &vertexBufferUploadPtr);
+	std::memcpy(vertexBufferUploadPtr, verts, sizeof(verts));
+	vertexBufferUploadHeap->Unmap(0, nullptr);
+	m_commandList->CopyResource(m_vertexBuffer.Get(), vertexBufferUploadHeap.Get());
+	m_commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(m_vertexBuffer.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER));
+
+	m_vertexBufferView = D3D12_VERTEX_BUFFER_VIEW{ m_vertexBuffer->GetGPUVirtualAddress(), sizeof(verts), sizeof(verts[0]) };
+
+	m_d3dDevice->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
+		D3D12_HEAP_FLAG_NONE,
+		&CD3DX12_RESOURCE_DESC::Buffer(D3D12_RESOURCE_ALLOCATION_INFO{ sizeof(indices), 0 }),
+		D3D12_RESOURCE_STATE_COPY_DEST,
+		nullptr,
+		IID_GRAPHICS_PPV_ARGS(m_indexBuffer.ReleaseAndGetAddressOf()));
+
+	ComPtr<ID3D12Resource> indexBufferUploadHeap;
+	void* indexBufferUploadPtr = nullptr;
+	m_d3dDevice->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
+		D3D12_HEAP_FLAG_NONE,
+		&CD3DX12_RESOURCE_DESC::Buffer(D3D12_RESOURCE_ALLOCATION_INFO{ sizeof(indices), 0 }),
+		D3D12_RESOURCE_STATE_GENERIC_READ,
+		nullptr,
+		IID_GRAPHICS_PPV_ARGS(indexBufferUploadHeap.ReleaseAndGetAddressOf()));
+	indexBufferUploadHeap->Map(0, nullptr, &indexBufferUploadPtr);
+	std::memcpy(indexBufferUploadPtr, indices, sizeof(indices));
+	indexBufferUploadHeap->Unmap(0, nullptr);
+	m_commandList->CopyResource(m_indexBuffer.Get(), indexBufferUploadHeap.Get());
+	m_commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(m_indexBuffer.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_INDEX_BUFFER));
+
+	m_indexBufferView = D3D12_INDEX_BUFFER_VIEW{ m_indexBuffer->GetGPUVirtualAddress(), sizeof(indices), DXGI_FORMAT_R32_UINT };
+
+	m_commandList->Close();
+	ID3D12CommandList* cmdLists[] = { m_commandList.Get() };
+	m_commandQueue->ExecuteCommandLists(_countof(cmdLists), cmdLists);
+
+	WaitForGpu();
 }
 
 void Game::WaitForGpu()
