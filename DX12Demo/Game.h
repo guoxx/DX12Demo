@@ -23,6 +23,7 @@ public:
     void Tick();
     void Render();
 	void DrawScene();
+	void DrawScene1();
 
     // Rendering helpers
     void Clear();
@@ -39,6 +40,7 @@ private:
     void CreateDevice();
     void CreateResources();
 	void LoadAssets();
+	void LoadAssets1();
 
     void WaitForGpu();
     void MoveToNextFrame();
@@ -77,6 +79,21 @@ private:
 	D3D12_INDEX_BUFFER_VIEW								m_indexBufferView;
 
 	float												m_offsetX;
+
+	ComPtr<ID3D12RootSignature>							m_rootSignature1;
+	ComPtr<ID3D12PipelineState>							m_PSO1;
+	ComPtr<ID3D12Resource>								m_vertexBuffer1;
+	ComPtr<ID3D12Resource>								m_indexBuffer1;
+	D3D12_VERTEX_BUFFER_VIEW							m_vbView1;
+	D3D12_INDEX_BUFFER_VIEW								m_ibView1;
+	ComPtr<ID3D12Resource>								m_texture0;
+	ComPtr<ID3D12Resource>								m_texture1;
+	ComPtr<ID3D12DescriptorHeap>						m_srvHeap1;
+	ComPtr<ID3D12DescriptorHeap>						m_sampHeap1;
+
+    uint32_t                                            m_cbvSrvUavDescriptorSize;
+    uint32_t                                            m_samplerDescriptorSize;
+
 
     // Game state
     INT64                                               m_frame;

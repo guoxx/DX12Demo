@@ -1,21 +1,27 @@
 
-Texture2D<float4> g_TextureArray[] : register(t0);
+#define RootSig \
+"RootFlags(0)" \
+", DescriptorTable(SRV(t0, numDescriptors=2), visibility=SHADER_VISIBILITY_PIXEL)" \
+", DescriptorTable(Sampler(s0, numDescriptors=1), visibility=SHADER_VISIBILITY_PIXEL)"
+
+Texture2D<float4> g_TextureArray[2] : register(t0);
 SamplerState g_Sampler : register(s0);
 
 struct VSInput
 {
 	float3 Position : POSITION;
 	float2 UV0 : TEXCOORD0;
-	int TexID : TEXID;
+	uint TexID : TEXID;
 };
 
 struct VSOutput
 {
 	float4 Position : SV_POSITION;
 	float2 UV0 : TEXCOORD0;
-	nointerpolation int TexID : TEXID;
+	nointerpolation uint TexID : TEXID;
 };
 
+[RootSignature(RootSig)]
 VSOutput VSMain(VSInput In)
 {
 	VSOutput Out;
@@ -25,8 +31,18 @@ VSOutput VSMain(VSInput In)
 	return Out;
 }
 
+[RootSignature(RootSig)]
 float4 PSMain(VSOutput In) : SV_TARGET
 {
-	float4 c = g_TextureArray[In.TexID].Sample(g_Sampler, In.UV0);
+	float4 c;
+	uint texID = In.TexID % 2;
+	if (texID == 0)
+	{
+		c = g_TextureArray[0].Sample(g_Sampler, In.UV0);
+	}
+	else
+	{
+		c = g_TextureArray[1].Sample(g_Sampler, In.UV0);
+	}
 	return float4(c.rgb, 1.0f);
 }
