@@ -41,10 +41,19 @@
     <ClInclude Include="DX12\DX12.h">
       <Filter>DX12\Public</Filter>
     </ClInclude>
-    <ClInclude Include="DX12\DX12Device.h">
+    <ClInclude Include="DX12\DX12GraphicManager.h">
       <Filter>DX12\Public</Filter>
     </ClInclude>
-    <ClInclude Include="DX12\DX12GraphicManager.h">
+    <ClInclude Include="DX12\DX12Device.h">
+      <Filter>DX12\Private</Filter>
+    </ClInclude>
+    <ClInclude Include="DX12\DX12CopyContext.h">
+      <Filter>DX12\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="DX12\DX12GraphicContext.h">
+      <Filter>DX12\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="DX12\DX12CommandContext.h">
       <Filter>DX12\Public</Filter>
     </ClInclude>
   </ItemGroup>
@@ -65,6 +74,15 @@
       <Filter>DX12\Private</Filter>
     </ClCompile>
     <ClCompile Include="DX12\DX12GraphicManager.cpp">
+      <Filter>DX12\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="DX12\DX12CopyContext.cpp">
+      <Filter>DX12\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="DX12\DX12GraphicContext.cpp">
+      <Filter>DX12\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="DX12\DX12CommandContext.cpp">
       <Filter>DX12\Private</Filter>
     </ClCompile>
   </ItemGroup>
