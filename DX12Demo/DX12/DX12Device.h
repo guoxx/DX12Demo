@@ -16,6 +16,8 @@ public:
 
 	ID3D12Resource* CreateBuffer();
 
+	ID3D12RootSignature* CreateRootSignature(const void* pBlobWithRootSignature, size_t blobLengthInBytes);
+
 private:
 	ComPtr<ID3D12Device> m_d3dDevice;
 };

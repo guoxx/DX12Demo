@@ -173,10 +173,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="DX12\DX12.h" />
+    <ClInclude Include="DX12\DX12Buffer.h" />
     <ClInclude Include="DX12\DX12CommandContext.h" />
     <ClInclude Include="DX12\DX12Device.h" />
     <ClInclude Include="DX12\DX12GraphicContext.h" />
     <ClInclude Include="DX12\DX12GraphicManager.h" />
+    <ClInclude Include="DX12\DX12PipelineState.h" />
+    <ClInclude Include="DX12\DX12RootSignature.h" />
+    <ClInclude Include="DX12\DX12Texture.h" />
     <ClInclude Include="StepTimer.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="pch.h" />
@@ -184,10 +188,14 @@
     <ClInclude Include="tga_reader.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="DX12\DX12Buffer.cpp" />
     <ClCompile Include="DX12\DX12CommandContext.cpp" />
     <ClCompile Include="DX12\DX12Device.cpp" />
     <ClCompile Include="DX12\DX12GraphicContext.cpp" />
     <ClCompile Include="DX12\DX12GraphicManager.cpp" />
+    <ClCompile Include="DX12\DX12PipelineState.cpp" />
+    <ClCompile Include="DX12\DX12RootSignature.cpp" />
+    <ClCompile Include="DX12\DX12Texture.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="pch.cpp">
