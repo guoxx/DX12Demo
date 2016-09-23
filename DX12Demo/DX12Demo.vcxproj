@@ -172,7 +172,9 @@
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="DX12Device.h" />
+    <ClInclude Include="DX12\DX12.h" />
+    <ClInclude Include="DX12\DX12Device.h" />
+    <ClInclude Include="DX12\DX12GraphicManager.h" />
     <ClInclude Include="StepTimer.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="pch.h" />
@@ -180,7 +182,8 @@
     <ClInclude Include="tga_reader.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="DX12Device.cpp" />
+    <ClCompile Include="DX12\DX12Device.cpp" />
+    <ClCompile Include="DX12\DX12GraphicManager.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="pch.cpp">

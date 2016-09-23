@@ -1,20 +1,6 @@
 #include "pch.h"
 #include "DX12Device.h"
 
-
-DX12Device* DX12Device::s_Device = nullptr;
-
-void DX12Device::Initialize()
-{
-	s_Device = new DX12Device();
-}
-
-void DX12Device::Finalize()
-{
-	delete s_Device;
-	s_Device = nullptr;
-}
-
 DX12Device::DX12Device()
 {
 #if defined(_DEBUG)

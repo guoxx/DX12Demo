@@ -15,6 +15,12 @@
     <Filter Include="DX12">
       <UniqueIdentifier>{d1f5a28b-a435-4bb6-a598-39f9da0debfb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="DX12\Public">
+      <UniqueIdentifier>{489e9f1b-9fed-4429-91e8-1b450ae999a9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DX12\Private">
+      <UniqueIdentifier>{729d7ea4-8310-45dd-87c3-73ab345d0dcb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -32,8 +38,14 @@
     <ClInclude Include="tga_reader.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="DX12Device.h">
-      <Filter>DX12</Filter>
+    <ClInclude Include="DX12\DX12.h">
+      <Filter>DX12\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="DX12\DX12Device.h">
+      <Filter>DX12\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="DX12\DX12GraphicManager.h">
+      <Filter>DX12\Public</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -49,8 +61,11 @@
     <ClCompile Include="tga_reader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DX12Device.cpp">
-      <Filter>DX12</Filter>
+    <ClCompile Include="DX12\DX12Device.cpp">
+      <Filter>DX12\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="DX12\DX12GraphicManager.cpp">
+      <Filter>DX12\Private</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
