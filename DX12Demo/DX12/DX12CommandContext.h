@@ -10,6 +10,6 @@ public:
 
 protected:
 	ComPtr<ID3D12CommandAllocator> m_CommandAllocator;
-	ComPtr<ID3D12CommandList> m_CommandList;
+	ComPtr<ID3D12GraphicsCommandList> m_CommandList;
 };
 

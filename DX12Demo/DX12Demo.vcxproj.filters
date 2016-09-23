@@ -47,9 +47,6 @@
     <ClInclude Include="DX12\DX12Device.h">
       <Filter>DX12\Private</Filter>
     </ClInclude>
-    <ClInclude Include="DX12\DX12CopyContext.h">
-      <Filter>DX12\Public</Filter>
-    </ClInclude>
     <ClInclude Include="DX12\DX12GraphicContext.h">
       <Filter>DX12\Public</Filter>
     </ClInclude>
@@ -74,9 +71,6 @@
       <Filter>DX12\Private</Filter>
     </ClCompile>
     <ClCompile Include="DX12\DX12GraphicManager.cpp">
-      <Filter>DX12\Private</Filter>
-    </ClCompile>
-    <ClCompile Include="DX12\DX12CopyContext.cpp">
       <Filter>DX12\Private</Filter>
     </ClCompile>
     <ClCompile Include="DX12\DX12GraphicContext.cpp">

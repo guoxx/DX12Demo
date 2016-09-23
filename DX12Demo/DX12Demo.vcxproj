@@ -174,7 +174,6 @@
   <ItemGroup>
     <ClInclude Include="DX12\DX12.h" />
     <ClInclude Include="DX12\DX12CommandContext.h" />
-    <ClInclude Include="DX12\DX12CopyContext.h" />
     <ClInclude Include="DX12\DX12Device.h" />
     <ClInclude Include="DX12\DX12GraphicContext.h" />
     <ClInclude Include="DX12\DX12GraphicManager.h" />
@@ -186,7 +185,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DX12\DX12CommandContext.cpp" />
-    <ClCompile Include="DX12\DX12CopyContext.cpp" />
     <ClCompile Include="DX12\DX12Device.cpp" />
     <ClCompile Include="DX12\DX12GraphicContext.cpp" />
     <ClCompile Include="DX12\DX12GraphicManager.cpp" />

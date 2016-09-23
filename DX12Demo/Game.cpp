@@ -38,7 +38,7 @@ Game::Game() :
 
 Game::~Game()
 {
-	DX12Device::Finalize();
+	DX12GraphicManager::Finalize();
 }
 
 // Initialize the Direct3D resources required to run.
@@ -232,7 +232,7 @@ void Game::OnResuming()
 // These are the resources that depend on the device.
 void Game::CreateDevice()
 {
-	DX12Device::Initialize();
+	DX12GraphicManager::Initialize();
 
     // Create the command queue.
     D3D12_COMMAND_QUEUE_DESC queueDesc = {};
