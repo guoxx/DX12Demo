@@ -12,6 +12,9 @@
     <Filter Include="Assets">
       <UniqueIdentifier>{8e966268-c145-4e6d-83d1-7eec265dd7db}</UniqueIdentifier>
     </Filter>
+    <Filter Include="DX12">
+      <UniqueIdentifier>{d1f5a28b-a435-4bb6-a598-39f9da0debfb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -29,6 +32,9 @@
     <ClInclude Include="tga_reader.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="DX12Device.h">
+      <Filter>DX12</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -42,6 +48,9 @@
     </ClCompile>
     <ClCompile Include="tga_reader.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DX12Device.cpp">
+      <Filter>DX12</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

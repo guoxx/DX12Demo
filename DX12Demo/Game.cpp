@@ -29,12 +29,16 @@ Game::Game() :
     m_window(0),
     m_outputWidth(1920),
     m_outputHeight(1080),
-    m_featureLevel(D3D_FEATURE_LEVEL_12_0),
     m_backBufferIndex(0),
     m_frame(0),
     m_fenceValues{}
 {
 	m_offsetX = 0;
+}
+
+Game::~Game()
+{
+	DX12Device::Finalize();
 }
 
 // Initialize the Direct3D resources required to run.
@@ -228,23 +232,7 @@ void Game::OnResuming()
 // These are the resources that depend on the device.
 void Game::CreateDevice()
 {
-//#if defined(_DEBUG)
-    // Enable the D3D12 debug layer.
-    {
-        ComPtr<ID3D12Debug> debugController;
-        if (SUCCEEDED(D3D12GetDebugInterface(IID_GRAPHICS_PPV_ARGS(debugController.GetAddressOf()))))
-        {
-            debugController->EnableDebugLayer();
-        }
-    }
-//#endif
-
-    // Create the DX12 API device object.
-    DX::ThrowIfFailed(D3D12CreateDevice(
-        nullptr,
-        m_featureLevel,
-        IID_GRAPHICS_PPV_ARGS(m_d3dDevice.ReleaseAndGetAddressOf())
-        ));
+	DX12Device::Initialize();
 
     // Create the command queue.
     D3D12_COMMAND_QUEUE_DESC queueDesc = {};

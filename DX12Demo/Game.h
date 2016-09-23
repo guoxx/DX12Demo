@@ -6,8 +6,6 @@
 
 #include "StepTimer.h"
 
-using Microsoft::WRL::ComPtr;
-
 // A basic game implementation that creates a D3D12 device and
 // provides a game loop.
 class Game
@@ -15,6 +13,7 @@ class Game
 public:
 
     Game();
+	~Game();
 
     // Initialization and management
     void Initialize(IUnknown* window);
@@ -51,10 +50,8 @@ private:
     int                                                 m_outputHeight;
 
     // Direct3D Objects
-    D3D_FEATURE_LEVEL                                   m_featureLevel;
     static const UINT                                   c_swapBufferCount = 2;
     UINT                                                m_backBufferIndex;
-    Microsoft::WRL::ComPtr<ID3D12Device>                m_d3dDevice;
     Microsoft::WRL::ComPtr<ID3D12CommandQueue>          m_commandQueue;
     Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>        m_rtvDescriptorHeap;
     UINT                                                m_rtvDescriptorSize;

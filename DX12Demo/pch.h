@@ -21,6 +21,8 @@
 
 #include <pix.h>
 
+using Microsoft::WRL::ComPtr;
+
 namespace DX
 {
     inline void ThrowIfFailed(HRESULT hr)
