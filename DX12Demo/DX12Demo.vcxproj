@@ -181,6 +181,7 @@
     <ClInclude Include="DX12\DX12PipelineState.h" />
     <ClInclude Include="DX12\DX12RootSignature.h" />
     <ClInclude Include="DX12\DX12Texture.h" />
+    <ClInclude Include="DX12\Hash.h" />
     <ClInclude Include="StepTimer.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="pch.h" />

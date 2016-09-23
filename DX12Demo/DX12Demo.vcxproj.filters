@@ -65,6 +65,9 @@
     <ClInclude Include="DX12\DX12RootSignature.h">
       <Filter>DX12\Public</Filter>
     </ClInclude>
+    <ClInclude Include="DX12\Hash.h">
+      <Filter>DX12\Public</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
