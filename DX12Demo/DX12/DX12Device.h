@@ -14,6 +14,8 @@ public:
 
 	ID3D12GraphicsCommandList* CreateGraphicCommandList();
 
+	ID3D12Resource* CreateBuffer();
+
 private:
 	ComPtr<ID3D12Device> m_d3dDevice;
 };
