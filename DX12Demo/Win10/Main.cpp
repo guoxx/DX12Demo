@@ -10,6 +10,7 @@
 //*********************************************************
 
 #include "pch.h"
+#include "Win32Application.h"
 #include "D3D12HelloTriangle.h"
 
 _Use_decl_annotations_

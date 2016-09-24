@@ -13,21 +13,12 @@
 
 #include "DXSample.h"
 
-using namespace DirectX;
-
-// Note that while ComPtr is used to manage the lifetime of resources on the CPU,
-// it has no understanding of the lifetime of resources on the GPU. Apps must account
-// for the GPU lifetime of resources to avoid destroying objects that may still be
-// referenced by the GPU.
-// An example of this can be found in the class method: OnDestroy().
-using Microsoft::WRL::ComPtr;
-
 class D3D12HelloTriangle : public DXSample
 {
 public:
 	D3D12HelloTriangle(UINT width, UINT height, std::wstring name);
 
-	virtual void OnInit();
+	virtual void OnInit(GFX_WHND hwnd);
 	virtual void OnUpdate();
 	virtual void OnRender();
 	virtual void OnDestroy();
@@ -37,8 +28,8 @@ private:
 
 	struct Vertex
 	{
-		XMFLOAT3 position;
-		XMFLOAT4 color;
+		DirectX::XMFLOAT3 position;
+		DirectX::XMFLOAT4 color;
 	};
 
 	// Pipeline objects.

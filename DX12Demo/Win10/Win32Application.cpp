@@ -50,7 +50,7 @@ int Win32Application::Run(DXSample* pSample, HINSTANCE hInstance, int nCmdShow)
 		pSample);
 
 	// Initialize the sample. OnInit is defined in each child-implementation of DXSample.
-	pSample->OnInit();
+	pSample->OnInit(m_hwnd);
 
 	ShowWindow(m_hwnd, nCmdShow);
 

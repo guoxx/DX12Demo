@@ -32,6 +32,12 @@
 
 #include <pix.h>
 
+#ifdef __XBOX_ONE__
+using GFX_WHND = IUnknown*;
+#else
+using GFX_WHND = HWND;
+#endif
+
 using Microsoft::WRL::ComPtr;
 
 namespace DX

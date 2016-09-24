@@ -1,53 +1,36 @@
-//*********************************************************
-//
-// Copyright (c) Microsoft. All rights reserved.
-// This code is licensed under the MIT License (MIT).
-// THIS CODE IS PROVIDED *AS IS* WITHOUT WARRANTY OF
-// ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING ANY
-// IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR
-// PURPOSE, MERCHANTABILITY, OR NON-INFRINGEMENT.
-//
-//*********************************************************
-
 #pragma once
-
-#include "Win32Application.h"
 
 class DXSample
 {
 public:
-	DXSample(UINT width, UINT height, std::wstring name);
+	DXSample(uint32_t width, uint32_t height, std::wstring name);
 	virtual ~DXSample();
 
-	virtual void OnInit() = 0;
+	virtual void OnInit(GFX_WHND hwnd);
 	virtual void OnUpdate() = 0;
 	virtual void OnRender() = 0;
 	virtual void OnDestroy() = 0;
 
 	// Samples override the event handlers to handle specific messages.
-	virtual void OnKeyDown(UINT8 /*key*/)   {}
-	virtual void OnKeyUp(UINT8 /*key*/)     {}
+	virtual void OnKeyDown(uint8_t /*key*/)   {}
+	virtual void OnKeyUp(uint8_t /*key*/)     {}
 
 	// Accessors.
-	UINT GetWidth() const           { return m_width; }
-	UINT GetHeight() const          { return m_height; }
-	const WCHAR* GetTitle() const   { return m_title.c_str(); }
+	uint32_t GetWidth() const           { return m_Width; }
+	uint32_t GetHeight() const          { return m_Height; }
+	const wchar_t* GetTitle() const		{ return m_Title.c_str(); }
+	const GFX_WHND GetHwnd() const		{ return m_Hwnd; }
 
 	void ParseCommandLineArgs(_In_reads_(argc) WCHAR* argv[], int argc);
 
 protected:
-	void GetHardwareAdapter(_In_ IDXGIFactory2* pFactory, _Outptr_result_maybenull_ IDXGIAdapter1** ppAdapter);
-	void SetCustomWindowText(LPCWSTR text);
-
 	// Viewport dimensions.
-	UINT m_width;
-	UINT m_height;
-	float m_aspectRatio;
-
-	// Adapter info.
-	bool m_useWarpDevice;
+	uint32_t m_Width;
+	uint32_t m_Height;
+	float m_AspectRatio;
+	GFX_WHND m_Hwnd;
 
 private:
 	// Window title.
-	std::wstring m_title;
+	std::wstring m_Title;
 };
