@@ -148,6 +148,7 @@ void DX12Demo::DrawScene()
 
 void DX12Demo::DrawScene1()
 {
+/*
 	m_commandList->SetGraphicsRootSignature(m_rootSignature1.Get());
 
 	ID3D12DescriptorHeap* heaps[] = { m_srvHeap1.Get(), m_sampHeap1.Get() };
@@ -163,6 +164,7 @@ void DX12Demo::DrawScene1()
 	m_commandList->SetPipelineState(m_PSO1.Get());
 
 	m_commandList->DrawIndexedInstanced(6, 1, 0, 0, 0);
+*/
 }
 
 // Helper method to prepare the command list for rendering and clear the back buffers.
@@ -394,8 +396,14 @@ void DX12Demo::CreateResources()
             m_renderTargets[n]->SetName(name);
         }
 
+		D3D12_RENDER_TARGET_VIEW_DESC rtvDesc{};
+		rtvDesc.Format = backBufferFormat;
+		rtvDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
+		rtvDesc.Texture2D.MipSlice = 0;
+		rtvDesc.Texture2D.PlaneSlice = 0;
+
         CD3DX12_CPU_DESCRIPTOR_HANDLE rtvDescriptor(m_rtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart(), n, m_rtvDescriptorSize);
-        m_d3dDevice->CreateRenderTargetView(m_renderTargets[n].Get(), nullptr, rtvDescriptor);
+        m_d3dDevice->CreateRenderTargetView(m_renderTargets[n].Get(), &rtvDesc, rtvDescriptor);
     }
 
     // Reset the index to the current back buffer.
@@ -552,6 +560,7 @@ void DX12Demo::LoadAssets()
 
 void DX12Demo::LoadAssets1()
 {
+/*
     DX::ThrowIfFailed(m_commandAllocators[m_backBufferIndex]->Reset());
     DX::ThrowIfFailed(m_commandList->Reset(m_commandAllocators[m_backBufferIndex].Get(), nullptr));
 
@@ -765,6 +774,7 @@ void DX12Demo::LoadAssets1()
 	m_commandQueue->ExecuteCommandLists(_countof(cmdLists), cmdLists);
 
 	WaitForGpu();
+*/
 }
 
 void DX12Demo::WaitForGpu()
