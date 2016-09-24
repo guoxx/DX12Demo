@@ -41,7 +41,11 @@ namespace DX
         if (FAILED(hr))
         {
             // Set a breakpoint on this line to catch DirectX API errors
-            //throw Platform::Exception::CreateException(hr);
+#ifdef __XBOX_ONE__
+            throw Platform::Exception::CreateException(hr);
+#else
+			throw std::exception();
+#endif
         }
     }
 }

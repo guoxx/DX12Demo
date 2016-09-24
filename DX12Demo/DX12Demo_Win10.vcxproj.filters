@@ -19,14 +19,9 @@
     <Filter Include="DX12\Public">
       <UniqueIdentifier>{5ffa3523-8f23-423f-9631-9513b69e0ba9}</UniqueIdentifier>
     </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="Assets\HelloTexture.hlsl">
-      <Filter>Assets\Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="Assets\HelloTriangle.hlsl">
-      <Filter>Assets\Shaders</Filter>
-    </FxCompile>
+    <Filter Include="Sources\Win10">
+      <UniqueIdentifier>{ed07c81a-6536-47f6-8705-1a44d232767f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DX12\DX12Buffer.cpp">
@@ -53,14 +48,23 @@
     <ClCompile Include="DX12\DX12Texture.cpp">
       <Filter>DX12\Private</Filter>
     </ClCompile>
-    <ClCompile Include="Game.cpp">
-      <Filter>Sources</Filter>
-    </ClCompile>
     <ClCompile Include="pch.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
     <ClCompile Include="tga_reader.cpp">
       <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Win10\D3D12HelloTriangle.cpp">
+      <Filter>Sources\Win10</Filter>
+    </ClCompile>
+    <ClCompile Include="Win10\DXSample.cpp">
+      <Filter>Sources\Win10</Filter>
+    </ClCompile>
+    <ClCompile Include="Win10\Main.cpp">
+      <Filter>Sources\Win10</Filter>
+    </ClCompile>
+    <ClCompile Include="Win10\Win32Application.cpp">
+      <Filter>Sources\Win10</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -94,9 +98,6 @@
     <ClInclude Include="DX12\DX12Device.h">
       <Filter>DX12\Private</Filter>
     </ClInclude>
-    <ClInclude Include="Game.h">
-      <Filter>Sources</Filter>
-    </ClInclude>
     <ClInclude Include="pch.h">
       <Filter>Sources</Filter>
     </ClInclude>
@@ -112,5 +113,22 @@
     <ClInclude Include="DX12\d3dx12.h">
       <Filter>DX12\Public</Filter>
     </ClInclude>
+    <ClInclude Include="Win10\D3D12HelloTriangle.h">
+      <Filter>Sources\Win10</Filter>
+    </ClInclude>
+    <ClInclude Include="Win10\DXSample.h">
+      <Filter>Sources\Win10</Filter>
+    </ClInclude>
+    <ClInclude Include="Win10\Win32Application.h">
+      <Filter>Sources\Win10</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Assets\HelloTexture.hlsl">
+      <Filter>Assets\Shaders</Filter>
+    </None>
+    <None Include="Assets\HelloTriangle.hlsl">
+      <Filter>Assets\Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>
