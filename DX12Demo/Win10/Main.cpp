@@ -11,11 +11,11 @@
 
 #include "pch.h"
 #include "Win32Application.h"
-#include "D3D12HelloTriangle.h"
+#include "../DX12Demo.h"
 
 _Use_decl_annotations_
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
 {
-	D3D12HelloTriangle sample(1280, 720, L"DX12Demo");
+	DX12Demo sample(1280, 720, L"DX12Demo");
 	return Win32Application::Run(&sample, hInstance, nCmdShow);
 }

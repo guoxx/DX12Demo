@@ -15,6 +15,11 @@ public:
 	virtual void OnKeyDown(uint8_t /*key*/)   {}
 	virtual void OnKeyUp(uint8_t /*key*/)     {}
 
+#ifdef __XBOX_ONE__
+	virtual void OnSuspending() = 0;
+	virtual void OnResuming() = 0;
+#endif
+
 	// Accessors.
 	uint32_t GetWidth() const           { return m_Width; }
 	uint32_t GetHeight() const          { return m_Height; }

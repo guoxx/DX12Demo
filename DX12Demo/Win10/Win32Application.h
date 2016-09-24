@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include "DXSample.h"
+#include "../DXSample.h"
 
 class DXSample;
 

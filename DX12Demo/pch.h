@@ -5,6 +5,8 @@
 
 #pragma once
 
+#define _CRT_SECURE_NO_WARNINGS
+
 // Use the C++ standard templated min/max
 #define NOMINMAX
 

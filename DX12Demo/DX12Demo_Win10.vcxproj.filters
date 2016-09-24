@@ -54,17 +54,17 @@
     <ClCompile Include="tga_reader.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
-    <ClCompile Include="Win10\D3D12HelloTriangle.cpp">
-      <Filter>Sources\Win10</Filter>
-    </ClCompile>
-    <ClCompile Include="Win10\DXSample.cpp">
-      <Filter>Sources\Win10</Filter>
-    </ClCompile>
     <ClCompile Include="Win10\Main.cpp">
       <Filter>Sources\Win10</Filter>
     </ClCompile>
     <ClCompile Include="Win10\Win32Application.cpp">
       <Filter>Sources\Win10</Filter>
+    </ClCompile>
+    <ClCompile Include="DXSample.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="DX12Demo.cpp">
+      <Filter>Sources</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -113,14 +113,14 @@
     <ClInclude Include="DX12\d3dx12.h">
       <Filter>DX12\Public</Filter>
     </ClInclude>
-    <ClInclude Include="Win10\D3D12HelloTriangle.h">
-      <Filter>Sources\Win10</Filter>
-    </ClInclude>
-    <ClInclude Include="Win10\DXSample.h">
-      <Filter>Sources\Win10</Filter>
-    </ClInclude>
     <ClInclude Include="Win10\Win32Application.h">
       <Filter>Sources\Win10</Filter>
+    </ClInclude>
+    <ClInclude Include="DXSample.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="DX12Demo.h">
+      <Filter>Sources</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
