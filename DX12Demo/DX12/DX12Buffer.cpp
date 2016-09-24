@@ -12,6 +12,7 @@ DX12Buffer::~DX12Buffer()
 }
 
 DX12ConstantsBuffer::DX12ConstantsBuffer(DX12Device* device)
+	: DX12Buffer(device)
 {
 	m_Buffer = device->CreateBuffer();
 }

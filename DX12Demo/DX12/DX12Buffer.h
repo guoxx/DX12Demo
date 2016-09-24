@@ -8,7 +8,7 @@ public:
 	DX12Buffer(DX12Device* device);
 	virtual ~DX12Buffer();
 
-private:
+protected:
 	ComPtr<ID3D12Resource> m_Buffer;
 };
 

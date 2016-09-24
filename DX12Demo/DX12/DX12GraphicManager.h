@@ -12,13 +12,10 @@ public:
 
 	static DX12GraphicManager* GetInstance() { return s_GfxManager; }
 
-	void CreateCopyCommandQueues(uint32_t cnt);
 	void CreateGraphicCommandQueues(uint32_t cnt);
 
-	std::shared_ptr<DX12CopyContext> CreateCopyContext();
 	std::shared_ptr<DX12GraphicContext> CreateGraphicContext();
 
-	void ExecuteCopyContext(DX12CopyContext* ctx);
 	void ExecuteGraphicContext(DX12GraphicContext* ctx);
 
 private:
@@ -26,7 +23,6 @@ private:
 	~DX12GraphicManager();
 
 	std::unique_ptr<DX12Device> m_Device;
-	std::vector<ComPtr<ID3D12CommandQueue>> m_CopyQueues;
 	std::vector<ComPtr<ID3D12CommandQueue>> m_GraphicQueues;
 
 private:
