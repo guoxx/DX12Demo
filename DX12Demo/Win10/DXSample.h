@@ -36,7 +36,6 @@ public:
 	void ParseCommandLineArgs(_In_reads_(argc) WCHAR* argv[], int argc);
 
 protected:
-	std::wstring GetAssetFullPath(LPCWSTR assetName);
 	void GetHardwareAdapter(_In_ IDXGIFactory2* pFactory, _Outptr_result_maybenull_ IDXGIAdapter1** ppAdapter);
 	void SetCustomWindowText(LPCWSTR text);
 

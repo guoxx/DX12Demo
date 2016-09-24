@@ -20,3 +20,28 @@ DX12Device::DX12Device()
 DX12Device::~DX12Device()
 {
 }
+
+ID3D12CommandQueue * DX12Device::CreateGraphicCommandQueue(int32_t priority, D3D12_COMMAND_QUEUE_FLAGS flags, uint32_t nodeMask)
+{
+	return nullptr;
+}
+
+ID3D12CommandAllocator * DX12Device::CreateGraphicCommandAllocator()
+{
+	return nullptr;
+}
+
+ID3D12GraphicsCommandList * DX12Device::CreateGraphicCommandList()
+{
+	return nullptr;
+}
+
+ID3D12Resource * DX12Device::CreateBuffer()
+{
+	return nullptr;
+}
+
+ID3D12RootSignature * DX12Device::CreateRootSignature(const void * pBlobWithRootSignature, size_t blobLengthInBytes)
+{
+	return nullptr;
+}

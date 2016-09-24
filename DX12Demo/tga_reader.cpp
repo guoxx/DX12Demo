@@ -39,7 +39,7 @@ int tgaGetHeight(const unsigned char *buffer) {
 }
 
 #define COLORMAP 1
-#define RGB 2
+#define RGB_ 2
 #define GRAYSCALE 3
 #define COLORMAP_RLE 9
 #define RGB_RLE 10
@@ -77,7 +77,7 @@ int *tgaRead(const unsigned char *buffer, const TGA_ORDER *order) {
 		int imageDataOffset = 18 + (colormapDepth / 8) * colormapLength;
 		pixels = createPixelsFromColormap(width, height, colormapDepth, buffer, imageDataOffset, buffer, colormapOrigin, descriptor, order);
 		} break;
-	case RGB:
+	case RGB_:
 		pixels = createPixelsFromRGB(width, height, depth, buffer, 18, descriptor, order);
 		break;
 	case GRAYSCALE:
