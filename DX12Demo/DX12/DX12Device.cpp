@@ -44,3 +44,45 @@ ID3D12PipelineState * DX12Device::CreateGraphicsPipelineState(const D3D12_GRAPHI
 {
 	return nullptr;
 }
+
+IDXGISwapChain1 * DX12Device::CreateSwapChain(const DXGI_SWAP_CHAIN_DESC1* swapChainDesc, const GFX_WHND hwnd)
+{
+	IDXGISwapChain1* pSwapChain = nullptr;
+
+#ifdef _XBOX_ONE
+	// First, retrieve the underlying DXGI device from the D3D device.
+	ComPtr<IDXGIDevice1> dxgiDevice;
+	DX::ThrowIfFailed(m_d3dDevice.As(&dxgiDevice));
+
+	// Identify the physical adapter (GPU or card) this device is running on.
+	ComPtr<IDXGIAdapter> dxgiAdapter;
+	DX::ThrowIfFailed(dxgiDevice->GetAdapter(dxgiAdapter.GetAddressOf()));
+
+	// And obtain the factory object that created it.
+	ComPtr<IDXGIFactory2> dxgiFactory;
+	DX::ThrowIfFailed(dxgiAdapter->GetParent(IID_GRAPHICS_PPV_ARGS(dxgiFactory.GetAddressOf())));
+
+	// Create a swap chain for the window.
+	DX::ThrowIfFailed(dxgiFactory->CreateSwapChainForCoreWindow(
+		m_d3dDevice.Get(),
+		hwnd,
+		swapChainDesc,
+		nullptr,
+		&pSwapChain
+	));
+#else
+	ComPtr<IDXGIFactory4> dxgiFactory;
+	DX::ThrowIfFailed(CreateDXGIFactory1(IID_GRAPHICS_PPV_ARGS(&dxgiFactory)));
+
+	DX::ThrowIfFailed(dxgiFactory->CreateSwapChainForHwnd(
+		m_commandQueue.Get(),		// Swap chain needs the queue so that it can force a flush on it.
+		m_Hwnd,
+		swapChainDesc,
+		nullptr,
+		nullptr,
+		&pSwapChain
+	));
+#endif
+
+	return pSwapChain;
+}
