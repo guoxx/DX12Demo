@@ -18,6 +18,10 @@ public:
 
 	void ExecuteGraphicContext(DX12GraphicContext* ctx);
 
+	void RegisterSRVInDescriptorHeap(ID3D12Resource* resource);
+	void RegisterRTVInDescriptorheap(ID3D12Resource* resource);
+	void RegisterDSVInDescriptorHeap(ID3D12Resource* resource);
+
 private:
 	DX12GraphicManager();
 	~DX12GraphicManager();

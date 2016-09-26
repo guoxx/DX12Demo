@@ -80,6 +80,9 @@
     <ClInclude Include="DX12\DX12SwapChain.h">
       <Filter>DX12\Public</Filter>
     </ClInclude>
+    <ClInclude Include="DX12\DX12GpuResource.h">
+      <Filter>DX12\Public</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -122,6 +125,9 @@
       <Filter>Sources</Filter>
     </ClCompile>
     <ClCompile Include="DX12\DX12SwapChain.cpp">
+      <Filter>DX12\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="DX12\DX12GpuResource.cpp">
       <Filter>DX12\Private</Filter>
     </ClCompile>
   </ItemGroup>

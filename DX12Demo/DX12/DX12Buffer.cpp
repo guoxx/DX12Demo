@@ -3,18 +3,8 @@
 
 #include "DX12Device.h"
 
-DX12Buffer::DX12Buffer(DX12Device* device)
+DX12ConstantsBuffer::DX12ConstantsBuffer(DX12Device * device)
 {
-}
-
-DX12Buffer::~DX12Buffer()
-{
-}
-
-DX12ConstantsBuffer::DX12ConstantsBuffer(DX12Device* device)
-	: DX12Buffer(device)
-{
-	m_Buffer = device->CreateBuffer();
 }
 
 DX12ConstantsBuffer::~DX12ConstantsBuffer()
@@ -22,12 +12,12 @@ DX12ConstantsBuffer::~DX12ConstantsBuffer()
 }
 
 DX12IndexBuffer::DX12IndexBuffer(DX12Device* device, uint32_t sizeInBytes, uint32_t alignInBytes, DXGI_FORMAT fmt)
-	: DX12Buffer(device)
+	: DX12GpuResource()
 	, m_Format{ fmt }
 	, m_View{}
 {
-	m_Buffer = device->CreateCommittedResourceInDefaultHeap(sizeInBytes, alignInBytes, D3D12_RESOURCE_STATE_COMMON);
-	m_View = D3D12_INDEX_BUFFER_VIEW{ m_Buffer->GetGPUVirtualAddress(), sizeInBytes, m_Format };
+	m_Resource = device->CreateCommittedResourceInDefaultHeap(sizeInBytes, alignInBytes, D3D12_RESOURCE_STATE_COMMON);
+	m_View = D3D12_INDEX_BUFFER_VIEW{ m_Resource->GetGPUVirtualAddress(), sizeInBytes, m_Format };
 }
 
 DX12IndexBuffer::~DX12IndexBuffer()
@@ -35,9 +25,9 @@ DX12IndexBuffer::~DX12IndexBuffer()
 }
 
 DX12StructuredBuffer::DX12StructuredBuffer(DX12Device * device, uint32_t sizeInBytes, uint32_t alignInBytes, uint32_t strideInBytes)
-	: DX12Buffer(device)
+	: DX12GpuResource()
 {
-	m_Buffer = device->CreateCommittedResourceInDefaultHeap(sizeInBytes, alignInBytes, D3D12_RESOURCE_STATE_COMMON);
+	m_Resource = device->CreateCommittedResourceInDefaultHeap(sizeInBytes, alignInBytes, D3D12_RESOURCE_STATE_COMMON);
 
 	//D3D12_SHADER_RESOURCE_VIEW_DESC desc;
 	//desc.Format = DXGI_FORMAT_UNKNOWN;

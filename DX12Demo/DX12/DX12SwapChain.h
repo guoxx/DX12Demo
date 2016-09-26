@@ -9,6 +9,7 @@ public:
 	~DX12SwapChain();
 
 private:
+	const uint32_t m_SwapBufferCount;
 	ComPtr<IDXGISwapChain1> m_SwapChain;
 };
 

@@ -52,3 +52,15 @@ std::shared_ptr<DX12GraphicContext> DX12GraphicManager::CreateGraphicContext()
 void DX12GraphicManager::ExecuteGraphicContext(DX12GraphicContext* ctx)
 {
 }
+
+void DX12GraphicManager::RegisterSRVInDescriptorHeap(ID3D12Resource * resource)
+{
+}
+
+void DX12GraphicManager::RegisterRTVInDescriptorheap(ID3D12Resource * resource)
+{
+}
+
+void DX12GraphicManager::RegisterDSVInDescriptorHeap(ID3D12Resource * resource)
+{
+}

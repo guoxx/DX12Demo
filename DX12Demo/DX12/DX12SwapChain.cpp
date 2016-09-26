@@ -4,6 +4,7 @@
 #include "DX12Device.h"
 
 DX12SwapChain::DX12SwapChain(DX12Device* device, const GFX_WHND hwnd, uint32_t swapBufferCount, uint32_t backBufferWidth, uint32_t backBufferHeight, DXGI_FORMAT backBufferFormat)
+	: m_SwapBufferCount{ swapBufferCount }
 {
 	DXGI_SWAP_CHAIN_DESC1 swapChainDesc = {};
 	swapChainDesc.Width = backBufferWidth;
