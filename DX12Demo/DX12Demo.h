@@ -10,11 +10,11 @@ public:
 	DX12Demo(uint32_t width, uint32_t height, std::wstring name);
 
 	virtual void OnInit(GFX_WHND hwnd) override final;
-	virtual void OnUpdate() override final;
+	virtual void OnUpdate(DX::StepTimer const& timer) override final;
 	virtual void OnRender() override final;
 	virtual void OnDestroy() override final;
 
-#ifdef __XBOX_ONE__
+#ifdef _XBOX_ONE
 	virtual void OnSuspending() override final;
 	virtual void OnResuming() override final;
 #endif
@@ -78,14 +78,4 @@ private:
 
 	uint32_t                                            m_cbvSrvUavDescriptorSize;
 	uint32_t                                            m_samplerDescriptorSize;
-
-
-	// Game state
-	INT64                                               m_frame;
 };
-
-// PIX event colors
-const DWORD EVT_COLOR_FRAME = PIX_COLOR_INDEX(1);
-const DWORD EVT_COLOR_UPDATE = PIX_COLOR_INDEX(2);
-const DWORD EVT_COLOR_RENDER = PIX_COLOR_INDEX(3);
-

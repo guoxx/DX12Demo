@@ -1,13 +1,17 @@
 #pragma once
 
+#include "StepTimer.h"
+
 class DXSample
 {
 public:
 	DXSample(uint32_t width, uint32_t height, std::wstring name);
 	virtual ~DXSample();
 
+	void Tick();
+
 	virtual void OnInit(GFX_WHND hwnd);
-	virtual void OnUpdate() = 0;
+	virtual void OnUpdate(DX::StepTimer const& timer) = 0;
 	virtual void OnRender() = 0;
 	virtual void OnDestroy() = 0;
 
@@ -15,7 +19,7 @@ public:
 	virtual void OnKeyDown(uint8_t /*key*/)   {}
 	virtual void OnKeyUp(uint8_t /*key*/)     {}
 
-#ifdef __XBOX_ONE__
+#ifdef _XBOX_ONE
 	virtual void OnSuspending() = 0;
 	virtual void OnResuming() = 0;
 #endif
@@ -35,7 +39,17 @@ protected:
 	float m_AspectRatio;
 	GFX_WHND m_Hwnd;
 
+    // Game state
+	int64_t m_Frame;
+	DX::StepTimer m_Timer;
+
 private:
 	// Window title.
 	std::wstring m_Title;
 };
+
+// PIX event colors
+const DWORD EVT_COLOR_FRAME = PIX_COLOR_INDEX(1);
+const DWORD EVT_COLOR_UPDATE = PIX_COLOR_INDEX(2);
+const DWORD EVT_COLOR_RENDER = PIX_COLOR_INDEX(3);
+

@@ -7,12 +7,28 @@ DXSample::DXSample(UINT width, UINT height, std::wstring name)
 	: m_Width(width)
 	, m_Height(height)
 	, m_Title(name)
+	, m_Frame(0)
 {
 	m_AspectRatio = static_cast<float>(width) / static_cast<float>(height);
 }
 
 DXSample::~DXSample()
 {
+}
+
+void DXSample::Tick()
+{
+    PIXBeginEvent(EVT_COLOR_FRAME, L"Frame %I64u", m_Frame);
+
+    m_Timer.Tick([&]()
+    {
+        OnUpdate(m_Timer);
+    });
+
+	OnRender();
+
+    PIXEndEvent();
+    m_Frame++;
 }
 
 void DXSample::OnInit(GFX_WHND hwnd)

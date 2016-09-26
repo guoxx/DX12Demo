@@ -68,8 +68,11 @@
     <ClInclude Include="DX12\Hash.h">
       <Filter>DX12\Public</Filter>
     </ClInclude>
-    <ClInclude Include="XboxOne\Game.h">
-      <Filter>Sources\XboxOne</Filter>
+    <ClInclude Include="DX12Demo.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="DXSample.h">
+      <Filter>Sources</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -103,11 +106,14 @@
     <ClCompile Include="DX12\DX12RootSignature.cpp">
       <Filter>DX12\Private</Filter>
     </ClCompile>
-    <ClCompile Include="XboxOne\Game.cpp">
-      <Filter>Sources\XboxOne</Filter>
-    </ClCompile>
     <ClCompile Include="XboxOne\Main.cpp">
       <Filter>Sources\XboxOne</Filter>
+    </ClCompile>
+    <ClCompile Include="DX12Demo.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="DXSample.cpp">
+      <Filter>Sources</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -3,7 +3,7 @@
 //
 
 #include "pch.h"
-#include "Game.h"
+#include "../DX12Demo.h"
 
 #include <ppltasks.h>
 
@@ -35,20 +35,21 @@ public:
         CoreApplication::Resuming +=
             ref new EventHandler<Platform::Object^>(this, &ViewProvider::OnResuming);
 
-        m_game.reset(new Game);
+        m_pSample.reset(new DX12Demo(1920, 1080, L"DX12Demo"));
     }
 
     virtual void Uninitialize()
     {
-        m_game.reset();
+        m_pSample.reset();
     }
 
     virtual void SetWindow(CoreWindow^ window)
     {
-        window->Closed +=
-            ref new TypedEventHandler<CoreWindow^, CoreWindowEventArgs^>(this, &ViewProvider::OnWindowClosed);
+		window->KeyDown += ref new TypedEventHandler<CoreWindow^, KeyEventArgs^>(this, &ViewProvider::OnKeyDown);
+		window->KeyUp += ref new TypedEventHandler<CoreWindow^, KeyEventArgs^>(this, &ViewProvider::OnKeyUp);
+        window->Closed += ref new TypedEventHandler<CoreWindow^, CoreWindowEventArgs^>(this, &ViewProvider::OnWindowClosed);
 
-        m_game->Initialize(reinterpret_cast<IUnknown*>(window));
+        m_pSample->OnInit(reinterpret_cast<IUnknown*>(window));
     }
 
     virtual void Load(Platform::String^ entryPoint)
@@ -59,10 +60,12 @@ public:
     {
         while (!m_exit)
         {
-            m_game->Tick();
-
             CoreWindow::GetForCurrentThread()->Dispatcher->ProcessEvents(CoreProcessEventsOption::ProcessAllIfPresent);
+
+			m_pSample->Tick();
         }
+
+		m_pSample->OnDestroy();
     }
 
 protected:
@@ -78,7 +81,7 @@ protected:
 
         create_task([this, deferral]()
         {
-            m_game->OnSuspending();
+            m_pSample->OnSuspending();
 
             deferral->Complete();
         });
@@ -86,7 +89,7 @@ protected:
 
     void OnResuming(Platform::Object^ sender, Platform::Object^ args)
     {
-        m_game->OnResuming();
+        m_pSample->OnResuming();
     }
 
     void OnWindowClosed(CoreWindow^ sender, CoreWindowEventArgs^ args)
@@ -94,9 +97,25 @@ protected:
         m_exit = true;
     }
 
+	void OnKeyDown(CoreWindow^ window, KeyEventArgs^ keyEventArgs)
+	{
+		if (static_cast<UINT>(keyEventArgs->VirtualKey) < 256)
+		{
+			m_pSample->OnKeyDown(static_cast<UINT8>(keyEventArgs->VirtualKey));
+		}
+	}
+
+	void OnKeyUp(CoreWindow^ window, KeyEventArgs^ keyEventArgs)
+	{
+		if (static_cast<UINT>(keyEventArgs->VirtualKey) < 256)
+		{
+			m_pSample->OnKeyUp(static_cast<UINT8>(keyEventArgs->VirtualKey));
+		}
+	}
+
 private:
-    bool                    m_exit;
-    std::unique_ptr<Game>   m_game;
+    bool						m_exit;
+    std::unique_ptr<DXSample>   m_pSample;
 };
 
 ref class ViewProviderFactory : IFrameworkViewSource

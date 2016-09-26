@@ -8,7 +8,7 @@
 
 using namespace DirectX;
 
-#ifdef __XBOX_ONE__
+#ifdef _XBOX_ONE
 using namespace Windows::Xbox::Input;
 using namespace Windows::Foundation::Collections;
 #endif
@@ -30,7 +30,6 @@ DX12Demo::DX12Demo(uint32_t width, uint32_t height, std::wstring name)
 	: DXSample(width, height, name)
 	, m_featureLevel(D3D_FEATURE_LEVEL_12_0)
 	, m_backBufferIndex(0)
-	, m_frame(0)
 	, m_fenceValues{}
 {
 	m_offsetX = 0;
@@ -54,27 +53,11 @@ void DX12Demo::OnInit(GFX_WHND hwnd)
     */
 }
 
-// Executes the basic game loop.
-//void DX12Demo::Tick()
-//{
-//    PIXBeginEvent(EVT_COLOR_FRAME, L"Frame %I64u", m_frame);
-//
-//    m_timer.Tick([&]()
-//    {
-//        Update(m_timer);
-//    });
-//
-//    Render();
-//
-//    PIXEndEvent();
-//    m_frame++;
-//}
-
-void DX12Demo::OnUpdate()
+void DX12Demo::OnUpdate(DX::StepTimer const& timer)
 {
     PIXBeginEvent(EVT_COLOR_UPDATE, L"Update");
 
-#ifdef __XBOX_ONE__
+#ifdef _XBOX_ONE
     // Allow the game to exit by pressing the view button on a controller.
     // This is just a helper for development.
     IVectorView<IGamepad^>^ gamepads = Gamepad::Gamepads;
@@ -87,12 +70,12 @@ void DX12Demo::OnUpdate()
             Windows::ApplicationModel::Core::CoreApplication::Exit();
         }
     }
+#endif
 
     float elapsedTime = float(timer.GetElapsedSeconds());
 
     // TODO: Add your game logic here.
     elapsedTime;
-#endif
 
 	m_offsetX += 0.001f;
 	if (m_offsetX > 0.5)
@@ -106,13 +89,11 @@ void DX12Demo::OnUpdate()
 // Draws the scene.
 void DX12Demo::OnRender()
 {
-#ifdef __XBOX_ONE__
     // Don't try to render anything before the first Update.
-    if (m_timer.GetFrameCount() == 0)
+    if (m_Timer.GetFrameCount() == 0)
     {
         return;
     }
-#endif
 
     PIXBeginEvent(EVT_COLOR_RENDER, L"Render");
 
@@ -148,7 +129,6 @@ void DX12Demo::DrawScene()
 
 void DX12Demo::DrawScene1()
 {
-/*
 	m_commandList->SetGraphicsRootSignature(m_rootSignature1.Get());
 
 	ID3D12DescriptorHeap* heaps[] = { m_srvHeap1.Get(), m_sampHeap1.Get() };
@@ -164,7 +144,6 @@ void DX12Demo::DrawScene1()
 	m_commandList->SetPipelineState(m_PSO1.Get());
 
 	m_commandList->DrawIndexedInstanced(6, 1, 0, 0, 0);
-*/
 }
 
 // Helper method to prepare the command list for rendering and clear the back buffers.
@@ -216,7 +195,7 @@ void DX12Demo::Present()
     MoveToNextFrame();
 }
 
-#ifdef __XBOX_ONE__
+#ifdef _XBOX_ONE
 // Occurs when the game is being suspended.
 void DX12Demo::OnSuspending()
 {
@@ -229,7 +208,7 @@ void DX12Demo::OnSuspending()
 void DX12Demo::OnResuming()
 {
     m_commandQueue->ResumeX();
-    m_timer.ResetElapsedTime();
+    m_Timer.ResetElapsedTime();
 
     // TODO: Handle changes in users and input devices.
 }
@@ -324,7 +303,7 @@ void DX12Demo::CreateResources()
     }
     else
     {
-#ifdef __XBOX_ONE__
+#ifdef _XBOX_ONE
 		// First, retrieve the underlying DXGI device from the D3D device.
 		ComPtr<IDXGIDevice1> dxgiDevice;
 		DX::ThrowIfFailed(m_d3dDevice.As(&dxgiDevice));
@@ -489,7 +468,7 @@ void DX12Demo::LoadAssets()
 	psoDesc.DSVFormat = DXGI_FORMAT_D32_FLOAT;
 	psoDesc.SampleDesc = { 1, 0 };
 	psoDesc.NodeMask = 0;
-#ifdef __XBOX_ONE__
+#ifdef _XBOX_ONE
 	psoDesc.Flags = D3D12_PIPELINE_STATE_FLAG_TOOL_DEBUG;
 #endif
 	m_d3dDevice->CreateGraphicsPipelineState(&psoDesc, IID_GRAPHICS_PPV_ARGS(m_PSO.ReleaseAndGetAddressOf()));
@@ -560,7 +539,6 @@ void DX12Demo::LoadAssets()
 
 void DX12Demo::LoadAssets1()
 {
-/*
     DX::ThrowIfFailed(m_commandAllocators[m_backBufferIndex]->Reset());
     DX::ThrowIfFailed(m_commandList->Reset(m_commandAllocators[m_backBufferIndex].Get(), nullptr));
 
@@ -622,7 +600,7 @@ void DX12Demo::LoadAssets1()
 	psoDesc.DSVFormat = DXGI_FORMAT_D32_FLOAT;
 	psoDesc.SampleDesc = { 1, 0 };
 	psoDesc.NodeMask = 0;
-#ifdef __XBOX_ONE__
+#ifdef _XBOX_ONE
 	psoDesc.Flags = D3D12_PIPELINE_STATE_FLAG_TOOL_DEBUG;
 #endif
 	m_d3dDevice->CreateGraphicsPipelineState(&psoDesc, IID_GRAPHICS_PPV_ARGS(m_PSO1.ReleaseAndGetAddressOf()));
@@ -774,7 +752,6 @@ void DX12Demo::LoadAssets1()
 	m_commandQueue->ExecuteCommandLists(_countof(cmdLists), cmdLists);
 
 	WaitForGpu();
-*/
 }
 
 void DX12Demo::WaitForGpu()
