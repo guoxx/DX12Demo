@@ -4,6 +4,7 @@
 #include "DX12Device.h"
 #include "DX12DescriptorManager.h"
 #include "DX12GraphicContext.h"
+#include "DX12Fence.h"
 
 DX12GraphicManager* DX12GraphicManager::s_GfxManager = nullptr;
 
@@ -35,6 +36,8 @@ DX12GraphicManager::DX12GraphicManager()
 
 	m_DescriptorManager = std::make_unique<DX12DescriptorManager>(m_Device.get());
 
+	m_FenceManager = std::make_unique<DX12FenceManager>(m_Device.get());
+
 	m_GraphicContextIdx = 0;
 	for (uint32_t i = 0; i < m_GraphicContexts.size(); ++i)
 	{
@@ -60,7 +63,9 @@ DX12GraphicContext* DX12GraphicManager::BegineGraphicContext()
 	++m_GraphicContextIdx;
 
 	std::shared_ptr<DX12GraphicContext> ctx = m_GraphicContexts[idx];
-	ctx->Reset();
+	// TODO
+	assert(false);
+	//ctx->Reset();
 	return ctx.get();
 }
 
@@ -75,7 +80,9 @@ void DX12GraphicManager::ExecuteGraphicContext(DX12GraphicContext* ctx)
 	m_GraphicQueues[0]->ExecuteCommandLists(_countof(cmdLists), cmdLists);
 
 	ctx->ClearState();
-	ctx->SignalFence(m_GraphicQueues[0].Get());
+	// TODO
+	assert(false);
+	//ctx->SignalFence(m_GraphicQueues[0].Get());
 }
 
 D3D12_CPU_DESCRIPTOR_HANDLE DX12GraphicManager::RegisterResourceInDescriptorHeap(ID3D12Resource * resource, D3D12_DESCRIPTOR_HEAP_TYPE type)

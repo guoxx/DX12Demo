@@ -6,6 +6,7 @@ class DX12Device;
 class DX12CopyContext;
 class DX12GraphicContext;
 class DX12DescriptorManager;
+class DX12FenceManager;
 
 class DX12GraphicManager
 {
@@ -14,6 +15,8 @@ public:
 	static void Finalize();
 
 	static DX12GraphicManager* GetInstance() { return s_GfxManager; }
+
+	DX12FenceManager* GetFenceManager() const { return m_FenceManager.get(); }
 
 	void CreateGraphicCommandQueues(uint32_t cnt = 1);
 
@@ -34,6 +37,8 @@ private:
 	std::array<std::shared_ptr<DX12GraphicContext>, DX12NumGraphicContexts> m_GraphicContexts;
 
 	std::unique_ptr<DX12DescriptorManager> m_DescriptorManager;
+
+	std::unique_ptr<DX12FenceManager> m_FenceManager;
 
 private:
 	static DX12GraphicManager* s_GfxManager;
