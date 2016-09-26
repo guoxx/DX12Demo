@@ -77,6 +77,9 @@
     <ClInclude Include="DX12\DX12Constants.h">
       <Filter>DX12\Public</Filter>
     </ClInclude>
+    <ClInclude Include="DX12\DX12SwapChain.h">
+      <Filter>DX12\Public</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -117,6 +120,9 @@
     </ClCompile>
     <ClCompile Include="DXSample.cpp">
       <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="DX12\DX12SwapChain.cpp">
+      <Filter>DX12\Private</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
