@@ -17,7 +17,8 @@ public:
 
 	void CreateGraphicCommandQueues(uint32_t cnt = 1);
 
-	DX12GraphicContext* AcquireGraphicContext();
+	DX12GraphicContext* BegineGraphicContext();
+	void EndGraphicContext(DX12GraphicContext* ctx);
 	void ExecuteGraphicContext(DX12GraphicContext* ctx);
 
 	D3D12_CPU_DESCRIPTOR_HANDLE RegisterResourceInDescriptorHeap(ID3D12Resource* resource, D3D12_DESCRIPTOR_HEAP_TYPE type);

@@ -22,6 +22,16 @@ void DX12CommandContext::Reset()
 	m_CommandList->Reset(m_CommandAllocator.Get(), nullptr);
 }
 
+void DX12CommandContext::Close()
+{
+	m_CommandList->Close();
+}
+
+void DX12CommandContext::ClearState()
+{
+	m_CommandList->ClearState(nullptr);
+}
+
 bool DX12CommandContext::IsBusy()
 {
     DWORD ret = WaitForSingleObjectEx(m_FenceEvent.Get(), IGNORE, FALSE);

@@ -54,7 +54,7 @@ void DX12GraphicManager::CreateGraphicCommandQueues(uint32_t cnt)
 	}
 }
 
-DX12GraphicContext* DX12GraphicManager::AcquireGraphicContext()
+DX12GraphicContext* DX12GraphicManager::BegineGraphicContext()
 {
 	uint32_t idx = m_GraphicContextIdx % DX12NumGraphicContexts;
 	++m_GraphicContextIdx;
@@ -64,10 +64,18 @@ DX12GraphicContext* DX12GraphicManager::AcquireGraphicContext()
 	return ctx.get();
 }
 
+void DX12GraphicManager::EndGraphicContext(DX12GraphicContext * ctx)
+{
+	ctx->Close();
+}
+
 void DX12GraphicManager::ExecuteGraphicContext(DX12GraphicContext* ctx)
 {
 	ID3D12CommandList* cmdLists[] = { ctx->GetCommandList(), };
 	m_GraphicQueues[0]->ExecuteCommandLists(_countof(cmdLists), cmdLists);
+
+	ctx->ClearState();
+	ctx->SignalFence(m_GraphicQueues[0].Get());
 }
 
 D3D12_CPU_DESCRIPTOR_HANDLE DX12GraphicManager::RegisterResourceInDescriptorHeap(ID3D12Resource * resource, D3D12_DESCRIPTOR_HEAP_TYPE type)

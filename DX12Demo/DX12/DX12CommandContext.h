@@ -10,6 +10,10 @@ public:
 
 	virtual void Reset();
 
+	void Close();
+
+	void ClearState();
+
 	bool IsBusy();
 
 	void WaitForGPU();
