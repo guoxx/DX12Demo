@@ -1,10 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
     <Filter Include="Resource Files">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
@@ -21,22 +17,26 @@
     <Filter Include="DX12\Private">
       <UniqueIdentifier>{729d7ea4-8310-45dd-87c3-73ab345d0dcb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Sources\XboxOne">
+      <UniqueIdentifier>{15bc6ae0-1a60-446e-b0fe-a87c53d96ab9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Game.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="pch.h">
-      <Filter>Source Files</Filter>
+      <Filter>Sources</Filter>
     </ClInclude>
     <ClInclude Include="StepTimer.h">
-      <Filter>Source Files</Filter>
+      <Filter>Sources</Filter>
     </ClInclude>
     <ClInclude Include="TextureTga.h">
-      <Filter>Source Files</Filter>
+      <Filter>Sources</Filter>
     </ClInclude>
     <ClInclude Include="tga_reader.h">
-      <Filter>Source Files</Filter>
+      <Filter>Sources</Filter>
     </ClInclude>
     <ClInclude Include="DX12\DX12.h">
       <Filter>DX12\Public</Filter>
@@ -68,19 +68,16 @@
     <ClInclude Include="DX12\Hash.h">
       <Filter>DX12\Public</Filter>
     </ClInclude>
+    <ClInclude Include="XboxOne\Game.h">
+      <Filter>Sources\XboxOne</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Game.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Sources</Filter>
     </ClCompile>
     <ClCompile Include="tga_reader.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Sources</Filter>
     </ClCompile>
     <ClCompile Include="DX12\DX12Device.cpp">
       <Filter>DX12\Private</Filter>
@@ -105,6 +102,12 @@
     </ClCompile>
     <ClCompile Include="DX12\DX12RootSignature.cpp">
       <Filter>DX12\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="XboxOne\Game.cpp">
+      <Filter>Sources\XboxOne</Filter>
+    </ClCompile>
+    <ClCompile Include="XboxOne\Main.cpp">
+      <Filter>Sources\XboxOne</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

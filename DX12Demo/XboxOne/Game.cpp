@@ -4,7 +4,7 @@
 
 #include "pch.h"
 #include "Game.h"
-#include "TextureTga.h"
+#include "../TextureTga.h"
 
 using namespace DirectX;
 using namespace Windows::Xbox::Input;
@@ -38,7 +38,6 @@ Game::Game() :
 
 Game::~Game()
 {
-	DX12GraphicManager::Finalize();
 }
 
 // Initialize the Direct3D resources required to run.
@@ -232,7 +231,23 @@ void Game::OnResuming()
 // These are the resources that depend on the device.
 void Game::CreateDevice()
 {
-	DX12GraphicManager::Initialize();
+//#if defined(_DEBUG)
+    // Enable the D3D12 debug layer.
+    {
+        ComPtr<ID3D12Debug> debugController;
+        if (SUCCEEDED(D3D12GetDebugInterface(IID_GRAPHICS_PPV_ARGS(debugController.GetAddressOf()))))
+        {
+            debugController->EnableDebugLayer();
+        }
+    }
+//#endif
+
+    // Create the DX12 API device object.
+    DX::ThrowIfFailed(D3D12CreateDevice(
+        nullptr,
+        D3D_FEATURE_LEVEL_12_0,
+        IID_GRAPHICS_PPV_ARGS(m_d3dDevice.ReleaseAndGetAddressOf())
+        ));
 
     // Create the command queue.
     D3D12_COMMAND_QUEUE_DESC queueDesc = {};

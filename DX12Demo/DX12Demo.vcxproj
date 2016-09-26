@@ -24,6 +24,7 @@
     <PlatformToolset>v140</PlatformToolset>
     <MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>
     <TargetRuntime>Native</TargetRuntime>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Durango'" Label="Configuration">
@@ -72,6 +73,9 @@
     <IncludePath>$(Console_SdkIncludeRoot)</IncludePath>
     <ExecutablePath>$(Console_SdkRoot)bin;$(VCInstallDir)bin\x86_amd64;$(VCInstallDir)bin;$(WindowsSDK_ExecutablePath_x86);$(VSInstallDir)Common7\Tools\bin;$(VSInstallDir)Common7\tools;$(VSInstallDir)Common7\ide;$(ProgramFiles)\HTML Help Workshop;$(MSBuildToolsPath32);$(FxCopDir);$(PATH);</ExecutablePath>
     <LinkIncremental>false</LinkIncremental>
+    <OutDir>..\Output\bin\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>..\Output\obj\$(Platform)\$(Configuration)\</IntDir>
+    <LayoutDir>..\Output\$(Platform)\Layout\</LayoutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Durango'">
     <ReferencePath>$(Console_SdkLibPath);$(Console_SdkWindowsMetadataPath)</ReferencePath>
@@ -80,6 +84,9 @@
     <IncludePath>$(Console_SdkIncludeRoot)</IncludePath>
     <ExecutablePath>$(Console_SdkRoot)bin;$(VCInstallDir)bin\x86_amd64;$(VCInstallDir)bin;$(WindowsSDK_ExecutablePath_x86);$(VSInstallDir)Common7\Tools\bin;$(VSInstallDir)Common7\tools;$(VSInstallDir)Common7\ide;$(ProgramFiles)\HTML Help Workshop;$(MSBuildToolsPath32);$(FxCopDir);$(PATH);</ExecutablePath>
     <LinkIncremental>false</LinkIncremental>
+    <OutDir>..\Output\bin\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>..\Output\obj\$(Platform)\$(Configuration)\</IntDir>
+    <LayoutDir>..\Output\$(Platform)\Layout\</LayoutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Durango'">
     <ReferencePath>$(Console_SdkLibPath);$(Console_SdkWindowsMetadataPath)</ReferencePath>
@@ -88,6 +95,9 @@
     <IncludePath>$(Console_SdkIncludeRoot)</IncludePath>
     <ExecutablePath>$(Console_SdkRoot)bin;$(VCInstallDir)bin\x86_amd64;$(VCInstallDir)bin;$(WindowsSDK_ExecutablePath_x86);$(VSInstallDir)Common7\Tools\bin;$(VSInstallDir)Common7\tools;$(VSInstallDir)Common7\ide;$(ProgramFiles)\HTML Help Workshop;$(MSBuildToolsPath32);$(FxCopDir);$(PATH);</ExecutablePath>
     <LinkIncremental>true</LinkIncremental>
+    <OutDir>..\Output\bin\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>..\Output\obj\$(Platform)\$(Configuration)\</IntDir>
+    <LayoutDir>..\Output\$(Platform)\Layout\</LayoutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Durango'">
     <Link>
@@ -183,10 +193,10 @@
     <ClInclude Include="DX12\DX12Texture.h" />
     <ClInclude Include="DX12\Hash.h" />
     <ClInclude Include="StepTimer.h" />
-    <ClInclude Include="Game.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="TextureTga.h" />
     <ClInclude Include="tga_reader.h" />
+    <ClInclude Include="XboxOne\Game.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DX12\DX12Buffer.cpp" />
@@ -197,14 +207,14 @@
     <ClCompile Include="DX12\DX12PipelineState.cpp" />
     <ClCompile Include="DX12\DX12RootSignature.cpp" />
     <ClCompile Include="DX12\DX12Texture.cpp" />
-    <ClCompile Include="Main.cpp" />
-    <ClCompile Include="Game.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Durango'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Profile|Durango'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Durango'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="tga_reader.cpp" />
+    <ClCompile Include="XboxOne\Game.cpp" />
+    <ClCompile Include="XboxOne\Main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest" />
