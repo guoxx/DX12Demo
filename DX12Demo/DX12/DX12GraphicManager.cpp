@@ -3,6 +3,7 @@
 
 #include "DX12Device.h"
 #include "DX12DescriptorManager.h"
+#include "DX12GraphicContext.h"
 
 DX12GraphicManager* DX12GraphicManager::s_GfxManager = nullptr;
 
@@ -33,6 +34,12 @@ DX12GraphicManager::DX12GraphicManager()
 	m_Device = std::make_unique<DX12Device>();
 
 	m_DescriptorManager = std::make_unique<DX12DescriptorManager>(m_Device.get());
+
+	m_GraphicContextIdx = 0;
+	for (uint32_t i = 0; i < m_GraphicContexts.size(); ++i)
+	{
+		m_GraphicContexts[i] = std::make_shared<DX12GraphicContext>(m_Device.get());
+	}
 }
 
 DX12GraphicManager::~DX12GraphicManager()
@@ -47,13 +54,20 @@ void DX12GraphicManager::CreateGraphicCommandQueues(uint32_t cnt)
 	}
 }
 
-std::shared_ptr<DX12GraphicContext> DX12GraphicManager::CreateGraphicContext()
+DX12GraphicContext* DX12GraphicManager::AcquireGraphicContext()
 {
-	return nullptr;
+	uint32_t idx = m_GraphicContextIdx % DX12NumGraphicContexts;
+	++m_GraphicContextIdx;
+
+	std::shared_ptr<DX12GraphicContext> ctx = m_GraphicContexts[idx];
+	ctx->Reset();
+	return ctx.get();
 }
 
 void DX12GraphicManager::ExecuteGraphicContext(DX12GraphicContext* ctx)
 {
+	ID3D12CommandList* cmdLists[] = { ctx->GetCommandList(), };
+	m_GraphicQueues[0]->ExecuteCommandLists(_countof(cmdLists), cmdLists);
 }
 
 D3D12_CPU_DESCRIPTOR_HANDLE DX12GraphicManager::RegisterResourceInDescriptorHeap(ID3D12Resource * resource, D3D12_DESCRIPTOR_HEAP_TYPE type)

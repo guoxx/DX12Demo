@@ -1,5 +1,7 @@
 #pragma once
 
+#include "DX12Constants.h"
+
 class DX12Device;
 class DX12CopyContext;
 class DX12GraphicContext;
@@ -15,8 +17,7 @@ public:
 
 	void CreateGraphicCommandQueues(uint32_t cnt = 1);
 
-	std::shared_ptr<DX12GraphicContext> CreateGraphicContext();
-
+	DX12GraphicContext* AcquireGraphicContext();
 	void ExecuteGraphicContext(DX12GraphicContext* ctx);
 
 	D3D12_CPU_DESCRIPTOR_HANDLE RegisterResourceInDescriptorHeap(ID3D12Resource* resource, D3D12_DESCRIPTOR_HEAP_TYPE type);
@@ -27,6 +28,9 @@ private:
 
 	std::unique_ptr<DX12Device> m_Device;
 	std::vector<ComPtr<ID3D12CommandQueue>> m_GraphicQueues;
+
+	uint32_t m_GraphicContextIdx;
+	std::array<std::shared_ptr<DX12GraphicContext>, DX12NumGraphicContexts> m_GraphicContexts;
 
 	std::unique_ptr<DX12DescriptorManager> m_DescriptorManager;
 

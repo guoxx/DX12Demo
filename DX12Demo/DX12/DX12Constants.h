@@ -9,3 +9,4 @@ enum DX12ShaderType
 };
 
 constexpr uint32_t DX12MaxRenderTargetsCount = D3D12_SIMULTANEOUS_RENDER_TARGET_COUNT;
+constexpr uint32_t DX12NumGraphicContexts = 256;

@@ -7,7 +7,7 @@ DX12GraphicContext::DX12GraphicContext(DX12Device* device)
 	: DX12CommandContext(device)
 {
 	m_CommandAllocator = device->CreateGraphicCommandAllocator();
-	m_CommandList = device->CreateGraphicCommandList();
+	m_CommandList = device->CreateGraphicCommandList(m_CommandAllocator.Get());
 }
 
 DX12GraphicContext::~DX12GraphicContext()

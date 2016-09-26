@@ -4,7 +4,8 @@
 
 class DX12GraphicContext : public DX12CommandContext
 {
+	using super = DX12CommandContext;
 public:
 	DX12GraphicContext(DX12Device* device);
-	~DX12GraphicContext();
+	virtual ~DX12GraphicContext();
 };
