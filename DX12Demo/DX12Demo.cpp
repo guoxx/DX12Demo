@@ -129,6 +129,7 @@ void DX12Demo::DrawScene()
 
 void DX12Demo::DrawScene1()
 {
+/*
 	m_commandList->SetGraphicsRootSignature(m_rootSignature1.Get());
 
 	ID3D12DescriptorHeap* heaps[] = { m_srvHeap1.Get(), m_sampHeap1.Get() };
@@ -144,6 +145,7 @@ void DX12Demo::DrawScene1()
 	m_commandList->SetPipelineState(m_PSO1.Get());
 
 	m_commandList->DrawIndexedInstanced(6, 1, 0, 0, 0);
+*/
 }
 
 // Helper method to prepare the command list for rendering and clear the back buffers.
@@ -539,6 +541,7 @@ void DX12Demo::LoadAssets()
 
 void DX12Demo::LoadAssets1()
 {
+/*
     DX::ThrowIfFailed(m_commandAllocators[m_backBufferIndex]->Reset());
     DX::ThrowIfFailed(m_commandList->Reset(m_commandAllocators[m_backBufferIndex].Get(), nullptr));
 
@@ -752,6 +755,7 @@ void DX12Demo::LoadAssets1()
 	m_commandQueue->ExecuteCommandLists(_countof(cmdLists), cmdLists);
 
 	WaitForGpu();
+*/
 }
 
 void DX12Demo::WaitForGpu()

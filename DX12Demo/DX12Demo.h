@@ -65,6 +65,7 @@ private:
 
 	float												m_offsetX;
 
+	/*
 	ComPtr<ID3D12RootSignature>							m_rootSignature1;
 	ComPtr<ID3D12PipelineState>							m_PSO1;
 	ComPtr<ID3D12Resource>								m_vertexBuffer1;
@@ -78,4 +79,5 @@ private:
 
 	uint32_t                                            m_cbvSrvUavDescriptorSize;
 	uint32_t                                            m_samplerDescriptorSize;
+	*/
 };
