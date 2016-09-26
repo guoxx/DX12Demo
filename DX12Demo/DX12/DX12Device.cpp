@@ -95,14 +95,15 @@ IDXGISwapChain1 * DX12Device::CreateSwapChain(const DXGI_SWAP_CHAIN_DESC1* swapC
 	ComPtr<IDXGIFactory4> dxgiFactory;
 	DX::ThrowIfFailed(CreateDXGIFactory1(IID_GRAPHICS_PPV_ARGS(&dxgiFactory)));
 
-	DX::ThrowIfFailed(dxgiFactory->CreateSwapChainForHwnd(
-		m_commandQueue.Get(),		// Swap chain needs the queue so that it can force a flush on it.
-		m_Hwnd,
-		swapChainDesc,
-		nullptr,
-		nullptr,
-		&pSwapChain
-	));
+	assert(false);
+	//DX::ThrowIfFailed(dxgiFactory->CreateSwapChainForHwnd(
+	//	m_d3dDevice.Get(),		// Swap chain needs the queue so that it can force a flush on it.
+	//	hwnd,
+	//	swapChainDesc,
+	//	nullptr,
+	//	nullptr,
+	//	&pSwapChain
+	//));
 #endif
 
 	return pSwapChain;

@@ -22,6 +22,9 @@
     <Filter Include="Sources\Win10">
       <UniqueIdentifier>{ed07c81a-6536-47f6-8705-1a44d232767f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Utils">
+      <UniqueIdentifier>{1ba50b8e-9252-4ea4-b985-d10d18d45260}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DX12\DX12Buffer.cpp">
@@ -65,6 +68,18 @@
     </ClCompile>
     <ClCompile Include="DX12Demo.cpp">
       <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="DX12\DX12DescriptorManager.cpp">
+      <Filter>DX12\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="DX12\DX12Fence.cpp">
+      <Filter>DX12\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="DX12\DX12GpuResource.cpp">
+      <Filter>DX12\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="DX12\DX12SwapChain.cpp">
+      <Filter>DX12\Private</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -121,6 +136,30 @@
     </ClInclude>
     <ClInclude Include="DX12Demo.h">
       <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\Heaponly.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\Noncopyable.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\Nonmovable.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="DX12\DX12Constants.h">
+      <Filter>DX12\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="DX12\DX12DescriptorManager.h">
+      <Filter>DX12\Private</Filter>
+    </ClInclude>
+    <ClInclude Include="DX12\DX12Fence.h">
+      <Filter>DX12\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="DX12\DX12GpuResource.h">
+      <Filter>DX12\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="DX12\DX12SwapChain.h">
+      <Filter>DX12\Public</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
