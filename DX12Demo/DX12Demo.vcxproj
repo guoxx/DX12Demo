@@ -187,6 +187,7 @@
     <ClInclude Include="DX12\DX12Buffer.h" />
     <ClInclude Include="DX12\DX12CommandContext.h" />
     <ClInclude Include="DX12\DX12Constants.h" />
+    <ClInclude Include="DX12\DX12DescriptorManager.h" />
     <ClInclude Include="DX12\DX12Device.h" />
     <ClInclude Include="DX12\DX12GpuResource.h" />
     <ClInclude Include="DX12\DX12GraphicContext.h" />
@@ -206,6 +207,7 @@
     <ClCompile Include="DX12Demo.cpp" />
     <ClCompile Include="DX12\DX12Buffer.cpp" />
     <ClCompile Include="DX12\DX12CommandContext.cpp" />
+    <ClCompile Include="DX12\DX12DescriptorManager.cpp" />
     <ClCompile Include="DX12\DX12Device.cpp" />
     <ClCompile Include="DX12\DX12GpuResource.cpp" />
     <ClCompile Include="DX12\DX12GraphicContext.cpp" />

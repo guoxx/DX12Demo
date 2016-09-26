@@ -31,6 +31,7 @@
 #include <algorithm>
 #include <memory>
 #include <vector>
+#include <array>
 
 #include <pix.h>
 

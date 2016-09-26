@@ -83,6 +83,9 @@
     <ClInclude Include="DX12\DX12GpuResource.h">
       <Filter>DX12\Public</Filter>
     </ClInclude>
+    <ClInclude Include="DX12\DX12DescriptorManager.h">
+      <Filter>DX12\Private</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -128,6 +131,9 @@
       <Filter>DX12\Private</Filter>
     </ClCompile>
     <ClCompile Include="DX12\DX12GpuResource.cpp">
+      <Filter>DX12\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="DX12\DX12DescriptorManager.cpp">
       <Filter>DX12\Private</Filter>
     </ClCompile>
   </ItemGroup>

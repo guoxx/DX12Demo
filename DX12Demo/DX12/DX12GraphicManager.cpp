@@ -2,6 +2,7 @@
 #include "DX12GraphicManager.h"
 
 #include "DX12Device.h"
+#include "DX12DescriptorManager.h"
 
 DX12GraphicManager* DX12GraphicManager::s_GfxManager = nullptr;
 
@@ -30,6 +31,8 @@ DX12GraphicManager::DX12GraphicManager()
 #endif
 
 	m_Device = std::make_unique<DX12Device>();
+
+	m_DescriptorManager = std::make_unique<DX12DescriptorManager>(m_Device.get());
 }
 
 DX12GraphicManager::~DX12GraphicManager()
@@ -53,14 +56,8 @@ void DX12GraphicManager::ExecuteGraphicContext(DX12GraphicContext* ctx)
 {
 }
 
-void DX12GraphicManager::RegisterSRVInDescriptorHeap(ID3D12Resource * resource)
+D3D12_CPU_DESCRIPTOR_HANDLE DX12GraphicManager::RegisterResourceInDescriptorHeap(ID3D12Resource * resource, D3D12_DESCRIPTOR_HEAP_TYPE type)
 {
+	return D3D12_CPU_DESCRIPTOR_HANDLE();
 }
 
-void DX12GraphicManager::RegisterRTVInDescriptorheap(ID3D12Resource * resource)
-{
-}
-
-void DX12GraphicManager::RegisterDSVInDescriptorHeap(ID3D12Resource * resource)
-{
-}

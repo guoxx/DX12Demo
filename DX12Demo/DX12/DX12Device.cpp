@@ -35,6 +35,16 @@ ID3D12Resource * DX12Device::CreateCommittedResourceInDefaultHeap(uint64_t sizeI
 	return nullptr;
 }
 
+ID3D12DescriptorHeap * DX12Device::CreateDescriptorHeap(const D3D12_DESCRIPTOR_HEAP_DESC * desc)
+{
+	return nullptr;
+}
+
+uint32_t DX12Device::GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE descriptorHeapType)
+{
+	return uint32_t();
+}
+
 ID3D12RootSignature * DX12Device::CreateRootSignature(const void * pBlobWithRootSignature, size_t blobLengthInBytes)
 {
 	return nullptr;
