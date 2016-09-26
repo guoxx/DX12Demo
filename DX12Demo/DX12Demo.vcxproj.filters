@@ -1,10 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
     <Filter Include="Assets">
       <UniqueIdentifier>{8e966268-c145-4e6d-83d1-7eec265dd7db}</UniqueIdentifier>
     </Filter>
@@ -23,6 +19,10 @@
     </Filter>
     <Filter Include="Sources\XboxOne">
       <UniqueIdentifier>{15bc6ae0-1a60-446e-b0fe-a87c53d96ab9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\XboxOne\Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -111,20 +111,17 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <AppxManifest Include="Package.appxmanifest" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="Logo.png">
-      <Filter>Resource Files</Filter>
+    <Image Include="XboxOne\Resources\Logo.png">
+      <Filter>Sources\XboxOne\Resource Files</Filter>
     </Image>
-    <Image Include="SmallLogo.png">
-      <Filter>Resource Files</Filter>
+    <Image Include="XboxOne\Resources\SmallLogo.png">
+      <Filter>Sources\XboxOne\Resource Files</Filter>
     </Image>
-    <Image Include="SplashScreen.png">
-      <Filter>Resource Files</Filter>
+    <Image Include="XboxOne\Resources\SplashScreen.png">
+      <Filter>Sources\XboxOne\Resource Files</Filter>
     </Image>
-    <Image Include="StoreLogo.png">
-      <Filter>Resource Files</Filter>
+    <Image Include="XboxOne\Resources\StoreLogo.png">
+      <Filter>Sources\XboxOne\Resource Files</Filter>
     </Image>
   </ItemGroup>
   <ItemGroup>
@@ -134,5 +131,10 @@
     <None Include="Assets\HelloTriangle.hlsl">
       <Filter>Assets</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <AppxManifest Include="XboxOne/Package.appxmanifest">
+      <Filter>Sources\XboxOne</Filter>
+    </AppxManifest>
   </ItemGroup>
 </Project>

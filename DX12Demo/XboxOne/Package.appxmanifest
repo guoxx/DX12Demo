@@ -10,7 +10,7 @@
   <Properties>
     <DisplayName>DX12Demo</DisplayName>
     <PublisherDisplayName>PublisherDisplayName</PublisherDisplayName>
-    <Logo>StoreLogo.png</Logo>
+    <Logo>XboxOne\Resources\StoreLogo.png</Logo>
     <Description>DX12Demo</Description>
   </Properties>
 
@@ -29,12 +29,12 @@
         EntryPoint="DX12Demo.App">
       <VisualElements
           DisplayName="DX12Demo"
-          Logo="Logo.png"
-          SmallLogo="SmallLogo.png"
+          Logo="XboxOne\Resources\Logo.png"
+          SmallLogo="XboxOne\Resources\SmallLogo.png"
           Description="DX12Demo"
           ForegroundText="light"
           BackgroundColor="#464646">
-        <SplashScreen Image="SplashScreen.png" />
+        <SplashScreen Image="XboxOne\Resources\SplashScreen.png" />
       </VisualElements>
       <Extensions>
         <mx:Extension Category="xbox.system.resources">

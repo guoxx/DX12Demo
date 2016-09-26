@@ -217,13 +217,13 @@
     <ClCompile Include="XboxOne\Main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <AppxManifest Include="Package.appxmanifest" />
+    <AppxManifest Include="XboxOne/Package.appxmanifest" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="Logo.png" />
-    <Image Include="SmallLogo.png" />
-    <Image Include="SplashScreen.png" />
-    <Image Include="StoreLogo.png" />
+    <Image Include="XboxOne\Resources\Logo.png" />
+    <Image Include="XboxOne\Resources\SmallLogo.png" />
+    <Image Include="XboxOne\Resources\SplashScreen.png" />
+    <Image Include="XboxOne\Resources\StoreLogo.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\HelloTriangle.hlsl">
