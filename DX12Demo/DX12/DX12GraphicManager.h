@@ -13,7 +13,7 @@ public:
 
 	static DX12GraphicManager* GetInstance() { return s_GfxManager; }
 
-	void CreateGraphicCommandQueues(uint32_t cnt);
+	void CreateGraphicCommandQueues(uint32_t cnt = 1);
 
 	std::shared_ptr<DX12GraphicContext> CreateGraphicContext();
 

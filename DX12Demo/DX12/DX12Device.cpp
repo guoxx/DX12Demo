@@ -12,22 +12,31 @@ DX12Device::~DX12Device()
 
 ID3D12CommandQueue * DX12Device::CreateGraphicCommandQueue(int32_t priority, D3D12_COMMAND_QUEUE_FLAGS flags, uint32_t nodeMask)
 {
-	return nullptr;
+    // Create the command queue.
+    D3D12_COMMAND_QUEUE_DESC desc = {};
+    desc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
+	desc.Priority = priority;
+    desc.Flags = flags;
+	desc.NodeMask = nodeMask;
+
+	ID3D12CommandQueue* pQueue = nullptr;
+    DX::ThrowIfFailed(m_d3dDevice->CreateCommandQueue(&desc, IID_GRAPHICS_PPV_ARGS(&pQueue)));
+	return pQueue;
 }
 
 ID3D12CommandAllocator * DX12Device::CreateGraphicCommandAllocator()
 {
-	return nullptr;
+	ID3D12CommandAllocator* pAllocator = nullptr;
+	DX::ThrowIfFailed(m_d3dDevice->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_GRAPHICS_PPV_ARGS(&pAllocator)));
+	return pAllocator;
 }
 
-ID3D12GraphicsCommandList * DX12Device::CreateGraphicCommandList()
+ID3D12GraphicsCommandList * DX12Device::CreateGraphicCommandList(ID3D12CommandAllocator* allocator)
 {
-	return nullptr;
-}
-
-ID3D12Resource * DX12Device::CreateBuffer()
-{
-	return nullptr;
+	ID3D12GraphicsCommandList* pCommandList = nullptr;
+    DX::ThrowIfFailed(m_d3dDevice->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, allocator, nullptr, IID_GRAPHICS_PPV_ARGS(&pCommandList)));
+    pCommandList->Close();
+	return pCommandList;
 }
 
 ID3D12Resource * DX12Device::CreateCommittedResourceInDefaultHeap(uint64_t sizeInBytes, uint64_t alignInBytes, D3D12_RESOURCE_STATES initialState)
@@ -37,7 +46,9 @@ ID3D12Resource * DX12Device::CreateCommittedResourceInDefaultHeap(uint64_t sizeI
 
 ID3D12DescriptorHeap * DX12Device::CreateDescriptorHeap(const D3D12_DESCRIPTOR_HEAP_DESC * desc)
 {
-	return nullptr;
+	ID3D12DescriptorHeap* pHeap = nullptr;
+    DX::ThrowIfFailed(m_d3dDevice->CreateDescriptorHeap(desc, IID_GRAPHICS_PPV_ARGS(&pHeap)));
+	return pHeap;
 }
 
 uint32_t DX12Device::GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE descriptorHeapType)
@@ -95,4 +106,11 @@ IDXGISwapChain1 * DX12Device::CreateSwapChain(const DXGI_SWAP_CHAIN_DESC1* swapC
 #endif
 
 	return pSwapChain;
+}
+
+ID3D12Fence* DX12Device::CreateFence(uint64_t initialValue)
+{
+	ID3D12Fence* pFence = nullptr;
+    DX::ThrowIfFailed(m_d3dDevice->CreateFence(initialValue, D3D12_FENCE_FLAG_NONE, IID_GRAPHICS_PPV_ARGS(&pFence)));
+	return pFence;
 }

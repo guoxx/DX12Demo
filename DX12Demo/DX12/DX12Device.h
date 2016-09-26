@@ -12,9 +12,7 @@ public:
 
 	ID3D12CommandAllocator* CreateGraphicCommandAllocator();
 
-	ID3D12GraphicsCommandList* CreateGraphicCommandList();
-
-	ID3D12Resource* CreateBuffer();
+	ID3D12GraphicsCommandList* CreateGraphicCommandList(ID3D12CommandAllocator* allocator);
 
 	ID3D12Resource* CreateCommittedResourceInDefaultHeap(uint64_t sizeInBytes, uint64_t alignInBytes, D3D12_RESOURCE_STATES initialState);
 
@@ -27,6 +25,8 @@ public:
 	ID3D12PipelineState* CreateGraphicsPipelineState(const D3D12_GRAPHICS_PIPELINE_STATE_DESC* desc);
 
 	IDXGISwapChain1* CreateSwapChain(const DXGI_SWAP_CHAIN_DESC1* swapChainDesc, const GFX_WHND hwnd);
+
+	ID3D12Fence* CreateFence(uint64_t initialValue = 0);
 
 private:
 	ComPtr<ID3D12Device> m_d3dDevice;
