@@ -89,7 +89,6 @@
     <ClInclude Include="DX12\DX12DescriptorManager.h">
       <Filter>DX12\Private</Filter>
     </ClInclude>
-    <ClInclude Include="DX12\DX12Fence.h" />
     <ClInclude Include="Utils\Heaponly.h">
       <Filter>Utils</Filter>
     </ClInclude>
@@ -98,6 +97,9 @@
     </ClInclude>
     <ClInclude Include="Utils\Nonmovable.h">
       <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="DX12\DX12Fence.h">
+      <Filter>DX12\Public</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -150,7 +152,7 @@
       <Filter>DX12\Private</Filter>
     </ClCompile>
     <ClCompile Include="DX12\DX12Fence.cpp">
-      <Filter>Sources</Filter>
+      <Filter>DX12\Private</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
