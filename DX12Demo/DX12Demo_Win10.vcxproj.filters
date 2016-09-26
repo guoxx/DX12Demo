@@ -161,6 +161,9 @@
     <ClInclude Include="DX12\DX12SwapChain.h">
       <Filter>DX12\Public</Filter>
     </ClInclude>
+    <ClInclude Include="DX12\DX12GraphicContextAutoExecutor.h">
+      <Filter>DX12\Public</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\HelloTexture.hlsl">
