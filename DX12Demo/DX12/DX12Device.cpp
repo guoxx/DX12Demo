@@ -30,6 +30,11 @@ ID3D12Resource * DX12Device::CreateBuffer()
 	return nullptr;
 }
 
+ID3D12Resource * DX12Device::CreateCommittedResourceInDefaultHeap(uint64_t sizeInBytes, uint64_t alignInBytes, D3D12_RESOURCE_STATES initialState)
+{
+	return nullptr;
+}
+
 ID3D12RootSignature * DX12Device::CreateRootSignature(const void * pBlobWithRootSignature, size_t blobLengthInBytes)
 {
 	return nullptr;
