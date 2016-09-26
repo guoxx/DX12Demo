@@ -44,3 +44,31 @@ private:
 	static DX12GraphicManager* s_GfxManager;
 };
 
+class DX12GraphicContextExecute : public Heaponly, Noncopyable, Nonmovable
+{
+public:
+	DX12GraphicContextExecute()
+		: m_Ctx{ nullptr }
+	{}
+
+	~DX12GraphicContextExecute()
+	{
+		if (m_Ctx != nullptr)
+		{
+			DX12GraphicManager::GetInstance()->EndGraphicContext(m_Ctx);
+			DX12GraphicManager::GetInstance()->ExecuteGraphicContext(m_Ctx);
+		}
+	}
+
+	DX12GraphicContext* GetGraphicContext()
+	{
+		if (m_Ctx == nullptr)
+		{
+			m_Ctx = DX12GraphicManager::GetInstance()->BegineGraphicContext();
+		}
+		return m_Ctx;
+	}
+
+private:
+	DX12GraphicContext*  m_Ctx;
+};

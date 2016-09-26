@@ -2,6 +2,7 @@
 #include "DX12SwapChain.h"
 
 #include "DX12Device.h"
+#include "DX12GraphicManager.h"
 
 DX12SwapChain::DX12SwapChain(DX12Device* device, const GFX_WHND hwnd, uint32_t backBufferWidth, uint32_t backBufferHeight, DXGI_FORMAT backBufferFormat)
 {
@@ -27,6 +28,13 @@ DX12SwapChain::DX12SwapChain(DX12Device* device, const GFX_WHND hwnd, uint32_t b
 
 DX12SwapChain::~DX12SwapChain()
 {
+}
+
+void DX12SwapChain::Begin()
+{
+	DX12GraphicContextExecute exeInstance;
+	DX12GraphicContext* pGfxContext = exeInstance.GetGraphicContext();
+
 }
 
 void DX12SwapChain::Flip()

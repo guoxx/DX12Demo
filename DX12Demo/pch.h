@@ -35,6 +35,10 @@
 
 #include <pix.h>
 
+#include "Utils/Heaponly.h"
+#include "Utils/Noncopyable.h"
+#include "Utils/Nonmovable.h"
+
 #ifdef _XBOX_ONE
 using D3D12_COMMAND_QUEUE_FLAGS = D3D12_COMMAND_QUEUE_FLAG;
 using GFX_WHND = IUnknown*;

@@ -203,6 +203,9 @@
     <ClInclude Include="pch.h" />
     <ClInclude Include="TextureTga.h" />
     <ClInclude Include="tga_reader.h" />
+    <ClInclude Include="Utils\Heaponly.h" />
+    <ClInclude Include="Utils\Noncopyable.h" />
+    <ClInclude Include="Utils\Nonmovable.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DX12Demo.cpp" />
