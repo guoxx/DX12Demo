@@ -18,6 +18,8 @@ public:
 
 	ID3D12RootSignature* CreateRootSignature(const void* pBlobWithRootSignature, size_t blobLengthInBytes);
 
+	ID3D12PipelineState* CreateGraphicsPipelineState(const D3D12_GRAPHICS_PIPELINE_STATE_DESC* desc);
+
 private:
 	ComPtr<ID3D12Device> m_d3dDevice;
 };

@@ -57,4 +57,14 @@ namespace DX
 #endif
         }
     }
+
+	inline void Print(const char* fmt, ...)
+	{
+		char buffer[1024];
+		va_list args;
+		va_start(args, fmt);
+		vsprintf_s(buffer, sizeof(buffer), fmt, args);
+		va_end(args);
+		OutputDebugStringA(buffer);
+	}
 }

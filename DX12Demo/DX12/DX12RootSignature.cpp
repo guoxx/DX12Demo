@@ -14,8 +14,9 @@ DX12RootSignature::~DX12RootSignature()
 }
 
 DX12RootSignatureCompiler::DX12RootSignatureCompiler()
-	: m_Flags(D3D12_ROOT_SIGNATURE_FLAG_NONE)
-	, m_NumInitializedStaticSamplers(0)
+	: m_State{ StateUnknow }
+	, m_Flags{ D3D12_ROOT_SIGNATURE_FLAG_NONE }
+	, m_NumInitializedStaticSamplers{ 0 }
 {
 }
 
@@ -25,6 +26,9 @@ DX12RootSignatureCompiler::~DX12RootSignatureCompiler()
 
 void DX12RootSignatureCompiler::Begin(uint32_t numParams, uint32_t numStaticSamplers)
 {
+	assert(m_State == StateUnknow);
+	m_State = StateBegin;
+
 	m_RootParams.reserve(numParams);
 	m_StaticSamplers.reserve(numStaticSamplers);
 }
@@ -83,10 +87,15 @@ void DX12RootSignatureCompiler::InitStaticSampler(uint32_t shaderRegister, const
 
 void DX12RootSignatureCompiler::End()
 {
+	assert(m_State == StateBegin);
+	m_State = StateEnd;
 }
 
 std::shared_ptr<DX12RootSignature> DX12RootSignatureCompiler::Compile(DX12Device * device)
 {
+	assert(m_State == StateEnd);
+	m_State = StateCompiled;
+
 	D3D12_ROOT_SIGNATURE_DESC rootSignatureDesc;	
 	rootSignatureDesc.NumParameters = static_cast<uint32_t>(m_RootParams.size());
 	rootSignatureDesc.pParameters = m_RootParams.data();

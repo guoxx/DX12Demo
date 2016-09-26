@@ -74,6 +74,9 @@
     <ClInclude Include="DXSample.h">
       <Filter>Sources</Filter>
     </ClInclude>
+    <ClInclude Include="DX12\DX12Constants.h">
+      <Filter>DX12\Public</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">

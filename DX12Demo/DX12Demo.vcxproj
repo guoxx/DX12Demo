@@ -186,6 +186,7 @@
     <ClInclude Include="DX12\DX12.h" />
     <ClInclude Include="DX12\DX12Buffer.h" />
     <ClInclude Include="DX12\DX12CommandContext.h" />
+    <ClInclude Include="DX12\DX12Constants.h" />
     <ClInclude Include="DX12\DX12Device.h" />
     <ClInclude Include="DX12\DX12GraphicContext.h" />
     <ClInclude Include="DX12\DX12GraphicManager.h" />

@@ -3,17 +3,6 @@
 
 DX12Device::DX12Device()
 {
-#if defined(_DEBUG)
-    // Enable the D3D12 debug layer.
-    {
-        ComPtr<ID3D12Debug> debugController;
-        if (SUCCEEDED(D3D12GetDebugInterface(IID_GRAPHICS_PPV_ARGS(debugController.GetAddressOf()))))
-        {
-            debugController->EnableDebugLayer();
-        }
-    }
-#endif
-
     DX::ThrowIfFailed(D3D12CreateDevice(nullptr, D3D_FEATURE_LEVEL_12_0, IID_GRAPHICS_PPV_ARGS(m_d3dDevice.ReleaseAndGetAddressOf())));
 }
 
@@ -42,6 +31,11 @@ ID3D12Resource * DX12Device::CreateBuffer()
 }
 
 ID3D12RootSignature * DX12Device::CreateRootSignature(const void * pBlobWithRootSignature, size_t blobLengthInBytes)
+{
+	return nullptr;
+}
+
+ID3D12PipelineState * DX12Device::CreateGraphicsPipelineState(const D3D12_GRAPHICS_PIPELINE_STATE_DESC * desc)
 {
 	return nullptr;
 }

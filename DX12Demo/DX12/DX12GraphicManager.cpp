@@ -18,9 +18,19 @@ void DX12GraphicManager::Finalize()
 
 DX12GraphicManager::DX12GraphicManager()
 {
+#if defined(_DEBUG)
+    // Enable the D3D12 debug layer.
+    {
+        ComPtr<ID3D12Debug> debugController;
+        if (SUCCEEDED(D3D12GetDebugInterface(IID_GRAPHICS_PPV_ARGS(debugController.GetAddressOf()))))
+        {
+            debugController->EnableDebugLayer();
+        }
+    }
+#endif
+
 	m_Device = std::make_unique<DX12Device>();
 }
-
 
 DX12GraphicManager::~DX12GraphicManager()
 {

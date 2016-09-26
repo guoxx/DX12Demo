@@ -8,6 +8,8 @@ public:
 	DX12RootSignature(ComPtr<ID3D12RootSignature> rootSig);
 	~DX12RootSignature();
 
+	ComPtr<ID3D12RootSignature> GetRootSig() const { return m_RootSig; }
+
 private:
 	ComPtr<ID3D12RootSignature> m_RootSig;
 };
@@ -36,6 +38,16 @@ public:
 	std::shared_ptr<DX12RootSignature> Compile(DX12Device* device);
 
 private:
+	enum CompilerState
+	{
+		StateUnknow,
+		StateBegin,
+		StateEnd,
+		StateCompiled,
+	};
+
+	CompilerState m_State;
+
 	D3D12_ROOT_SIGNATURE_FLAGS m_Flags;
 	uint32_t m_NumInitializedStaticSamplers;
 

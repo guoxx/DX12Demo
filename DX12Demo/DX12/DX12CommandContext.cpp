@@ -7,7 +7,6 @@ DX12CommandContext::DX12CommandContext(DX12Device* device)
 {
 }
 
-
 DX12CommandContext::~DX12CommandContext()
 {
 }
