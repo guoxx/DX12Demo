@@ -44,16 +44,16 @@ public:
 		WaitForSingleObjectEx(m_FenceEvent.Get(), INFINITE, FALSE);
 	}
 
-	//void SignalFence(ID3D12CommandQueue* pCommandQueue, uint32_t newFenceValue)
-	//{
-	//	assert(m_Fence->GetCompletedValue() < newFenceValue);
+	void SignalFence(ID3D12CommandQueue* pCommandQueue, uint32_t newFenceValue)
+	{
+		assert(m_Fence->GetCompletedValue() < newFenceValue);
 
-	//	// Schedule a Signal command in the GPU queue.
-	//	DX::ThrowIfFailed(pCommandQueue->Signal(m_Fence.Get(), newFenceValue));
+		// Schedule a Signal command in the GPU queue.
+		DX::ThrowIfFailed(pCommandQueue->Signal(m_Fence.Get(), newFenceValue));
 
-	//	// Setup fence event.
-	//	DX::ThrowIfFailed(m_Fence->SetEventOnCompletion(newFenceValue, m_FenceEvent.Get()));
-	//}
+		// Setup fence event.
+		DX::ThrowIfFailed(m_Fence->SetEventOnCompletion(newFenceValue, m_FenceEvent.Get()));
+	}
 
 private:
 	ComPtr<ID3D12Fence>		m_Fence;

@@ -15,9 +15,9 @@ public:
 
 	void WaitForFence() const { if (IsValid()) { GetFence()->WaitForFence(); } }
 
+private:
 	DX12Fence* GetFence() const;
 
-private:
 	uint32_t m_FenceIdx;
 };
 
@@ -30,6 +30,8 @@ public:
 	void AdvanceFenceValue();
 
 	void AdvanceSegment();
+
+	void SignalAndAdvance(ID3D12CommandQueue* pCommandQueue);
 
 	DX12FenceHandle GetFenceHandle() const;
 

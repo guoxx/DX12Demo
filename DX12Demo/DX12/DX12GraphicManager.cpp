@@ -63,9 +63,7 @@ DX12GraphicContext* DX12GraphicManager::BegineGraphicContext()
 	++m_GraphicContextIdx;
 
 	std::shared_ptr<DX12GraphicContext> ctx = m_GraphicContexts[idx];
-	// TODO
-	assert(false);
-	//ctx->Reset();
+	ctx->Reset();
 	return ctx.get();
 }
 
@@ -76,13 +74,7 @@ void DX12GraphicManager::EndGraphicContext(DX12GraphicContext * ctx)
 
 void DX12GraphicManager::ExecuteGraphicContext(DX12GraphicContext* ctx)
 {
-	ID3D12CommandList* cmdLists[] = { ctx->GetCommandList(), };
-	m_GraphicQueues[0]->ExecuteCommandLists(_countof(cmdLists), cmdLists);
-
-	ctx->ClearState();
-	// TODO
-	assert(false);
-	//ctx->SignalFence(m_GraphicQueues[0].Get());
+	ctx->ExecuteInQueue(m_GraphicQueues[0].Get());
 }
 
 D3D12_CPU_DESCRIPTOR_HANDLE DX12GraphicManager::RegisterResourceInDescriptorHeap(ID3D12Resource * resource, D3D12_DESCRIPTOR_HEAP_TYPE type)

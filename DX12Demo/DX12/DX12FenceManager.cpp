@@ -44,6 +44,13 @@ void DX12FenceManager::AdvanceSegment()
 	m_CurrentSegment = (m_CurrentSegment + 1) % DX12MaxFences;
 }
 
+void DX12FenceManager::SignalAndAdvance(ID3D12CommandQueue * pCommandQueue)
+{
+	m_Fences[m_CurrentSegment].SignalFence(pCommandQueue, m_CurrentFenceValue);
+	AdvanceSegment();
+	AdvanceFenceValue();
+}
+
 DX12FenceHandle DX12FenceManager::GetFenceHandle() const
 {
 	assert(!m_Fences[m_CurrentSegment].IsBusy());
