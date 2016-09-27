@@ -72,13 +72,22 @@
     <ClCompile Include="DX12\DX12DescriptorManager.cpp">
       <Filter>DX12\Private</Filter>
     </ClCompile>
-    <ClCompile Include="DX12\DX12Fence.cpp">
-      <Filter>DX12\Private</Filter>
-    </ClCompile>
     <ClCompile Include="DX12\DX12GpuResource.cpp">
       <Filter>DX12\Private</Filter>
     </ClCompile>
     <ClCompile Include="DX12\DX12SwapChain.cpp">
+      <Filter>DX12\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="DX12\DX12FenceManager.cpp">
+      <Filter>DX12\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="DX12\DX12RenderableSurface.cpp">
+      <Filter>DX12\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="DX12\DX12ColorSurface.cpp">
+      <Filter>DX12\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="DX12\DX12DepthSurface.cpp">
       <Filter>DX12\Private</Filter>
     </ClCompile>
   </ItemGroup>
@@ -152,9 +161,6 @@
     <ClInclude Include="DX12\DX12DescriptorManager.h">
       <Filter>DX12\Private</Filter>
     </ClInclude>
-    <ClInclude Include="DX12\DX12Fence.h">
-      <Filter>DX12\Public</Filter>
-    </ClInclude>
     <ClInclude Include="DX12\DX12GpuResource.h">
       <Filter>DX12\Public</Filter>
     </ClInclude>
@@ -162,6 +168,24 @@
       <Filter>DX12\Public</Filter>
     </ClInclude>
     <ClInclude Include="DX12\DX12GraphicContextAutoExecutor.h">
+      <Filter>DX12\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="DX12\DX12FenceManager.h">
+      <Filter>DX12\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="DX12\DX12Fence.h">
+      <Filter>DX12\Private</Filter>
+    </ClInclude>
+    <ClInclude Include="DX12\DX12RenderableSurface.h">
+      <Filter>DX12\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="DX12\DX12ColorSurface.h">
+      <Filter>DX12\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="DX12\DX12DepthSurface.h">
+      <Filter>DX12\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="DX12\DX12DescriptorHandle.h">
       <Filter>DX12\Public</Filter>
     </ClInclude>
   </ItemGroup>
