@@ -115,3 +115,18 @@ ID3D12Fence* DX12Device::CreateFence(uint64_t initialValue)
     DX::ThrowIfFailed(m_d3dDevice->CreateFence(initialValue, D3D12_FENCE_FLAG_NONE, IID_GRAPHICS_PPV_ARGS(&pFence)));
 	return pFence;
 }
+
+void DX12Device::CreateShaderResourceView(ID3D12Resource * pResource, const D3D12_SHADER_RESOURCE_VIEW_DESC * pDesc, D3D12_CPU_DESCRIPTOR_HANDLE DestDescriptor)
+{
+    m_d3dDevice->CreateShaderResourceView(pResource, pDesc, DestDescriptor);
+}
+
+void DX12Device::CreateRenderTargetView(ID3D12Resource * pResource, const D3D12_RENDER_TARGET_VIEW_DESC * pDesc, D3D12_CPU_DESCRIPTOR_HANDLE DestDescriptor)
+{
+    m_d3dDevice->CreateRenderTargetView(pResource, pDesc, DestDescriptor);
+}
+
+void DX12Device::CreateDepthStencilView(ID3D12Resource * pResource, const D3D12_DEPTH_STENCIL_VIEW_DESC * pDesc, D3D12_CPU_DESCRIPTOR_HANDLE DestDescriptor)
+{
+    m_d3dDevice->CreateDepthStencilView(pResource, pDesc, DestDescriptor);
+}

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "DX12Constants.h"
+#include "DX12DescriptorHandle.h"
 
 class DX12Device;
 class DX12CopyContext;
@@ -20,11 +21,13 @@ public:
 
 	void CreateGraphicCommandQueues(uint32_t cnt = 1);
 
+	// graphic context execution
 	DX12GraphicContext* BegineGraphicContext();
 	void EndGraphicContext(DX12GraphicContext* ctx);
 	void ExecuteGraphicContext(DX12GraphicContext* ctx);
 
-	D3D12_CPU_DESCRIPTOR_HANDLE RegisterResourceInDescriptorHeap(ID3D12Resource* resource, D3D12_DESCRIPTOR_HEAP_TYPE type);
+	// resource binding
+	DX12DescriptorHandle RegisterResourceInDescriptorHeap(ID3D12Resource* resource, D3D12_DESCRIPTOR_HEAP_TYPE type);
 
 private:
 	DX12GraphicManager();

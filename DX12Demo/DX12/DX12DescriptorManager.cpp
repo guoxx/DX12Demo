@@ -23,3 +23,19 @@ DX12DescriptorManager::DX12DescriptorManager(DX12Device * device)
 DX12DescriptorManager::~DX12DescriptorManager()
 {
 }
+
+DX12DescriptorHandle DX12DescriptorManager::AllocateInHeap(D3D12_DESCRIPTOR_HEAP_TYPE heapType)
+{
+	assert(m_DescriptorHeapOffset[heapType] < DefaultDescriptorHeapSize);
+
+	uint32_t offset = m_DescriptorHeapOffset[heapType] * m_DescriptorHandleIncrementSizeForHeaps[heapType];
+	m_DescriptorHeapOffset[heapType] += 1;
+
+	DX12DescriptorHandle handle;
+	handle.m_CpuHandle = m_DescriptorHeaps[heapType]->GetCPUDescriptorHandleForHeapStart();
+	handle.m_GpuHandle = m_DescriptorHeaps[heapType]->GetGPUDescriptorHandleForHeapStart();
+	handle.m_CpuHandle.ptr += offset;
+	handle.m_GpuHandle.ptr += offset;
+
+	return handle;
+}

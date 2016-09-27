@@ -107,6 +107,9 @@
     <ClInclude Include="DX12\DX12Fence.h">
       <Filter>DX12\Private</Filter>
     </ClInclude>
+    <ClInclude Include="DX12\DX12DescriptorHandle.h">
+      <Filter>DX12\Public</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">

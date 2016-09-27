@@ -1,6 +1,7 @@
 #pragma once
 
 #include "DX12GpuResource.h"
+#include "DX12DescriptorHandle.h"
 
 class DX12Device;
 
@@ -31,5 +32,5 @@ public:
 	virtual ~DX12StructuredBuffer();
 
 private:
-
+	DX12DescriptorHandle m_DescriptorHandle;
 };

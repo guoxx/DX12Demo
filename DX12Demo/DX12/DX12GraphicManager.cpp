@@ -77,8 +77,8 @@ void DX12GraphicManager::ExecuteGraphicContext(DX12GraphicContext* ctx)
 	ctx->ExecuteInQueue(m_GraphicQueues[0].Get());
 }
 
-D3D12_CPU_DESCRIPTOR_HANDLE DX12GraphicManager::RegisterResourceInDescriptorHeap(ID3D12Resource * resource, D3D12_DESCRIPTOR_HEAP_TYPE type)
+DX12DescriptorHandle DX12GraphicManager::RegisterResourceInDescriptorHeap(ID3D12Resource * resource, D3D12_DESCRIPTOR_HEAP_TYPE type)
 {
-	return D3D12_CPU_DESCRIPTOR_HANDLE();
+	return m_DescriptorManager->AllocateInHeap(type);
 }
 
