@@ -19,7 +19,6 @@ private:
 	ComPtr<IDXGISwapChain1> m_SwapChain;
 
 	uint32_t m_BackBufferIdx;
-	std::array<DX12FenceHandle, DX12NumSwapChainBuffers> m_FenceHandles;
 	std::array<ComPtr<ID3D12Resource>, DX12NumSwapChainBuffers> m_BackBuffers;
 };
 

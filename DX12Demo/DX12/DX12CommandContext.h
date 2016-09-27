@@ -1,6 +1,6 @@
 #pragma once
 
-#include "DX12Fence.h"
+#include "DX12FenceManager.h"
 
 class DX12Device;
 
@@ -16,9 +16,9 @@ public:
 
 	void ClearState();
 
-	bool IsBusy();
+	bool IsBusy() const;
 
-	void WaitForGPU();
+	void WaitForGPU() const;
 
 	ID3D12GraphicsCommandList* GetCommandList() { return m_CommandList.Get(); }
 

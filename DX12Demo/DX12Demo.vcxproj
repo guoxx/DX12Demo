@@ -190,6 +190,7 @@
     <ClInclude Include="DX12\DX12DescriptorManager.h" />
     <ClInclude Include="DX12\DX12Device.h" />
     <ClInclude Include="DX12\DX12Fence.h" />
+    <ClInclude Include="DX12\DX12FenceManager.h" />
     <ClInclude Include="DX12\DX12GpuResource.h" />
     <ClInclude Include="DX12\DX12GraphicContext.h" />
     <ClInclude Include="DX12\DX12GraphicContextAutoExecutor.h" />
@@ -214,7 +215,7 @@
     <ClCompile Include="DX12\DX12CommandContext.cpp" />
     <ClCompile Include="DX12\DX12DescriptorManager.cpp" />
     <ClCompile Include="DX12\DX12Device.cpp" />
-    <ClCompile Include="DX12\DX12Fence.cpp" />
+    <ClCompile Include="DX12\DX12FenceManager.cpp" />
     <ClCompile Include="DX12\DX12GpuResource.cpp" />
     <ClCompile Include="DX12\DX12GraphicContext.cpp" />
     <ClCompile Include="DX12\DX12GraphicManager.cpp" />

@@ -98,11 +98,14 @@
     <ClInclude Include="Utils\Nonmovable.h">
       <Filter>Utils</Filter>
     </ClInclude>
-    <ClInclude Include="DX12\DX12Fence.h">
-      <Filter>DX12\Public</Filter>
-    </ClInclude>
     <ClInclude Include="DX12\DX12GraphicContextAutoExecutor.h">
       <Filter>DX12\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="DX12\DX12FenceManager.h">
+      <Filter>DX12\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="DX12\DX12Fence.h">
+      <Filter>DX12\Private</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -154,7 +157,7 @@
     <ClCompile Include="DX12\DX12DescriptorManager.cpp">
       <Filter>DX12\Private</Filter>
     </ClCompile>
-    <ClCompile Include="DX12\DX12Fence.cpp">
+    <ClCompile Include="DX12\DX12FenceManager.cpp">
       <Filter>DX12\Private</Filter>
     </ClCompile>
   </ItemGroup>

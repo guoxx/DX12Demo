@@ -32,17 +32,12 @@ void DX12CommandContext::ClearState()
 	m_CommandList->ClearState(nullptr);
 }
 
-bool DX12CommandContext::IsBusy()
+bool DX12CommandContext::IsBusy() const
 {
-	DX12Fence* fence = m_FenceHandle.GetFence();
-	return fence != nullptr && fence->IsBusy();
+	return m_FenceHandle.IsBusy();
 }
 
-void DX12CommandContext::WaitForGPU()
+void DX12CommandContext::WaitForGPU() const
 {
-	DX12Fence* fence = m_FenceHandle.GetFence();
-	if (fence != nullptr)
-	{
-		fence->WaitForFence();
-	}
+	m_FenceHandle.WaitForFence();
 }

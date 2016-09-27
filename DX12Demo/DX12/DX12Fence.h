@@ -1,6 +1,7 @@
 #pragma once
 
 #include "DX12Constants.h"
+#include "DX12Device.h"
 
 class DX12Device;
 
@@ -9,12 +10,22 @@ class DX12Fence
 	using Event = Microsoft::WRL::Wrappers::Event;
 
 public:
-	DX12Fence();
-	~DX12Fence();
+	DX12Fence()
+	{
+	}
 
-	void Init(DX12Device* device);
+	~DX12Fence()
+	{
+		m_FenceEvent.Detach();
+	}
 
-	bool IsBusy()
+	void Init(DX12Device* device)
+	{
+		m_Fence = device->CreateFence(0);
+		m_FenceEvent.Attach(CreateEvent(nullptr, FALSE, FALSE, nullptr));
+	}
+
+	bool IsBusy() const
 	{
 		DWORD ret = WaitForSingleObjectEx(m_FenceEvent.Get(), IGNORE, FALSE);
 		if (ret == WAIT_OBJECT_0)
@@ -28,56 +39,23 @@ public:
 		}
 	}
 
-	void WaitForFence()
+	void WaitForFence() const
 	{
 		WaitForSingleObjectEx(m_FenceEvent.Get(), INFINITE, FALSE);
 	}
 
-	void SignalFence(ID3D12CommandQueue* pCommandQueue, uint32_t newFenceValue)
-	{
-		assert(m_Fence->GetCompletedValue() < newFenceValue);
+	//void SignalFence(ID3D12CommandQueue* pCommandQueue, uint32_t newFenceValue)
+	//{
+	//	assert(m_Fence->GetCompletedValue() < newFenceValue);
 
-		// Schedule a Signal command in the GPU queue.
-		DX::ThrowIfFailed(pCommandQueue->Signal(m_Fence.Get(), newFenceValue));
+	//	// Schedule a Signal command in the GPU queue.
+	//	DX::ThrowIfFailed(pCommandQueue->Signal(m_Fence.Get(), newFenceValue));
 
-		// Setup fence event.
-		DX::ThrowIfFailed(m_Fence->SetEventOnCompletion(newFenceValue, m_FenceEvent.Get()));
-	}
+	//	// Setup fence event.
+	//	DX::ThrowIfFailed(m_Fence->SetEventOnCompletion(newFenceValue, m_FenceEvent.Get()));
+	//}
 
 private:
 	ComPtr<ID3D12Fence>		m_Fence;
 	Event					m_FenceEvent;
-};
-
-class DX12FenceHandle
-{
-public:
-	DX12FenceHandle();
-	DX12FenceHandle(uint32_t idx);
-	~DX12FenceHandle() = default;
-
-	DX12Fence* GetFence();
-
-private:
-	uint32_t m_FenceIdx;
-};
-
-class DX12FenceManager
-{
-public:
-	DX12FenceManager(DX12Device* device);
-	~DX12FenceManager();
-
-	void AdvanceFenceValue();
-
-	void AdvanceSegment();
-
-	DX12FenceHandle GetFenceHandle();
-
-	DX12Fence* GetFence(uint32_t idx);
-
-private:
-	uint32_t m_CurrentFenceValue;
-	uint32_t m_CurrentSegment;
-	std::array<DX12Fence, DX12MaxFences> m_Fences;
 };
