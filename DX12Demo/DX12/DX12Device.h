@@ -14,7 +14,15 @@ public:
 
 	ID3D12GraphicsCommandList* CreateGraphicCommandList(ID3D12CommandAllocator* allocator);
 
-	ID3D12Resource* CreateCommittedResourceInDefaultHeap(uint64_t sizeInBytes, uint64_t alignInBytes, D3D12_RESOURCE_STATES initialState);
+	ID3D12Resource* CreateCommittedBufferInDefaultHeap(uint64_t sizeInBytes, uint64_t alignInBytes, D3D12_RESOURCE_STATES initialState);
+
+	ID3D12Resource* CreateCommittedTexture2DInDefaultHeap(DXGI_FORMAT format,
+		uint32_t width,
+		uint32_t height,
+		uint32_t arraySize,
+		uint32_t mipLevels,
+		D3D12_RESOURCE_STATES initialState,
+		const D3D12_CLEAR_VALUE* pOptimizedClearValue);
 
 	ID3D12DescriptorHeap* CreateDescriptorHeap(const D3D12_DESCRIPTOR_HEAP_DESC* desc);
 

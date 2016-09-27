@@ -17,7 +17,7 @@ DX12IndexBuffer::DX12IndexBuffer(DX12Device* device, uint32_t sizeInBytes, uint3
 	, m_Format{ fmt }
 	, m_View{}
 {
-	m_Resource = device->CreateCommittedResourceInDefaultHeap(sizeInBytes, alignInBytes, D3D12_RESOURCE_STATE_COMMON);
+	m_Resource = device->CreateCommittedBufferInDefaultHeap(sizeInBytes, alignInBytes, D3D12_RESOURCE_STATE_COMMON);
 	m_View = D3D12_INDEX_BUFFER_VIEW{ m_Resource->GetGPUVirtualAddress(), sizeInBytes, m_Format };
 }
 
@@ -28,7 +28,7 @@ DX12IndexBuffer::~DX12IndexBuffer()
 DX12StructuredBuffer::DX12StructuredBuffer(DX12Device * device, uint32_t sizeInBytes, uint32_t alignInBytes, uint32_t strideInBytes)
 	: DX12GpuResource()
 {
-	m_Resource = device->CreateCommittedResourceInDefaultHeap(sizeInBytes, alignInBytes, D3D12_RESOURCE_STATE_COMMON);
+	m_Resource = device->CreateCommittedBufferInDefaultHeap(sizeInBytes, alignInBytes, D3D12_RESOURCE_STATE_COMMON);
 
 	D3D12_SHADER_RESOURCE_VIEW_DESC desc;
 	desc.Format = DXGI_FORMAT_UNKNOWN;

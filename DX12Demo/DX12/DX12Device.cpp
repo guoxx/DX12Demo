@@ -39,9 +39,34 @@ ID3D12GraphicsCommandList * DX12Device::CreateGraphicCommandList(ID3D12CommandAl
 	return pCommandList;
 }
 
-ID3D12Resource * DX12Device::CreateCommittedResourceInDefaultHeap(uint64_t sizeInBytes, uint64_t alignInBytes, D3D12_RESOURCE_STATES initialState)
+ID3D12Resource * DX12Device::CreateCommittedBufferInDefaultHeap(uint64_t sizeInBytes, uint64_t alignInBytes, D3D12_RESOURCE_STATES initialState)
 {
-	return nullptr;
+	ID3D12Resource* pResource = nullptr;
+	DX::ThrowIfFailed(m_d3dDevice->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
+		D3D12_HEAP_FLAG_NONE,
+		&CD3DX12_RESOURCE_DESC::Buffer(D3D12_RESOURCE_ALLOCATION_INFO{ sizeInBytes, alignInBytes }),
+		initialState,
+		nullptr,
+		IID_GRAPHICS_PPV_ARGS(&pResource)));
+	return pResource;
+}
+
+ID3D12Resource * DX12Device::CreateCommittedTexture2DInDefaultHeap(DXGI_FORMAT format,
+	uint32_t width,
+	uint32_t height,
+	uint32_t arraySize,
+	uint32_t mipLevels,
+	D3D12_RESOURCE_STATES initialState,
+	const D3D12_CLEAR_VALUE* pOptimizedClearValue)
+{
+	ID3D12Resource* pResource = nullptr;
+	DX::ThrowIfFailed(m_d3dDevice->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
+		D3D12_HEAP_FLAG_NONE,
+		&CD3DX12_RESOURCE_DESC::Tex2D(format, width, height, arraySize, mipLevels),
+		initialState,
+		pOptimizedClearValue,
+		IID_GRAPHICS_PPV_ARGS(&pResource)));
+	return pResource;
 }
 
 ID3D12DescriptorHeap * DX12Device::CreateDescriptorHeap(const D3D12_DESCRIPTOR_HEAP_DESC * desc)
