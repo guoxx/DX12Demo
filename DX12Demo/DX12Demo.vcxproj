@@ -192,6 +192,7 @@
     <ClInclude Include="DX12\DX12Fence.h" />
     <ClInclude Include="DX12\DX12GpuResource.h" />
     <ClInclude Include="DX12\DX12GraphicContext.h" />
+    <ClInclude Include="DX12\DX12GraphicContextAutoExecutor.h" />
     <ClInclude Include="DX12\DX12GraphicManager.h" />
     <ClInclude Include="DX12\DX12PipelineState.h" />
     <ClInclude Include="DX12\DX12RootSignature.h" />
