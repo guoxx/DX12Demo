@@ -56,8 +56,8 @@ ID3D12Resource * DX12Device::CreateCommittedTexture2DInDefaultHeap(DXGI_FORMAT f
 	uint32_t height,
 	uint32_t arraySize,
 	uint32_t mipLevels,
-	D3D12_RESOURCE_STATES initialState,
-	const D3D12_CLEAR_VALUE* pOptimizedClearValue)
+	const D3D12_CLEAR_VALUE* pOptimizedClearValue,
+	D3D12_RESOURCE_STATES initialState)
 {
 	ID3D12Resource* pResource = nullptr;
 	DX::ThrowIfFailed(m_d3dDevice->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
