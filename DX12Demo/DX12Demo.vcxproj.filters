@@ -110,6 +110,15 @@
     <ClInclude Include="DX12\DX12DescriptorHandle.h">
       <Filter>DX12\Public</Filter>
     </ClInclude>
+    <ClInclude Include="DX12\DX12RenderableSurface.h">
+      <Filter>DX12\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="DX12\DX12ColorSurface.h">
+      <Filter>DX12\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="DX12\DX12DepthSurface.h">
+      <Filter>DX12\Public</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -161,6 +170,15 @@
       <Filter>DX12\Private</Filter>
     </ClCompile>
     <ClCompile Include="DX12\DX12FenceManager.cpp">
+      <Filter>DX12\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="DX12\DX12RenderableSurface.cpp">
+      <Filter>DX12\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="DX12\DX12ColorSurface.cpp">
+      <Filter>DX12\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="DX12\DX12DepthSurface.cpp">
       <Filter>DX12\Private</Filter>
     </ClCompile>
   </ItemGroup>

@@ -185,8 +185,10 @@
     <ClInclude Include="DX12Demo.h" />
     <ClInclude Include="DX12\DX12.h" />
     <ClInclude Include="DX12\DX12Buffer.h" />
+    <ClInclude Include="DX12\DX12ColorSurface.h" />
     <ClInclude Include="DX12\DX12CommandContext.h" />
     <ClInclude Include="DX12\DX12Constants.h" />
+    <ClInclude Include="DX12\DX12DepthSurface.h" />
     <ClInclude Include="DX12\DX12DescriptorHandle.h" />
     <ClInclude Include="DX12\DX12DescriptorManager.h" />
     <ClInclude Include="DX12\DX12Device.h" />
@@ -197,6 +199,7 @@
     <ClInclude Include="DX12\DX12GraphicContextAutoExecutor.h" />
     <ClInclude Include="DX12\DX12GraphicManager.h" />
     <ClInclude Include="DX12\DX12PipelineState.h" />
+    <ClInclude Include="DX12\DX12RenderableSurface.h" />
     <ClInclude Include="DX12\DX12RootSignature.h" />
     <ClInclude Include="DX12\DX12SwapChain.h" />
     <ClInclude Include="DX12\DX12Texture.h" />
@@ -213,7 +216,9 @@
   <ItemGroup>
     <ClCompile Include="DX12Demo.cpp" />
     <ClCompile Include="DX12\DX12Buffer.cpp" />
+    <ClCompile Include="DX12\DX12ColorSurface.cpp" />
     <ClCompile Include="DX12\DX12CommandContext.cpp" />
+    <ClCompile Include="DX12\DX12DepthSurface.cpp" />
     <ClCompile Include="DX12\DX12DescriptorManager.cpp" />
     <ClCompile Include="DX12\DX12Device.cpp" />
     <ClCompile Include="DX12\DX12FenceManager.cpp" />
@@ -221,6 +226,7 @@
     <ClCompile Include="DX12\DX12GraphicContext.cpp" />
     <ClCompile Include="DX12\DX12GraphicManager.cpp" />
     <ClCompile Include="DX12\DX12PipelineState.cpp" />
+    <ClCompile Include="DX12\DX12RenderableSurface.cpp" />
     <ClCompile Include="DX12\DX12RootSignature.cpp" />
     <ClCompile Include="DX12\DX12SwapChain.cpp" />
     <ClCompile Include="DX12\DX12Texture.cpp" />

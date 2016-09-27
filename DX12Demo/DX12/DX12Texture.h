@@ -1,8 +1,11 @@
 #pragma once
-class DX12Texture
+
+#include "DX12GpuResource.h"
+
+class DX12Texture : public DX12GpuResource
 {
 public:
 	DX12Texture();
-	~DX12Texture();
+	virtual ~DX12Texture();
 };
 
