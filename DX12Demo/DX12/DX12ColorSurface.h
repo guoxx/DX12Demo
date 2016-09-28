@@ -11,6 +11,7 @@ public:
 
 	void InitAs2dSurface(DX12Device* device, DXGI_FORMAT fmt, uint32_t width, uint32_t height);
 	void InitAs2dSurface(DX12Device* device, DXGI_FORMAT fmt, uint32_t width, uint32_t height, uint32_t mipLevels);
+	void InitAs2dSurface(DX12Device* device, ID3D12Resource* pResource);
 
 	DX12DescriptorHandle GetSRV() const { return m_SRV; };
 	DX12DescriptorHandle GetRTV() const { return m_RTV; };

@@ -31,6 +31,12 @@ void DX12ColorSurface::InitAs2dSurface(DX12Device* device, DXGI_FORMAT fmt, uint
 	CreateView(device);
 }
 
+void DX12ColorSurface::InitAs2dSurface(DX12Device* device, ID3D12Resource* pResource)
+{
+	m_Resource = pResource;
+	CreateView(device);
+}
+
 void DX12ColorSurface::CreateView(DX12Device* device)
 {
 	m_SRV = DX12GraphicManager::GetInstance()->RegisterResourceInDescriptorHeap(m_Resource.Get(), D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);

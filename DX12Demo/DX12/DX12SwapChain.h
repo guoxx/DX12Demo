@@ -4,6 +4,7 @@
 #include "DX12Fence.h"
 
 class DX12Device;
+class DX12ColorSurface;
 
 class DX12SwapChain
 {
@@ -13,12 +14,15 @@ public:
 
 	void Begin();
 
+	DX12ColorSurface* GetBackBuffer() const;
+
 	void Flip();
 
 private:
 	ComPtr<IDXGISwapChain1> m_SwapChain;
 
+	// TODO: add fence to detect if back buffer is been using by GPU
 	uint32_t m_BackBufferIdx;
-	std::array<ComPtr<ID3D12Resource>, DX12NumSwapChainBuffers> m_BackBuffers;
+	std::array<std::shared_ptr<DX12ColorSurface>, DX12NumSwapChainBuffers> m_BackBuffers;
 };
 
