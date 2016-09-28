@@ -61,6 +61,17 @@ ID3D12Heap * DX12Device::CreateHeap(uint64_t sizeInBytes,
 	return pHeap;
 }
 
+ID3D12Resource * DX12Device::CreatePlacedResource(ID3D12Heap * pHeap,
+	uint64_t heapOffsetInBytes,
+	const D3D12_RESOURCE_DESC * pDesc,
+	D3D12_RESOURCE_STATES initialState,
+	const D3D12_CLEAR_VALUE * pOptimizedClearValue)
+{
+	ID3D12Resource* pResource = nullptr;
+	DX::ThrowIfFailed(m_d3dDevice->CreatePlacedResource(pHeap, heapOffsetInBytes, pDesc, initialState, pOptimizedClearValue, IID_GRAPHICS_PPV_ARGS(&pResource)));
+	return pResource;
+}
+
 ID3D12Resource * DX12Device::CreateCommittedBufferInDefaultHeap(uint64_t sizeInBytes, uint64_t alignInBytes, D3D12_RESOURCE_STATES initialState)
 {
 	ID3D12Resource* pResource = nullptr;

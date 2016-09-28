@@ -21,6 +21,12 @@ public:
 		D3D12_MEMORY_POOL memoryPool = D3D12_MEMORY_POOL_UNKNOWN,
 		D3D12_HEAP_FLAGS flags = D3D12_HEAP_FLAG_NONE);
 
+	ID3D12Resource* CreatePlacedResource(ID3D12Heap* pHeap,
+		uint64_t heapOffsetInBytes,
+		const D3D12_RESOURCE_DESC* pDesc,
+		D3D12_RESOURCE_STATES initialState = D3D12_RESOURCE_STATE_COMMON,
+		const D3D12_CLEAR_VALUE* pOptimizedClearValue = nullptr);
+
 	ID3D12Resource* CreateCommittedBufferInDefaultHeap(uint64_t sizeInBytes, uint64_t alignInBytes, D3D12_RESOURCE_STATES initialState = D3D12_RESOURCE_STATE_COMMON);
 
 	ID3D12Resource* CreateCommittedTexture2DInDefaultHeap(DXGI_FORMAT format,

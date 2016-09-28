@@ -32,7 +32,7 @@ public:
 	// resource binding
 	DX12DescriptorHandle RegisterResourceInDescriptorHeap(ID3D12Resource* resource, D3D12_DESCRIPTOR_HEAP_TYPE type);
 
-	void UpdateSubresources(ID3D12Resource* resource, void* pSrcData, uint64_t sizeInBytes);
+	void UpdateBufer(DX12GraphicContext* pGfxContext, ID3D12Resource* resource, void* pSrcData, uint64_t sizeInBytes);
 
 private:
 	DX12GraphicManager();
@@ -50,6 +50,9 @@ private:
 
 	ComPtr<ID3D12Heap> m_UploadHeap;
 	RingBufferAllocator m_UploadHeapAllocator;
+
+	// TODO: using timing wheel to delete temp resources
+	std::vector<ComPtr<ID3D12Resource>> m_TempResources;
 
 private:
 	static DX12GraphicManager* s_GfxManager;

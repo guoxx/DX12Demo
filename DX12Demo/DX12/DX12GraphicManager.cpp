@@ -85,7 +85,11 @@ DX12DescriptorHandle DX12GraphicManager::RegisterResourceInDescriptorHeap(ID3D12
 	return m_DescriptorManager->AllocateInHeap(type);
 }
 
-void DX12GraphicManager::UpdateSubresources(ID3D12Resource * resource, void * pSrcData, uint64_t sizeInBytes)
+void DX12GraphicManager::UpdateBufer(DX12GraphicContext* pGfxContext, ID3D12Resource * resource, void * pSrcData, uint64_t sizeInBytes)
 {
+	uint64_t heapOffset = m_UploadHeapAllocator.Alloc(sizeInBytes, D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT);
+	ComPtr<ID3D12Resource> uploadResource = m_Device->CreatePlacedResource(m_UploadHeap.Get(), heapOffset, &resource->GetDesc(), D3D12_RESOURCE_STATE_GENERIC_READ);
+
+	// TODO
 }
 
