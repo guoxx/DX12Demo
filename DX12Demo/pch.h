@@ -95,4 +95,16 @@ namespace DX
 	{
 	}
 #endif
+
+	inline bool IsPowerOfTwo(uint64_t n)
+	{
+		return ((n & (n - 1)) == 0 && (n) != 0);
+	}
+
+	inline uint64_t NextMultiple(uint64_t value, uint64_t multiple)
+	{
+		assert(IsPowerOfTwo(multiple));
+
+		return (value + multiple - 1) & ~(multiple - 1);
+	}
 }

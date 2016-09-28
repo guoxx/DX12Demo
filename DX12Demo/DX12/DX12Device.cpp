@@ -39,6 +39,28 @@ ID3D12GraphicsCommandList * DX12Device::CreateGraphicCommandList(ID3D12CommandAl
 	return pCommandList;
 }
 
+ID3D12Heap * DX12Device::CreateHeap(uint64_t sizeInBytes,
+	uint64_t alignInBytes,
+	D3D12_HEAP_TYPE type,
+	D3D12_CPU_PAGE_PROPERTY cpuPageProperty,
+	D3D12_MEMORY_POOL memoryPool,
+	D3D12_HEAP_FLAGS flags)
+{
+	D3D12_HEAP_DESC desc;
+	desc.SizeInBytes = sizeInBytes;
+	desc.Properties.Type = type;
+	desc.Properties.CPUPageProperty = cpuPageProperty;
+	desc.Properties.MemoryPoolPreference = memoryPool;
+	desc.Properties.CreationNodeMask = 0;
+	desc.Properties.VisibleNodeMask = 0;
+	desc.Alignment = alignInBytes;
+	desc.Flags = flags;
+
+	ID3D12Heap* pHeap;
+	DX::ThrowIfFailed(m_d3dDevice->CreateHeap(&desc, IID_GRAPHICS_PPV_ARGS(&pHeap)));
+	return pHeap;
+}
+
 ID3D12Resource * DX12Device::CreateCommittedBufferInDefaultHeap(uint64_t sizeInBytes, uint64_t alignInBytes, D3D12_RESOURCE_STATES initialState)
 {
 	ID3D12Resource* pResource = nullptr;

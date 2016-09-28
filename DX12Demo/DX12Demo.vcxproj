@@ -212,6 +212,7 @@
     <ClInclude Include="Utils\Heaponly.h" />
     <ClInclude Include="Utils\Noncopyable.h" />
     <ClInclude Include="Utils\Nonmovable.h" />
+    <ClInclude Include="Utils\RingBufferAllocator.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DX12Demo.cpp" />

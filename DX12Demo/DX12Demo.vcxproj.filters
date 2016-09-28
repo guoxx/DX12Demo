@@ -119,6 +119,9 @@
     <ClInclude Include="DX12\DX12CommandContext.h">
       <Filter>DX12\Private</Filter>
     </ClInclude>
+    <ClInclude Include="Utils\RingBufferAllocator.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">

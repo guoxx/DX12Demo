@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../Utils/RingBufferAllocator.h"
 #include "DX12Constants.h"
 #include "DX12DescriptorHandle.h"
 
@@ -17,6 +18,8 @@ public:
 
 	static DX12GraphicManager* GetInstance() { return s_GfxManager; }
 
+	DX12Device* GetDevice() const { return m_Device.get(); }
+
 	DX12FenceManager* GetFenceManager() const { return m_FenceManager.get(); }
 
 	void CreateGraphicCommandQueues(uint32_t cnt = 1);
@@ -28,6 +31,8 @@ public:
 
 	// resource binding
 	DX12DescriptorHandle RegisterResourceInDescriptorHeap(ID3D12Resource* resource, D3D12_DESCRIPTOR_HEAP_TYPE type);
+
+	void UpdateSubresources(ID3D12Resource* resource, void* pSrcData, uint64_t sizeInBytes);
 
 private:
 	DX12GraphicManager();
@@ -42,6 +47,9 @@ private:
 	std::unique_ptr<DX12DescriptorManager> m_DescriptorManager;
 
 	std::unique_ptr<DX12FenceManager> m_FenceManager;
+
+	ComPtr<ID3D12Heap> m_UploadHeap;
+	RingBufferAllocator m_UploadHeapAllocator;
 
 private:
 	static DX12GraphicManager* s_GfxManager;

@@ -20,6 +20,7 @@ void DX12GraphicManager::Finalize()
 }
 
 DX12GraphicManager::DX12GraphicManager()
+	: m_UploadHeapAllocator{ 0, DX12UploadHeapSizeInBytes }
 {
 #if defined(_DEBUG)
     // Enable the D3D12 debug layer.
@@ -43,6 +44,8 @@ DX12GraphicManager::DX12GraphicManager()
 	{
 		m_GraphicContexts[i] = std::make_shared<DX12GraphicContext>(m_Device.get());
 	}
+
+	m_UploadHeap = m_Device->CreateHeap(DX12UploadHeapSizeInBytes, D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT, D3D12_HEAP_TYPE_UPLOAD);
 }
 
 DX12GraphicManager::~DX12GraphicManager()
@@ -80,5 +83,9 @@ void DX12GraphicManager::ExecuteGraphicContext(DX12GraphicContext* ctx)
 DX12DescriptorHandle DX12GraphicManager::RegisterResourceInDescriptorHeap(ID3D12Resource * resource, D3D12_DESCRIPTOR_HEAP_TYPE type)
 {
 	return m_DescriptorManager->AllocateInHeap(type);
+}
+
+void DX12GraphicManager::UpdateSubresources(ID3D12Resource * resource, void * pSrcData, uint64_t sizeInBytes)
+{
 }
 
