@@ -13,6 +13,7 @@ public:
 	virtual void OnInit(GFX_WHND hwnd);
 	virtual void OnUpdate(DX::StepTimer const& timer) = 0;
 	virtual void OnRender() = 0;
+	virtual void OnFlip() = 0;
 	virtual void OnDestroy() = 0;
 
 	// Samples override the event handlers to handle specific messages.

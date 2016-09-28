@@ -26,6 +26,7 @@ void DXSample::Tick()
     });
 
 	OnRender();
+	OnFlip();
 
     PIXEndEvent();
     m_Frame++;

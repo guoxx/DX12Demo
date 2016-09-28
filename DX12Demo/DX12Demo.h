@@ -12,6 +12,7 @@ public:
 	virtual void OnInit(GFX_WHND hwnd) override final;
 	virtual void OnUpdate(DX::StepTimer const& timer) override final;
 	virtual void OnRender() override final;
+	virtual void OnFlip() override final;
 	virtual void OnDestroy() override final;
 
 #ifdef _XBOX_ONE

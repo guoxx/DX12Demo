@@ -103,9 +103,13 @@ void DX12Demo::OnRender()
 	DrawScene();
 	DrawScene1();
 
-    Present();
 
     PIXEndEvent();
+}
+
+void DX12Demo::OnFlip()
+{
+    Present();
 }
 
 void DX12Demo::OnDestroy()
