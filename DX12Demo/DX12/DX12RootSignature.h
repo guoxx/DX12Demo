@@ -8,7 +8,7 @@ public:
 	DX12RootSignature(ComPtr<ID3D12RootSignature> rootSig);
 	~DX12RootSignature();
 
-	ComPtr<ID3D12RootSignature> GetRootSig() const { return m_RootSig; }
+	ID3D12RootSignature* GetSignature() const { return m_RootSig.Get(); }
 
 private:
 	ComPtr<ID3D12RootSignature> m_RootSig;

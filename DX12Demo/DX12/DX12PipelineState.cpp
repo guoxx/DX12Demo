@@ -41,7 +41,7 @@ DX12GraphicPsoCompiler::~DX12GraphicPsoCompiler()
 
 bool DX12GraphicPsoCompiler::SetRoogSignature(DX12RootSignature * rootSig)
 {
-	m_RootSig = rootSig->GetRootSig();
+	m_RootSig = rootSig->GetSignature();
 	m_PsoDesc.pRootSignature = m_RootSig.Get();
 	return m_PsoDesc.pRootSignature != nullptr;
 }

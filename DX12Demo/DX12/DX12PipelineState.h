@@ -11,6 +11,8 @@ public:
 	DX12PipelineState(ComPtr<ID3D12PipelineState> pso);
 	~DX12PipelineState();
 
+	ID3D12PipelineState* GetPSO() const { return m_PSO.Get(); }
+
 private:
 	ComPtr<ID3D12PipelineState> m_PSO;
 };
