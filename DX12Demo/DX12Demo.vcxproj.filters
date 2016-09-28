@@ -53,9 +53,6 @@
     <ClInclude Include="DX12\DX12GraphicContext.h">
       <Filter>DX12\Public</Filter>
     </ClInclude>
-    <ClInclude Include="DX12\DX12CommandContext.h">
-      <Filter>DX12\Public</Filter>
-    </ClInclude>
     <ClInclude Include="DX12\DX12Texture.h">
       <Filter>DX12\Public</Filter>
     </ClInclude>
@@ -83,9 +80,6 @@
     <ClInclude Include="DX12\DX12SwapChain.h">
       <Filter>DX12\Public</Filter>
     </ClInclude>
-    <ClInclude Include="DX12\DX12GpuResource.h">
-      <Filter>DX12\Public</Filter>
-    </ClInclude>
     <ClInclude Include="DX12\DX12DescriptorManager.h">
       <Filter>DX12\Private</Filter>
     </ClInclude>
@@ -110,14 +104,20 @@
     <ClInclude Include="DX12\DX12DescriptorHandle.h">
       <Filter>DX12\Public</Filter>
     </ClInclude>
-    <ClInclude Include="DX12\DX12RenderableSurface.h">
-      <Filter>DX12\Public</Filter>
-    </ClInclude>
     <ClInclude Include="DX12\DX12ColorSurface.h">
       <Filter>DX12\Public</Filter>
     </ClInclude>
     <ClInclude Include="DX12\DX12DepthSurface.h">
       <Filter>DX12\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="DX12\DX12GpuResource.h">
+      <Filter>DX12\Private</Filter>
+    </ClInclude>
+    <ClInclude Include="DX12\DX12RenderableSurface.h">
+      <Filter>DX12\Private</Filter>
+    </ClInclude>
+    <ClInclude Include="DX12\DX12CommandContext.h">
+      <Filter>DX12\Private</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -1,8 +1,16 @@
 #pragma once
 
+#include "Hash.h"
 #include "DX12Constants.h"
-#include "DX12Shader.h"
 #include "DX12Buffer.h"
-#include "DX12CommandContext.h"
+#include "DX12Texture.h"
+#include "DX12SwapChain.h"
+#include "DX12ColorSurface.h"
+#include "DX12DepthSurface.h"
+#include "DX12DescriptorHandle.h"
+#include "DX12PipelineState.h"
+#include "DX12RootSignature.h"
+#include "DX12FenceManager.h"
 #include "DX12GraphicContext.h"
+#include "DX12GraphicContextAutoExecutor.h"
 #include "DX12GraphicManager.h"
