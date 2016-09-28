@@ -20,11 +20,11 @@ public:
 
 	void ResourceTransitionBarrier(DX12GpuResource* resource, D3D12_RESOURCE_STATES stateBefore, D3D12_RESOURCE_STATES stateAfter, uint32_t subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES);
 
-	void SetGraphicsRoot32BitConstants(uint32_t rootParameterIndex, uint32 num32BitValuesToSet, const void *pSrcData, uint32 destOffsetIn32BitValues);
+	void SetGraphicsRoot32BitConstants(uint32_t rootParameterIndex, uint32_t num32BitValuesToSet, const void *pSrcData, uint32_t destOffsetIn32BitValues);
 
 	void SetGraphicsRootSignature(DX12RootSignature* pRootSig);
 
 	void SetPipelineState(DX12PipelineState* pPSO);
 
-	void DrawIndexed(uint32 indexCount, uint32_t startIndexLocation, int32_t baseVertexLocation);
+	void DrawIndexed(uint32_t indexCount, uint32_t startIndexLocation, int32_t baseVertexLocation);
 };

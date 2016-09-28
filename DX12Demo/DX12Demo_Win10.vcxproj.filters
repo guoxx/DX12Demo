@@ -92,9 +92,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DX12\DX12CommandContext.h">
-      <Filter>DX12\Public</Filter>
-    </ClInclude>
     <ClInclude Include="DX12\DX12GraphicContext.h">
       <Filter>DX12\Public</Filter>
     </ClInclude>
@@ -161,9 +158,6 @@
     <ClInclude Include="DX12\DX12DescriptorManager.h">
       <Filter>DX12\Private</Filter>
     </ClInclude>
-    <ClInclude Include="DX12\DX12GpuResource.h">
-      <Filter>DX12\Public</Filter>
-    </ClInclude>
     <ClInclude Include="DX12\DX12SwapChain.h">
       <Filter>DX12\Public</Filter>
     </ClInclude>
@@ -176,9 +170,6 @@
     <ClInclude Include="DX12\DX12Fence.h">
       <Filter>DX12\Private</Filter>
     </ClInclude>
-    <ClInclude Include="DX12\DX12RenderableSurface.h">
-      <Filter>DX12\Public</Filter>
-    </ClInclude>
     <ClInclude Include="DX12\DX12ColorSurface.h">
       <Filter>DX12\Public</Filter>
     </ClInclude>
@@ -187,6 +178,18 @@
     </ClInclude>
     <ClInclude Include="DX12\DX12DescriptorHandle.h">
       <Filter>DX12\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\RingBufferAllocator.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="DX12\DX12CommandContext.h">
+      <Filter>DX12\Private</Filter>
+    </ClInclude>
+    <ClInclude Include="DX12\DX12GpuResource.h">
+      <Filter>DX12\Private</Filter>
+    </ClInclude>
+    <ClInclude Include="DX12\DX12RenderableSurface.h">
+      <Filter>DX12\Private</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

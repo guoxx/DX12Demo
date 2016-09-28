@@ -34,7 +34,7 @@ void DX12GraphicContext::ResourceTransitionBarrier(DX12GpuResource* resource, D3
     m_CommandList->ResourceBarrier(1, &barrier);
 }
 
-void DX12GraphicContext::SetGraphicsRoot32BitConstants(uint32_t rootParameterIndex, uint32 num32BitValuesToSet, const void * pSrcData, uint32 destOffsetIn32BitValues)
+void DX12GraphicContext::SetGraphicsRoot32BitConstants(uint32_t rootParameterIndex, uint32_t num32BitValuesToSet, const void * pSrcData, uint32_t destOffsetIn32BitValues)
 {
 	m_CommandList->SetGraphicsRoot32BitConstants(rootParameterIndex, num32BitValuesToSet, pSrcData, destOffsetIn32BitValues);
 }
@@ -49,7 +49,7 @@ void DX12GraphicContext::SetPipelineState(DX12PipelineState * pPSO)
 	m_CommandList->SetPipelineState(pPSO->GetPSO());
 }
 
-void DX12GraphicContext::DrawIndexed(uint32 indexCount, uint32_t startIndexLocation, int32_t baseVertexLocation)
+void DX12GraphicContext::DrawIndexed(uint32_t indexCount, uint32_t startIndexLocation, int32_t baseVertexLocation)
 {
 	m_CommandList->DrawIndexedInstanced(indexCount, 1, startIndexLocation, baseVertexLocation, 0);
 }
