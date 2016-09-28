@@ -5,6 +5,7 @@
 #include "DX12DescriptorManager.h"
 #include "DX12GraphicContext.h"
 #include "DX12Fence.h"
+#include "DX12GpuResource.h"
 
 DX12GraphicManager* DX12GraphicManager::s_GfxManager = nullptr;
 
@@ -85,11 +86,15 @@ DX12DescriptorHandle DX12GraphicManager::RegisterResourceInDescriptorHeap(ID3D12
 	return m_DescriptorManager->AllocateInHeap(type);
 }
 
-void DX12GraphicManager::UpdateBufer(DX12GraphicContext* pGfxContext, ID3D12Resource * resource, void * pSrcData, uint64_t sizeInBytes)
+void DX12GraphicManager::UpdateBufer(DX12GraphicContext* pGfxContext, DX12GpuResource* pResource, void * pSrcData, uint64_t sizeInBytes)
 {
 	uint64_t heapOffset = m_UploadHeapAllocator.Alloc(sizeInBytes, D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT);
-	ComPtr<ID3D12Resource> uploadResource = m_Device->CreatePlacedResource(m_UploadHeap.Get(), heapOffset, &resource->GetDesc(), D3D12_RESOURCE_STATE_GENERIC_READ);
+	ComPtr<ID3D12Resource> uploadResource = m_Device->CreatePlacedResource(m_UploadHeap.Get(), heapOffset, &pResource->GetGpuResource()->GetDesc(), D3D12_RESOURCE_STATE_GENERIC_READ);
 
-	// TODO
+	// keep a reference to that resource to avoid it been released
+	m_TempResources.push_back(uploadResource);
+
+	DX12GpuResource srcResource{ uploadResource };
+	pGfxContext->CopyResource(&srcResource, pResource);
 }
 

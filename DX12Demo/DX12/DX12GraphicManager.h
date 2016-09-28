@@ -5,7 +5,7 @@
 #include "DX12DescriptorHandle.h"
 
 class DX12Device;
-class DX12CopyContext;
+class DX12GpuResource;
 class DX12GraphicContext;
 class DX12DescriptorManager;
 class DX12FenceManager;
@@ -32,7 +32,7 @@ public:
 	// resource binding
 	DX12DescriptorHandle RegisterResourceInDescriptorHeap(ID3D12Resource* resource, D3D12_DESCRIPTOR_HEAP_TYPE type);
 
-	void UpdateBufer(DX12GraphicContext* pGfxContext, ID3D12Resource* resource, void* pSrcData, uint64_t sizeInBytes);
+	void UpdateBufer(DX12GraphicContext* pGfxContext, DX12GpuResource* pResource, void* pSrcData, uint64_t sizeInBytes);
 
 private:
 	DX12GraphicManager();

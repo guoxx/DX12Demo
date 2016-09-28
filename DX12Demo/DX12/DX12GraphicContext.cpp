@@ -53,3 +53,8 @@ void DX12GraphicContext::DrawIndexed(uint32_t indexCount, uint32_t startIndexLoc
 {
 	m_CommandList->DrawIndexedInstanced(indexCount, 1, startIndexLocation, baseVertexLocation, 0);
 }
+
+void DX12GraphicContext::CopyResource(DX12GpuResource* srcResource, DX12GpuResource* dstResource)
+{
+	m_CommandList->CopyResource(srcResource->GetGpuResource(), dstResource->GetGpuResource());
+}

@@ -8,7 +8,10 @@ class DX12GpuResource
 
 public:
 	DX12GpuResource();
+	DX12GpuResource(ComPtr<ID3D12Resource> resource);
 	virtual ~DX12GpuResource();
+
+	ID3D12Resource* GetGpuResource() const { return m_Resource.Get(); }
 
 protected:
 	ComPtr<ID3D12Resource> m_Resource;

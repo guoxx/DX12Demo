@@ -27,4 +27,6 @@ public:
 	void SetPipelineState(DX12PipelineState* pPSO);
 
 	void DrawIndexed(uint32_t indexCount, uint32_t startIndexLocation, int32_t baseVertexLocation);
+
+	void CopyResource(DX12GpuResource* srcResource, DX12GpuResource* dstResource);
 };
