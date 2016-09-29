@@ -29,7 +29,7 @@ void DX12DepthSurface::InitAs2dSurface(DX12Device * device, DXGI_FORMAT fmt, uin
 	optimizedClearValue.Format = fmt;
 	optimizedClearValue.DepthStencil.Depth = 1.0f;
 	optimizedClearValue.DepthStencil.Stencil = 0;
-	Init(device, fmt, width, height, arraySize, mipLevels, sampleCount, sampleQuality, flags, &optimizedClearValue);
+	Init(device, fmt, width, height, arraySize, mipLevels, sampleCount, sampleQuality, flags, &optimizedClearValue, D3D12_RESOURCE_STATE_DEPTH_WRITE);
 
 	CreateView(device);
 }
