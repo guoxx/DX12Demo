@@ -22,5 +22,5 @@ void DX12GpuResource::MapResource(uint32_t subresource, void** ppData)
 
 void DX12GpuResource::UnmapResource(uint32_t subresource)
 {
-	m_Resource->Unmap(subresource);
+	m_Resource->Unmap(subresource, nullptr);
 }

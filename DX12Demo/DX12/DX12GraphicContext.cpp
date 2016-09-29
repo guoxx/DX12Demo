@@ -42,6 +42,11 @@ void DX12GraphicContext::SetGraphicsRoot32BitConstants(uint32_t rootParameterInd
 	m_CommandList->SetGraphicsRoot32BitConstants(rootParameterIndex, num32BitValuesToSet, pSrcData, destOffsetIn32BitValues);
 }
 
+void DX12GraphicContext::SetGraphicsRootStructuredBuffer(uint32_t rootParameterIndex, const DX12StructuredBuffer * pStructuredBuffer)
+{
+	m_CommandList->SetGraphicsRootShaderResourceView(rootParameterIndex, pStructuredBuffer->GetGpuResource()->GetGPUVirtualAddress());
+}
+
 void DX12GraphicContext::SetGraphicsRootSignature(DX12RootSignature * pRootSig)
 {
 	m_CommandList->SetGraphicsRootSignature(pRootSig->GetSignature());

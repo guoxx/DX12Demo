@@ -15,7 +15,7 @@ public:
 class DX12IndexBuffer : public DX12GpuResource
 {
 public:
-	DX12IndexBuffer(DX12Device* device, uint32_t sizeInBytes, uint32_t alignInBytes, DXGI_FORMAT fmt);
+	DX12IndexBuffer(DX12Device* device, uint64_t sizeInBytes, uint64_t alignInBytes, DXGI_FORMAT fmt);
 	virtual ~DX12IndexBuffer();
 
 	const D3D12_INDEX_BUFFER_VIEW& GetView() const { return m_View; };
@@ -28,8 +28,10 @@ private:
 class DX12StructuredBuffer : public DX12GpuResource
 {
 public:
-	DX12StructuredBuffer(DX12Device* device, uint32_t sizeInBytes, uint32_t alignInBytes, uint32_t strideInBytes);
+	DX12StructuredBuffer(DX12Device* device, uint64_t sizeInBytes, uint64_t alignInBytes, uint64_t strideInBytes);
 	virtual ~DX12StructuredBuffer();
+
+	const DX12DescriptorHandle& GetDescriptorHandle() const { return m_DescriptorHandle; }
 
 private:
 	DX12DescriptorHandle m_DescriptorHandle;
