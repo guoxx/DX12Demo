@@ -12,8 +12,6 @@
 
 #pragma once
 
-#include "Math/Common.h"
-
 // This requires SSE4.2 which is present on Intel Nehalem (Nov. 2008)
 // and AMD Bulldozer (Oct. 2011) processors.  I could put a runtime
 // check for this, but I'm just going to assume people playing with
@@ -31,11 +29,31 @@
 
 namespace Utility
 {
+	template <typename T> __forceinline T AlignUpWithMask( T value, size_t mask )
+	{
+		return (T)(((size_t)value + mask) & ~mask);
+	}
+
+	template <typename T> __forceinline T AlignDownWithMask( T value, size_t mask )
+	{
+		return (T)((size_t)value & ~mask);
+	}
+
+	template <typename T> __forceinline T AlignUp( T value, size_t alignment )
+	{
+		return AlignUpWithMask(value, alignment - 1);
+	}
+
+	template <typename T> __forceinline T AlignDown( T value, size_t alignment )
+	{
+		return AlignDownWithMask(value, alignment - 1);
+	}
+
 	inline size_t HashRange(const uint32_t* const Begin, const uint32_t* const End, size_t Hash)
 	{
 #if ENABLE_SSE_CRC32
-		const uint64_t* Iter64 = (const uint64_t*)Math::AlignUp(Begin, 8);
-		const uint64_t* const End64 = (const uint64_t* const)Math::AlignDown(End, 8);
+		const uint64_t* Iter64 = (const uint64_t*)AlignUp(Begin, 8);
+		const uint64_t* const End64 = (const uint64_t* const)AlignDown(End, 8);
 
 		// If not 64-bit aligned, start with a single u32
 		if ((uint32_t*)Iter64 > Begin)
