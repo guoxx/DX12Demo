@@ -1,6 +1,7 @@
 #pragma once
 
 #include "DXSample.h"
+#include "DX12/DX12.h"
 
 class DX12Demo : public DXSample
 {
@@ -33,36 +34,13 @@ private:
 	void LoadAssets();
 	void LoadAssets1();
 
-	void WaitForGpu();
-	void MoveToNextFrame();
-
-	// Direct3D Objects
-	D3D_FEATURE_LEVEL                                   m_featureLevel;
-	static const uint32_t                                   c_swapBufferCount = 2;
-	uint32_t                                                m_backBufferIndex;
-	Microsoft::WRL::ComPtr<ID3D12Device>                m_d3dDevice;
-	Microsoft::WRL::ComPtr<ID3D12CommandQueue>          m_commandQueue;
-	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>        m_rtvDescriptorHeap;
-	uint32_t                                                m_rtvDescriptorSize;
-	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>        m_dsvDescriptorHeap;
-	uint32_t                                                m_dsvDescriptorSize;
-	Microsoft::WRL::ComPtr<ID3D12CommandAllocator>      m_commandAllocators[c_swapBufferCount];
-	Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>   m_commandList;
-	Microsoft::WRL::ComPtr<ID3D12Fence>                 m_fence;
-	uint64_t                                              m_fenceValues[c_swapBufferCount];
-	Microsoft::WRL::Wrappers::Event                     m_fenceEvent;
-
-	// Rendering resources
-	Microsoft::WRL::ComPtr<IDXGISwapChain1>             m_swapChain;
-	Microsoft::WRL::ComPtr<ID3D12Resource>              m_renderTargets[c_swapBufferCount];
-	Microsoft::WRL::ComPtr<ID3D12Resource>              m_depthStencil;
-
-	ComPtr<ID3D12RootSignature>							m_rootSignature;
-	ComPtr<ID3D12PipelineState>							m_PSO;
-	ComPtr<ID3D12Resource>								m_vertexBuffer;
-	ComPtr<ID3D12Resource>								m_indexBuffer;
-	D3D12_VERTEX_BUFFER_VIEW							m_vertexBufferView;
-	D3D12_INDEX_BUFFER_VIEW								m_indexBufferView;
+	DX12GraphicManager*									m_GraphicManager;
+	std::shared_ptr<DX12SwapChain>						m_SwapChain;
+	std::shared_ptr<DX12DepthSurface>					m_DepthSurface;
+	std::shared_ptr<DX12RootSignature>					m_RootSig;
+	std::shared_ptr<DX12PipelineState>					m_PSO;
+	std::shared_ptr<DX12StructuredBuffer>				m_VertexBuffer;
+	std::shared_ptr<DX12IndexBuffer>					m_IndexBuffer;
 
 	float												m_offsetX;
 
