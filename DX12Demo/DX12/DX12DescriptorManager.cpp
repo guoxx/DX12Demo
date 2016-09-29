@@ -16,6 +16,7 @@ DX12DescriptorManager::DX12DescriptorManager(DX12Device * device)
 		desc.NodeMask = 0;
 
 		m_DescriptorHeaps[i] = ComPtr<ID3D12DescriptorHeap>{ device->CreateDescriptorHeap(&desc) };
+		m_DescriptorHeapOffset[i] = 0;
 		m_DescriptorHandleIncrementSizeForHeaps[i] = device->GetDescriptorHandleIncrementSize(type);
 	}
 }
