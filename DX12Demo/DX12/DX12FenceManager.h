@@ -38,7 +38,7 @@ public:
 	DX12Fence* GetFence(uint32_t idx);
 
 private:
-	uint32_t m_CurrentFenceValue;
+	uint64_t m_CurrentFenceValue;
 	uint32_t m_CurrentSegment;
 	std::array<DX12Fence, DX12MaxFences> m_Fences;
 };

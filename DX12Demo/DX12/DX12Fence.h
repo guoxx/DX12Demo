@@ -11,63 +11,48 @@ class DX12Fence
 
 public:
 	DX12Fence()
-		: m_IsSignalled{ false }
 	{
 	}
 
 	~DX12Fence()
 	{
-		m_FenceEvent.Detach();
 	}
 
-	void Init(DX12Device* device)
+	void Init(DX12Device* device, uint64_t fenceValue)
 	{
-		m_Fence = device->CreateFence(0);
-		m_FenceEvent.Attach(CreateEvent(nullptr, FALSE, FALSE, nullptr));
+		m_FenceValue = fenceValue;
+		m_Fence = device->CreateFence(fenceValue);
 	}
 
 	bool IsBusy() const
 	{
-		if (!m_IsSignalled)
-		{
-			return false;
-		}
-
-		DWORD ret = WaitForSingleObjectEx(m_FenceEvent.Get(), IGNORE, true);
-		if (ret == WAIT_OBJECT_0)
-		{
-			return false;
-		}
-		else
-		{
-			assert(ret == WAIT_TIMEOUT);
-			return true;
-		}
+		uint64_t val = m_Fence->GetCompletedValue();
+		return val > m_FenceValue;
 	}
 
 	void WaitForFence()
 	{
-		WaitForSingleObjectEx(m_FenceEvent.Get(), INFINITE, FALSE);
-
-		assert(!IsBusy());
-		 m_IsSignalled = false;
+		while (true)
+		{
+			if (!IsBusy())
+			{
+				break;
+			}
+		}
 	}
 
-	void SignalFence(ID3D12CommandQueue* pCommandQueue, uint32_t newFenceValue)
+	void SignalFence(ID3D12CommandQueue* pCommandQueue, uint64_t newFenceValue)
 	{
-		m_IsSignalled = true;
+		assert(m_FenceValue > newFenceValue);
+		assert(m_Fence->GetCompletedValue() > newFenceValue);
 
-		assert(m_Fence->GetCompletedValue() < newFenceValue);
+		m_FenceValue = newFenceValue;
 
 		// Schedule a Signal command in the GPU queue.
 		DX::ThrowIfFailed(pCommandQueue->Signal(m_Fence.Get(), newFenceValue));
-
-		// Setup fence event.
-		DX::ThrowIfFailed(m_Fence->SetEventOnCompletion(newFenceValue, m_FenceEvent.Get()));
 	}
 
 private:
-	bool					m_IsSignalled;
 	ComPtr<ID3D12Fence>		m_Fence;
-	Event					m_FenceEvent;
+	uint64_t				m_FenceValue;
 };

@@ -21,13 +21,15 @@ DX12Fence* DX12FenceHandle::GetFence() const
 
 DX12FenceManager::DX12FenceManager(DX12Device* device)
 {
-	m_CurrentFenceValue = 1;
+	m_CurrentFenceValue = UINT64_MAX;
 	m_CurrentSegment = 0;
 
 	for (uint32_t i = 0; i < m_Fences.size(); ++i)
 	{
-		m_Fences[i].Init(device);
+		m_Fences[i].Init(device, m_CurrentFenceValue);
 	}
+
+	AdvanceFenceValue();
 }
 
 DX12FenceManager::~DX12FenceManager()
@@ -36,7 +38,7 @@ DX12FenceManager::~DX12FenceManager()
 
 void DX12FenceManager::AdvanceFenceValue()
 {
-	m_CurrentFenceValue += 1;
+	m_CurrentFenceValue -= 1;
 }
 
 void DX12FenceManager::AdvanceSegment()
