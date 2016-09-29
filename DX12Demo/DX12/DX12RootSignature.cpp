@@ -29,8 +29,26 @@ void DX12RootSignatureCompiler::Begin(uint32_t numParams, uint32_t numStaticSamp
 	assert(m_State == StateUnknow);
 	m_State = StateBegin;
 
-	m_RootParams.reserve(numParams);
-	m_StaticSamplers.reserve(numStaticSamplers);
+	m_NumRootParams = numParams;
+	m_NumStaticSamplers = numStaticSamplers;
+
+	if (numParams > 0)
+	{
+		m_RootParams.reset(new CD3DX12_ROOT_PARAMETER[numParams]);
+	}
+	else
+	{
+		m_RootParams = nullptr;
+	}
+
+	if (numStaticSamplers)
+	{
+		m_StaticSamplers.reset(new CD3DX12_STATIC_SAMPLER_DESC[numParams]);
+	}
+	else
+	{
+		m_StaticSamplers = nullptr;
+	}
 }
 
 void DX12RootSignatureCompiler::SetFlag(D3D12_ROOT_SIGNATURE_FLAGS flags)
@@ -45,8 +63,8 @@ void DX12RootSignatureCompiler::UnsetFlag(D3D12_ROOT_SIGNATURE_FLAGS flags)
 
 void DX12RootSignatureCompiler::InitStaticSampler(uint32_t shaderRegister, const D3D12_SAMPLER_DESC& staticSamplerDesc, D3D12_SHADER_VISIBILITY visibility)
 {
-	assert(m_NumInitializedStaticSamplers < m_StaticSamplers.size());
-	D3D12_STATIC_SAMPLER_DESC& StaticSamplerDesc = m_StaticSamplers[m_NumInitializedStaticSamplers];
+	assert(m_NumInitializedStaticSamplers < m_NumStaticSamplers);
+	D3D12_STATIC_SAMPLER_DESC& StaticSamplerDesc = m_StaticSamplers.get()[m_NumInitializedStaticSamplers];
 	m_NumInitializedStaticSamplers += 1;
 
 	StaticSamplerDesc.Filter = staticSamplerDesc.Filter;
@@ -97,10 +115,10 @@ std::shared_ptr<DX12RootSignature> DX12RootSignatureCompiler::Compile(DX12Device
 	m_State = StateCompiled;
 
 	D3D12_ROOT_SIGNATURE_DESC rootSignatureDesc;	
-	rootSignatureDesc.NumParameters = static_cast<uint32_t>(m_RootParams.size());
-	rootSignatureDesc.pParameters = m_RootParams.data();
-	rootSignatureDesc.NumStaticSamplers = static_cast<uint32_t>(m_StaticSamplers.size());
-	rootSignatureDesc.pStaticSamplers = m_StaticSamplers.data();
+	rootSignatureDesc.NumParameters = m_NumRootParams;
+	rootSignatureDesc.pParameters = m_RootParams.get();
+	rootSignatureDesc.NumStaticSamplers = m_NumStaticSamplers;
+	rootSignatureDesc.pStaticSamplers = m_StaticSamplers.get();
 	rootSignatureDesc.Flags = m_Flags;
 
 	ComPtr<ID3DBlob> rootSignatureBlob;

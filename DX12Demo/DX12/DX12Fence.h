@@ -11,6 +11,7 @@ class DX12Fence
 
 public:
 	DX12Fence()
+		: m_IsSignalled{ false }
 	{
 	}
 
@@ -27,7 +28,12 @@ public:
 
 	bool IsBusy() const
 	{
-		DWORD ret = WaitForSingleObjectEx(m_FenceEvent.Get(), IGNORE, FALSE);
+		if (!m_IsSignalled)
+		{
+			return false;
+		}
+
+		DWORD ret = WaitForSingleObjectEx(m_FenceEvent.Get(), IGNORE, true);
 		if (ret == WAIT_OBJECT_0)
 		{
 			return false;
@@ -39,13 +45,18 @@ public:
 		}
 	}
 
-	void WaitForFence() const
+	void WaitForFence()
 	{
 		WaitForSingleObjectEx(m_FenceEvent.Get(), INFINITE, FALSE);
+
+		assert(!IsBusy());
+		 m_IsSignalled = false;
 	}
 
 	void SignalFence(ID3D12CommandQueue* pCommandQueue, uint32_t newFenceValue)
 	{
+		m_IsSignalled = true;
+
 		assert(m_Fence->GetCompletedValue() < newFenceValue);
 
 		// Schedule a Signal command in the GPU queue.
@@ -56,6 +67,7 @@ public:
 	}
 
 private:
+	bool					m_IsSignalled;
 	ComPtr<ID3D12Fence>		m_Fence;
 	Event					m_FenceEvent;
 };

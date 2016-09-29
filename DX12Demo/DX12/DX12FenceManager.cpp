@@ -21,7 +21,7 @@ DX12Fence* DX12FenceHandle::GetFence() const
 
 DX12FenceManager::DX12FenceManager(DX12Device* device)
 {
-	m_CurrentFenceValue = 0;
+	m_CurrentFenceValue = 1;
 	m_CurrentSegment = 0;
 
 	for (uint32_t i = 0; i < m_Fences.size(); ++i)

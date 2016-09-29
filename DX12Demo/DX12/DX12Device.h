@@ -34,7 +34,11 @@ public:
 		uint32_t height,
 		uint32_t arraySize,
 		uint32_t mipLevels,
-		const D3D12_CLEAR_VALUE* pOptimizedClearValue,
+        uint32_t sampleCount = 1,
+        uint32_t sampleQuality = 0,
+        D3D12_RESOURCE_FLAGS flags = D3D12_RESOURCE_FLAG_NONE,
+        D3D12_TEXTURE_LAYOUT layout = D3D12_TEXTURE_LAYOUT_UNKNOWN,
+		const D3D12_CLEAR_VALUE* pOptimizedClearValue = nullptr,
 		D3D12_RESOURCE_STATES initialState = D3D12_RESOURCE_STATE_COMMON);
 
 	ID3D12DescriptorHeap* CreateDescriptorHeap(const D3D12_DESCRIPTOR_HEAP_DESC* desc);

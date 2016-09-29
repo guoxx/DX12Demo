@@ -29,8 +29,8 @@ public:
 
 	CD3DX12_ROOT_PARAMETER& operator[](uint32_t idx)
 	{
-		assert(idx < m_RootParams.size());
-		return m_RootParams[idx];
+		assert(idx < m_NumRootParams);
+		return m_RootParams.get()[idx];
 	}
 
 	void End();
@@ -51,6 +51,8 @@ private:
 	D3D12_ROOT_SIGNATURE_FLAGS m_Flags;
 	uint32_t m_NumInitializedStaticSamplers;
 
-	std::vector<CD3DX12_ROOT_PARAMETER> m_RootParams;
-	std::vector<CD3DX12_STATIC_SAMPLER_DESC> m_StaticSamplers;
+	uint32_t m_NumRootParams;
+	uint32_t m_NumStaticSamplers;
+	std::unique_ptr<CD3DX12_ROOT_PARAMETER[]> m_RootParams;
+	std::unique_ptr<CD3DX12_STATIC_SAMPLER_DESC[]> m_StaticSamplers;
 };

@@ -64,7 +64,7 @@ void DX12GraphicContext::DrawIndexed(uint32_t indexCount, uint32_t startIndexLoc
 
 void DX12GraphicContext::CopyResource(DX12GpuResource* srcResource, DX12GpuResource* dstResource)
 {
-	m_CommandList->CopyResource(srcResource->GetGpuResource(), dstResource->GetGpuResource());
+	m_CommandList->CopyResource(dstResource->GetGpuResource(), srcResource->GetGpuResource());
 }
 
 void DX12GraphicContext::ClearRenderTarget(DX12ColorSurface * pColorSurface, float r, float g, float b, float a)
@@ -95,4 +95,8 @@ void DX12GraphicContext::SetViewport(uint32_t topLeftX, uint32_t topLeftY, uint3
 {
     D3D12_VIEWPORT viewport = { (float)topLeftX, (float)topLeftY, (float)(width), (float)(height) };
     m_CommandList->RSSetViewports(1, &viewport);
+
+	// TODO: remove this code
+    D3D12_RECT scissorRect = { (float)topLeftX, (float)topLeftY, (float)(topLeftX + width), (float)(topLeftY + height) };
+    m_CommandList->RSSetScissorRects(1, &scissorRect);
 }

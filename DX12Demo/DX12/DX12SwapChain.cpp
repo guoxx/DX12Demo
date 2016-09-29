@@ -26,6 +26,7 @@ DX12SwapChain::DX12SwapChain(DX12Device* device, const GFX_WHND hwnd, uint32_t b
 
 	m_SwapChain = device->CreateSwapChain(&swapChainDesc, hwnd);
 
+	m_BackBufferIdx = 0;
 	for (uint32_t i = 0; i < m_BackBuffers.size(); ++i)
 	{
 		ComPtr<ID3D12Resource> backBuffer;

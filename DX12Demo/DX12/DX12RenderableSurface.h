@@ -19,6 +19,9 @@ protected:
 		uint32_t height,
 		uint32_t arraySize,
 		uint32_t mipLevels,
+        uint32_t sampleCount,
+        uint32_t sampleQuality,
+        D3D12_RESOURCE_FLAGS flags,
 		const D3D12_CLEAR_VALUE* pOptimizedClearValue);
 };
 

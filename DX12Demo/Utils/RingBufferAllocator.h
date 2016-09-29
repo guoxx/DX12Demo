@@ -31,6 +31,7 @@ public:
 
 	void Free(uint64_t ptr)
 	{
+		(void)ptr;
 	}
 
 private:

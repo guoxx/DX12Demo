@@ -20,13 +20,18 @@ void DX12ColorSurface::InitAs2dSurface(DX12Device * device, DXGI_FORMAT fmt, uin
 
 void DX12ColorSurface::InitAs2dSurface(DX12Device* device, DXGI_FORMAT fmt, uint32_t width, uint32_t height, uint32_t mipLevels)
 {
+	uint32_t arraySize = 1;
+	uint32_t sampleCount = 1;
+	uint32_t sampleQuality = 0;
+	D3D12_RESOURCE_FLAGS flags = D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET;
+
 	D3D12_CLEAR_VALUE optimizedClearValue;
 	optimizedClearValue.Format = fmt;
 	optimizedClearValue.Color[0] = 0.0f;
 	optimizedClearValue.Color[1] = 0.0f;
 	optimizedClearValue.Color[2] = 0.0f;
 	optimizedClearValue.Color[3] = 0.0f;
-	Init(device, fmt, width, height, 1, mipLevels, &optimizedClearValue);
+	Init(device, fmt, width, height, arraySize, mipLevels, sampleCount, sampleQuality, flags, &optimizedClearValue);
 
 	CreateView(device);
 }

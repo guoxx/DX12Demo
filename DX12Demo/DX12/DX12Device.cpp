@@ -89,13 +89,17 @@ ID3D12Resource * DX12Device::CreateCommittedTexture2DInDefaultHeap(DXGI_FORMAT f
 	uint32_t height,
 	uint32_t arraySize,
 	uint32_t mipLevels,
+	uint32_t sampleCount,
+	uint32_t sampleQuality,
+	D3D12_RESOURCE_FLAGS flags,
+	D3D12_TEXTURE_LAYOUT layout,
 	const D3D12_CLEAR_VALUE* pOptimizedClearValue,
 	D3D12_RESOURCE_STATES initialState)
 {
 	ID3D12Resource* pResource = nullptr;
 	DX::ThrowIfFailed(m_d3dDevice->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
 		D3D12_HEAP_FLAG_NONE,
-		&CD3DX12_RESOURCE_DESC::Tex2D(format, width, height, arraySize, mipLevels),
+		&CD3DX12_RESOURCE_DESC::Tex2D(format, width, height, arraySize, mipLevels, sampleCount, sampleQuality, flags, layout),
 		initialState,
 		pOptimizedClearValue,
 		IID_GRAPHICS_PPV_ARGS(&pResource)));
@@ -111,17 +115,21 @@ ID3D12DescriptorHeap * DX12Device::CreateDescriptorHeap(const D3D12_DESCRIPTOR_H
 
 uint32_t DX12Device::GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE descriptorHeapType)
 {
-	return uint32_t();
+	return m_d3dDevice->GetDescriptorHandleIncrementSize(descriptorHeapType);
 }
 
 ID3D12RootSignature * DX12Device::CreateRootSignature(const void * pBlobWithRootSignature, size_t blobLengthInBytes)
 {
-	return nullptr;
+	ID3D12RootSignature* pRootSig = nullptr;
+    DX::ThrowIfFailed(m_d3dDevice->CreateRootSignature(0, pBlobWithRootSignature, blobLengthInBytes, IID_GRAPHICS_PPV_ARGS(&pRootSig)));
+	return pRootSig;	
 }
 
 ID3D12PipelineState * DX12Device::CreateGraphicsPipelineState(const D3D12_GRAPHICS_PIPELINE_STATE_DESC * desc)
 {
-	return nullptr;
+	ID3D12PipelineState* pPSO = nullptr;
+    DX::ThrowIfFailed(m_d3dDevice->CreateGraphicsPipelineState(desc, IID_GRAPHICS_PPV_ARGS(&pPSO)));
+	return pPSO;	
 }
 
 IDXGISwapChain1 * DX12Device::CreateSwapChain(const DXGI_SWAP_CHAIN_DESC1* swapChainDesc, const GFX_WHND hwnd)
