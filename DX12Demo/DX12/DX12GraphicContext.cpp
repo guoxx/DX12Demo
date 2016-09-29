@@ -3,6 +3,9 @@
 
 #include "DX12Device.h"
 #include "DX12GpuResource.h"
+#include "DX12Buffer.h"
+#include "DX12ColorSurface.h"
+#include "DX12DepthSurface.h"
 #include "DX12RootSignature.h"
 #include "DX12PipelineState.h"
 
@@ -17,9 +20,9 @@ DX12GraphicContext::~DX12GraphicContext()
 {
 }
 
-void DX12GraphicContext::IASetIndexBuffer(const D3D12_INDEX_BUFFER_VIEW * pView)
+void DX12GraphicContext::IASetIndexBuffer(const DX12IndexBuffer* pIndexBuffer)
 {
-	m_CommandList->IASetIndexBuffer(pView);
+	m_CommandList->IASetIndexBuffer(&pIndexBuffer->GetView());
 }
 
 void DX12GraphicContext::IASetPrimitiveTopology(D3D12_PRIMITIVE_TOPOLOGY primitiveTopology)
@@ -57,4 +60,34 @@ void DX12GraphicContext::DrawIndexed(uint32_t indexCount, uint32_t startIndexLoc
 void DX12GraphicContext::CopyResource(DX12GpuResource* srcResource, DX12GpuResource* dstResource)
 {
 	m_CommandList->CopyResource(srcResource->GetGpuResource(), dstResource->GetGpuResource());
+}
+
+void DX12GraphicContext::ClearRenderTarget(DX12ColorSurface * pColorSurface, float r, float g, float b, float a)
+{
+    DirectX::XMVECTORF32 clearColor;
+	clearColor.v = {r, g, b, a};
+
+    m_CommandList->ClearRenderTargetView(pColorSurface->GetRTV().GetCpuHandle(), clearColor, 0, nullptr);
+
+}
+
+void DX12GraphicContext::ClearDepthTarget(DX12DepthSurface* pDepthSurface, float d)
+{
+    m_CommandList->ClearDepthStencilView(pDepthSurface->GetDSV().GetCpuHandle(), D3D12_CLEAR_FLAG_DEPTH, d, 0, 0, nullptr);
+}
+
+void DX12GraphicContext::SetRenderTargets(uint32_t numColorSurfaces, DX12ColorSurface * pColorSurface[], DX12DepthSurface * pDepthSurface)
+{
+	D3D12_CPU_DESCRIPTOR_HANDLE srvs[DX12MaxRenderTargetsCount];
+	for (uint32_t i = 0; i < numColorSurfaces; ++i)
+	{
+		srvs[i] = pColorSurface[i]->GetRTV().GetCpuHandle();
+	}
+	m_CommandList->OMSetRenderTargets(numColorSurfaces, srvs, false, &pDepthSurface->GetDSV().GetCpuHandle());
+}
+
+void DX12GraphicContext::SetViewport(uint32_t topLeftX, uint32_t topLeftY, uint32_t width, uint32_t height)
+{
+    D3D12_VIEWPORT viewport = { (float)topLeftX, (float)topLeftY, (float)(width), (float)(height) };
+    m_CommandList->RSSetViewports(1, &viewport);
 }
