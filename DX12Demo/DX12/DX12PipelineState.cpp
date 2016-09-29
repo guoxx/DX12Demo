@@ -86,7 +86,22 @@ bool DX12GraphicPsoCompiler::SetBlendState(D3D12_BLEND_DESC & blendDesc)
 	return true;
 }
 
-bool DX12GraphicPsoCompiler::SetRenderTargetFormat(uint32_t numRenderTargets, DXGI_FORMAT* fmts)
+bool DX12GraphicPsoCompiler::SetRenderTargetFormat(DXGI_FORMAT fmt0)
+{
+	m_PsoDesc.NumRenderTargets = 1;
+	m_PsoDesc.RTVFormats[0] = fmt0;
+	return true;
+}
+
+bool DX12GraphicPsoCompiler::SetRenderTargetFormat(DXGI_FORMAT fmt0, DXGI_FORMAT fmt1)
+{
+	m_PsoDesc.NumRenderTargets = 2;
+	m_PsoDesc.RTVFormats[0] = fmt0;
+	m_PsoDesc.RTVFormats[1] = fmt1;
+	return true;
+}
+
+bool DX12GraphicPsoCompiler::SetRenderTargetFormats(uint32_t numRenderTargets, DXGI_FORMAT* fmts)
 {
 	assert(numRenderTargets < DX12MaxRenderTargetsCount);
 	m_PsoDesc.NumRenderTargets = numRenderTargets;

@@ -53,6 +53,24 @@ DX12GraphicManager::~DX12GraphicManager()
 {
 }
 
+#ifdef _XBOX_ONE
+void DX12GraphicManager::Suspend()
+{
+	for (auto queue : m_GraphicQueues)
+	{
+		queue->SuspendX(0);
+	}
+}
+
+void DX12GraphicManager::Resume()
+{
+	for (auto queue : m_GraphicQueues)
+	{
+		queue->ResumeX();
+	}
+}
+#endif
+
 void DX12GraphicManager::CreateGraphicCommandQueues(uint32_t cnt)
 {
 	for (uint32_t i = 0; i < cnt; ++i)
@@ -95,6 +113,12 @@ void DX12GraphicManager::UpdateBufer(DX12GraphicContext* pGfxContext, DX12GpuRes
 	m_TempResources.push_back(uploadResource);
 
 	DX12GpuResource srcResource{ uploadResource };
+
+	void* pUploadData = nullptr;
+	srcResource.MapResource(0, &pUploadData);
+	std::memcpy(pUploadData, pSrcData, sizeInBytes);
+	srcResource.UnmapResource(0);
+
 	pGfxContext->CopyResource(&srcResource, pResource);
 }
 

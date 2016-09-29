@@ -22,6 +22,11 @@ public:
 
 	DX12FenceManager* GetFenceManager() const { return m_FenceManager.get(); }
 
+#ifdef _XBOX_ONE
+	void Suspend();
+	void Resume();
+#endif
+
 	void CreateGraphicCommandQueues(uint32_t cnt = 1);
 
 	// graphic context execution

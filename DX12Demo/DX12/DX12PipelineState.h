@@ -30,7 +30,9 @@ public:
 	// optional
 	bool SetBlendState(D3D12_BLEND_DESC& blendDesc);
 
-	bool SetRenderTargetFormat(uint32_t numRenderTargets, DXGI_FORMAT* fmts);
+	bool SetRenderTargetFormat(DXGI_FORMAT fmt0);
+	bool SetRenderTargetFormat(DXGI_FORMAT fmt0, DXGI_FORMAT fmt1);
+	bool SetRenderTargetFormats(uint32_t numRenderTargets, DXGI_FORMAT* fmts);
 
 	bool SetDespthStencilFormat(DXGI_FORMAT fmt);
 

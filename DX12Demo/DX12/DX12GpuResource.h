@@ -13,6 +13,10 @@ public:
 
 	ID3D12Resource* GetGpuResource() const { return m_Resource.Get(); }
 
+	void MapResource(uint32_t subresource, void** ppData);
+
+	void UnmapResource(uint32_t subresource);
+
 protected:
 	ComPtr<ID3D12Resource> m_Resource;
 };
