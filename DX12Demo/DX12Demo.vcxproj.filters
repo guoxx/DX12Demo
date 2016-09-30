@@ -30,6 +30,9 @@
     <Filter Include="DX12\Private\Texture">
       <UniqueIdentifier>{ad33998e-2df7-4d29-be9e-8f864b1b1f36}</UniqueIdentifier>
     </Filter>
+    <Filter Include="3DEngine">
+      <UniqueIdentifier>{d1b938ee-86f7-41ac-b1b0-2145995dfee7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -125,6 +128,33 @@
     <ClInclude Include="DX12\Texture\TextureLoaderTga.h">
       <Filter>DX12\Private\Texture</Filter>
     </ClInclude>
+    <ClInclude Include="3DEngine\Mesh.h">
+      <Filter>3DEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="3DEngine\tiny_obj_loader.h">
+      <Filter>3DEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="3DEngine\Material.h">
+      <Filter>3DEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="3DEngine\Actor.h">
+      <Filter>3DEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="3DEngine\Model.h">
+      <Filter>3DEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="3DEngine\Camera.h">
+      <Filter>3DEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="3DEngine\Scene.h">
+      <Filter>3DEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="3DEngine\PointLight.h">
+      <Filter>3DEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="3DEngine\ILight.h">
+      <Filter>3DEngine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -186,6 +216,30 @@
     </ClCompile>
     <ClCompile Include="DX12\Texture\tga_reader.cpp">
       <Filter>DX12\Private\Texture</Filter>
+    </ClCompile>
+    <ClCompile Include="3DEngine\Mesh.cpp">
+      <Filter>3DEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="3DEngine\Material.cpp">
+      <Filter>3DEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="3DEngine\Actor.cpp">
+      <Filter>3DEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="3DEngine\Model.cpp">
+      <Filter>3DEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="3DEngine\Camera.cpp">
+      <Filter>3DEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="3DEngine\Scene.cpp">
+      <Filter>3DEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="3DEngine\PointLight.cpp">
+      <Filter>3DEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="3DEngine\ILight.cpp">
+      <Filter>3DEngine</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

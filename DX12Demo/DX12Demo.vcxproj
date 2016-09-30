@@ -182,6 +182,15 @@
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="3DEngine\Actor.h" />
+    <ClInclude Include="3DEngine\Camera.h" />
+    <ClInclude Include="3DEngine\ILight.h" />
+    <ClInclude Include="3DEngine\Material.h" />
+    <ClInclude Include="3DEngine\Mesh.h" />
+    <ClInclude Include="3DEngine\Model.h" />
+    <ClInclude Include="3DEngine\PointLight.h" />
+    <ClInclude Include="3DEngine\Scene.h" />
+    <ClInclude Include="3DEngine\tiny_obj_loader.h" />
     <ClInclude Include="DX12Demo.h" />
     <ClInclude Include="DX12\DX12.h" />
     <ClInclude Include="DX12\DX12Buffer.h" />
@@ -215,6 +224,14 @@
     <ClInclude Include="Utils\RingBufferAllocator.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="3DEngine\Actor.cpp" />
+    <ClCompile Include="3DEngine\Camera.cpp" />
+    <ClCompile Include="3DEngine\ILight.cpp" />
+    <ClCompile Include="3DEngine\Material.cpp" />
+    <ClCompile Include="3DEngine\Mesh.cpp" />
+    <ClCompile Include="3DEngine\Model.cpp" />
+    <ClCompile Include="3DEngine\PointLight.cpp" />
+    <ClCompile Include="3DEngine\Scene.cpp" />
     <ClCompile Include="DX12Demo.cpp" />
     <ClCompile Include="DX12\DX12Buffer.cpp" />
     <ClCompile Include="DX12\DX12ColorSurface.cpp" />
