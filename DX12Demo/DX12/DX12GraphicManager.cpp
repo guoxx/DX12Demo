@@ -6,6 +6,7 @@
 #include "DX12GraphicContext.h"
 #include "DX12Fence.h"
 #include "DX12GpuResource.h"
+#include "DX12Texture.h"
 
 DX12GraphicManager* DX12GraphicManager::s_GfxManager = nullptr;
 
@@ -120,5 +121,26 @@ void DX12GraphicManager::UpdateBufer(DX12GraphicContext* pGfxContext, DX12GpuRes
 	srcResource.UnmapResource(0);
 
 	pGfxContext->CopyResource(&srcResource, pResource);
+}
+
+void DX12GraphicManager::UpdateTexture(DX12GraphicContext * pGfxContext, DX12Texture * pTexture, uint32_t subresource, void * pSrcData, uint64_t sizeInBytes)
+{
+	uint64_t uploadBufferSize = GetRequiredIntermediateSize(pTexture->GetGpuResource(), subresource, 1);
+	assert(uploadBufferSize >= sizeInBytes);
+
+	uint64_t heapOffset = m_UploadHeapAllocator.Alloc(uploadBufferSize, D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT);
+	ComPtr<ID3D12Resource> uploadResource = m_Device->CreatePlacedResource(m_UploadHeap.Get(), heapOffset, &CD3DX12_RESOURCE_DESC::Buffer({uploadBufferSize, 0}), D3D12_RESOURCE_STATE_GENERIC_READ);
+
+	// keep a reference to that resource to avoid it been released
+	m_TempResources.push_back(uploadResource);
+
+	DX12GpuResource srcResource{ uploadResource };
+
+	void* pUploadData = nullptr;
+	srcResource.MapResource(0, &pUploadData);
+	std::memcpy(pUploadData, pSrcData, sizeInBytes);
+	srcResource.UnmapResource(0);
+
+	pGfxContext->CopyResource(&srcResource, pTexture);
 }
 

@@ -6,6 +6,7 @@
 
 class DX12Device;
 class DX12GpuResource;
+class DX12Texture;
 class DX12GraphicContext;
 class DX12DescriptorManager;
 class DX12FenceManager;
@@ -38,6 +39,8 @@ public:
 	DX12DescriptorHandle RegisterResourceInDescriptorHeap(ID3D12Resource* resource, D3D12_DESCRIPTOR_HEAP_TYPE type);
 
 	void UpdateBufer(DX12GraphicContext* pGfxContext, DX12GpuResource* pResource, void* pSrcData, uint64_t sizeInBytes);
+
+	void UpdateTexture(DX12GraphicContext* pGfxContext, DX12Texture* pTexture, uint32_t subresource, void* pSrcData, uint64_t sizeInBytes);
 
 private:
 	DX12GraphicManager();
