@@ -13,39 +13,39 @@ PointLight::~PointLight()
 {
 }
 
-void PointLight::setIntensity(DirectX::XMFLOAT3 intensity)
+void PointLight::SetIntensity(DirectX::XMFLOAT3 intensity)
 {
-	_intensity = intensity;
+	m_Intensity = intensity;
 }
 
-DirectX::XMFLOAT3 PointLight::getIntensity() const
+DirectX::XMFLOAT3 PointLight::GetIntensity() const
 {
-	return _intensity;
+	return m_Intensity;
 }
 
-void PointLight::setRadius(float rStart, float rEnd)
+void PointLight::SetRadius(float rStart, float rEnd)
 {
-	_radiusStart = rStart;
-	_radiusEnd = rEnd;
+	m_RadiusStart = rStart;
+	m_RadiusEnd = rEnd;
 }
 
-float PointLight::getRadiusStart() const
+float PointLight::GetRadiusStart() const
 {
-	return _radiusStart;
+	return m_RadiusStart;
 }
 
-float PointLight::getRadiusEnd() const
+float PointLight::GetRadiusEnd() const
 {
-	return _radiusEnd;
+	return m_RadiusEnd;
 }
 
-void PointLight::getViewNearFar(float& zNear, float& zFar) const
+void PointLight::GetViewNearFar(float& zNear, float& zFar) const
 {
 	zNear = 0.01f;
-	zFar = _radiusEnd;
+	zFar = m_RadiusEnd;
 }
 
-DirectX::XMMATRIX PointLight::getViewProj(AXIS axis, uint32_t shadowMapSize) const
+DirectX::XMMATRIX PointLight::GetViewProj(AXIS axis, uint32_t shadowMapSize) const
 {
 	// tricks for seamless cubemap filtering
 	// http://www.gamedev.net/blog/73/entry-2005516-seamless-filtering-across-faces-of-dynamic-cube-map/
@@ -53,7 +53,7 @@ DirectX::XMMATRIX PointLight::getViewProj(AXIS axis, uint32_t shadowMapSize) con
 	float fov = 2.0 * atanf(halfSize/(halfSize-0.5f));
 
 	float zNear = 0.01f;
-	float zFar = _radiusEnd;
+	float zFar = m_RadiusEnd;
 	float aspect = 1.0f;
 	assert(zFar > zNear);
 
@@ -76,7 +76,7 @@ DirectX::XMMATRIX PointLight::getViewProj(AXIS axis, uint32_t shadowMapSize) con
 		{0.0f, 1.0f, 0.0f, 0.0f},		// NEGATIVE_Z
 	};
 
-	DirectX::XMVECTOR position = getPosition();
+	DirectX::XMVECTOR position = GetPosition();
 	DirectX::XMMATRIX mView = DirectX::XMMatrixLookToRH(position, axes[axis], upDir[axis]);
 	
 	DirectX::XMMATRIX mViewProj = DirectX::XMMatrixMultiply(mView, mProj);

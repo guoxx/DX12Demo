@@ -2,8 +2,6 @@
 
 #include "ILight.h"
 
-class Mesh;
-
 class PointLight : public ILight
 {
 public:
@@ -22,21 +20,19 @@ public:
 	PointLight();
 	virtual ~PointLight();
 
-	void setIntensity(DirectX::XMFLOAT3 intensity);
-	DirectX::XMFLOAT3 getIntensity() const;
+	void SetIntensity(DirectX::XMFLOAT3 intensity);
+	DirectX::XMFLOAT3 GetIntensity() const;
 
-	void setRadius(float rStart, float rEnd);
-	float getRadiusStart() const;
-	float getRadiusEnd() const;
+	void SetRadius(float rStart, float rEnd);
+	float GetRadiusStart() const;
+	float GetRadiusEnd() const;
 
-	void getViewNearFar(float& zNear, float& zFar) const;
-	DirectX::XMMATRIX getViewProj(AXIS axis, uint32_t shadowMapSize) const;
+	void GetViewNearFar(float& zNear, float& zFar) const;
+	DirectX::XMMATRIX GetViewProj(AXIS axis, uint32_t shadowMapSize) const;
 
 private:
-	DirectX::XMFLOAT3 _intensity;
-	float _radiusStart;
-	float _radiusEnd;
-
-	std::shared_ptr<Mesh> _sphere;
+	DirectX::XMFLOAT3 m_Intensity;
+	float m_RadiusStart;
+	float m_RadiusEnd;
 };
 

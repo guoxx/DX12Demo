@@ -16,7 +16,7 @@ void Scene::update(double delta)
 {
 	for (auto mod : _models)
 	{
-		mod->update();
+		mod->Update();
 	}
 }
 

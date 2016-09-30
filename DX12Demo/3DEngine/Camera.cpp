@@ -4,7 +4,7 @@
 
 Camera::Camera()
 {
-	DirectX::XMStoreFloat4x4(&_projMat, DirectX::XMMatrixIdentity());
+	DirectX::XMStoreFloat4x4(&m_ProjectionMatrix, DirectX::XMMatrixIdentity());
 }
 
 Camera::~Camera()
@@ -24,43 +24,43 @@ Camera::~Camera()
 //	_updateWorldMatrixDeferred();
 //}
 
-void Camera::setViewParams(float fovy, float aspectRatio, float zNear, float zFar)
+void Camera::SetViewParams(float fovy, float aspectRatio, float zNear, float zFar)
 {
 	DirectX::XMMATRIX mProj = DirectX::XMMatrixPerspectiveFovRH(DirectX::XMConvertToRadians(fovy), aspectRatio, zNear, zFar);
-	DirectX::XMStoreFloat4x4(&_projMat, mProj);
+	DirectX::XMStoreFloat4x4(&m_ProjectionMatrix, mProj);
 }
 
-DirectX::XMMATRIX Camera::getViewMatrix() const
+DirectX::XMMATRIX Camera::GetViewMatrix() const
 {
-	DirectX::XMMATRIX mModel = getWorldMatrix();
+	DirectX::XMMATRIX mModel = GetWorldMatrix();
 	DirectX::XMMATRIX mView = DirectX::XMMatrixInverse(nullptr, mModel);
 	return mView;
 }
 
-DirectX::XMMATRIX Camera::getInvViewMatrix() const
+DirectX::XMMATRIX Camera::GetInvViewMatrix() const
 {
-	return DirectX::XMMatrixInverse(nullptr, getViewMatrix());
+	return DirectX::XMMatrixInverse(nullptr, GetViewMatrix());
 }
 
-DirectX::XMMATRIX Camera::getProjectionMatrix() const
+DirectX::XMMATRIX Camera::GetProjectionMatrix() const
 {
-	return DirectX::XMLoadFloat4x4(&_projMat);
+	return DirectX::XMLoadFloat4x4(&m_ProjectionMatrix);
 }
 
-DirectX::XMMATRIX Camera::getInvProjectionMatrix() const
+DirectX::XMMATRIX Camera::GetInvProjectionMatrix() const
 {
-	return DirectX::XMMatrixInverse(nullptr, getProjectionMatrix());
+	return DirectX::XMMatrixInverse(nullptr, GetProjectionMatrix());
 }
 
-DirectX::XMMATRIX Camera::getViewProjectionMatrix() const
+DirectX::XMMATRIX Camera::GetViewProjectionMatrix() const
 {
-	DirectX::XMMATRIX viewMat = getViewMatrix();
-	DirectX::XMMATRIX projMat = getProjectionMatrix();
+	DirectX::XMMATRIX viewMat = GetViewMatrix();
+	DirectX::XMMATRIX projMat = GetProjectionMatrix();
 	DirectX::XMMATRIX viewPorjMat = DirectX::XMMatrixMultiply(viewMat, projMat);
 	return viewPorjMat;
 }
 
-DirectX::XMMATRIX Camera::getInvViewProjectionMatrix() const
+DirectX::XMMATRIX Camera::GetInvViewProjectionMatrix() const
 {
-	return DirectX::XMMatrixInverse(nullptr, getViewProjectionMatrix());
+	return DirectX::XMMatrixInverse(nullptr, GetViewProjectionMatrix());
 }

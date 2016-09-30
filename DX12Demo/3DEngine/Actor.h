@@ -12,56 +12,56 @@ public:
 	Actor();
 	~Actor();
 
-	void update();
+	void Update();
 
-	void setPosition(DirectX::XMVECTOR position);
-	DirectX::XMVECTOR getPosition() const;
+	void SetPosition(DirectX::XMVECTOR position);
+	DirectX::XMVECTOR GetPosition() const;
 
-	void setRotationPitchYawRoll(float pitch, float yaw, float roll);
-	void setRotationPitchYawRoll(DirectX::XMVECTOR pitchYawRollInDegrees);
-	DirectX::XMVECTOR getRotationPitchYawRoll() const;
+	void SetRotationPitchYawRoll(float pitch, float yaw, float roll);
+	void SetRotationPitchYawRoll(DirectX::XMVECTOR pitchYawRollInDegrees);
+	DirectX::XMVECTOR GetRotationPitchYawRoll() const;
 
-	void setScale(DirectX::XMVECTOR scale);
-	DirectX::XMVECTOR getScale() const;
+	void SetScale(DirectX::XMVECTOR scale);
+	DirectX::XMVECTOR GetScale() const;
 
-	DirectX::XMMATRIX getLocalMatrix() const;
-	DirectX::XMMATRIX getWorldMatrix() const;
+	DirectX::XMMATRIX GetLocalMatrix() const;
+	DirectX::XMMATRIX GetWorldMatrix() const;
 
 	// get directions in local space
-	DirectX::XMVECTOR getUp() const;
-	DirectX::XMVECTOR getDown() const;
-	DirectX::XMVECTOR getLeft() const;
-	DirectX::XMVECTOR getRight() const;
-	DirectX::XMVECTOR getForward() const;
-	DirectX::XMVECTOR getBackward() const;
+	DirectX::XMVECTOR GetUp() const;
+	DirectX::XMVECTOR GetDown() const;
+	DirectX::XMVECTOR GetLeft() const;
+	DirectX::XMVECTOR GetRight() const;
+	DirectX::XMVECTOR GetForward() const;
+	DirectX::XMVECTOR GetBackward() const;
 
 	// transformation in local space
-	void move(DirectX::XMVECTOR direction, float distance);
+	void Move(DirectX::XMVECTOR direction, float distance);
 	// rotate in local space, angle is measured by degrees
-	void rotatePitchYawRoll(float pitch, float yaw, float roll);
+	void RotatePitchYawRoll(float pitch, float yaw, float roll);
 
 protected:
 
-	void _updateLocalMatrixImmediate();
-	void _updateWorldMatrixImmediate();
+	void UpdateLocalMatrixImmediate();
+	void UpdateWorldMatrixImmediate();
 
-	void _updateLocalMatrixDeferred();
-	void _updateWorldMatrixDeferred();
+	void UpdateLocalMatrixDeferred();
+	void UpdateWorldMatrixDeferred();
 
 private:
 
-	std::weak_ptr<Actor> _parent;
-	std::vector<std::shared_ptr<Actor>> _children;
+	std::weak_ptr<Actor> m_Parent;
+	std::vector<std::shared_ptr<Actor>> m_Children;
 
 protected:
 
-	uint32_t _dirtyFlags;
+	uint32_t m_DirtyFlags;
 
-	DirectX::XMVECTOR _translation;
-	DirectX::XMVECTOR _rotationPitchYawRoll;
-	DirectX::XMVECTOR _scale;
+	DirectX::XMVECTOR m_Translation;
+	DirectX::XMVECTOR m_RotationPitchYawRoll;
+	DirectX::XMVECTOR m_Scale;
 
-	DirectX::XMFLOAT4X4 _localMatrix;
-	DirectX::XMFLOAT4X4 _worldMatrix;
+	DirectX::XMFLOAT4X4 m_LocalMatrix;
+	DirectX::XMFLOAT4X4 m_WorldMatrix;
 };
 

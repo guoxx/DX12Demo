@@ -6,9 +6,6 @@ Model::Model()
 {
 }
 
-
 Model::~Model()
 {
 }
-
-

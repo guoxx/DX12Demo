@@ -3,195 +3,195 @@
 
 
 Actor::Actor()
-	: _parent{}
-	, _children{}
-	, _dirtyFlags{0}
+	: m_Parent{}
+	, m_Children{}
+	, m_DirtyFlags{0}
 {
-	_translation = DirectX::XMVectorZero();
-	_rotationPitchYawRoll = DirectX::XMVectorZero();
-	_scale = DirectX::XMVECTOR{1, 1, 1};
+	m_Translation = DirectX::XMVectorZero();
+	m_RotationPitchYawRoll = DirectX::XMVectorZero();
+	m_Scale = DirectX::XMVECTOR{1, 1, 1};
 
-	DirectX::XMStoreFloat4x4(&_localMatrix, DirectX::XMMatrixIdentity());
-	DirectX::XMStoreFloat4x4(&_worldMatrix, DirectX::XMMatrixIdentity());
+	DirectX::XMStoreFloat4x4(&m_LocalMatrix, DirectX::XMMatrixIdentity());
+	DirectX::XMStoreFloat4x4(&m_WorldMatrix, DirectX::XMMatrixIdentity());
 }
 
 Actor::~Actor()
 {
 }
 
-void Actor::update()
+void Actor::Update()
 {
-	if (_dirtyFlags & ACTOR_DIRTY_LOCAL_MATRIX)
+	if (m_DirtyFlags & ACTOR_DIRTY_LOCAL_MATRIX)
 	{
-		_updateLocalMatrixImmediate();
+		UpdateLocalMatrixImmediate();
 	}
 
-	if (_dirtyFlags & ACTOR_DIRTY_WORLD_MATRIX)
+	if (m_DirtyFlags & ACTOR_DIRTY_WORLD_MATRIX)
 	{
-		_updateWorldMatrixImmediate();
+		UpdateWorldMatrixImmediate();
 	}
 
-	for (auto aActor : _children)
+	for (auto aActor : m_Children)
 	{
-		aActor->update();
+		aActor->Update();
 	}
 }
 
-void Actor::setPosition(DirectX::XMVECTOR position)
+void Actor::SetPosition(DirectX::XMVECTOR position)
 {
-	_translation = position;
-	_updateLocalMatrixDeferred();
+	m_Translation = position;
+	UpdateLocalMatrixDeferred();
 }
 
-DirectX::XMVECTOR Actor::getPosition() const
+DirectX::XMVECTOR Actor::GetPosition() const
 {
-	return _translation;
+	return m_Translation;
 }
 
-void Actor::setRotationPitchYawRoll(float pitch, float yaw, float roll)
+void Actor::SetRotationPitchYawRoll(float pitch, float yaw, float roll)
 {
-	setRotationPitchYawRoll(DirectX::XMVECTOR{pitch, yaw, roll, 0.0f});
+	SetRotationPitchYawRoll(DirectX::XMVECTOR{pitch, yaw, roll, 0.0f});
 }
 
-void Actor::setRotationPitchYawRoll(DirectX::XMVECTOR pitchYawRollInDegrees)
+void Actor::SetRotationPitchYawRoll(DirectX::XMVECTOR pitchYawRollInDegrees)
 {
 	float degreeToRadian = -DirectX::XM_PI / 180.0f;
-	_rotationPitchYawRoll = DirectX::XMVectorMultiply(pitchYawRollInDegrees, DirectX::XMVECTOR{degreeToRadian, degreeToRadian, degreeToRadian, degreeToRadian});
-	_updateLocalMatrixDeferred();
+	m_RotationPitchYawRoll = DirectX::XMVectorMultiply(pitchYawRollInDegrees, DirectX::XMVECTOR{degreeToRadian, degreeToRadian, degreeToRadian, degreeToRadian});
+	UpdateLocalMatrixDeferred();
 }
 
-DirectX::XMVECTOR Actor::getRotationPitchYawRoll() const
+DirectX::XMVECTOR Actor::GetRotationPitchYawRoll() const
 {
-	return _rotationPitchYawRoll;
+	return m_RotationPitchYawRoll;
 }
 
-void Actor::setScale(DirectX::XMVECTOR scale)
+void Actor::SetScale(DirectX::XMVECTOR scale)
 {
-	_scale = scale;
-	_updateLocalMatrixDeferred();
+	m_Scale = scale;
+	UpdateLocalMatrixDeferred();
 }
 
-DirectX::XMVECTOR Actor::getScale() const
+DirectX::XMVECTOR Actor::GetScale() const
 {
-	return _scale;
+	return m_Scale;
 }
 
-DirectX::XMMATRIX Actor::getLocalMatrix() const
+DirectX::XMMATRIX Actor::GetLocalMatrix() const
 {
-	assert(!(_dirtyFlags & Actor::ACTOR_DIRTY_LOCAL_MATRIX));
-	DirectX::XMMATRIX mLocal = DirectX::XMLoadFloat4x4(&_localMatrix);
+	assert(!(m_DirtyFlags & Actor::ACTOR_DIRTY_LOCAL_MATRIX));
+	DirectX::XMMATRIX mLocal = DirectX::XMLoadFloat4x4(&m_LocalMatrix);
 	return mLocal;
 }
 
-DirectX::XMMATRIX Actor::getWorldMatrix() const
+DirectX::XMMATRIX Actor::GetWorldMatrix() const
 {
-	assert(!(_dirtyFlags & Actor::ACTOR_DIRTY_WORLD_MATRIX));
-	DirectX::XMMATRIX mWorld = DirectX::XMLoadFloat4x4(&_worldMatrix);
+	assert(!(m_DirtyFlags & Actor::ACTOR_DIRTY_WORLD_MATRIX));
+	DirectX::XMMATRIX mWorld = DirectX::XMLoadFloat4x4(&m_WorldMatrix);
 	return mWorld;
 }
 
-DirectX::XMVECTOR Actor::getUp() const
+DirectX::XMVECTOR Actor::GetUp() const
 {
-	DirectX::XMVECTOR upDir{_localMatrix._21, _localMatrix._22, _localMatrix._23, 0};
+	DirectX::XMVECTOR upDir{m_LocalMatrix._21, m_LocalMatrix._22, m_LocalMatrix._23, 0};
 	return DirectX::XMVector3Normalize(upDir);
 }
 
-DirectX::XMVECTOR Actor::getDown() const
+DirectX::XMVECTOR Actor::GetDown() const
 {
-	DirectX::XMVECTOR downDir{-_localMatrix._21, -_localMatrix._22, -_localMatrix._23, 0};
+	DirectX::XMVECTOR downDir{-m_LocalMatrix._21, -m_LocalMatrix._22, -m_LocalMatrix._23, 0};
 	return DirectX::XMVector3Normalize(downDir);
 }
 
-DirectX::XMVECTOR Actor::getLeft() const
+DirectX::XMVECTOR Actor::GetLeft() const
 {
-	DirectX::XMVECTOR leftDir{_localMatrix._11, _localMatrix._12, _localMatrix._13, 0};
+	DirectX::XMVECTOR leftDir{m_LocalMatrix._11, m_LocalMatrix._12, m_LocalMatrix._13, 0};
 	return DirectX::XMVector3Normalize(leftDir);
 }
 
-DirectX::XMVECTOR Actor::getRight() const
+DirectX::XMVECTOR Actor::GetRight() const
 {
-	DirectX::XMVECTOR rightDir{-_localMatrix._11, -_localMatrix._12, -_localMatrix._13, 0};
+	DirectX::XMVECTOR rightDir{-m_LocalMatrix._11, -m_LocalMatrix._12, -m_LocalMatrix._13, 0};
 	return DirectX::XMVector3Normalize(rightDir);
 }
 
-DirectX::XMVECTOR Actor::getForward() const
+DirectX::XMVECTOR Actor::GetForward() const
 {
 	// right hand coordinate
-	DirectX::XMVECTOR forwardDir{-_localMatrix._31, -_localMatrix._32, -_localMatrix._33, 0};
+	DirectX::XMVECTOR forwardDir{-m_LocalMatrix._31, -m_LocalMatrix._32, -m_LocalMatrix._33, 0};
 	return DirectX::XMVector3Normalize(forwardDir);
 }
 
-DirectX::XMVECTOR Actor::getBackward() const
+DirectX::XMVECTOR Actor::GetBackward() const
 {
 	// right hand coordinate
-	DirectX::XMVECTOR backwardDir{_localMatrix._31, _localMatrix._32, _localMatrix._33, 0};
+	DirectX::XMVECTOR backwardDir{m_LocalMatrix._31, m_LocalMatrix._32, m_LocalMatrix._33, 0};
 	return DirectX::XMVector3Normalize(backwardDir);
 }
 
-void Actor::move(DirectX::XMVECTOR direction, float distance)
+void Actor::Move(DirectX::XMVECTOR direction, float distance)
 {
-	_translation = DirectX::XMVectorMultiplyAdd(direction, DirectX::XMVECTOR{distance, distance, distance, distance}, _translation);
-	_updateLocalMatrixDeferred();
+	m_Translation = DirectX::XMVectorMultiplyAdd(direction, DirectX::XMVECTOR{distance, distance, distance, distance}, m_Translation);
+	UpdateLocalMatrixDeferred();
 }
 
-void Actor::rotatePitchYawRoll(float pitch, float yaw, float roll)
+void Actor::RotatePitchYawRoll(float pitch, float yaw, float roll)
 {
 	DirectX::XMVECTOR rotation = DirectX::XMVECTOR{DirectX::XMConvertToRadians(pitch), DirectX::XMConvertToRadians(yaw), DirectX::XMConvertToRadians(roll), 0};
-	_rotationPitchYawRoll = DirectX::XMVectorAdd(_rotationPitchYawRoll, rotation);
-	_updateLocalMatrixDeferred();
+	m_RotationPitchYawRoll = DirectX::XMVectorAdd(m_RotationPitchYawRoll, rotation);
+	UpdateLocalMatrixDeferred();
 }
 
-void Actor::_updateLocalMatrixImmediate()
+void Actor::UpdateLocalMatrixImmediate()
 {
 	if (true)
 	//if (_dirtyFlags & ACTOR_DIRTY_LOCAL_MATRIX)
 	{
-		DirectX::XMMATRIX mTrans = DirectX::XMMatrixTranslationFromVector(_translation);
-		DirectX::XMMATRIX mRot = DirectX::XMMatrixRotationRollPitchYawFromVector(_rotationPitchYawRoll);
-		DirectX::XMMATRIX mScale = DirectX::XMMatrixScalingFromVector(_scale);
+		DirectX::XMMATRIX mTrans = DirectX::XMMatrixTranslationFromVector(m_Translation);
+		DirectX::XMMATRIX mRot = DirectX::XMMatrixRotationRollPitchYawFromVector(m_RotationPitchYawRoll);
+		DirectX::XMMATRIX mScale = DirectX::XMMatrixScalingFromVector(m_Scale);
 		// mRot * mTrans * mScale
 		DirectX::XMMATRIX mLocal = DirectX::XMMatrixMultiply(DirectX::XMMatrixMultiply(mRot, mTrans), mScale);
-		DirectX::XMStoreFloat4x4(&_localMatrix, mLocal);
+		DirectX::XMStoreFloat4x4(&m_LocalMatrix, mLocal);
 
-		_dirtyFlags &= (~ACTOR_DIRTY_LOCAL_MATRIX);
+		m_DirtyFlags &= (~ACTOR_DIRTY_LOCAL_MATRIX);
 	}
 }
 
-void Actor::_updateWorldMatrixImmediate()
+void Actor::UpdateWorldMatrixImmediate()
 {
 	if (true)
 	//if (_dirtyFlags & ACTOR_DIRTY_WORLD_MATRIX)
 	{
-		auto parent = _parent.lock();
+		auto parent = m_Parent.lock();
 		if (parent)
 		{
-			parent->_updateWorldMatrixImmediate();	
-			DirectX::XMMATRIX parentWorldMatrix = parent->getWorldMatrix();
-			_updateLocalMatrixImmediate();
-			DirectX::XMMATRIX currentLocalMatrix = getLocalMatrix();
+			parent->UpdateWorldMatrixImmediate();	
+			DirectX::XMMATRIX parentWorldMatrix = parent->GetWorldMatrix();
+			UpdateLocalMatrixImmediate();
+			DirectX::XMMATRIX currentLocalMatrix = GetLocalMatrix();
 			DirectX::XMMATRIX mWorld = DirectX::XMMatrixMultiply(currentLocalMatrix, parentWorldMatrix);
-			DirectX::XMStoreFloat4x4(&_worldMatrix, mWorld);
+			DirectX::XMStoreFloat4x4(&m_WorldMatrix, mWorld);
 		}
 		else
 		{
-			_updateLocalMatrixImmediate();
-			_worldMatrix = _localMatrix;
+			UpdateLocalMatrixImmediate();
+			m_WorldMatrix = m_LocalMatrix;
 		}
 
-		_dirtyFlags &= (~ACTOR_DIRTY_WORLD_MATRIX);
+		m_DirtyFlags &= (~ACTOR_DIRTY_WORLD_MATRIX);
 	}
 }
 
-void Actor::_updateLocalMatrixDeferred()
+void Actor::UpdateLocalMatrixDeferred()
 {
-	_updateLocalMatrixImmediate();
-	_updateWorldMatrixImmediate();
+	UpdateLocalMatrixImmediate();
+	UpdateWorldMatrixImmediate();
 	//_dirtyFlags |= Actor::ACTOR_DIRTY_LOCAL_MATRIX;	
 	//_dirtyFlags |= Actor::ACTOR_DIRTY_WORLD_MATRIX;
 }
 
-void Actor::_updateWorldMatrixDeferred()
+void Actor::UpdateWorldMatrixDeferred()
 {
-	_updateWorldMatrixImmediate();
+	UpdateWorldMatrixImmediate();
 	//_dirtyFlags |= Actor::ACTOR_DIRTY_WORLD_MATRIX;	
 }

@@ -10,20 +10,20 @@ public:
 
 	//void lookAt(DirectX::XMVECTOR eye, DirectX::XMVECTOR target, DirectX::XMVECTOR up);
 
-	void setViewParams(float fovy, float aspectRatio, float zNear, float zFar);
+	void SetViewParams(float fovy, float aspectRatio, float zNear, float zFar);
 
-	DirectX::XMMATRIX getViewMatrix() const;
-	DirectX::XMMATRIX getInvViewMatrix() const;
+	DirectX::XMMATRIX GetViewMatrix() const;
+	DirectX::XMMATRIX GetInvViewMatrix() const;
 
-	DirectX::XMMATRIX getProjectionMatrix() const;
-	DirectX::XMMATRIX getInvProjectionMatrix() const;
+	DirectX::XMMATRIX GetProjectionMatrix() const;
+	DirectX::XMMATRIX GetInvProjectionMatrix() const;
 
-	DirectX::XMMATRIX getViewProjectionMatrix() const;
-	DirectX::XMMATRIX getInvViewProjectionMatrix() const;
+	DirectX::XMMATRIX GetViewProjectionMatrix() const;
+	DirectX::XMMATRIX GetInvViewProjectionMatrix() const;
 
 private:
 
 	// column-major matrix data
-	DirectX::XMFLOAT4X4 _projMat;
+	DirectX::XMFLOAT4X4 m_ProjectionMatrix;
 };
 
