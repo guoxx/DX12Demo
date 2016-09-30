@@ -37,6 +37,8 @@ public:
 
 	void DrawIndexed(uint32_t indexCount, uint32_t startIndexLocation, int32_t baseVertexLocation);
 
+	void CopyTextureRegion(const D3D12_TEXTURE_COPY_LOCATION *pDst, uint32_t dstX, uint32_t dstY, uint32_t dstZ, const D3D12_TEXTURE_COPY_LOCATION *pSrc, const D3D12_BOX *pSrcBox);
+
 	void CopyResource(DX12GpuResource* srcResource, DX12GpuResource* dstResource);
 
 	void ClearRenderTarget(DX12ColorSurface* pColorSurface, float r, float g, float b, float a);

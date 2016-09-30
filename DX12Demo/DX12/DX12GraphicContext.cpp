@@ -69,6 +69,11 @@ void DX12GraphicContext::DrawIndexed(uint32_t indexCount, uint32_t startIndexLoc
 	m_CommandList->DrawIndexedInstanced(indexCount, 1, startIndexLocation, baseVertexLocation, 0);
 }
 
+void DX12GraphicContext::CopyTextureRegion(const D3D12_TEXTURE_COPY_LOCATION * pDst, uint32_t dstX, uint32_t dstY, uint32_t dstZ, const D3D12_TEXTURE_COPY_LOCATION * pSrc, const D3D12_BOX * pSrcBox)
+{
+	m_CommandList->CopyTextureRegion(pDst, dstX, dstY, dstZ, pSrc, pSrcBox);
+}
+
 void DX12GraphicContext::CopyResource(DX12GpuResource* srcResource, DX12GpuResource* dstResource)
 {
 	m_CommandList->CopyResource(dstResource->GetGpuResource(), srcResource->GetGpuResource());
