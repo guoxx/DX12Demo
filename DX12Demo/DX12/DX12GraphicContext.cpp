@@ -8,6 +8,8 @@
 #include "DX12DepthSurface.h"
 #include "DX12RootSignature.h"
 #include "DX12PipelineState.h"
+#include "DX12DescriptorHandle.h"
+
 
 DX12GraphicContext::DX12GraphicContext(DX12Device* device)
 	: DX12CommandContext(device)
@@ -45,6 +47,11 @@ void DX12GraphicContext::SetGraphicsRoot32BitConstants(uint32_t rootParameterInd
 void DX12GraphicContext::SetGraphicsRootStructuredBuffer(uint32_t rootParameterIndex, const DX12StructuredBuffer * pStructuredBuffer)
 {
 	m_CommandList->SetGraphicsRootShaderResourceView(rootParameterIndex, pStructuredBuffer->GetGpuResource()->GetGPUVirtualAddress());
+}
+
+void DX12GraphicContext::SetGraphicsRootDescriptorTable(uint32_t rootParameterIndex, DX12DescriptorHandle baseDescriptorHandle)
+{
+	m_CommandList->SetGraphicsRootDescriptorTable(rootParameterIndex, baseDescriptorHandle.GetGpuHandle());
 }
 
 void DX12GraphicContext::SetGraphicsRootSignature(DX12RootSignature * pRootSig)

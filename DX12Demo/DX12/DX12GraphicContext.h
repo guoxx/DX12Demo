@@ -10,6 +10,7 @@ class DX12ColorSurface;
 class DX12DepthSurface;
 class DX12RootSignature;
 class DX12PipelineState;
+class DX12DescriptorHandle;
 
 class DX12GraphicContext : public DX12CommandContext
 {
@@ -27,6 +28,8 @@ public:
 	void SetGraphicsRoot32BitConstants(uint32_t rootParameterIndex, uint32_t num32BitValuesToSet, const void *pSrcData, uint32_t destOffsetIn32BitValues);
 
 	void SetGraphicsRootStructuredBuffer(uint32_t rootParameterIndex, const DX12StructuredBuffer* pStructuredBuffer);
+
+	void SetGraphicsRootDescriptorTable(uint32_t rootParameterIndex, DX12DescriptorHandle baseDescriptorHandle);
 
 	void SetGraphicsRootSignature(DX12RootSignature* pRootSig);
 

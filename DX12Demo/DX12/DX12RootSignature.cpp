@@ -61,6 +61,14 @@ void DX12RootSignatureCompiler::UnsetFlag(D3D12_ROOT_SIGNATURE_FLAGS flags)
 	m_Flags &= ~flags;
 }
 
+void DX12RootSignatureCompiler::InitStaticSampler(const CD3DX12_STATIC_SAMPLER_DESC& desc)
+{
+	assert(m_NumInitializedStaticSamplers < m_NumStaticSamplers);
+
+	m_StaticSamplers.get()[m_NumInitializedStaticSamplers] = desc;
+	m_NumInitializedStaticSamplers += 1;
+}
+
 void DX12RootSignatureCompiler::InitStaticSampler(uint32_t shaderRegister, const D3D12_SAMPLER_DESC& staticSamplerDesc, D3D12_SHADER_VISIBILITY visibility)
 {
 	assert(m_NumInitializedStaticSamplers < m_NumStaticSamplers);

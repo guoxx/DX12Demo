@@ -25,6 +25,7 @@ public:
 	void SetFlag(D3D12_ROOT_SIGNATURE_FLAGS flags);
 	void UnsetFlag(D3D12_ROOT_SIGNATURE_FLAGS flags);
 
+	void InitStaticSampler(const CD3DX12_STATIC_SAMPLER_DESC& desc);
 	void InitStaticSampler(uint32_t shaderRegister, const D3D12_SAMPLER_DESC& staticSamplerDesc, D3D12_SHADER_VISIBILITY visibility = D3D12_SHADER_VISIBILITY_ALL);
 
 	CD3DX12_ROOT_PARAMETER& operator[](uint32_t idx)

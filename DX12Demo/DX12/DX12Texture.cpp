@@ -21,6 +21,8 @@ DX12Texture::DX12Texture(DX12Device* device, DXGI_FORMAT fmt, uint32_t width, ui
 	D3D12_RESOURCE_STATES initialState = D3D12_RESOURCE_STATE_GENERIC_READ;
 
 	m_Resource = device->CreateCommittedTexture2DInDefaultHeap(m_Format, m_Width, m_Height, arraySize, m_MipLevels, sampleCount, sampleQuality, flags, layout, nullptr, initialState);
+
+	CreateView(device);
 }
 
 DX12Texture::~DX12Texture()
