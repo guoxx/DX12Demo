@@ -2,8 +2,12 @@
 
 #include "../DX12/DX12.h"
 
+class Model;
+
 class Mesh
 {
+	friend class Model;
+
 public:
 	Mesh();
 	~Mesh();
