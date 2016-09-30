@@ -27,18 +27,15 @@
     <Filter Include="Utils">
       <UniqueIdentifier>{a8e4b419-2df3-4a93-9152-36b873c46b59}</UniqueIdentifier>
     </Filter>
+    <Filter Include="DX12\Private\Texture">
+      <UniqueIdentifier>{ad33998e-2df7-4d29-be9e-8f864b1b1f36}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
       <Filter>Sources</Filter>
     </ClInclude>
     <ClInclude Include="StepTimer.h">
-      <Filter>Sources</Filter>
-    </ClInclude>
-    <ClInclude Include="TextureTga.h">
-      <Filter>Sources</Filter>
-    </ClInclude>
-    <ClInclude Include="tga_reader.h">
       <Filter>Sources</Filter>
     </ClInclude>
     <ClInclude Include="DX12\DX12.h">
@@ -122,12 +119,15 @@
     <ClInclude Include="Utils\RingBufferAllocator.h">
       <Filter>Utils</Filter>
     </ClInclude>
+    <ClInclude Include="DX12\Texture\tga_reader.h">
+      <Filter>DX12\Private\Texture</Filter>
+    </ClInclude>
+    <ClInclude Include="DX12\Texture\TextureLoaderTga.h">
+      <Filter>DX12\Private\Texture</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
-      <Filter>Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="tga_reader.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
     <ClCompile Include="DX12\DX12Device.cpp">
@@ -183,6 +183,9 @@
     </ClCompile>
     <ClCompile Include="DX12\DX12DepthSurface.cpp">
       <Filter>DX12\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="DX12\Texture\tga_reader.cpp">
+      <Filter>DX12\Private\Texture</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

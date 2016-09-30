@@ -6,9 +6,9 @@
 
 #include "tga_reader.h"
 
-class TextureReaderTga {
+class TextureLoaderTga {
 public:
-    TextureReaderTga()
+    TextureLoaderTga()
     : m_Width(0)
     , m_Height(0)
     , m_DataSize(0)
@@ -16,7 +16,7 @@ public:
     {
     }
 
-    ~TextureReaderTga()
+    ~TextureLoaderTga()
     {
         if (m_Data != NULL)
         {
