@@ -144,6 +144,7 @@
     <ClCompile Include="DX12\DX12RootSignature.cpp" />
     <ClCompile Include="DX12\DX12SwapChain.cpp" />
     <ClCompile Include="DX12\DX12Texture.cpp" />
+    <ClCompile Include="DX12\Texture\tga_reader.cpp" />
     <ClCompile Include="DXSample.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -151,7 +152,6 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.h</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="tga_reader.cpp" />
     <ClCompile Include="Win10\Main.cpp" />
     <ClCompile Include="Win10\Win32Application.cpp" />
   </ItemGroup>
@@ -179,11 +179,11 @@
     <ClInclude Include="DX12\DX12SwapChain.h" />
     <ClInclude Include="DX12\DX12Texture.h" />
     <ClInclude Include="DX12\Hash.h" />
+    <ClInclude Include="DX12\Texture\TextureLoaderTga.h" />
+    <ClInclude Include="DX12\Texture\tga_reader.h" />
     <ClInclude Include="DXSample.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="StepTimer.h" />
-    <ClInclude Include="TextureTga.h" />
-    <ClInclude Include="tga_reader.h" />
     <ClInclude Include="Utils\Heaponly.h" />
     <ClInclude Include="Utils\Noncopyable.h" />
     <ClInclude Include="Utils\Nonmovable.h" />
