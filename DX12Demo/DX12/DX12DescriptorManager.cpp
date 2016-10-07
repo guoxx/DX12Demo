@@ -8,11 +8,12 @@ DX12DescriptorManager::DX12DescriptorManager(DX12Device * device)
 	for (uint32_t i = 0; i < m_DescriptorHeaps.size(); ++i)
 	{
 		D3D12_DESCRIPTOR_HEAP_TYPE type = (D3D12_DESCRIPTOR_HEAP_TYPE)i;
+		bool isShaderVisible = (type == D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV) || (type == D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER);
 
 		D3D12_DESCRIPTOR_HEAP_DESC desc = {};
 		desc.NumDescriptors = DefaultDescriptorHeapSize;
 		desc.Type = type;
-		desc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+		desc.Flags = isShaderVisible ? D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE : D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
 		desc.NodeMask = 0;
 
 		m_DescriptorHeaps[i] = ComPtr<ID3D12DescriptorHeap>{ device->CreateDescriptorHeap(&desc) };

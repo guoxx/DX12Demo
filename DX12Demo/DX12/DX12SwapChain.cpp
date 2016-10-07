@@ -24,7 +24,11 @@ DX12SwapChain::DX12SwapChain(DX12Device* device, const GFX_WHND hwnd, uint32_t b
 	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
 #endif
 
+#ifdef _XBOX_ONE
 	m_SwapChain = device->CreateSwapChain(&swapChainDesc, hwnd);
+#else
+	m_SwapChain = device->CreateSwapChain(&swapChainDesc, hwnd, DX12GraphicManager::GetInstance()->GetSwapChainCommandQueue());
+#endif
 
 	m_BackBufferIdx = 0;
 	for (uint32_t i = 0; i < m_BackBuffers.size(); ++i)

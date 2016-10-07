@@ -47,7 +47,14 @@ DX12GraphicManager::DX12GraphicManager()
 		m_GraphicContexts[i] = std::make_shared<DX12GraphicContext>(m_Device.get());
 	}
 
-	m_UploadHeap = m_Device->CreateHeap(DX12UploadHeapSizeInBytes, D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT, D3D12_HEAP_TYPE_UPLOAD);
+	m_UploadHeap = m_Device->CreateHeap(DX12UploadHeapSizeInBytes,
+		D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT,
+		D3D12_HEAP_TYPE_UPLOAD,
+		D3D12_CPU_PAGE_PROPERTY_UNKNOWN,
+		D3D12_MEMORY_POOL_UNKNOWN,
+		D3D12_HEAP_FLAG_ALLOW_ONLY_BUFFERS);
+
+	m_SwapChainCommandQueue = m_Device->CreateGraphicCommandQueue(0, D3D12_COMMAND_QUEUE_FLAG_NONE, 0);
 }
 
 DX12GraphicManager::~DX12GraphicManager()

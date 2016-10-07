@@ -23,6 +23,8 @@ public:
 
 	DX12FenceManager* GetFenceManager() const { return m_FenceManager.get(); }
 
+	ID3D12CommandQueue* GetSwapChainCommandQueue() const { return m_SwapChainCommandQueue.Get(); }
+
 #ifdef _XBOX_ONE
 	void Suspend();
 	void Resume();
@@ -48,6 +50,7 @@ private:
 
 	std::unique_ptr<DX12Device> m_Device;
 	std::vector<ComPtr<ID3D12CommandQueue>> m_GraphicQueues;
+	ComPtr<ID3D12CommandQueue> m_SwapChainCommandQueue;
 
 	uint32_t m_GraphicContextIdx;
 	std::array<std::shared_ptr<DX12GraphicContext>, DX12NumGraphicContexts> m_GraphicContexts;
