@@ -3,6 +3,7 @@
 
 #include "Mesh.h"
 #include "Material.h"
+#include "Primitive.h"
 
 #pragma warning(push)
 #pragma warning(disable:4201)
@@ -11,6 +12,30 @@
 #include "tiny_obj_loader.h"
 #pragma warning(pop)
 
+void Model::_LoadMTLMaterial(void* materialData, Material* pMaterial, DX12GraphicContext* pGfxContext)
+{
+	tinyobj::material_t* pMaterialData = (tinyobj::material_t*)materialData;
+
+	pMaterial->m_Name = pMaterialData->name;
+	pMaterial->m_Ambient = DirectX::XMFLOAT3(pMaterialData->ambient[0], pMaterialData->ambient[1], pMaterialData->ambient[2]);
+	pMaterial->m_Diffuse = DirectX::XMFLOAT3(pMaterialData->diffuse[0], pMaterialData->diffuse[1], pMaterialData->diffuse[2]);
+	pMaterial->m_Specular = DirectX::XMFLOAT3(pMaterialData->specular[0], pMaterialData->specular[1], pMaterialData->specular[2]);
+	pMaterial->m_Transmittance = DirectX::XMFLOAT3(pMaterialData->transmittance[0], pMaterialData->transmittance[1], pMaterialData->transmittance[2]);
+	pMaterial->m_Emission = DirectX::XMFLOAT3(pMaterialData->emission[0], pMaterialData->emission[1], pMaterialData->emission[2]);
+	pMaterial->m_Shininess = pMaterialData->shininess;
+	pMaterial->m_Ior = pMaterialData->ior;
+	pMaterial->m_Dissolve = pMaterialData->dissolve;
+	pMaterial->m_Illum = pMaterialData->illum;
+	pMaterial->m_AmbientTexName = pMaterialData->ambient_texname;
+	pMaterial->m_DiffuseTexName = pMaterialData->diffuse_texname;
+	pMaterial->m_SpecularTexName = pMaterialData->specular_texname;
+	pMaterial->m_SpecularHighlightTexName = pMaterialData->specular_highlight_texname;
+	pMaterial->m_BumpTexName = pMaterialData->bump_texname;
+	pMaterial->m_DisplacementTexName = pMaterialData->displacement_texname;
+	pMaterial->m_AlphaTexName = pMaterialData->alpha_texname;
+	pMaterial->m_UnknownParameters = pMaterialData->unknown_parameter;
+	pMaterial->LoadTextures(pGfxContext);
+}
 
 std::vector<std::shared_ptr<Model>> Model::LoadOBJ(DX12Device* device, DX12GraphicContext* pGfxContext, const char* objFilename, const char* mtlBasepath)
 {
@@ -31,11 +56,10 @@ std::vector<std::shared_ptr<Model>> Model::LoadOBJ(DX12Device* device, DX12Graph
 		std::shared_ptr<Model> mod = std::make_shared<Model>();
 		mod->m_Name = shape.name;
 		mod->m_Mesh = std::make_shared<Mesh>();
-		mod->m_Material = std::make_shared<Material>();
 		models.push_back(mod);
 
 		{
-			// load mesh
+			// load buffers
 			bool hasNormal = false;
 			bool hasTexcoord = false;
 
@@ -103,35 +127,76 @@ std::vector<std::shared_ptr<Model>> Model::LoadOBJ(DX12Device* device, DX12Graph
 		}
 
 		{
-			// load material
-			int32_t matId = shape.mesh.material_ids[0];
-#ifdef _DEBUG
-			for (int32_t id : shape.mesh.material_ids)
-			{
-				assert(matId == id);
-			}
-#endif
-			tinyobj::material_t& material = materials[matId];
-			mod->m_Material->m_Name = material.name;
-			mod->m_Material->m_Ambient = DirectX::XMFLOAT3(material.ambient[0], material.ambient[1], material.ambient[2]);
-			mod->m_Material->m_Diffuse = DirectX::XMFLOAT3(material.diffuse[0], material.diffuse[1], material.diffuse[2]);
-			mod->m_Material->m_Specular = DirectX::XMFLOAT3(material.specular[0], material.specular[1], material.specular[2]);
-			mod->m_Material->m_Transmittance = DirectX::XMFLOAT3(material.transmittance[0], material.transmittance[1], material.transmittance[2]);
-			mod->m_Material->m_Emission = DirectX::XMFLOAT3(material.emission[0], material.emission[1], material.emission[2]);
-			mod->m_Material->m_Shininess = material.shininess;
-			mod->m_Material->m_Ior = material.ior;
-			mod->m_Material->m_Dissolve = material.dissolve;
-			mod->m_Material->m_Illum = material.illum;
-			mod->m_Material->m_AmbientTexName = material.ambient_texname;
-			mod->m_Material->m_DiffuseTexName = material.diffuse_texname;
-			mod->m_Material->m_SpecularTexName = material.specular_texname;
-			mod->m_Material->m_SpecularHighlightTexName = material.specular_highlight_texname;
-			mod->m_Material->m_BumpTexName = material.bump_texname;
-			mod->m_Material->m_DisplacementTexName = material.displacement_texname;
-			mod->m_Material->m_AlphaTexName = material.alpha_texname;
-			mod->m_Material->m_UnknownParameters = material.unknown_parameter;
+			// load primitives
+			int32_t materialId = shape.mesh.material_ids[0];
+			int32_t indexCount = 0;
 
-			mod->m_Material->LoadTextures(pGfxContext);
+			// insert default primitive
+			std::shared_ptr<Primitive> prim = std::make_shared<Primitive>();
+			mod->m_Mesh->m_Primitives.push_back(prim);
+
+			prim->m_Material = std::make_shared<Material>();
+			prim->m_Mesh = mod->m_Mesh;
+			prim->m_StartIndexLocation = 0;
+			_LoadMTLMaterial(&materials[materialId], prim->m_Material.get(), pGfxContext);
+
+			for (uint32_t i = 0; i < shape.mesh.material_ids.size(); ++i)
+			{
+				int32_t id = shape.mesh.material_ids[i];
+				if (id != materialId)
+				{
+					materialId = id;
+
+					// finalize a primitive
+					prim->m_IndexCount = indexCount;
+
+					// reset index count
+					indexCount = 0;
+
+					// add new primitive
+					prim = std::make_shared<Primitive>();
+					mod->m_Mesh->m_Primitives.push_back(prim);
+
+					prim->m_Material = std::make_shared<Material>();
+					prim->m_Mesh = mod->m_Mesh;
+					prim->m_StartIndexLocation = i * 3;
+					_LoadMTLMaterial(&materials[materialId], prim->m_Material.get(), pGfxContext);
+				}
+				else
+				{
+					indexCount += 3;
+				}
+			}
+
+			prim->m_IndexCount = indexCount;
+
+//#ifdef _DEBUG
+//			for (int32_t id : shape.mesh.material_ids)
+//			{
+//				assert(matId == id);
+//			}
+//#endif
+//			tinyobj::material_t& pMaterialData = materials[matId];
+//			mod->m_Material->m_Name = pMaterialData->name;
+//			mod->m_Material->m_Ambient = DirectX::XMFLOAT3(pMaterialData->ambient[0], pMaterialData->ambient[1], pMaterialData->ambient[2]);
+//			mod->m_Material->m_Diffuse = DirectX::XMFLOAT3(pMaterialData->diffuse[0], pMaterialData->diffuse[1], pMaterialData->diffuse[2]);
+//			mod->m_Material->m_Specular = DirectX::XMFLOAT3(pMaterialData->specular[0], pMaterialData->specular[1], pMaterialData->specular[2]);
+//			mod->m_Material->m_Transmittance = DirectX::XMFLOAT3(pMaterialData->transmittance[0], pMaterialData->transmittance[1], pMaterialData->transmittance[2]);
+//			mod->m_Material->m_Emission = DirectX::XMFLOAT3(pMaterialData->emission[0], pMaterialData->emission[1], pMaterialData->emission[2]);
+//			mod->m_Material->m_Shininess = pMaterialData->shininess;
+//			mod->m_Material->m_Ior = pMaterialData->ior;
+//			mod->m_Material->m_Dissolve = pMaterialData->dissolve;
+//			mod->m_Material->m_Illum = pMaterialData->illum;
+//			mod->m_Material->m_AmbientTexName = pMaterialData->ambient_texname;
+//			mod->m_Material->m_DiffuseTexName = pMaterialData->diffuse_texname;
+//			mod->m_Material->m_SpecularTexName = pMaterialData->specular_texname;
+//			mod->m_Material->m_SpecularHighlightTexName = pMaterialData->specular_highlight_texname;
+//			mod->m_Material->m_BumpTexName = pMaterialData->bump_texname;
+//			mod->m_Material->m_DisplacementTexName = pMaterialData->displacement_texname;
+//			mod->m_Material->m_AlphaTexName = pMaterialData->alpha_texname;
+//			mod->m_Material->m_UnknownParameters = pMaterialData->unknown_parameter;
+//
+//			mod->m_Material->LoadTextures(pGfxContext);
 		}
 	}
 

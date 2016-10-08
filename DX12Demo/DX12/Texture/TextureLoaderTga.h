@@ -69,6 +69,8 @@ public:
 		delete[] buffer;
 		buffer = nullptr;
 
+		fclose(f);
+
 		return true;
 	}
 

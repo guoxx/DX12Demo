@@ -16,8 +16,9 @@ public:
 	static std::vector<std::shared_ptr<Model>> LoadOBJ(DX12Device* device, DX12GraphicContext* pGfxContext, const char* objFilename, const char* mtlBasepath);
 
 private:
+	static void Model::_LoadMTLMaterial(void* materialData, Material* pMaterial, DX12GraphicContext* pGfxContext);
+
 	std::string m_Name;
 	std::shared_ptr<Mesh> m_Mesh;
-	std::shared_ptr<Material> m_Material;
 };
 
