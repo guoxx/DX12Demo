@@ -111,7 +111,7 @@ std::vector<std::shared_ptr<Model>> Model::LoadOBJ(DX12Device* device, DX12Graph
 				assert(matId == id);
 			}
 #endif
-			tinyobj::material_t& material = materials[shape.mesh.material_ids[0]];
+			tinyobj::material_t& material = materials[matId];
 			mod->m_Material->m_Name = material.name;
 			mod->m_Material->m_Ambient = DirectX::XMFLOAT3(material.ambient[0], material.ambient[1], material.ambient[2]);
 			mod->m_Material->m_Diffuse = DirectX::XMFLOAT3(material.diffuse[0], material.diffuse[1], material.diffuse[2]);
@@ -122,7 +122,6 @@ std::vector<std::shared_ptr<Model>> Model::LoadOBJ(DX12Device* device, DX12Graph
 			mod->m_Material->m_Ior = material.ior;
 			mod->m_Material->m_Dissolve = material.dissolve;
 			mod->m_Material->m_Illum = material.illum;
-			mod->m_Material->m_Dummy = material.dummy;
 			mod->m_Material->m_AmbientTexName = material.ambient_texname;
 			mod->m_Material->m_DiffuseTexName = material.diffuse_texname;
 			mod->m_Material->m_SpecularTexName = material.specular_texname;

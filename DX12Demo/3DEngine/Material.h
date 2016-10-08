@@ -30,8 +30,6 @@ private:
 	// illumination model (see http://www.fileformat.info/format/material/)
 	int m_Illum;
 
-	int m_Dummy; // Suppress padding warning.
-
 	std::string m_AmbientTexName;            // map_Ka
 	std::string m_DiffuseTexName;            // map_Kd
 	std::string m_SpecularTexName;           // map_Ks

@@ -47,7 +47,9 @@ public:
     bool LoadTga(const char* file)
 	{
 		FILE *f = fopen(file, "rb");
-		if (f == NULL) {
+		if (f == NULL)
+		{
+			assert(false);
 			return false;
 		}
 

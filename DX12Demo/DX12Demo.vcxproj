@@ -99,6 +99,9 @@
     <IntDir>..\Output\obj\$(Platform)\$(Configuration)\</IntDir>
     <LayoutDir>..\Output\$(Platform)\Layout\</LayoutDir>
   </PropertyGroup>
+  <PropertyGroup>
+    <RemoveExtraDeployFiles>true</RemoveExtraDeployFiles>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Durango'">
     <Link>
       <AdditionalDependencies>d3d12_x.lib;d3dcompiler.lib;combase.lib;kernelx.lib;uuid.lib;$(XboxExtensionsDependencies)</AdditionalDependencies>
@@ -125,7 +128,7 @@
       </Command>
     </PostBuildEvent>
     <PreBuildEvent>
-      <Command>copy "$(ProjectDir)Assets\*" "$(OutDir)"</Command>
+      <Command>xcopy /s /Y "$(ProjectDir)Assets" "$(OutDir)"</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Durango'">
@@ -154,7 +157,7 @@
       </Command>
     </PostBuildEvent>
     <PreBuildEvent>
-      <Command>copy "$(ProjectDir)Assets\*" "$(OutDir)"</Command>
+      <Command>xcopy /s /Y "$(ProjectDir)Assets" "$(OutDir)"</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Durango'">
@@ -178,7 +181,7 @@
       </Command>
     </PostBuildEvent>
     <PreBuildEvent>
-      <Command>copy "$(ProjectDir)Assets\*" "$(OutDir)"</Command>
+      <Command>xcopy /s /Y "$(ProjectDir)Assets" "$(OutDir)"</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

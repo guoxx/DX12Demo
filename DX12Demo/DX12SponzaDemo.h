@@ -3,6 +3,8 @@
 #include "DXSample.h"
 #include "DX12/DX12.h"
 
+class Scene;
+
 class DX12SponzaDemo : public DXSample
 {
 	using super = DXSample;
@@ -22,7 +24,6 @@ public:
 #endif
 
 	void DrawScene();
-	void DrawScene1();
 
 	// Rendering helpers
 	void Clear();
@@ -32,21 +33,8 @@ private:
 	void CreateDevice();
 	void CreateResources();
 	void LoadAssets();
-	void LoadAssets1();
 
 	DX12GraphicManager*									m_GraphicManager;
-	std::shared_ptr<DX12SwapChain>						m_SwapChain;
-	std::shared_ptr<DX12DepthSurface>					m_DepthSurface;
-	std::shared_ptr<DX12RootSignature>					m_RootSig;
-	std::shared_ptr<DX12PipelineState>					m_PSO;
-	std::shared_ptr<DX12StructuredBuffer>				m_VertexBuffer;
-	std::shared_ptr<DX12IndexBuffer>					m_IndexBuffer;
 
-	float												m_offsetX;
-
-	std::shared_ptr<DX12RootSignature>					m_RootSig1;
-	std::shared_ptr<DX12PipelineState>					m_PSO1;
-	std::shared_ptr<DX12StructuredBuffer>				m_VertexBuffer1;
-	std::shared_ptr<DX12IndexBuffer>					m_IndexBuffer1;
-	std::shared_ptr<DX12Texture>						m_Tex1;
+	std::shared_ptr<Scene>								m_Scene;
 };
