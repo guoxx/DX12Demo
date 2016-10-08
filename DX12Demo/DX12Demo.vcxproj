@@ -230,6 +230,7 @@
     <ClCompile Include="3DEngine\Material.cpp" />
     <ClCompile Include="3DEngine\Mesh.cpp" />
     <ClCompile Include="3DEngine\Model.cpp" />
+    <ClCompile Include="3DEngine\Model_OBJ.cpp" />
     <ClCompile Include="3DEngine\PointLight.cpp" />
     <ClCompile Include="3DEngine\Scene.cpp" />
     <ClCompile Include="DX12Demo.cpp" />

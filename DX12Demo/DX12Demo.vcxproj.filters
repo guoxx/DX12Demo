@@ -241,6 +241,9 @@
     <ClCompile Include="3DEngine\ILight.cpp">
       <Filter>3DEngine</Filter>
     </ClCompile>
+    <ClCompile Include="3DEngine\Model_OBJ.cpp">
+      <Filter>3DEngine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="XboxOne\Resources\Logo.png">
