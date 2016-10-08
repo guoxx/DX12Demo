@@ -42,9 +42,9 @@
 
 #ifdef _XBOX_ONE
 using D3D12_COMMAND_QUEUE_FLAGS = D3D12_COMMAND_QUEUE_FLAG;
-using GFX_WHND = IUnknown*;
+using GFX_HWND = IUnknown*;
 #else
-using GFX_WHND = HWND;
+using GFX_HWND = HWND;
 #endif
 
 using Microsoft::WRL::ComPtr;

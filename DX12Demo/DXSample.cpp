@@ -32,7 +32,7 @@ void DXSample::Tick()
     m_Frame++;
 }
 
-void DXSample::OnInit(GFX_WHND hwnd)
+void DXSample::OnInit(GFX_HWND hwnd)
 {
 	m_Hwnd = hwnd;
 }

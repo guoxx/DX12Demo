@@ -5,7 +5,7 @@
 #include "DX12ColorSurface.h"
 #include "DX12GraphicContextAutoExecutor.h"
 
-DX12SwapChain::DX12SwapChain(DX12Device* device, const GFX_WHND hwnd, uint32_t backBufferWidth, uint32_t backBufferHeight, DXGI_FORMAT backBufferFormat)
+DX12SwapChain::DX12SwapChain(DX12Device* device, const GFX_HWND hwnd, uint32_t backBufferWidth, uint32_t backBufferHeight, DXGI_FORMAT backBufferFormat)
 {
 	DXGI_SWAP_CHAIN_DESC1 swapChainDesc = {};
 	swapChainDesc.Width = backBufferWidth;

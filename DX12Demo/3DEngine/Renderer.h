@@ -5,7 +5,7 @@ class Scene;
 class Renderer
 {
 public:
-	Renderer(int32_t width, int32_t height);
+	Renderer(GFX_HWND hwnd, int32_t width, int32_t height);
 	~Renderer();
 
 	void Render(Scene* pScene);

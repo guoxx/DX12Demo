@@ -2,7 +2,7 @@
 #include "Renderer.h"
 
 
-Renderer::Renderer(int32_t width, int32_t height)
+Renderer::Renderer(GFX_HWND hwnd, int32_t width, int32_t height)
 	: m_Width{ width}
 	, m_Height{ height }
 {

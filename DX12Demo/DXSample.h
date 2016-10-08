@@ -10,7 +10,7 @@ public:
 
 	void Tick();
 
-	virtual void OnInit(GFX_WHND hwnd);
+	virtual void OnInit(GFX_HWND hwnd);
 	virtual void OnUpdate(DX::StepTimer const& timer) = 0;
 	virtual void OnRender() = 0;
 	virtual void OnFlip() = 0;
@@ -29,7 +29,7 @@ public:
 	uint32_t GetWidth() const           { return m_Width; }
 	uint32_t GetHeight() const          { return m_Height; }
 	const wchar_t* GetTitle() const		{ return m_Title.c_str(); }
-	const GFX_WHND GetHwnd() const		{ return m_Hwnd; }
+	const GFX_HWND GetHwnd() const		{ return m_Hwnd; }
 
 	void ParseCommandLineArgs(_In_reads_(argc) WCHAR* argv[], int argc);
 
@@ -38,7 +38,7 @@ protected:
 	uint32_t m_Width;
 	uint32_t m_Height;
 	float m_AspectRatio;
-	GFX_WHND m_Hwnd;
+	GFX_HWND m_Hwnd;
 
     // Game state
 	int64_t m_Frame;

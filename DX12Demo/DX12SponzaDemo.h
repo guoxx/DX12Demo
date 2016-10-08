@@ -13,7 +13,7 @@ class DX12SponzaDemo : public DXSample
 public:
 	DX12SponzaDemo(uint32_t width, uint32_t height, std::wstring name);
 
-	virtual void OnInit(GFX_WHND hwnd) override final;
+	virtual void OnInit(GFX_HWND hwnd) override final;
 	virtual void OnUpdate(DX::StepTimer const& timer) override final;
 	virtual void OnRender() override final;
 	virtual void OnFlip() override final;

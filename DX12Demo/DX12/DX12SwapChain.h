@@ -9,7 +9,7 @@ class DX12ColorSurface;
 class DX12SwapChain
 {
 public:
-	DX12SwapChain(DX12Device* device, const GFX_WHND hwnd, uint32_t backBufferWidth, uint32_t backBufferHeight, DXGI_FORMAT backBufferFormat);
+	DX12SwapChain(DX12Device* device, const GFX_HWND hwnd, uint32_t backBufferWidth, uint32_t backBufferHeight, DXGI_FORMAT backBufferFormat);
 	~DX12SwapChain();
 
 	void Begin();

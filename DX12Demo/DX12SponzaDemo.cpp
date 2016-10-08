@@ -20,7 +20,7 @@ DX12SponzaDemo::DX12SponzaDemo(uint32_t width, uint32_t height, std::wstring nam
 }
 
 // Initialize the Direct3D resources required to run.
-void DX12SponzaDemo::OnInit(GFX_WHND hwnd)
+void DX12SponzaDemo::OnInit(GFX_HWND hwnd)
 {
 	super::OnInit(hwnd);
 
@@ -126,7 +126,7 @@ void DX12SponzaDemo::CreateDevice()
 // Allocate all memory resources that change on a window SizeChanged event.
 void DX12SponzaDemo::CreateResources()
 {
-	m_Renderer = std::make_shared<Renderer>(m_Width, m_Height);
+	m_Renderer = std::make_shared<Renderer>(m_Hwnd, m_Width, m_Height);
 }
 
 void DX12SponzaDemo::LoadAssets()

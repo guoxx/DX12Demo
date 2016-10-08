@@ -17,7 +17,7 @@ DX12Demo::DX12Demo(uint32_t width, uint32_t height, std::wstring name)
 }
 
 // Initialize the Direct3D resources required to run.
-void DX12Demo::OnInit(GFX_WHND hwnd)
+void DX12Demo::OnInit(GFX_HWND hwnd)
 {
 	super::OnInit(hwnd);
 

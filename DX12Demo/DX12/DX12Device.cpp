@@ -132,7 +132,7 @@ ID3D12PipelineState * DX12Device::CreateGraphicsPipelineState(const D3D12_GRAPHI
 	return pPSO;	
 }
 
-IDXGISwapChain1 * DX12Device::CreateSwapChain(const DXGI_SWAP_CHAIN_DESC1* swapChainDesc, const GFX_WHND hwnd)
+IDXGISwapChain1 * DX12Device::CreateSwapChain(const DXGI_SWAP_CHAIN_DESC1* swapChainDesc, const GFX_HWND hwnd)
 {
 	IDXGISwapChain1* pSwapChain = nullptr;
 
