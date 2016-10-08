@@ -194,6 +194,7 @@
     <ClInclude Include="3DEngine\Model.h" />
     <ClInclude Include="3DEngine\PointLight.h" />
     <ClInclude Include="3DEngine\Primitive.h" />
+    <ClInclude Include="3DEngine\Renderer.h" />
     <ClInclude Include="3DEngine\Scene.h" />
     <ClInclude Include="3DEngine\tiny_obj_loader.h" />
     <ClInclude Include="DX12Demo.h" />
@@ -239,6 +240,7 @@
     <ClCompile Include="3DEngine\Model_OBJ.cpp" />
     <ClCompile Include="3DEngine\PointLight.cpp" />
     <ClCompile Include="3DEngine\Primitive.cpp" />
+    <ClCompile Include="3DEngine\Renderer.cpp" />
     <ClCompile Include="3DEngine\Scene.cpp" />
     <ClCompile Include="DX12Demo.cpp" />
     <ClCompile Include="DX12SponzaDemo.cpp" />

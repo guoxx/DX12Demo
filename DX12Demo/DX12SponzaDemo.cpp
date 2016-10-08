@@ -7,6 +7,7 @@
 
 #include "3DEngine/Scene.h"
 #include "3DEngine/Model.h"
+#include "3DEngine/Renderer.h"
 
 #ifdef _XBOX_ONE
 using namespace Windows::Xbox::Input;
@@ -73,18 +74,18 @@ void DX12SponzaDemo::OnRender()
 
     PIXBeginEvent(EVT_COLOR_RENDER, L"Render");
 
-    // Prepare the command list to render a new frame.
-    Clear();
-
 	DrawScene();
-
 
     PIXEndEvent();
 }
 
 void DX12SponzaDemo::OnFlip()
 {
-    Present();
+    PIXBeginEvent(EVT_COLOR_PRESENT, L"Flip");
+
+	m_Renderer->Flip();
+
+	PIXEndEvent();
 }
 
 void DX12SponzaDemo::OnDestroy()
@@ -94,19 +95,7 @@ void DX12SponzaDemo::OnDestroy()
 
 void DX12SponzaDemo::DrawScene()
 {
-}
-
-// Helper method to prepare the command list for rendering and clear the back buffers.
-void DX12SponzaDemo::Clear()
-{
-}
-
-// Submits the command list to the GPU and presents the back buffer contents to the screen.
-void DX12SponzaDemo::Present()
-{
-    PIXBeginEvent(EVT_COLOR_PRESENT, L"Present");
-
-	PIXEndEvent();
+	m_Renderer->Render(m_Scene.get());
 }
 
 #ifdef _XBOX_ONE
@@ -137,6 +126,7 @@ void DX12SponzaDemo::CreateDevice()
 // Allocate all memory resources that change on a window SizeChanged event.
 void DX12SponzaDemo::CreateResources()
 {
+	m_Renderer = std::make_shared<Renderer>(m_Width, m_Height);
 }
 
 void DX12SponzaDemo::LoadAssets()

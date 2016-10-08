@@ -4,6 +4,7 @@
 #include "DX12/DX12.h"
 
 class Scene;
+class Renderer;
 
 class DX12SponzaDemo : public DXSample
 {
@@ -25,10 +26,6 @@ public:
 
 	void DrawScene();
 
-	// Rendering helpers
-	void Clear();
-	void Present();
-
 private:
 	void CreateDevice();
 	void CreateResources();
@@ -36,5 +33,6 @@ private:
 
 	DX12GraphicManager*									m_GraphicManager;
 
+	std::shared_ptr<Renderer>							m_Renderer;
 	std::shared_ptr<Scene>								m_Scene;
 };
