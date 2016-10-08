@@ -7,6 +7,7 @@
 
 #include "3DEngine/Scene.h"
 #include "3DEngine/Model.h"
+#include "3DEngine/Camera.h"
 #include "3DEngine/Renderer.h"
 
 #ifdef _XBOX_ONE
@@ -95,7 +96,7 @@ void DX12SponzaDemo::OnDestroy()
 
 void DX12SponzaDemo::DrawScene()
 {
-	m_Renderer->Render(m_Scene.get());
+	m_Renderer->Render(m_Camera.get(), m_Scene.get());
 }
 
 #ifdef _XBOX_ONE
@@ -131,11 +132,16 @@ void DX12SponzaDemo::CreateResources()
 
 void DX12SponzaDemo::LoadAssets()
 {
+	m_Camera = std::make_shared<Camera>();
+	m_Camera->SetPosition(DirectX::XMVECTOR{0, 0, 3});
+	m_Camera->SetViewParams(54, m_Width * 1.0f / m_Height, 0.1f, 1000.0f);
+
 	DX12GraphicContextAutoExecutor executor;
 	DX12GraphicContext* pGfxContext = executor.GetGraphicContext();
 
 	m_Scene = std::make_shared<Scene>();
-	std::vector<std::shared_ptr<Model>> models = Model::LoadOBJ(m_GraphicManager->GetDevice(), pGfxContext, "crytek-sponza/sponza.obj", "crytek-sponza/");
+	//std::vector<std::shared_ptr<Model>> models = Model::LoadOBJ(m_GraphicManager->GetDevice(), pGfxContext, "crytek-sponza/sponza.obj", "crytek-sponza/");
+	std::vector<std::shared_ptr<Model>> models = Model::LoadOBJ(m_GraphicManager->GetDevice(), pGfxContext, "cornell-box/CornellBox-Glossy.obj", "cornell-box/");
 	for (auto m : models)
 	{
 		m_Scene->attachModel(m);

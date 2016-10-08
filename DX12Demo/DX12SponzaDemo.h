@@ -4,6 +4,7 @@
 #include "DX12/DX12.h"
 
 class Scene;
+class Camera;
 class Renderer;
 
 class DX12SponzaDemo : public DXSample
@@ -35,4 +36,5 @@ private:
 
 	std::shared_ptr<Renderer>							m_Renderer;
 	std::shared_ptr<Scene>								m_Scene;
+	std::shared_ptr<Camera>								m_Camera;
 };

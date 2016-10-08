@@ -3,6 +3,7 @@
 #include "../DX12/DX12.h"
 
 class Scene;
+class Camera;
 
 class Renderer
 {
@@ -10,7 +11,7 @@ public:
 	Renderer(GFX_HWND hwnd, int32_t width, int32_t height);
 	~Renderer();
 
-	void Render(Scene* pScene);
+	void Render(const Camera* pCamera, Scene* pScene);
 
 	void ResolveToSwapChain();
 

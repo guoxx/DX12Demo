@@ -13,7 +13,7 @@ Renderer::~Renderer()
 {
 }
 
-void Renderer::Render(Scene* pScene)
+void Renderer::Render(const Camera* pCamera, Scene* pScene)
 {
 	ResolveToSwapChain();
 }
