@@ -50,7 +50,7 @@ DirectX::XMMATRIX PointLight::GetViewProj(AXIS axis, uint32_t shadowMapSize) con
 	// tricks for seamless cubemap filtering
 	// http://www.gamedev.net/blog/73/entry-2005516-seamless-filtering-across-faces-of-dynamic-cube-map/
 	float halfSize = shadowMapSize/1.0f;
-	float fov = 2.0 * atanf(halfSize/(halfSize-0.5f));
+	float fov = 2.0f * atanf(halfSize/(halfSize-0.5f));
 
 	float zNear = 0.01f;
 	float zFar = m_RadiusEnd;

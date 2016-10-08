@@ -32,6 +32,7 @@
 #include <memory>
 #include <vector>
 #include <array>
+#include <map>
 
 #include <pix.h>
 
