@@ -13,13 +13,18 @@ public:
 
 	void Render(const Camera* pCamera, Scene* pScene);
 
-	void ResolveToSwapChain();
-
 	void Flip();
 
 private:
+	void RenderScene(const Camera* pCamera, Scene* pScene);
+
+	void ResolveToSwapChain();
+
 	int32_t m_Width;
 	int32_t m_Height;
+
+	std::shared_ptr<DX12ColorSurface> m_SceneColorSurface;
+	std::shared_ptr<DX12DepthSurface> m_SceneDepthSurface;
 
 	std::shared_ptr<DX12SwapChain> m_SwapChain;
 };
