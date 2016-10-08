@@ -155,6 +155,9 @@
     <ClInclude Include="3DEngine\ILight.h">
       <Filter>3DEngine</Filter>
     </ClInclude>
+    <ClInclude Include="DX12SponzaDemo.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -243,6 +246,9 @@
     </ClCompile>
     <ClCompile Include="3DEngine\Model_OBJ.cpp">
       <Filter>3DEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="DX12SponzaDemo.cpp">
+      <Filter>Sources</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

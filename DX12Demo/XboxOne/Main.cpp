@@ -4,6 +4,7 @@
 
 #include "pch.h"
 #include "../DX12Demo.h"
+#include "../DX12SponzaDemo.h"
 
 #include <ppltasks.h>
 
@@ -35,7 +36,7 @@ public:
         CoreApplication::Resuming +=
             ref new EventHandler<Platform::Object^>(this, &ViewProvider::OnResuming);
 
-        m_pSample.reset(new DX12Demo(1920, 1080, L"DX12Demo"));
+        m_pSample.reset(new DX12SponzaDemo(1920, 1080, L"DX12SponzaDemo"));
     }
 
     virtual void Uninitialize()
