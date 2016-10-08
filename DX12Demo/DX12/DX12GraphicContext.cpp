@@ -100,7 +100,7 @@ void DX12GraphicContext::SetRenderTargets(uint32_t numColorSurfaces, DX12ColorSu
 	{
 		srvs[i] = pColorSurface[i]->GetRTV().GetCpuHandle();
 	}
-	m_CommandList->OMSetRenderTargets(numColorSurfaces, srvs, false, &pDepthSurface->GetDSV().GetCpuHandle());
+	m_CommandList->OMSetRenderTargets(numColorSurfaces, srvs, false, pDepthSurface != nullptr ? &pDepthSurface->GetDSV().GetCpuHandle() : nullptr);
 }
 
 void DX12GraphicContext::SetViewport(uint32_t topLeftX, uint32_t topLeftY, uint32_t width, uint32_t height)
