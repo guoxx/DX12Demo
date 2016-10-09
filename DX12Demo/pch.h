@@ -76,7 +76,7 @@ namespace DX
 
 	inline void Print(const char* fmt, ...)
 	{
-		char buffer[1024];
+		char buffer[4096];
 		va_list args;
 		va_start(args, fmt);
 		vsprintf_s(buffer, sizeof(buffer), fmt, args);

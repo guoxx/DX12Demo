@@ -112,5 +112,5 @@ void Material::Apply(RenderContext* pRenderContext, DX12GraphicContext* pGfxCont
 	pGfxContext->ResourceTransitionBarrier(m_MaterialConstantsBuffer.get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_GENERIC_READ);
 
 	pGfxContext->SetGraphicsRootConstantBufferView(0, m_ViewConstantsBuffer.get());
-	pGfxContext->SetGraphicsRootConstantBufferView(0, m_MaterialConstantsBuffer.get());
+	pGfxContext->SetGraphicsRootConstantBufferView(1, m_MaterialConstantsBuffer.get());
 }

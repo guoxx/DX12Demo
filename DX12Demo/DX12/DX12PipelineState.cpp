@@ -51,9 +51,9 @@ bool DX12GraphicPsoCompiler::SetShaderFromFile(DX12ShaderType shaderType, const 
 	assert(shaderType != DX12ShaderTypeCompute);
 
 	static char* profiles[DX12ShaderTypeMax] = {
-		"vs_5_0",
-		"ps_5_0",
-		"cs_5_0",
+		"vs_5_1",
+		"ps_5_1",
+		"cs_5_1",
 	};
 	ComPtr<ID3DBlob> bin = CompileShader(file, entry, profiles[shaderType]);
 	if (bin.Get() == nullptr)
@@ -126,15 +126,15 @@ std::shared_ptr<DX12PipelineState> DX12GraphicPsoCompiler::Compile(DX12Device* d
 
 ComPtr<ID3DBlob> DX12GraphicPsoCompiler::CompileShader(const wchar_t* file, const char* entry, const char* profile) const
 {
-	ComPtr<ID3DBlob> shaderBlob;
-	ComPtr<ID3DBlob> errBlob;
+	ComPtr<ID3DBlob> shaderBlob = nullptr;
+	ComPtr<ID3DBlob> errBlob = nullptr;
 
 	uint32_t compileFlags = 0;
-#ifdef _DEBUG
-	compileFlags |= (D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION);
-#endif
-	D3DCompileFromFile(file, nullptr, nullptr, entry, profile, compileFlags, 0, &shaderBlob, &errBlob);
-	if (errBlob != nullptr && errBlob->GetBufferPointer() > 0)
+//#ifdef _DEBUG
+//	compileFlags |= (D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION);
+//#endif
+	D3DCompileFromFile(file, nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, entry, profile, compileFlags, 0, &shaderBlob, &errBlob);
+	if (D3DCompileFromFile(file, nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, entry, profile, compileFlags, 0, &shaderBlob, &errBlob) != S_OK)
 	{
 		char* errMsg = static_cast<char*>(errBlob->GetBufferPointer());
 		DX::Print("%s\n", errMsg);

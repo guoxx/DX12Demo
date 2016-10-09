@@ -1,7 +1,7 @@
 #include "Common.hlsli"
 
 #define RootSigDeclaration \
-RootSigStart \
+RootSigBegin \
 ", CBV(b0, visibility = SHADER_VISIBILITY_ALL)" \
 ", CBV(b1, visibility = SHADER_VISIBILITY_ALL)" \
 ", SRV(t0, visibility = SHADER_VISIBILITY_VERTEX)" \
@@ -37,8 +37,8 @@ struct BaseMaterial
 	int Illum;
 };
 
-ConstantBuffer<BaseMaterial> g_View : register(b0)
-ConstantBuffer<BaseMaterial> g_Material : register(b1)
+ConstantBuffer<View> g_View : register(b0);
+ConstantBuffer<BaseMaterial> g_Material : register(b1);
 StructuredBuffer<VSInput> g_VertexArray : register(t0);
 
 
