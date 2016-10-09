@@ -284,6 +284,9 @@
     <None Include="Assets\HelloTriangle.hlsl">
       <Filter>Assets</Filter>
     </None>
+    <None Include="Assets\Common.hlsli">
+      <Filter>Assets</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="XboxOne/Package.appxmanifest">

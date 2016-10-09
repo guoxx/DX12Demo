@@ -50,3 +50,8 @@ std::shared_ptr<DX12Texture> Material::LoadTexture(DX12GraphicContext* pGfxConte
 	tex.reset(DX12Texture::LoadTGAFromFile(DX12GraphicManager::GetInstance()->GetDevice(), pGfxContext, texname.c_str()));
 	return tex;	
 }
+
+void Material::Apply(DX12GraphicContext * pGfxContext)
+{
+	assert(false);
+}

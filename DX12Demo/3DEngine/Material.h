@@ -14,6 +14,8 @@ public:
 
 	void LoadTextures(DX12GraphicContext* pGfxContext);
 
+	void Apply(DX12GraphicContext* pGfxContext);
+
 private:
 	std::shared_ptr<DX12Texture> LoadTexture(DX12GraphicContext* pGfxContext, std::string texname);
 
