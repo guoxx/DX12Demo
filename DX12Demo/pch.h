@@ -40,6 +40,16 @@
 #include "Utils/Noncopyable.h"
 #include "Utils/Nonmovable.h"
 
+
+using float4x4 = DirectX::XMFLOAT4X4;
+using float4 = DirectX::XMFLOAT4;
+using float3 = DirectX::XMFLOAT3;
+using float2 = DirectX::XMFLOAT2;
+
+#define ConstantBuffer(typename) \
+struct __declspec(align(16)) typename
+
+
 #ifdef _XBOX_ONE
 using D3D12_COMMAND_QUEUE_FLAGS = D3D12_COMMAND_QUEUE_FLAG;
 using GFX_HWND = IUnknown*;

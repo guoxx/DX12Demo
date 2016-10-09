@@ -4,9 +4,10 @@
 #include "DX12Device.h"
 #include "DX12GraphicManager.h"
 
-DX12ConstantsBuffer::DX12ConstantsBuffer(DX12Device * device)
+
+DX12ConstantsBuffer::DX12ConstantsBuffer(DX12Device * device, uint64_t sizeInBytes, uint64_t alignInBytes)
 {
-	assert(false);
+	m_Resource = device->CreateCommittedBufferInDefaultHeap(sizeInBytes, alignInBytes, D3D12_RESOURCE_STATE_GENERIC_READ);
 }
 
 DX12ConstantsBuffer::~DX12ConstantsBuffer()

@@ -2,6 +2,8 @@
 
 #include "../DX12/DX12.h"
 
+#include "RenderContext.h"
+
 class Scene;
 class Camera;
 
@@ -22,6 +24,8 @@ private:
 
 	int32_t m_Width;
 	int32_t m_Height;
+
+	RenderContext m_RenderContext;	
 
 	std::shared_ptr<DX12ColorSurface> m_SceneColorSurface;
 	std::shared_ptr<DX12DepthSurface> m_SceneDepthSurface;

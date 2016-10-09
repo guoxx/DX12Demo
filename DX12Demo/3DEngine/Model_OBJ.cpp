@@ -34,7 +34,7 @@ void Model::_LoadMTLMaterial(void* materialData, Material* pMaterial, DX12Graphi
 	pMaterial->m_DisplacementTexName = pMaterialData->displacement_texname;
 	pMaterial->m_AlphaTexName = pMaterialData->alpha_texname;
 	pMaterial->m_UnknownParameters = pMaterialData->unknown_parameter;
-	pMaterial->LoadTextures(pGfxContext);
+	pMaterial->Load(pGfxContext);
 }
 
 std::vector<std::shared_ptr<Model>> Model::LoadOBJ(DX12Device* device, DX12GraphicContext* pGfxContext, const char* objFilename, const char* mtlBasepath)

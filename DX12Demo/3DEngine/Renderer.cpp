@@ -1,6 +1,11 @@
 #include "pch.h"
 #include "Renderer.h"
 
+#include "Camera.h"
+#include "Scene.h"
+#include "Model.h"
+
+
 
 Renderer::Renderer(GFX_HWND hwnd, int32_t width, int32_t height)
 	: m_Width{ width}
@@ -42,6 +47,19 @@ void Renderer::RenderScene(const Camera* pCamera, Scene* pScene)
 	// setup color and depth buffers
 	DX12ColorSurface* pColorSurfaces[] = { m_SceneColorSurface.get() };
     pGfxContext->SetRenderTargets(_countof(pColorSurfaces), pColorSurfaces, m_SceneDepthSurface.get());
+
+	pGfxContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	pGfxContext->SetViewport(0, 0, m_Width, m_Height);
+
+	m_RenderContext.SetModelMatrix(DirectX::XMMatrixIdentity());
+	m_RenderContext.SetViewMatrix(pCamera->GetViewMatrix());
+	m_RenderContext.SetProjMatrix(pCamera->GetProjectionMatrix());
+
+	for (auto model : pScene->getModels())
+	{
+		model->DrawPrimitives(&m_RenderContext, pGfxContext);
+	}
 }
 
 void Renderer::ResolveToSwapChain()

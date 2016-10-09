@@ -1,8 +1,9 @@
 #pragma once
 
+#include "../DX12/DX12.h"
+
 class Model;
-class DX12Texture;
-class DX12GraphicContext;
+class RenderContext;
 
 class Material
 {
@@ -12,9 +13,9 @@ public:
 	Material();
 	~Material();
 
-	void LoadTextures(DX12GraphicContext* pGfxContext);
+	void Load(DX12GraphicContext* pGfxContext);
 
-	void Apply(DX12GraphicContext* pGfxContext);
+	void Apply(RenderContext* pRenderContext, DX12GraphicContext* pGfxContext);
 
 private:
 	std::shared_ptr<DX12Texture> LoadTexture(DX12GraphicContext* pGfxContext, std::string texname);
@@ -48,4 +49,9 @@ private:
 	std::shared_ptr<DX12Texture> m_BumpTexture;
 	std::shared_ptr<DX12Texture> m_DisplacementTexture;
 	std::shared_ptr<DX12Texture> m_AlphaTexture;
+
+	std::shared_ptr<DX12RootSignature> m_RootSig;
+	std::shared_ptr<DX12PipelineState> m_PSO;
+	std::shared_ptr<DX12ConstantsBuffer> m_ViewConstantsBuffer;
+	std::shared_ptr<DX12ConstantsBuffer> m_MaterialConstantsBuffer;
 };

@@ -164,6 +164,9 @@
     <ClInclude Include="3DEngine\Renderer.h">
       <Filter>3DEngine</Filter>
     </ClInclude>
+    <ClInclude Include="3DEngine\RenderContext.h">
+      <Filter>3DEngine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -260,6 +263,9 @@
       <Filter>3DEngine</Filter>
     </ClCompile>
     <ClCompile Include="3DEngine\Renderer.cpp">
+      <Filter>3DEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="3DEngine\RenderContext.cpp">
       <Filter>3DEngine</Filter>
     </ClCompile>
   </ItemGroup>

@@ -7,6 +7,7 @@
 class Mesh;
 class Camera;
 class Material;
+class RenderContext;
 
 class Model : public Actor
 {
@@ -16,7 +17,7 @@ public:
 
 	static std::vector<std::shared_ptr<Model>> LoadOBJ(DX12Device* device, DX12GraphicContext* pGfxContext, const char* objFilename, const char* mtlBasepath);
 
-	void DrawPrimitives(const Camera* pCamera, DX12GraphicContext* pGfxContext);
+	void DrawPrimitives(RenderContext* pRenderContext, DX12GraphicContext* pGfxContext);
 
 private:
 	static void Model::_LoadMTLMaterial(void* materialData, Material* pMaterial, DX12GraphicContext* pGfxContext);
