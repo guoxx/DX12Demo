@@ -188,6 +188,7 @@
   <ItemGroup>
     <ClInclude Include="3DEngine\Actor.h" />
     <ClInclude Include="3DEngine\Camera.h" />
+    <ClInclude Include="3DEngine\Filters\Filter2D.h" />
     <ClInclude Include="3DEngine\ILight.h" />
     <ClInclude Include="3DEngine\Material.h" />
     <ClInclude Include="3DEngine\Mesh.h" />
@@ -234,6 +235,7 @@
   <ItemGroup>
     <ClCompile Include="3DEngine\Actor.cpp" />
     <ClCompile Include="3DEngine\Camera.cpp" />
+    <ClCompile Include="3DEngine\Filters\Filter2D.cpp" />
     <ClCompile Include="3DEngine\ILight.cpp" />
     <ClCompile Include="3DEngine\Material.cpp" />
     <ClCompile Include="3DEngine\Mesh.cpp" />
@@ -295,6 +297,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\BaseMaterial.hlsl">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Assets\IdentityFilter2D.hlsl">
       <FileType>Document</FileType>
     </None>
   </ItemGroup>

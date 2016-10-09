@@ -33,8 +33,6 @@ DX12GraphicPsoCompiler::DX12GraphicPsoCompiler()
 #ifdef _XBOX_ONE
 	m_PsoDesc.Flags = D3D12_PIPELINE_STATE_FLAG_TOOL_DEBUG;
 #endif
-
-	m_PsoDesc.RasterizerState.FrontCounterClockwise = true;
 }
 
 DX12GraphicPsoCompiler::~DX12GraphicPsoCompiler()
@@ -79,6 +77,12 @@ bool DX12GraphicPsoCompiler::SetShaderFromFile(DX12ShaderType shaderType, const 
 	default:
 		break;
 	}
+	return true;
+}
+
+bool DX12GraphicPsoCompiler::SetRasterizerState(D3D12_RASTERIZER_DESC & rasterizerDesc)
+{
+	m_PsoDesc.RasterizerState = rasterizerDesc;
 	return true;
 }
 

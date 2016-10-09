@@ -5,6 +5,7 @@
 #include "Scene.h"
 #include "Model.h"
 
+#include "Filters/Filter2D.h"
 
 
 Renderer::Renderer(GFX_HWND hwnd, int32_t width, int32_t height)
@@ -18,6 +19,8 @@ Renderer::Renderer(GFX_HWND hwnd, int32_t width, int32_t height)
 	
 	m_SceneDepthSurface = std::make_shared<DX12DepthSurface>();
 	m_SceneDepthSurface->InitAs2dSurface(DX12GraphicManager::GetInstance()->GetDevice(), DXGI_FORMAT_D32_FLOAT, width, height);
+
+	m_IdentityFilter2D = std::make_shared<Filter2D>(DX12GraphicManager::GetInstance()->GetDevice(), L"IdentityFilter2D.hlsl");
 }
 
 Renderer::~Renderer()
@@ -73,6 +76,13 @@ void Renderer::ResolveToSwapChain()
 	DX12ColorSurface* pColorSurface = m_SwapChain->GetBackBuffer();
 	DX12ColorSurface* pColorSurfaces[] = { pColorSurface };
     pGfxContext->SetRenderTargets(_countof(pColorSurfaces), pColorSurfaces, nullptr);
-    pGfxContext->ClearRenderTarget(pColorSurface, 0, 1, 1, 1);
+
+	pGfxContext->SetViewport(0, 0, m_Width, m_Height);
+
+	m_IdentityFilter2D->Apply(pGfxContext);
+	pGfxContext->ResourceTransitionBarrier(m_SceneColorSurface.get(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_GENERIC_READ);
+	pGfxContext->SetGraphicsRootDescriptorTable(0, m_SceneColorSurface->GetSRV());
+	m_IdentityFilter2D->Draw(pGfxContext);
+	pGfxContext->ResourceTransitionBarrier(m_SceneColorSurface.get(), D3D12_RESOURCE_STATE_GENERIC_READ, D3D12_RESOURCE_STATE_RENDER_TARGET);
 }
 

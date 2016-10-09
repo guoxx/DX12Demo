@@ -49,6 +49,11 @@ void Material::Load(DX12GraphicContext* pGfxContext)
 	psoCompiler.SetRoogSignature(m_RootSig.get());
 	psoCompiler.SetRenderTargetFormat(DXGI_FORMAT_R8G8B8A8_UNORM);
 	psoCompiler.SetDespthStencilFormat(DXGI_FORMAT_D32_FLOAT);
+
+	CD3DX12_RASTERIZER_DESC rasterizerDesc{ D3D12_DEFAULT };
+	rasterizerDesc.FrontCounterClockwise = true;
+	psoCompiler.SetRasterizerState(rasterizerDesc);
+
 	m_PSO = psoCompiler.Compile(DX12GraphicManager::GetInstance()->GetDevice());
 
 	m_ViewConstantsBuffer = std::make_shared<DX12ConstantsBuffer>(DX12GraphicManager::GetInstance()->GetDevice(), sizeof(View), 0);
