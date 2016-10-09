@@ -35,7 +35,6 @@ struct BaseMaterial
 	float Shininess;
 	float Ior;
 	float Dissolve;
-	int Illum;
 };
 
 ConstantBuffer<View> g_View : register(b0);

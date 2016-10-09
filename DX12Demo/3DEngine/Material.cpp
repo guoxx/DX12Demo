@@ -13,15 +13,14 @@ namespace
 
 	ConstantBuffer(BaseMaterial)
 	{
-		float3 Ambient;
-		float3 Diffuse;
-		float3 Specular;
-		float3 Transmittance;
-		float3 Emission;
-		float Shininess;
-		float Ior;
-		float Dissolve;
-		int Illum;
+		float4 Ambient;
+		float4 Diffuse;
+		float4 Specular;
+		float4 Transmittance;
+		float4 Emission;
+		float4 Shininess;
+		float4 Ior;
+		float4 Dissolve;
 	};
 }
 
@@ -106,7 +105,9 @@ void Material::Apply(RenderContext* pRenderContext, DX12GraphicContext* pGfxCont
 	DirectX::XMStoreFloat4x4(&view.mModelViewProj, DirectX::XMMatrixTranspose(pRenderContext->GetModelViewProjMatrix()));
 
 	BaseMaterial baseMaterial;
-	baseMaterial.Diffuse = m_Diffuse;
+	baseMaterial.Ambient = DirectX::XMFLOAT4{m_Ambient.x, m_Ambient.y, m_Ambient.z, 0.0f};
+	baseMaterial.Diffuse = DirectX::XMFLOAT4{m_Diffuse.x, m_Diffuse.y, m_Diffuse.z, 0.0f};
+	baseMaterial.Specular = DirectX::XMFLOAT4{m_Specular.x, m_Specular.y, m_Specular.z, 0.0f};
 
 	pGfxContext->ResourceTransitionBarrier(m_ViewConstantsBuffer.get(), D3D12_RESOURCE_STATE_GENERIC_READ, D3D12_RESOURCE_STATE_COPY_DEST);
 	DX12GraphicManager::GetInstance()->UpdateBufer(pGfxContext, m_ViewConstantsBuffer.get(), &view, sizeof(view));
