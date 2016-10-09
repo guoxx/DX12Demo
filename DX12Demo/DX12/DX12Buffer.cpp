@@ -6,6 +6,7 @@
 
 DX12ConstantsBuffer::DX12ConstantsBuffer(DX12Device * device)
 {
+	assert(false);
 }
 
 DX12ConstantsBuffer::~DX12ConstantsBuffer()

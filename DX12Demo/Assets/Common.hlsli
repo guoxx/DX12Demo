@@ -1,12 +1,19 @@
+struct View
+{
+	float4x4 mModelViewProj;
+};
 
-#define RootSigStart \
-[RootSignature("RootFlags(0)"
+ConstantBuffer<BaseMaterial> g_View : register(b0)
+
+#define RootSigElemViewCBV \
+", CBV(b0, visibility = SHADER_VISIBILITY_ALL)"
+
+
+#define RootSigBegin \
+[RootSignature("RootFlags(0)" \
+RootSigElemViewCBV
 
 #define RootSigEnd \
 )]
 
-#define RootSigElemVertexArray \
-", SRV(t0, visibility = SHADER_VISIBILITY_VERTEX)"
 
-
-StructuredBuffer<VSInput> g_VertexArray : register(t0);

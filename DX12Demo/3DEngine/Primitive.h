@@ -6,6 +6,8 @@ class Material;
 class Primitive
 {
 	friend class Model;
+	friend class Mesh;
+
 public:
 	Primitive();
 	~Primitive();

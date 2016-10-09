@@ -4,6 +4,7 @@
 
 class Model;
 class Primitive;
+class Camera;
 
 class Mesh
 {
@@ -12,6 +13,8 @@ class Mesh
 public:
 	Mesh();
 	~Mesh();
+
+	void DrawPrimitives(const Camera* pCamera, DX12GraphicContext* pGfxContext);	
 
 private:
 	std::shared_ptr<DX12StructuredBuffer> m_VertexBuffer;
