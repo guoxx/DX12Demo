@@ -36,6 +36,7 @@ public:
 	DX12GraphicContext* BegineGraphicContext();
 	void EndGraphicContext(DX12GraphicContext* ctx);
 	void ExecuteGraphicContext(DX12GraphicContext* ctx);
+	void ExecuteGraphicContextInQueue(DX12GraphicContext* ctx, ID3D12CommandQueue* pQueue);
 
 	// resource binding
 	DX12DescriptorHandle RegisterResourceInDescriptorHeap(ID3D12Resource* resource, D3D12_DESCRIPTOR_HEAP_TYPE type);

@@ -100,8 +100,12 @@ void DX12Demo::OnDestroy()
 
 void DX12Demo::DrawScene()
 {
-	DX12GraphicContextAutoExecutor executor;
+	DX12SwapChainContextAutoExecutor executor;
 	DX12GraphicContext* pGfxContext = executor.GetGraphicContext();
+
+	DX12ColorSurface* pColorSurface = m_SwapChain->GetBackBuffer();
+	DX12ColorSurface* pColorSurfaces[] = { pColorSurface };
+	pGfxContext->SetRenderTargets(_countof(pColorSurfaces), pColorSurfaces, m_DepthSurface.get());
 
 	pGfxContext->SetGraphicsRootSignature(m_RootSig.get());
 	pGfxContext->SetGraphicsRoot32BitConstants(0, 1, &m_offsetX, 0);
@@ -119,8 +123,12 @@ void DX12Demo::DrawScene()
 
 void DX12Demo::DrawScene1()
 {
-	DX12GraphicContextAutoExecutor executor;
+	DX12SwapChainContextAutoExecutor executor;
 	DX12GraphicContext* pGfxContext = executor.GetGraphicContext();
+
+	DX12ColorSurface* pColorSurface = m_SwapChain->GetBackBuffer();
+	DX12ColorSurface* pColorSurfaces[] = { pColorSurface };
+	pGfxContext->SetRenderTargets(_countof(pColorSurfaces), pColorSurfaces, m_DepthSurface.get());
 
 	pGfxContext->SetGraphicsRootSignature(m_RootSig1.get());
 
@@ -142,7 +150,7 @@ void DX12Demo::Clear()
 {
 	m_SwapChain->Begin();
 
-	DX12GraphicContextAutoExecutor executor;
+	DX12SwapChainContextAutoExecutor executor;
 	DX12GraphicContext* pGfxContext = executor.GetGraphicContext();
 
     // Clear the views.

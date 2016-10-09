@@ -49,7 +49,7 @@ DX12SwapChain::~DX12SwapChain()
 
 void DX12SwapChain::Begin()
 {
-	DX12GraphicContextAutoExecutor executor;
+	DX12SwapChainContextAutoExecutor executor;
 	DX12GraphicContext* pGfxContext = executor.GetGraphicContext();
 
 	pGfxContext->ResourceTransitionBarrier(GetBackBuffer(), D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
@@ -62,10 +62,12 @@ DX12ColorSurface * DX12SwapChain::GetBackBuffer() const
 
 void DX12SwapChain::Flip()
 {
-	DX12GraphicContextAutoExecutor executor;
-	DX12GraphicContext* pGfxContext = executor.GetGraphicContext();
+	{
+		DX12SwapChainContextAutoExecutor executor;
+		DX12GraphicContext* pGfxContext = executor.GetGraphicContext();
 
-	pGfxContext->ResourceTransitionBarrier(GetBackBuffer(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
+		pGfxContext->ResourceTransitionBarrier(GetBackBuffer(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
+	}
 
 	m_SwapChain->Present(1, 0);
 

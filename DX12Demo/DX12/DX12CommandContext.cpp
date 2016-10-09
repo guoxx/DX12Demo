@@ -30,6 +30,8 @@ void DX12CommandContext::Reset()
 	m_CommandAllocator->Reset();
 	m_CommandList->Reset(m_CommandAllocator.Get(), nullptr);
 
+	ClearState();
+
 	m_FenceHandle = DX12GraphicManager::GetInstance()->GetFenceManager()->GetFenceHandle();
 }
 
@@ -43,7 +45,6 @@ void DX12CommandContext::ExecuteInQueue(ID3D12CommandQueue* pCommandQueue)
 	ID3D12CommandList* lists[] = { m_CommandList.Get() };
 	pCommandQueue->ExecuteCommandLists(_countof(lists), lists);
 
-	ClearState();
 	DX12GraphicManager::GetInstance()->GetFenceManager()->SignalAndAdvance(pCommandQueue);
 }
 

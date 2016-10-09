@@ -2,6 +2,7 @@
 #include "DX12DescriptorManager.h"
 
 #include "DX12Device.h"
+#include "DX12GraphicContext.h"
 
 DX12DescriptorManager::DX12DescriptorManager(DX12Device * device)
 {
@@ -40,4 +41,10 @@ DX12DescriptorHandle DX12DescriptorManager::AllocateInHeap(D3D12_DESCRIPTOR_HEAP
 	handle.m_GpuHandle.ptr += offset;
 
 	return handle;
+}
+
+void DX12DescriptorManager::SetupHeapsForCommandList(DX12GraphicContext* pGfxContext)
+{
+	ID3D12DescriptorHeap* heaps[] = { m_DescriptorHeaps[D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV].Get(), m_DescriptorHeaps[D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER].Get() };
+	pGfxContext->SetDescriptorHeaps(_countof(heaps), heaps);
 }
