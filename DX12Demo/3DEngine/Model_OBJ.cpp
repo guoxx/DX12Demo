@@ -45,7 +45,7 @@ std::vector<std::shared_ptr<Model>> Model::LoadOBJ(DX12Device* device, DX12Graph
 	std::vector<tinyobj::material_t> materials;
 	std::string err;
 
-	LoadObj(shapes, materials, err, objFilename, mtlBasepath, tinyobj::triangulation | tinyobj::calculate_normals);
+	LoadObj(shapes, materials, err, objFilename, mtlBasepath);
 	if (!err.empty())
 	{
 		DX::Print("%s\n", err.c_str());
@@ -65,25 +65,25 @@ std::vector<std::shared_ptr<Model>> Model::LoadOBJ(DX12Device* device, DX12Graph
 
 			uint64_t numVertex = shape.mesh.positions.size() / 3;
 
-			uint64_t vertexDataSizeInBytes = shape.mesh.positions.size() * sizeof(float);
+			uint64_t vertexDataSizeInBytes = numVertex * sizeof(float) * 3;
 			uint64_t vertexDataStrideInBytes = sizeof(float) * 3;
 
 			if (shape.mesh.normals.size() > 0)
 			{
 				hasNormal = true;
-
-				vertexDataSizeInBytes += shape.mesh.normals.size() * sizeof(float);
-				vertexDataStrideInBytes = sizeof(float) * 3;
 				assert(numVertex == shape.mesh.normals.size() / 3);
 			}
+			assert(hasNormal);
+			vertexDataSizeInBytes += numVertex * sizeof(float) * 3;
+			vertexDataStrideInBytes += sizeof(float) * 3;
 
 			if (shape.mesh.texcoords.size() > 0)
 			{
 				hasTexcoord = true;
-				vertexDataSizeInBytes += shape.mesh.texcoords.size() * sizeof(float);
-				vertexDataStrideInBytes = sizeof(float) * 2;
 				assert(numVertex == shape.mesh.texcoords.size() / 2);
 			}
+			vertexDataSizeInBytes += numVertex * sizeof(float) * 2;
+			vertexDataStrideInBytes += sizeof(float) * 2;
 
 			uint64_t indexDataSizeInBytes = shape.mesh.indices.size() * sizeof(uint32_t);
 
@@ -109,6 +109,11 @@ std::vector<std::shared_ptr<Model>> Model::LoadOBJ(DX12Device* device, DX12Graph
 				{
 					pData[6] = shape.mesh.texcoords[i * 2 + 0];
 					pData[7] = shape.mesh.texcoords[i * 2 + 1];
+				}
+				else
+				{
+					pData[6] = 0.0f;
+					pData[7] = 0.0f;
 				}
 			}
 

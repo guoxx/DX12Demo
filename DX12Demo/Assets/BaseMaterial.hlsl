@@ -12,6 +12,7 @@ struct VSInput
 {
 	float3 Position;
 	float3 Normal;
+	float2 Texcoord;
 };
 
 struct VSOutput
