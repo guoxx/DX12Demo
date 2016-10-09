@@ -228,6 +228,7 @@
     <ClInclude Include="StepTimer.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Utils\Heaponly.h" />
+    <ClInclude Include="Utils\Helpers.h" />
     <ClInclude Include="Utils\Noncopyable.h" />
     <ClInclude Include="Utils\Nonmovable.h" />
     <ClInclude Include="Utils\RingBufferAllocator.h" />

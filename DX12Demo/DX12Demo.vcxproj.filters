@@ -173,6 +173,9 @@
     <ClInclude Include="3DEngine\Filters\Filter2D.h">
       <Filter>3DEngine\Filters</Filter>
     </ClInclude>
+    <ClInclude Include="Utils\Helpers.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">

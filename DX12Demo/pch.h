@@ -39,6 +39,7 @@
 #include "Utils/Heaponly.h"
 #include "Utils/Noncopyable.h"
 #include "Utils/Nonmovable.h"
+#include "Utils/Helpers.h"
 
 
 using float4x4 = DirectX::XMFLOAT4X4;

@@ -133,7 +133,7 @@ void DX12SponzaDemo::CreateResources()
 void DX12SponzaDemo::LoadAssets()
 {
 	m_Camera = std::make_shared<Camera>();
-	m_Camera->SetPosition(DirectX::XMVECTOR{0, 0, 3});
+	m_Camera->LookAt(DirectX::XMVECTOR{0, 1, 2}, DirectX::XMVECTOR{0, 1, 0}, DirectX::XMVECTOR{0, 1, 0});
 	m_Camera->SetViewParams(54, m_Width * 1.0f / m_Height, 0.1f, 1000.0f);
 
 	DX12GraphicContextAutoExecutor executor;

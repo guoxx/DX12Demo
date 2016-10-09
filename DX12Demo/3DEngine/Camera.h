@@ -8,7 +8,7 @@ public:
 	Camera();
 	~Camera();
 
-	//void lookAt(DirectX::XMVECTOR eye, DirectX::XMVECTOR target, DirectX::XMVECTOR up);
+	void LookAt(DirectX::XMVECTOR eye, DirectX::XMVECTOR target, DirectX::XMVECTOR up);
 
 	void SetViewParams(float fovy, float aspectRatio, float zNear, float zFar);
 

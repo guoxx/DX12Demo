@@ -11,18 +11,23 @@ Camera::~Camera()
 {
 }
 
-//void Camera::lookAt(DirectX::XMVECTOR eye, DirectX::XMVECTOR target, DirectX::XMVECTOR up)
-//{
-//	DirectX::XMMATRIX mView = DirectX::XMMatrixLookAtRH(eye, target, up);
-//	DirectX::XMMATRIX mModel = DirectX::XMMatrixInverse(nullptr, mView);
-//	DirectX::XMStoreFloat4x4(&_localMatrix, mModel);
-//
-//	// TODO: better code
-//	// this will cause _localMatrix been updated again
-//	// and lose precision due to float arithmetic
-//	DirectX::XMMatrixDecompose(&_scale, &_rotationQuat, &_translation, mModel);
-//	_updateWorldMatrixDeferred();
-//}
+void Camera::LookAt(DirectX::XMVECTOR eye, DirectX::XMVECTOR target, DirectX::XMVECTOR up)
+{
+	DirectX::XMMATRIX mView = DirectX::XMMatrixLookAtRH(eye, target, up);
+	DirectX::XMMATRIX mModel = DirectX::XMMatrixInverse(nullptr, mView);
+	DirectX::XMStoreFloat4x4(&m_LocalMatrix, mModel);
+
+	// TODO: better code
+	// this will cause _localMatrix been updated again
+	// and lose precision due to float arithmetic
+	DirectX::XMVECTOR rotationQuat;
+	DirectX::XMMatrixDecompose(&m_Scale, &rotationQuat, &m_Translation, mModel);
+	double pitch, yaw, roll;
+	EulerianToEulerAngle(rotationQuat, pitch, yaw, roll);
+	m_RotationPitchYawRoll = DirectX::XMVECTOR{ static_cast<float>(roll), static_cast<float>(yaw), static_cast<float>(pitch), 0.0f };
+
+	UpdateWorldMatrixDeferred();
+}
 
 void Camera::SetViewParams(float fovy, float aspectRatio, float zNear, float zFar)
 {
