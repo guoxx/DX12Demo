@@ -2,8 +2,9 @@
 
 #define RootSigDeclaration \
 RootSigStart \
-", SRV(t0, visibility = SHADER_VISIBILITY_VERTEX)"
-", CBV(b1, visibility = SHADER_VISIBILITY_ALL)"
+", CBV(b0, visibility = SHADER_VISIBILITY_ALL)" \
+", CBV(b1, visibility = SHADER_VISIBILITY_ALL)" \
+", SRV(t0, visibility = SHADER_VISIBILITY_VERTEX)" \
 RootSigEnd
 
 
@@ -16,6 +17,11 @@ struct VSInput
 struct VSOutput
 {
 	float4 Position : SV_POSITION;
+};
+
+struct View
+{
+	float4x4 mModelViewProj;
 };
 
 struct BaseMaterial
@@ -31,9 +37,9 @@ struct BaseMaterial
 	int Illum;
 };
 
-StructuredBuffer<VSInput> g_VertexArray : register(t0);
-
+ConstantBuffer<BaseMaterial> g_View : register(b0)
 ConstantBuffer<BaseMaterial> g_Material : register(b1)
+StructuredBuffer<VSInput> g_VertexArray : register(t0);
 
 
 RootSigDeclaration

@@ -19,7 +19,7 @@ void Mesh::DrawPrimitives(const Camera* pCamera, DX12GraphicContext* pGfxContext
 	{
 		prim->m_Material->Apply(pGfxContext);
 
-		pGfxContext->SetGraphicsRootStructuredBuffer(1, m_VertexBuffer.get());
+		pGfxContext->SetGraphicsRootStructuredBuffer(2, m_VertexBuffer.get());
 		pGfxContext->IASetIndexBuffer(m_IndexBuffer.get());
 		pGfxContext->DrawIndexed(prim->m_IndexCount, prim->m_StartIndexLocation);
 	}
