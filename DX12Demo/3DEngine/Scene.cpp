@@ -1,7 +1,8 @@
 #include "pch.h"
 #include "Scene.h"
 #include "Model.h"
-#include "PointLight.h"
+
+#include "Lights/PointLight.h"
 
 
 Scene::Scene()

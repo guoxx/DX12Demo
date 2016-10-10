@@ -36,6 +36,9 @@
     <Filter Include="3DEngine\Filters">
       <UniqueIdentifier>{87915f85-d091-4b5f-a9b7-6af349a06281}</UniqueIdentifier>
     </Filter>
+    <Filter Include="3DEngine\Lights">
+      <UniqueIdentifier>{e5f17825-3465-498c-a2d9-39d70b64763c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -152,12 +155,6 @@
     <ClInclude Include="3DEngine\Scene.h">
       <Filter>3DEngine</Filter>
     </ClInclude>
-    <ClInclude Include="3DEngine\PointLight.h">
-      <Filter>3DEngine</Filter>
-    </ClInclude>
-    <ClInclude Include="3DEngine\ILight.h">
-      <Filter>3DEngine</Filter>
-    </ClInclude>
     <ClInclude Include="DX12SponzaDemo.h">
       <Filter>Sources</Filter>
     </ClInclude>
@@ -181,6 +178,12 @@
     </ClInclude>
     <ClInclude Include="3DEngine\MaterialManager.h">
       <Filter>3DEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="3DEngine\Lights\ILight.h">
+      <Filter>3DEngine\Lights</Filter>
+    </ClInclude>
+    <ClInclude Include="3DEngine\Lights\PointLight.h">
+      <Filter>3DEngine\Lights</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -262,12 +265,6 @@
     <ClCompile Include="3DEngine\Scene.cpp">
       <Filter>3DEngine</Filter>
     </ClCompile>
-    <ClCompile Include="3DEngine\PointLight.cpp">
-      <Filter>3DEngine</Filter>
-    </ClCompile>
-    <ClCompile Include="3DEngine\ILight.cpp">
-      <Filter>3DEngine</Filter>
-    </ClCompile>
     <ClCompile Include="3DEngine\Model_OBJ.cpp">
       <Filter>3DEngine</Filter>
     </ClCompile>
@@ -291,6 +288,12 @@
     </ClCompile>
     <ClCompile Include="3DEngine\MaterialManager.cpp">
       <Filter>3DEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="3DEngine\Lights\ILight.cpp">
+      <Filter>3DEngine\Lights</Filter>
+    </ClCompile>
+    <ClCompile Include="3DEngine\Lights\PointLight.cpp">
+      <Filter>3DEngine\Lights</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

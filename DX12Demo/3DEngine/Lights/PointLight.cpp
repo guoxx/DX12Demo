@@ -1,8 +1,9 @@
 #include "pch.h"
 #include "PointLight.h"
-#include "Camera.h"
-#include "Mesh.h"
-#include "Material.h"
+
+#include "../Camera.h"
+#include "../Mesh.h"
+#include "../Material.h"
 
 
 PointLight::PointLight()
