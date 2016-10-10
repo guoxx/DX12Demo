@@ -57,6 +57,7 @@ std::vector<std::shared_ptr<Model>> Model::LoadOBJ(DX12Device* device, DX12Graph
 	{
 		std::shared_ptr<Model> mod = std::make_shared<Model>();
 		mod->m_Name = shape.name;
+		mod->m_wName = DX::UTF8StrToUTF16(shape.name);
 		mod->m_Mesh = std::make_shared<Mesh>();
 		models.push_back(mod);
 
@@ -110,7 +111,7 @@ std::vector<std::shared_ptr<Model>> Model::LoadOBJ(DX12Device* device, DX12Graph
 				if (hasTexcoord)
 				{
 					pData[6] = shape.mesh.texcoords[i * 2 + 0];
-					pData[7] = shape.mesh.texcoords[i * 2 + 1];
+					pData[7] = 1 - shape.mesh.texcoords[i * 2 + 1];
 				}
 				else
 				{

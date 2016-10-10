@@ -23,6 +23,8 @@ private:
 	static void Model::_LoadMTLMaterial(void* materialData, Material* pMaterial, DX12GraphicContext* pGfxContext);
 
 	std::string m_Name;
+	std::wstring m_wName;
+
 	std::shared_ptr<Mesh> m_Mesh;
 };
 

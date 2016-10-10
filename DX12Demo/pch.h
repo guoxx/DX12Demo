@@ -28,7 +28,10 @@
 #include <DirectXMath.h>
 #include <DirectXColors.h>
 
+#include <locale>
+#include <codecvt>
 #include <algorithm>
+#include <string>
 #include <memory>
 #include <vector>
 #include <array>
@@ -118,5 +121,11 @@ namespace DX
 		assert(IsPowerOfTwo(multiple));
 
 		return (value + multiple - 1) & ~(multiple - 1);
+	}
+
+	inline std::wstring UTF8StrToUTF16(std::string s)
+	{
+		std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+		return converter.from_bytes(s);
 	}
 }
