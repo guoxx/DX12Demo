@@ -54,7 +54,9 @@ DX12GraphicManager::DX12GraphicManager()
 		D3D12_MEMORY_POOL_UNKNOWN,
 		D3D12_HEAP_FLAG_ALLOW_ONLY_BUFFERS);
 
+#ifndef _XBOX_ONE
 	m_SwapChainCommandQueue = m_Device->CreateGraphicCommandQueue(0, D3D12_COMMAND_QUEUE_FLAG_NONE, 0);
+#endif
 }
 
 DX12GraphicManager::~DX12GraphicManager()
@@ -85,6 +87,10 @@ void DX12GraphicManager::CreateGraphicCommandQueues(uint32_t cnt)
 	{
 		m_GraphicQueues.push_back(ComPtr<ID3D12CommandQueue>{ m_Device->CreateGraphicCommandQueue(0, D3D12_COMMAND_QUEUE_FLAG_NONE, 0) });
 	}
+
+#ifdef _XBOX_ONE
+	m_SwapChainCommandQueue = m_GraphicQueues[0];
+#endif
 }
 
 DX12GraphicContext* DX12GraphicManager::BegineGraphicContext()

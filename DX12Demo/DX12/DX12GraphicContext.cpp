@@ -39,7 +39,7 @@ void DX12GraphicContext::ResourceTransitionBarrier(DX12GpuResource* resource, D3
     m_CommandList->ResourceBarrier(1, &barrier);
 }
 
-void DX12GraphicContext::SetDescriptorHeaps(uint32_t numDescriptorHeaps, ID3D12DescriptorHeap * const * ppDescriptorHeaps)
+void DX12GraphicContext::SetDescriptorHeaps(uint32_t numDescriptorHeaps, ID3D12DescriptorHeap** ppDescriptorHeaps)
 {
 	m_CommandList->SetDescriptorHeaps(numDescriptorHeaps, ppDescriptorHeaps);
 }
