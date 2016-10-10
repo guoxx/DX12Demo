@@ -25,6 +25,9 @@
     <Filter Include="Utils">
       <UniqueIdentifier>{1ba50b8e-9252-4ea4-b985-d10d18d45260}</UniqueIdentifier>
     </Filter>
+    <Filter Include="DX12\Private\Texture">
+      <UniqueIdentifier>{d2b7f395-cf18-42a8-94d8-613e34191950}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DX12\DX12Buffer.cpp">
@@ -52,9 +55,6 @@
       <Filter>DX12\Private</Filter>
     </ClCompile>
     <ClCompile Include="pch.cpp">
-      <Filter>Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="tga_reader.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
     <ClCompile Include="Win10\Main.cpp">
@@ -90,6 +90,9 @@
     <ClCompile Include="DX12\DX12DepthSurface.cpp">
       <Filter>DX12\Private</Filter>
     </ClCompile>
+    <ClCompile Include="DX12\Texture\tga_reader.cpp">
+      <Filter>DX12\Private\Texture</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DX12\DX12GraphicContext.h">
@@ -123,12 +126,6 @@
       <Filter>Sources</Filter>
     </ClInclude>
     <ClInclude Include="StepTimer.h">
-      <Filter>Sources</Filter>
-    </ClInclude>
-    <ClInclude Include="TextureTga.h">
-      <Filter>Sources</Filter>
-    </ClInclude>
-    <ClInclude Include="tga_reader.h">
       <Filter>Sources</Filter>
     </ClInclude>
     <ClInclude Include="DX12\d3dx12.h">
@@ -190,6 +187,12 @@
     </ClInclude>
     <ClInclude Include="DX12\DX12RenderableSurface.h">
       <Filter>DX12\Private</Filter>
+    </ClInclude>
+    <ClInclude Include="DX12\Texture\TextureLoaderTga.h">
+      <Filter>DX12\Private\Texture</Filter>
+    </ClInclude>
+    <ClInclude Include="DX12\Texture\tga_reader.h">
+      <Filter>DX12\Private\Texture</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

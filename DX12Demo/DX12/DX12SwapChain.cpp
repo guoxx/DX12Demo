@@ -24,7 +24,11 @@ DX12SwapChain::DX12SwapChain(DX12Device* device, const GFX_HWND hwnd, uint32_t b
 	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
 #endif
 
+#ifdef _XBOX_ONE
 	m_SwapChain = device->CreateSwapChain(&swapChainDesc, hwnd);
+#else
+	m_SwapChain = device->CreateSwapChain(&swapChainDesc, hwnd, DX12GraphicManager::GetInstance()->GetSwapChainCommandQueue());
+#endif
 
 	m_BackBufferIdx = 0;
 	for (uint32_t i = 0; i < m_BackBuffers.size(); ++i)
@@ -45,7 +49,7 @@ DX12SwapChain::~DX12SwapChain()
 
 void DX12SwapChain::Begin()
 {
-	DX12GraphicContextAutoExecutor executor;
+	DX12SwapChainContextAutoExecutor executor;
 	DX12GraphicContext* pGfxContext = executor.GetGraphicContext();
 
 	pGfxContext->ResourceTransitionBarrier(GetBackBuffer(), D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
@@ -58,10 +62,12 @@ DX12ColorSurface * DX12SwapChain::GetBackBuffer() const
 
 void DX12SwapChain::Flip()
 {
-	DX12GraphicContextAutoExecutor executor;
-	DX12GraphicContext* pGfxContext = executor.GetGraphicContext();
+	{
+		DX12SwapChainContextAutoExecutor executor;
+		DX12GraphicContext* pGfxContext = executor.GetGraphicContext();
 
-	pGfxContext->ResourceTransitionBarrier(GetBackBuffer(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
+		pGfxContext->ResourceTransitionBarrier(GetBackBuffer(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
+	}
 
 	m_SwapChain->Present(1, 0);
 

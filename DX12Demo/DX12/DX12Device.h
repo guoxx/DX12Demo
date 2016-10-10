@@ -49,7 +49,11 @@ public:
 
 	ID3D12PipelineState* CreateGraphicsPipelineState(const D3D12_GRAPHICS_PIPELINE_STATE_DESC* desc);
 
+#ifdef _XBOX_ONE
 	IDXGISwapChain1* CreateSwapChain(const DXGI_SWAP_CHAIN_DESC1* swapChainDesc, const GFX_HWND hwnd);
+#else
+	IDXGISwapChain1* CreateSwapChain(const DXGI_SWAP_CHAIN_DESC1* swapChainDesc, const GFX_HWND hwnd, ID3D12CommandQueue* pQueue);
+#endif
 
 	ID3D12Fence* CreateFence(uint64_t initialValue = 0);
 
