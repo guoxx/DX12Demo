@@ -69,7 +69,7 @@ void Renderer::ResolveToSwapChain()
 {
 	m_SwapChain->Begin();
 
-	DX12GraphicContextAutoExecutor executor;
+	DX12SwapChainContextAutoExecutor executor;
 	DX12GraphicContext* pGfxContext = executor.GetGraphicContext();
 
     // Clear the views.

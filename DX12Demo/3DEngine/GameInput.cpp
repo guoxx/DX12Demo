@@ -33,9 +33,9 @@
 #endif
 
 #ifdef USE_KEYBOARD_MOUSE
-namespace GameCore
+namespace
 {
-	extern HWND g_hWnd;
+	static GFX_HWND g_hWnd;
 }
 #endif
 
@@ -201,19 +201,34 @@ namespace
 		memset(s_Keybuffer, 0, sizeof(s_Keybuffer));
 	}
 
-	void KbmInitialize()
+	void KbmInitialize(GFX_HWND hwnd)
 	{
+		g_hWnd = hwnd;
+
 		KbmBuildKeyMapping();
 
 		if (FAILED(DirectInput8Create(GetModuleHandle(nullptr), DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&s_DI, nullptr)))
-			ASSERT(false, "DirectInput8 initialization failed.");
+		{
+			assert(false);
+			//ASSERT(false, "DirectInput8 initialization failed.");
+		}
 
 		if (FAILED(s_DI->CreateDevice(GUID_SysKeyboard, &s_Keyboard, nullptr)))
-			ASSERT(false, "Keyboard CreateDevice failed.");
+		{
+			assert(false);
+			//ASSERT(false, "Keyboard CreateDevice failed.");
+		}
 		if (FAILED(s_Keyboard->SetDataFormat(&c_dfDIKeyboard)))
-			ASSERT(false, "Keyboard SetDataFormat failed.");
-		if (FAILED(s_Keyboard->SetCooperativeLevel(GameCore::g_hWnd, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE)))
-			ASSERT(false, "Keyboard SetCooperativeLevel failed.");
+		{
+			assert(false);
+			//ASSERT(false, "Keyboard SetDataFormat failed.");
+		}
+		if (FAILED(s_Keyboard->SetCooperativeLevel(g_hWnd, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE)))
+		{
+			assert(false);
+			//ASSERT(false, "Keyboard SetCooperativeLevel failed.");
+		}
+
 		DIPROPDWORD dipdw;
 		dipdw.diph.dwSize = sizeof(DIPROPDWORD);
 		dipdw.diph.dwHeaderSize = sizeof(DIPROPHEADER);
@@ -221,14 +236,26 @@ namespace
 		dipdw.diph.dwHow = DIPH_DEVICE;
 		dipdw.dwData = 10;
 		if (FAILED(s_Keyboard->SetProperty(DIPROP_BUFFERSIZE, &dipdw.diph)))
-			ASSERT(false, "Keyboard set buffer size failed.");
+		{
+			assert(false);
+			//ASSERT(false, "Keyboard set buffer size failed.");
+		}
 
 		if (FAILED(s_DI->CreateDevice(GUID_SysMouse, &s_Mouse, nullptr)))
-			ASSERT(false, "Mouse CreateDevice failed.");
+		{
+			assert(false);
+			//ASSERT(false, "Mouse CreateDevice failed.");
+		}
 		if (FAILED(s_Mouse->SetDataFormat(&c_dfDIMouse2)))
-			ASSERT(false, "Mouse SetDataFormat failed.");
-		if (FAILED(s_Mouse->SetCooperativeLevel(GameCore::g_hWnd, DISCL_FOREGROUND | DISCL_EXCLUSIVE)))
-			ASSERT(false, "Mouse SetCooperativeLevel failed.");
+		{
+			assert(false);
+			//ASSERT(false, "Mouse SetDataFormat failed.");
+		}
+		if (FAILED(s_Mouse->SetCooperativeLevel(g_hWnd, DISCL_FOREGROUND | DISCL_EXCLUSIVE)))
+		{
+			assert(false);
+			//ASSERT(false, "Mouse SetCooperativeLevel failed.");
+		}
 
 		KbmZeroInputs();
 	}
@@ -259,7 +286,7 @@ namespace
 		HWND foreground = GetForegroundWindow();
 		bool visible = IsWindowVisible(foreground) != 0;
 
-		if (foreground != GameCore::g_hWnd // wouldn't be able to acquire
+		if (foreground != g_hWnd // wouldn't be able to acquire
 			|| !visible)
 		{
 			KbmZeroInputs();
@@ -276,7 +303,7 @@ namespace
 
 }
 
-void GameInput::Initialize()
+void GameInput::Initialize(GFX_HWND hwnd)
 {
 	// For Windows 8
 	//	XInputEnable(TRUE);
@@ -285,7 +312,7 @@ void GameInput::Initialize()
 	ZeroMemory( s_Analogs, sizeof(s_Analogs) );
 
 #ifdef USE_KEYBOARD_MOUSE
-	KbmInitialize();
+	KbmInitialize(hwnd);
 #endif
 }
 

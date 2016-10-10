@@ -15,7 +15,7 @@
 
 namespace GameInput
 {
-	void Initialize();
+	void Initialize(GFX_HWND hwnd);
 	void Shutdown();
 	void Update( float frameDelta );
 

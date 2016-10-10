@@ -161,7 +161,7 @@ IDXGISwapChain1 * DX12Device::CreateSwapChain(const DXGI_SWAP_CHAIN_DESC1* swapC
 	return pSwapChain;
 }
 #else
-IDXGISwapChain1 * DX12Device::CreateSwapChain(const DXGI_SWAP_CHAIN_DESC1* swapChainDesc, const GFX_WHND hwnd, ID3D12CommandQueue* pQueue)
+IDXGISwapChain1 * DX12Device::CreateSwapChain(const DXGI_SWAP_CHAIN_DESC1* swapChainDesc, const GFX_HWND hwnd, ID3D12CommandQueue* pQueue)
 {
 	IDXGISwapChain1* pSwapChain = nullptr;
 
