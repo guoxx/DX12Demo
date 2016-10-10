@@ -22,6 +22,60 @@ DX12GraphicContext::~DX12GraphicContext()
 {
 }
 
+void DX12GraphicContext::PIXBeginEvent(const wchar_t* label)
+{
+#if defined(RELEASE) || !defined(_XBOX_ONE) && _MSC_VER < 1800
+	(label);
+#else
+
+#if _XBOX_ONE
+	#if D3D12_SDK_VERSION_MINOR == 0
+		m_CommandList->PIXBeginEventX(label);
+	#else
+		::PIXBeginEvent(m_CommandList.Get(), 0, label);
+	#endif
+#elif _MSC_VER >= 1800
+	::PIXBeginEvent(m_CommandList.Get(), 0, label);
+#endif
+
+#endif
+}
+
+void DX12GraphicContext::PIXEndEvent(void)
+{
+#if !defined(RELEASE)
+#if _XBOX_ONE
+	#if D3D12_SDK_VERSION_MINOR == 0
+		m_CommandList->PIXEndEventX();
+	#else
+		::PIXEndEvent(m_CommandList.Get());
+	#endif
+#elif _MSC_VER >= 1800
+	::PIXEndEvent(m_CommandList.Get());
+#endif
+#endif
+}
+
+void DX12GraphicContext::PIXSetMarker(const wchar_t* label)
+{
+#if defined(RELEASE) || !defined(_XBOX_ONE) && _MSC_VER < 1800
+	(label);
+#else
+
+#if _XBOX_ONE
+	#if D3D12_SDK_VERSION_MINOR == 0
+		m_CommandList->PIXSetMarkerX(label);
+	#else
+		::PIXSetMarker(m_CommandList.Get(), 0, label);
+	#endif
+#elif _MSC_VER >= 1800
+	::PIXSetMarker(m_CommandList.Get(), 0, label);
+#endif
+
+#endif
+}
+
+
 void DX12GraphicContext::IASetIndexBuffer(const DX12IndexBuffer* pIndexBuffer)
 {
 	m_CommandList->IASetIndexBuffer(&pIndexBuffer->GetView());

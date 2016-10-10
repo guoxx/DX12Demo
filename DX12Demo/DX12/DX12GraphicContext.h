@@ -20,6 +20,12 @@ public:
 	DX12GraphicContext(DX12Device* device);
 	virtual ~DX12GraphicContext();
 
+	void PIXBeginEvent(const wchar_t* label);
+
+	void PIXEndEvent(void);
+
+	void PIXSetMarker(const wchar_t* label);
+
 	void IASetIndexBuffer(const DX12IndexBuffer* pIndexBuffer);
 
 	void IASetPrimitiveTopology(D3D12_PRIMITIVE_TOPOLOGY primitiveTopology);
