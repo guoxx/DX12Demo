@@ -113,9 +113,9 @@ void DX12GraphicContext::SetRenderTargets(uint32_t numColorSurfaces, DX12ColorSu
 	m_CommandList->OMSetRenderTargets(numColorSurfaces, srvs, false, pDepthSurface != nullptr ? &pDepthSurface->GetDSV().GetCpuHandle() : nullptr);
 }
 
-void DX12GraphicContext::SetViewport(uint32_t topLeftX, uint32_t topLeftY, uint32_t width, uint32_t height)
+void DX12GraphicContext::SetViewport(uint32_t topLeftX, uint32_t topLeftY, uint32_t width, uint32_t height, float minDepth, float maxDepth)
 {
-    D3D12_VIEWPORT viewport = { (float)topLeftX, (float)topLeftY, (float)(width), (float)(height) };
+    D3D12_VIEWPORT viewport = { (float)topLeftX, (float)topLeftY, (float)(width), (float)(height), minDepth, maxDepth };
     m_CommandList->RSSetViewports(1, &viewport);
 
 	// TODO: remove this code
