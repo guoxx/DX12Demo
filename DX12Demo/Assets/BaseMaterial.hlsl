@@ -57,6 +57,6 @@ RootSigDeclaration
 float4 PSMain(VSOutput In) : SV_TARGET
 {
 	float4 OutColor;
-	OutColor = float4(g_Material.Diffuse, 1.0f);
+	OutColor = float4(g_Material.Diffuse + g_Material.Specular + g_Material.Ambient, 1.0f);
 	return OutColor;
 }

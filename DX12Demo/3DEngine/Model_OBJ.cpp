@@ -5,6 +5,8 @@
 #include "Material.h"
 #include "Primitive.h"
 
+#include "MaterialManager.h"
+
 #pragma warning(push)
 #pragma warning(disable:4201)
 #pragma warning(disable:4706)
@@ -140,10 +142,16 @@ std::vector<std::shared_ptr<Model>> Model::LoadOBJ(DX12Device* device, DX12Graph
 			std::shared_ptr<Primitive> prim = std::make_shared<Primitive>();
 			mod->m_Mesh->m_Primitives.push_back(prim);
 
-			prim->m_Material = std::make_shared<Material>();
 			prim->m_Mesh = mod->m_Mesh;
 			prim->m_StartIndexLocation = 0;
-			_LoadMTLMaterial(&materials[materialId], prim->m_Material.get(), pGfxContext);
+
+			prim->m_Material = MaterialManager::GetInstance()->GetMaterialByName(materials[materialId].name);
+			if (prim->m_Material.get() == nullptr)
+			{
+				prim->m_Material = std::make_shared<Material>();
+				MaterialManager::GetInstance()->SetMaterialByName(materials[materialId].name, prim->m_Material);
+				_LoadMTLMaterial(&materials[materialId], prim->m_Material.get(), pGfxContext);
+			}
 
 			for (uint32_t i = 0; i < shape.mesh.material_ids.size(); ++i)
 			{
@@ -162,10 +170,16 @@ std::vector<std::shared_ptr<Model>> Model::LoadOBJ(DX12Device* device, DX12Graph
 					prim = std::make_shared<Primitive>();
 					mod->m_Mesh->m_Primitives.push_back(prim);
 
-					prim->m_Material = std::make_shared<Material>();
 					prim->m_Mesh = mod->m_Mesh;
 					prim->m_StartIndexLocation = i * 3;
-					_LoadMTLMaterial(&materials[materialId], prim->m_Material.get(), pGfxContext);
+
+					prim->m_Material = MaterialManager::GetInstance()->GetMaterialByName(materials[materialId].name);
+					if (prim->m_Material.get() == nullptr)
+					{
+						prim->m_Material = std::make_shared<Material>();
+						MaterialManager::GetInstance()->SetMaterialByName(materials[materialId].name, prim->m_Material);
+						_LoadMTLMaterial(&materials[materialId], prim->m_Material.get(), pGfxContext);
+					}
 				}
 				else
 				{

@@ -179,6 +179,9 @@
     <ClInclude Include="3DEngine\GameInput.h">
       <Filter>3DEngine</Filter>
     </ClInclude>
+    <ClInclude Include="3DEngine\MaterialManager.h">
+      <Filter>3DEngine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -284,6 +287,9 @@
       <Filter>3DEngine\Filters</Filter>
     </ClCompile>
     <ClCompile Include="3DEngine\GameInput.cpp">
+      <Filter>3DEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="3DEngine\MaterialManager.cpp">
       <Filter>3DEngine</Filter>
     </ClCompile>
   </ItemGroup>

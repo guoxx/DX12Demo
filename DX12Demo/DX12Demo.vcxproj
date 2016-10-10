@@ -173,7 +173,7 @@
       <MinimalRebuild>false</MinimalRebuild>
       <AdditionalUsingDirectories>$(Console_SdkPackagesRoot);$(Console_SdkWindowsMetadataPath);%(AdditionalUsingDirectories)</AdditionalUsingDirectories>
       <WarningLevel>Level4</WarningLevel>
-      <Optimization>Disabled</Optimization>
+      <Optimization>MaxSpeed</Optimization>
       <PreprocessorDefinitions>_DEBUG;__WRL_NO_DEFAULT_LIB__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
     </ClCompile>
@@ -192,6 +192,7 @@
     <ClInclude Include="3DEngine\GameInput.h" />
     <ClInclude Include="3DEngine\ILight.h" />
     <ClInclude Include="3DEngine\Material.h" />
+    <ClInclude Include="3DEngine\MaterialManager.h" />
     <ClInclude Include="3DEngine\Mesh.h" />
     <ClInclude Include="3DEngine\Model.h" />
     <ClInclude Include="3DEngine\PointLight.h" />
@@ -241,6 +242,7 @@
     <ClCompile Include="3DEngine\GameInput.cpp" />
     <ClCompile Include="3DEngine\ILight.cpp" />
     <ClCompile Include="3DEngine\Material.cpp" />
+    <ClCompile Include="3DEngine\MaterialManager.cpp" />
     <ClCompile Include="3DEngine\Mesh.cpp" />
     <ClCompile Include="3DEngine\Model.cpp" />
     <ClCompile Include="3DEngine\Model_OBJ.cpp" />

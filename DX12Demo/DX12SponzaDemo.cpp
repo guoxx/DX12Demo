@@ -10,6 +10,7 @@
 #include "3DEngine/Camera.h"
 #include "3DEngine/Renderer.h"
 
+#include "3DEngine/MaterialManager.h"
 #include "3DEngine/GameInput.h"
 
 #ifdef _XBOX_ONE
@@ -62,7 +63,7 @@ void DX12SponzaDemo::OnUpdate(DX::StepTimer const& timer)
 
 	GameInput::Update(elapsedTime);
 
-	float speedScale = 0.5;
+	float speedScale = 20;
 	float forward = (GameInput::GetTimeCorrectedAnalogInput(GameInput::kAnalogLeftStickY)) +
 		(GameInput::IsPressed(GameInput::kKey_w) ? elapsedTime : 0.0f) +
 		(GameInput::IsPressed(GameInput::kKey_s) ? -elapsedTime : 0.0f);
@@ -119,6 +120,7 @@ void DX12SponzaDemo::OnFlip()
 void DX12SponzaDemo::OnDestroy()
 {
 	DX12GraphicManager::Finalize();
+	MaterialManager::Finalize();
 	GameInput::Shutdown();
 }
 
@@ -146,6 +148,7 @@ void DX12SponzaDemo::OnResuming()
 void DX12SponzaDemo::CreateDevice()
 {
 	DX12GraphicManager::Initialize();
+	MaterialManager::Initialize();
 	GameInput::Initialize();
 
 	m_GraphicManager = DX12GraphicManager::GetInstance();
@@ -164,14 +167,14 @@ void DX12SponzaDemo::LoadAssets()
 {
 	m_Camera = std::make_shared<Camera>();
 	m_Camera->LookAt(DirectX::XMVECTOR{0, 1, 2}, DirectX::XMVECTOR{0, 1, 0}, DirectX::XMVECTOR{0, 1, 0});
-	m_Camera->SetViewParams(54, m_Width * 1.0f / m_Height, 0.1f, 1000.0f);
+	m_Camera->SetViewParams(60, m_Width * 1.0f / m_Height, 0.1f, 5000.0f);
 
 	DX12GraphicContextAutoExecutor executor;
 	DX12GraphicContext* pGfxContext = executor.GetGraphicContext();
 
 	m_Scene = std::make_shared<Scene>();
-	//std::vector<std::shared_ptr<Model>> models = Model::LoadOBJ(m_GraphicManager->GetDevice(), pGfxContext, "crytek-sponza/sponza.obj", "crytek-sponza/");
-	std::vector<std::shared_ptr<Model>> models = Model::LoadOBJ(m_GraphicManager->GetDevice(), pGfxContext, "cornell-box/CornellBox-Glossy.obj", "cornell-box/");
+	std::vector<std::shared_ptr<Model>> models = Model::LoadOBJ(m_GraphicManager->GetDevice(), pGfxContext, "crytek-sponza/sponza.obj", "crytek-sponza/");
+	//std::vector<std::shared_ptr<Model>> models = Model::LoadOBJ(m_GraphicManager->GetDevice(), pGfxContext, "cornell-box/CornellBox-Glossy.obj", "cornell-box/");
 	for (auto m : models)
 	{
 		m_Scene->attachModel(m);
