@@ -63,7 +63,7 @@ void DX12SponzaDemo::OnUpdate(DX::StepTimer const& timer)
 
 	GameInput::Update(elapsedTime);
 
-	float speedScale = 20;
+	float speedScale = 50;
 	float forward = (GameInput::GetTimeCorrectedAnalogInput(GameInput::kAnalogLeftStickY)) +
 		(GameInput::IsPressed(GameInput::kKey_w) ? elapsedTime : 0.0f) +
 		(GameInput::IsPressed(GameInput::kKey_s) ? -elapsedTime : 0.0f);
@@ -81,7 +81,7 @@ void DX12SponzaDemo::OnUpdate(DX::StepTimer const& timer)
 	m_Camera->Move(m_Camera->GetLeft(), strafe);
 	m_Camera->Move(m_Camera->GetUp(), ascent);
 
-	float panScale = 0.5 * DirectX::XM_1DIVPI * 180;
+	float panScale = 2 * DirectX::XM_1DIVPI * 180;
 	float yaw = -GameInput::GetTimeCorrectedAnalogInput(GameInput::kAnalogRightStickX);
 	float pitch = GameInput::GetTimeCorrectedAnalogInput(GameInput::kAnalogRightStickY);
 	float roll = 0.0f;

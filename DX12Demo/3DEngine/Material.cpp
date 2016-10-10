@@ -34,12 +34,30 @@ Material::~Material()
 
 void Material::Load(DX12GraphicContext* pGfxContext)
 {
+	D3D12_SHADER_RESOURCE_VIEW_DESC nullSrvDesc = {};
+	nullSrvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+	nullSrvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	nullSrvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	nullSrvDesc.Texture2D.MipLevels = 1;
+	nullSrvDesc.Texture2D.MostDetailedMip = 0;
+	nullSrvDesc.Texture2D.ResourceMinLODClamp = 0.0f;
+
+	m_NullDescriptorHandle = DX12GraphicManager::GetInstance()->RegisterResourceInDescriptorHeap(nullptr, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	DX12GraphicManager::GetInstance()->GetDevice()->CreateShaderResourceView(nullptr, &nullSrvDesc, m_NullDescriptorHandle.GetCpuHandle());
+
+	D3D12_DESCRIPTOR_RANGE descriptorRanges[] = {
+		{ D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 1, 0, 0 },
+	};
+
+
 	DX12RootSignatureCompiler sigCompiler;
-	sigCompiler.Begin(3, 0);
+	sigCompiler.Begin(4, 1);
 	sigCompiler.End();
 	sigCompiler[0].InitAsConstantBufferView(0);
 	sigCompiler[1].InitAsConstantBufferView(1);
 	sigCompiler[2].InitAsShaderResourceView(0, 0, D3D12_SHADER_VISIBILITY_VERTEX);
+	sigCompiler[3].InitAsDescriptorTable(_countof(descriptorRanges), descriptorRanges, D3D12_SHADER_VISIBILITY_PIXEL);
+	sigCompiler.InitStaticSampler(CD3DX12_STATIC_SAMPLER_DESC(0, D3D12_FILTER_MIN_MAG_MIP_POINT));
 	m_RootSig = sigCompiler.Compile(DX12GraphicManager::GetInstance()->GetDevice());
 
 	DX12GraphicPsoCompiler psoCompiler;
@@ -119,4 +137,13 @@ void Material::Apply(RenderContext* pRenderContext, DX12GraphicContext* pGfxCont
 
 	pGfxContext->SetGraphicsRootConstantBufferView(0, m_ViewConstantsBuffer.get());
 	pGfxContext->SetGraphicsRootConstantBufferView(1, m_MaterialConstantsBuffer.get());
+
+	if (m_DiffuseTexture.get() == nullptr)
+	{
+		pGfxContext->SetGraphicsRootDescriptorTable(3, m_NullDescriptorHandle);
+	}
+	else
+	{
+		pGfxContext->SetGraphicsRootDescriptorTable(3, m_DiffuseTexture->GetSRV());
+	}
 }
