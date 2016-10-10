@@ -176,6 +176,9 @@
     <ClInclude Include="Utils\Helpers.h">
       <Filter>Utils</Filter>
     </ClInclude>
+    <ClInclude Include="3DEngine\GameInput.h">
+      <Filter>3DEngine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -279,6 +282,9 @@
     </ClCompile>
     <ClCompile Include="3DEngine\Filters\Filter2D.cpp">
       <Filter>3DEngine\Filters</Filter>
+    </ClCompile>
+    <ClCompile Include="3DEngine\GameInput.cpp">
+      <Filter>3DEngine</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

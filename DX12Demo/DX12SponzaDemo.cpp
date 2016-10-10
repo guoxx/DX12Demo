@@ -10,6 +10,8 @@
 #include "3DEngine/Camera.h"
 #include "3DEngine/Renderer.h"
 
+#include "3DEngine/GameInput.h"
+
 #ifdef _XBOX_ONE
 using namespace Windows::Xbox::Input;
 using namespace Windows::Foundation::Collections;
@@ -58,8 +60,33 @@ void DX12SponzaDemo::OnUpdate(DX::StepTimer const& timer)
 
     float elapsedTime = float(timer.GetElapsedSeconds());
 
-    // TODO: Add your game logic here.
-    elapsedTime;
+	GameInput::Update(elapsedTime);
+
+	float speedScale = 0.5;
+	float forward = (GameInput::GetTimeCorrectedAnalogInput(GameInput::kAnalogLeftStickY)) +
+		(GameInput::IsPressed(GameInput::kKey_w) ? elapsedTime : 0.0f) +
+		(GameInput::IsPressed(GameInput::kKey_s) ? -elapsedTime : 0.0f);
+	float strafe = (GameInput::GetTimeCorrectedAnalogInput(GameInput::kAnalogLeftStickX)) +
+		(GameInput::IsPressed(GameInput::kKey_d) ? elapsedTime : 0.0f) +
+		(GameInput::IsPressed(GameInput::kKey_a) ? -elapsedTime : 0.0f);
+	float ascent = (GameInput::GetTimeCorrectedAnalogInput(GameInput::kAnalogRightTrigger)) -
+		(GameInput::GetTimeCorrectedAnalogInput(GameInput::kAnalogLeftTrigger)) +
+		(GameInput::IsPressed(GameInput::kKey_e) ? elapsedTime : 0.0f) +
+		(GameInput::IsPressed(GameInput::kKey_q) ? -elapsedTime : 0.0f);
+	forward *= speedScale;
+	strafe *= speedScale;
+	ascent *= speedScale;
+	m_Camera->Move(m_Camera->GetForward(), forward);
+	m_Camera->Move(m_Camera->GetLeft(), strafe);
+	m_Camera->Move(m_Camera->GetUp(), ascent);
+
+	float panScale = 0.5 * DirectX::XM_1DIVPI * 180;
+	float yaw = -GameInput::GetTimeCorrectedAnalogInput(GameInput::kAnalogRightStickX);
+	float pitch = GameInput::GetTimeCorrectedAnalogInput(GameInput::kAnalogRightStickY);
+	float roll = 0.0f;
+	yaw *= panScale;
+	pitch *= panScale;
+	m_Camera->RotatePitchYawRoll(pitch, yaw, roll);
 
     PIXEndEvent();
 }
@@ -92,6 +119,7 @@ void DX12SponzaDemo::OnFlip()
 void DX12SponzaDemo::OnDestroy()
 {
 	DX12GraphicManager::Finalize();
+	GameInput::Shutdown();
 }
 
 void DX12SponzaDemo::DrawScene()
@@ -118,6 +146,8 @@ void DX12SponzaDemo::OnResuming()
 void DX12SponzaDemo::CreateDevice()
 {
 	DX12GraphicManager::Initialize();
+	GameInput::Initialize();
+
 	m_GraphicManager = DX12GraphicManager::GetInstance();
 
 	m_GraphicManager->CreateGraphicCommandQueues();
