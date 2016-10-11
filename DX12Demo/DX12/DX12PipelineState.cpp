@@ -107,6 +107,15 @@ bool DX12GraphicPsoCompiler::SetRenderTargetFormat(DXGI_FORMAT fmt0, DXGI_FORMAT
 	return true;
 }
 
+bool DX12GraphicPsoCompiler::SetRenderTargetFormat(DXGI_FORMAT fmt0, DXGI_FORMAT fmt1, DXGI_FORMAT fmt2)
+{
+	m_PsoDesc.NumRenderTargets = 3;
+	m_PsoDesc.RTVFormats[0] = fmt0;
+	m_PsoDesc.RTVFormats[1] = fmt1;
+	m_PsoDesc.RTVFormats[2] = fmt2;
+	return true;
+}
+
 bool DX12GraphicPsoCompiler::SetRenderTargetFormats(uint32_t numRenderTargets, DXGI_FORMAT* fmts)
 {
 	assert(numRenderTargets < DX12MaxRenderTargetsCount);

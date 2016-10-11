@@ -14,11 +14,20 @@ Renderer::Renderer(GFX_HWND hwnd, int32_t width, int32_t height)
 {
 	m_SwapChain = std::make_shared<DX12SwapChain>(DX12GraphicManager::GetInstance()->GetDevice(), hwnd, width, height, DXGI_FORMAT_R8G8B8A8_UNORM);
 
-	m_SceneColorSurface = std::make_shared<DX12ColorSurface>();
-	m_SceneColorSurface->InitAs2dSurface(DX12GraphicManager::GetInstance()->GetDevice(), DXGI_FORMAT_R8G8B8A8_UNORM, width, height);
-	
+	m_SceneGBuffer0 = std::make_shared<DX12ColorSurface>();
+	m_SceneGBuffer0->InitAs2dSurface(DX12GraphicManager::GetInstance()->GetDevice(), DXGI_FORMAT_R8G8B8A8_UNORM, width, height);
+
+	m_SceneGBuffer1 = std::make_shared<DX12ColorSurface>();
+	m_SceneGBuffer1->InitAs2dSurface(DX12GraphicManager::GetInstance()->GetDevice(), DXGI_FORMAT_R8G8B8A8_UNORM, width, height);
+
+	m_SceneGBuffer2 = std::make_shared<DX12ColorSurface>();
+	m_SceneGBuffer2->InitAs2dSurface(DX12GraphicManager::GetInstance()->GetDevice(), DXGI_FORMAT_R8G8B8A8_UNORM, width, height);
+
 	m_SceneDepthSurface = std::make_shared<DX12DepthSurface>();
 	m_SceneDepthSurface->InitAs2dSurface(DX12GraphicManager::GetInstance()->GetDevice(), DXGI_FORMAT_D32_FLOAT, width, height);
+
+	m_LightingSurface = std::make_shared<DX12ColorSurface>();
+	m_LightingSurface->InitAs2dSurface(DX12GraphicManager::GetInstance()->GetDevice(), DXGI_FORMAT_R8G8B8A8_UNORM, width, height);
 
 	m_IdentityFilter2D = std::make_shared<Filter2D>(DX12GraphicManager::GetInstance()->GetDevice(), L"IdentityFilter2D.hlsl");
 }
@@ -29,7 +38,8 @@ Renderer::~Renderer()
 
 void Renderer::Render(const Camera* pCamera, Scene* pScene)
 {
-	RenderScene(pCamera, pScene);
+	RenderGBuffer(pCamera, pScene);
+	DeferredLighting(pCamera, pScene);
 	ResolveToSwapChain();
 }
 
@@ -39,17 +49,23 @@ void Renderer::Flip()
 	DX12GraphicManager::GetInstance()->Flip();
 }
 
-void Renderer::RenderScene(const Camera* pCamera, Scene* pScene)
+void Renderer::DeferredLighting(const Camera* pCamera, Scene* pScene)
+{
+}
+
+void Renderer::RenderGBuffer(const Camera* pCamera, Scene* pScene)
 {
 	DX12GraphicContextAutoExecutor executor;
 	DX12GraphicContext* pGfxContext = executor.GetGraphicContext();
 
     // Clear the views.
-    pGfxContext->ClearRenderTarget(m_SceneColorSurface.get(), 0, 0, 0, 0);
+    pGfxContext->ClearRenderTarget(m_SceneGBuffer0.get(), 0, 0, 0, 0);
+    pGfxContext->ClearRenderTarget(m_SceneGBuffer1.get(), 0, 0, 0, 0);
+    pGfxContext->ClearRenderTarget(m_SceneGBuffer2.get(), 0, 0, 0, 0);
 	pGfxContext->ClearDepthTarget(m_SceneDepthSurface.get(), 1.0f);
 
 	// setup color and depth buffers
-	DX12ColorSurface* pColorSurfaces[] = { m_SceneColorSurface.get() };
+	DX12ColorSurface* pColorSurfaces[] = { m_SceneGBuffer0.get(), m_SceneGBuffer1.get(), m_SceneGBuffer2.get() };
     pGfxContext->SetRenderTargets(_countof(pColorSurfaces), pColorSurfaces, m_SceneDepthSurface.get());
 
 	pGfxContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -81,9 +97,9 @@ void Renderer::ResolveToSwapChain()
 	pGfxContext->SetViewport(0, 0, m_Width, m_Height);
 
 	m_IdentityFilter2D->Apply(pGfxContext);
-	pGfxContext->ResourceTransitionBarrier(m_SceneColorSurface.get(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_GENERIC_READ);
-	pGfxContext->SetGraphicsRootDescriptorTable(0, m_SceneColorSurface->GetSRV());
+	pGfxContext->ResourceTransitionBarrier(m_SceneGBuffer0.get(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_GENERIC_READ);
+	pGfxContext->SetGraphicsRootDescriptorTable(0, m_SceneGBuffer0->GetSRV());
 	m_IdentityFilter2D->Draw(pGfxContext);
-	pGfxContext->ResourceTransitionBarrier(m_SceneColorSurface.get(), D3D12_RESOURCE_STATE_GENERIC_READ, D3D12_RESOURCE_STATE_RENDER_TARGET);
+	pGfxContext->ResourceTransitionBarrier(m_SceneGBuffer0.get(), D3D12_RESOURCE_STATE_GENERIC_READ, D3D12_RESOURCE_STATE_RENDER_TARGET);
 }
 

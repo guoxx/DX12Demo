@@ -9,6 +9,7 @@ namespace
 	ConstantBuffer(View)
 	{
 		float4x4 mModelViewProj;
+		float4x4 mInverseTransposeModel;
 	};
 
 	ConstantBuffer(BaseMaterial)
@@ -64,7 +65,7 @@ void Material::Load(DX12GraphicContext* pGfxContext)
 	psoCompiler.SetShaderFromFile(DX12ShaderTypeVertex, L"BaseMaterial.hlsl", "VSMain");
 	psoCompiler.SetShaderFromFile(DX12ShaderTypePixel, L"BaseMaterial.hlsl", "PSMain");
 	psoCompiler.SetRoogSignature(m_RootSig.get());
-	psoCompiler.SetRenderTargetFormat(DXGI_FORMAT_R8G8B8A8_UNORM);
+	psoCompiler.SetRenderTargetFormat(DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM);
 	psoCompiler.SetDespthStencilFormat(DXGI_FORMAT_D32_FLOAT);
 
 	CD3DX12_RASTERIZER_DESC rasterizerDesc{ D3D12_DEFAULT };
@@ -119,13 +120,22 @@ void Material::Apply(RenderContext* pRenderContext, DX12GraphicContext* pGfxCont
 
 	pGfxContext->SetPipelineState(m_PSO.get());
 
+	DirectX::XMMATRIX mModel = pRenderContext->GetModelMatrix();
+	DirectX::XMMATRIX mInverseModel = DirectX::XMMatrixInverse(nullptr, mModel);
+	DirectX::XMMATRIX mInverseTransposeModel = DirectX::XMMatrixTranspose(mInverseModel);
 	View view;
 	DirectX::XMStoreFloat4x4(&view.mModelViewProj, DirectX::XMMatrixTranspose(pRenderContext->GetModelViewProjMatrix()));
+	DirectX::XMStoreFloat4x4(&view.mInverseTransposeModel, mInverseTransposeModel);
 
 	BaseMaterial baseMaterial;
-	baseMaterial.Ambient = DirectX::XMFLOAT4{m_Ambient.x, m_Ambient.y, m_Ambient.z, 0.0f};
-	baseMaterial.Diffuse = DirectX::XMFLOAT4{m_Diffuse.x, m_Diffuse.y, m_Diffuse.z, 0.0f};
-	baseMaterial.Specular = DirectX::XMFLOAT4{m_Specular.x, m_Specular.y, m_Specular.z, 0.0f};
+	baseMaterial.Ambient = DirectX::XMFLOAT4{ m_Ambient.x, m_Ambient.y, m_Ambient.z, 0.0f };
+	baseMaterial.Diffuse = DirectX::XMFLOAT4{ m_Diffuse.x, m_Diffuse.y, m_Diffuse.z, 0.0f };
+	baseMaterial.Specular = DirectX::XMFLOAT4{ m_Specular.x, m_Specular.y, m_Specular.z, 0.0f };
+	baseMaterial.Transmittance = DirectX::XMFLOAT4{ m_Transmittance.x, m_Transmittance.y, m_Transmittance.z, 0.0f };
+	baseMaterial.Emission = DirectX::XMFLOAT4{ m_Emission.x, m_Emission.y, m_Emission.z, 0.0f };
+	baseMaterial.Shininess = DirectX::XMFLOAT4{ m_Shininess, m_Shininess, m_Shininess, m_Shininess };
+	baseMaterial.Ior = DirectX::XMFLOAT4{ m_Ior, m_Ior, m_Ior, m_Ior };
+	baseMaterial.Dissolve = DirectX::XMFLOAT4{ m_Dissolve, m_Dissolve, m_Dissolve, m_Dissolve };
 
 	pGfxContext->ResourceTransitionBarrier(m_ViewConstantsBuffer.get(), D3D12_RESOURCE_STATE_GENERIC_READ, D3D12_RESOURCE_STATE_COPY_DEST);
 	DX12GraphicManager::GetInstance()->UpdateBufer(pGfxContext, m_ViewConstantsBuffer.get(), &view, sizeof(view));

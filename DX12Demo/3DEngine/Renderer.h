@@ -19,7 +19,9 @@ public:
 	void Flip();
 
 private:
-	void RenderScene(const Camera* pCamera, Scene* pScene);
+	void DeferredLighting(const Camera* pCamera, Scene* pScene);
+
+	void RenderGBuffer(const Camera* pCamera, Scene* pScene);
 
 	void ResolveToSwapChain();
 
@@ -28,8 +30,12 @@ private:
 
 	RenderContext m_RenderContext;	
 
-	std::shared_ptr<DX12ColorSurface> m_SceneColorSurface;
+	std::shared_ptr<DX12ColorSurface> m_SceneGBuffer0;
+	std::shared_ptr<DX12ColorSurface> m_SceneGBuffer1;
+	std::shared_ptr<DX12ColorSurface> m_SceneGBuffer2;
 	std::shared_ptr<DX12DepthSurface> m_SceneDepthSurface;
+
+	std::shared_ptr<DX12ColorSurface> m_LightingSurface;
 
 	std::shared_ptr<DX12SwapChain> m_SwapChain;
 

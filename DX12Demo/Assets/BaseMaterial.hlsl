@@ -20,24 +20,26 @@ struct VSInput
 struct VSOutput
 {
 	float4 Position : SV_POSITION;
+	float3 Normal : NORMAL;
 	float2 Texcoord : TEXCOORD;
 };
 
 struct View
 {
 	float4x4 mModelViewProj;
+	float4x4 mInverseTransposeModel;
 };
 
 struct BaseMaterial
 {
-	float3 Ambient;
-	float3 Diffuse;
-	float3 Specular;
-	float3 Transmittance;
-	float3 Emission;
-	float Shininess;
-	float Ior;
-	float Dissolve;
+	float4 Ambient;
+	float4 Diffuse;
+	float4 Specular;
+	float4 Transmittance;
+	float4 Emission;
+	float4 Shininess;
+	float4 Ior;
+	float4 Dissolve;
 };
 
 ConstantBuffer<View> g_View : register(b0);
@@ -54,15 +56,26 @@ VSOutput VSMain(uint vertid : SV_VertexID)
 
 	VSOutput Out;
 	Out.Position = mul(float4(In.Position, 1), g_View.mModelViewProj);
+	Out.Normal = mul(float4(In.Normal, 0), g_View.mInverseTransposeModel).xyz;
 	Out.Texcoord = In.Texcoord;
 
 	return Out;
 }
 
 RootSigDeclaration
-float4 PSMain(VSOutput In) : SV_TARGET
+GBufferOutput PSMain(VSOutput In)
 {
-	float4 OutColor = g_DiffuseTexture.Sample(s_PointSampler, In.Texcoord);
-	//OutColor = float4(g_Material.Diffuse + g_Material.Specular + g_Material.Ambient, 1.0f);
-	return OutColor;
+	GBufferOutput Out;
+
+	Out.Diffuse.xyz = g_DiffuseTexture.Sample(s_PointSampler, In.Texcoord).xyz;
+	Out.Diffuse.w = 0.0f;
+
+	Out.Specular.xyz = IorToF0_Dielectric(g_Material.Ior.x).xxx;
+	Out.Specular.w = 0.0f;
+
+	// encode to [0, 1]
+	Out.Normal_Roughness.xyz = (In.Normal + 1.0f) * 0.5f;
+	Out.Normal_Roughness.w = saturate((100.0f - g_Material.Shininess) / 100.0f);
+
+	return Out;
 }
