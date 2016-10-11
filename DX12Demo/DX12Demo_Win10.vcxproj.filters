@@ -150,6 +150,9 @@
     <ClCompile Include="3DEngine\Scene.cpp">
       <Filter>3DEngine</Filter>
     </ClCompile>
+    <ClCompile Include="3DEngine\Lights\DirectionalLight.cpp">
+      <Filter>3DEngine\Lights</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DX12\DX12GraphicContext.h">
@@ -302,6 +305,9 @@
     <ClInclude Include="3DEngine\tiny_obj_loader.h">
       <Filter>3DEngine</Filter>
     </ClInclude>
+    <ClInclude Include="3DEngine\Lights\DirectionalLight.h">
+      <Filter>3DEngine\Lights</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\HelloTexture.hlsl">
@@ -313,13 +319,14 @@
     <None Include="Assets\Common.hlsli">
       <Filter>Assets\Shaders</Filter>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="Assets\BaseMaterial.hlsl">
+    <None Include="Assets\BaseMaterial.hlsl">
       <Filter>Assets\Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="Assets\IdentityFilter2D.hlsl">
+    </None>
+    <None Include="Assets\IdentityFilter2D.hlsl">
       <Filter>Assets\Shaders</Filter>
-    </FxCompile>
+    </None>
+    <None Include="Assets\DirectionalLight.hlsl">
+      <Filter>Assets\Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>
