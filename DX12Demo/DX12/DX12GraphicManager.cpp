@@ -23,6 +23,7 @@ void DX12GraphicManager::Finalize()
 
 DX12GraphicManager::DX12GraphicManager()
 	: m_UploadHeapAllocator{ 0, DX12UploadHeapSizeInBytes }
+	, m_TempResourcePoolIdx{ 0 }
 {
 #if defined(_DEBUG)
     // Enable the D3D12 debug layer.
