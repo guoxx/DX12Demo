@@ -133,7 +133,7 @@ std::shared_ptr<DX12RootSignature> DX12RootSignatureCompiler::Compile(DX12Device
 	ComPtr<ID3DBlob> errBlob;
 	D3D12SerializeRootSignature(&rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1, &rootSignatureBlob, &errBlob);
 
-	ID3D12RootSignature* rootSig = device->CreateRootSignature(rootSignatureBlob->GetBufferPointer(), rootSignatureBlob->GetBufferSize());
-	return std::make_shared<DX12RootSignature>(ComPtr<ID3D12RootSignature>{ rootSig });
+	ComPtr<ID3D12RootSignature> rootSig = device->CreateRootSignature(rootSignatureBlob->GetBufferPointer(), rootSignatureBlob->GetBufferSize());
+	return std::make_shared<DX12RootSignature>(rootSig);
 }
 
