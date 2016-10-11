@@ -25,6 +25,8 @@ public:
 
 	ID3D12CommandQueue* GetSwapChainCommandQueue() const { return m_SwapChainCommandQueue.Get(); }
 
+	void Flip();
+
 #ifdef _XBOX_ONE
 	void Suspend();
 	void Resume();
@@ -63,8 +65,13 @@ private:
 	ComPtr<ID3D12Heap> m_UploadHeap;
 	RingBufferAllocator m_UploadHeapAllocator;
 
-	// TODO: using timing wheel to delete temp resources
-	std::vector<ComPtr<ID3D12Resource>> m_TempResources;
+	// timing wheel for temp resource lifetime management
+	enum
+	{
+		NumTempResourcesPool = 4,
+	};
+	int32_t m_TempResourcePoolIdx;
+	std::vector<ComPtr<ID3D12Resource>> m_TempResources[NumTempResourcesPool];
 
 private:
 	static DX12GraphicManager* s_GfxManager;

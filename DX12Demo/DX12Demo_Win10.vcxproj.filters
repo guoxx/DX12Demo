@@ -28,6 +28,15 @@
     <Filter Include="DX12\Private\Texture">
       <UniqueIdentifier>{d2b7f395-cf18-42a8-94d8-613e34191950}</UniqueIdentifier>
     </Filter>
+    <Filter Include="3DEngine">
+      <UniqueIdentifier>{daa8cb02-6fd2-4d8a-8516-1e21102b0094}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3DEngine\Filters">
+      <UniqueIdentifier>{a5881cce-db94-4fcf-87f3-fb65faf97de3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3DEngine\Lights">
+      <UniqueIdentifier>{7757919e-1198-4c0d-b37c-f4a72ee9405d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DX12\DX12Buffer.cpp">
@@ -92,6 +101,54 @@
     </ClCompile>
     <ClCompile Include="DX12\Texture\tga_reader.cpp">
       <Filter>DX12\Private\Texture</Filter>
+    </ClCompile>
+    <ClCompile Include="DX12SponzaDemo.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="3DEngine\Filters\Filter2D.cpp">
+      <Filter>3DEngine\Filters</Filter>
+    </ClCompile>
+    <ClCompile Include="3DEngine\Lights\ILight.cpp">
+      <Filter>3DEngine\Lights</Filter>
+    </ClCompile>
+    <ClCompile Include="3DEngine\Lights\PointLight.cpp">
+      <Filter>3DEngine\Lights</Filter>
+    </ClCompile>
+    <ClCompile Include="3DEngine\Actor.cpp">
+      <Filter>3DEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="3DEngine\Camera.cpp">
+      <Filter>3DEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="3DEngine\GameInput.cpp">
+      <Filter>3DEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="3DEngine\Material.cpp">
+      <Filter>3DEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="3DEngine\MaterialManager.cpp">
+      <Filter>3DEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="3DEngine\Mesh.cpp">
+      <Filter>3DEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="3DEngine\Model.cpp">
+      <Filter>3DEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="3DEngine\Model_OBJ.cpp">
+      <Filter>3DEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="3DEngine\Primitive.cpp">
+      <Filter>3DEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="3DEngine\RenderContext.cpp">
+      <Filter>3DEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="3DEngine\Renderer.cpp">
+      <Filter>3DEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="3DEngine\Scene.cpp">
+      <Filter>3DEngine</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -194,6 +251,57 @@
     <ClInclude Include="DX12\Texture\tga_reader.h">
       <Filter>DX12\Private\Texture</Filter>
     </ClInclude>
+    <ClInclude Include="Utils\Helpers.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="DX12SponzaDemo.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="3DEngine\Filters\Filter2D.h">
+      <Filter>3DEngine\Filters</Filter>
+    </ClInclude>
+    <ClInclude Include="3DEngine\Lights\ILight.h">
+      <Filter>3DEngine\Lights</Filter>
+    </ClInclude>
+    <ClInclude Include="3DEngine\Lights\PointLight.h">
+      <Filter>3DEngine\Lights</Filter>
+    </ClInclude>
+    <ClInclude Include="3DEngine\Actor.h">
+      <Filter>3DEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="3DEngine\Camera.h">
+      <Filter>3DEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="3DEngine\GameInput.h">
+      <Filter>3DEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="3DEngine\Material.h">
+      <Filter>3DEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="3DEngine\MaterialManager.h">
+      <Filter>3DEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="3DEngine\Mesh.h">
+      <Filter>3DEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="3DEngine\Model.h">
+      <Filter>3DEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="3DEngine\Primitive.h">
+      <Filter>3DEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="3DEngine\RenderContext.h">
+      <Filter>3DEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="3DEngine\Renderer.h">
+      <Filter>3DEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="3DEngine\Scene.h">
+      <Filter>3DEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="3DEngine\tiny_obj_loader.h">
+      <Filter>3DEngine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\HelloTexture.hlsl">
@@ -202,5 +310,16 @@
     <None Include="Assets\HelloTriangle.hlsl">
       <Filter>Assets\Shaders</Filter>
     </None>
+    <None Include="Assets\Common.hlsli">
+      <Filter>Assets\Shaders</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Assets\BaseMaterial.hlsl">
+      <Filter>Assets\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Assets\IdentityFilter2D.hlsl">
+      <Filter>Assets\Shaders</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

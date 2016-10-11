@@ -23,6 +23,7 @@ void DX12GraphicManager::Finalize()
 
 DX12GraphicManager::DX12GraphicManager()
 	: m_UploadHeapAllocator{ 0, DX12UploadHeapSizeInBytes }
+	, m_TempResourcePoolIdx{ 0 }
 {
 #if defined(_DEBUG)
     // Enable the D3D12 debug layer.
@@ -61,6 +62,12 @@ DX12GraphicManager::DX12GraphicManager()
 
 DX12GraphicManager::~DX12GraphicManager()
 {
+}
+
+void DX12GraphicManager::Flip()
+{
+	m_TempResourcePoolIdx = (m_TempResourcePoolIdx + 1) % NumTempResourcesPool;
+	m_TempResources[m_TempResourcePoolIdx].clear();
 }
 
 #ifdef _XBOX_ONE
@@ -130,7 +137,7 @@ void DX12GraphicManager::UpdateBufer(DX12GraphicContext* pGfxContext, DX12GpuRes
 	ComPtr<ID3D12Resource> uploadResource = m_Device->CreatePlacedResource(m_UploadHeap.Get(), heapOffset, &pResource->GetGpuResource()->GetDesc(), D3D12_RESOURCE_STATE_GENERIC_READ);
 
 	// keep a reference to that resource to avoid it been released
-	m_TempResources.push_back(uploadResource);
+	m_TempResources[m_TempResourcePoolIdx].push_back(uploadResource);
 
 	DX12GpuResource srcResource{ uploadResource };
 
@@ -154,7 +161,7 @@ void DX12GraphicManager::UpdateTexture(DX12GraphicContext * pGfxContext, DX12Tex
 	ComPtr<ID3D12Resource> uploadResource = m_Device->CreatePlacedResource(m_UploadHeap.Get(), heapOffset, &CD3DX12_RESOURCE_DESC::Buffer({uploadBufferSize, 0}), D3D12_RESOURCE_STATE_GENERIC_READ);
 
 	// keep a reference to that resource to avoid it been released
-	m_TempResources.push_back(uploadResource);
+	m_TempResources[m_TempResourcePoolIdx].push_back(uploadResource);
 
 	DX12GpuResource srcResource{ uploadResource };
 

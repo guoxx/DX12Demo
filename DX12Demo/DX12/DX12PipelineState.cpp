@@ -126,8 +126,7 @@ bool DX12GraphicPsoCompiler::SetDespthStencilFormat(DXGI_FORMAT fmt)
 
 std::shared_ptr<DX12PipelineState> DX12GraphicPsoCompiler::Compile(DX12Device* device)
 {
-	ID3D12PipelineState* pso = device->CreateGraphicsPipelineState(&m_PsoDesc);
-	return std::make_shared<DX12PipelineState>(ComPtr<ID3D12PipelineState>{ pso });
+	return std::make_shared<DX12PipelineState>(device->CreateGraphicsPipelineState(&m_PsoDesc));
 }
 
 ComPtr<ID3DBlob> DX12GraphicPsoCompiler::CompileShader(const wchar_t* file, const char* entry, const char* profile) const

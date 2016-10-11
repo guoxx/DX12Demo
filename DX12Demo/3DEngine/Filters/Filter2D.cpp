@@ -31,7 +31,7 @@ Filter2D::Filter2D(DX12Device* device, const wchar_t* shaderfile)
 	psoCompiler.SetShaderFromFile(DX12ShaderTypePixel, shaderfile, "PSMain");
 	psoCompiler.SetRoogSignature(m_RootSig.get());
 	psoCompiler.SetRenderTargetFormat(DXGI_FORMAT_R8G8B8A8_UNORM);
-	psoCompiler.SetDespthStencilFormat(DXGI_FORMAT_D32_FLOAT);
+	psoCompiler.SetDespthStencilFormat(DXGI_FORMAT_UNKNOWN);
 	m_PSO = psoCompiler.Compile(DX12GraphicManager::GetInstance()->GetDevice());
 }
 

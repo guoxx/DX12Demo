@@ -82,8 +82,8 @@ void DX12SponzaDemo::OnUpdate(DX::StepTimer const& timer)
 	m_Camera->Move(m_Camera->GetUp(), ascent);
 
 	float panScale = 2 * DirectX::XM_1DIVPI * 180;
-	float yaw = -GameInput::GetTimeCorrectedAnalogInput(GameInput::kAnalogRightStickX);
-	float pitch = GameInput::GetTimeCorrectedAnalogInput(GameInput::kAnalogRightStickY);
+	float yaw = -(GameInput::GetTimeCorrectedAnalogInput(GameInput::kAnalogRightStickX) + GameInput::GetTimeCorrectedAnalogInput(GameInput::kAnalogMouseX) * 8);
+	float pitch = GameInput::GetTimeCorrectedAnalogInput(GameInput::kAnalogRightStickY) + GameInput::GetTimeCorrectedAnalogInput(GameInput::kAnalogMouseY) * 8;
 	float roll = 0.0f;
 	yaw *= panScale;
 	pitch *= panScale;
@@ -149,7 +149,7 @@ void DX12SponzaDemo::CreateDevice()
 {
 	DX12GraphicManager::Initialize();
 	MaterialManager::Initialize();
-	GameInput::Initialize();
+	GameInput::Initialize(m_Hwnd);
 
 	m_GraphicManager = DX12GraphicManager::GetInstance();
 
