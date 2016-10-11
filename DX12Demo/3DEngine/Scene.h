@@ -1,7 +1,7 @@
 #pragma once
 
 class Model;
-class PointLight;
+class ILight;
 
 class Scene
 {
@@ -9,19 +9,19 @@ public:
 	Scene();
 	~Scene();
 
-	std::vector<std::shared_ptr<Model>> getModels();
-	std::vector<std::shared_ptr<PointLight>> getPointLights();
+	std::vector<std::shared_ptr<Model>> GetModels();
+	std::vector<std::shared_ptr<ILight>> GetLights();
 
-	void attachModel(std::shared_ptr<Model> model);
-	void detachModel(std::shared_ptr<Model> model);
+	void AttachModel(std::shared_ptr<Model> model);
+	void DetachModel(std::shared_ptr<Model> model);
 
-	void attachPointLight(std::shared_ptr<PointLight> pointLight);
-	void detachPointLight(std::shared_ptr<PointLight> pointLight);
+	void AttachLight(std::shared_ptr<ILight> light);
+	void DetachLight(std::shared_ptr<ILight> light);
 
-	void update(double delta);
+	void Update(double delta);
 
 private:
-	std::vector<std::shared_ptr<PointLight>> _pointLights;
-	std::vector<std::shared_ptr<Model>> _models;
+	std::vector<std::shared_ptr<ILight>> m_Lights;
+	std::vector<std::shared_ptr<Model>> m_Models;
 };
 

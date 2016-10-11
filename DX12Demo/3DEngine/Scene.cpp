@@ -3,6 +3,7 @@
 #include "Model.h"
 
 #include "Lights/PointLight.h"
+#include "Lights/DirectionalLight.h"
 
 
 Scene::Scene()
@@ -13,40 +14,40 @@ Scene::~Scene()
 {
 }
 
-void Scene::update(double delta)
+void Scene::Update(double delta)
 {
-	for (auto mod : _models)
+	for (auto mod : m_Models)
 	{
 		mod->Update();
 	}
 }
 
-std::vector<std::shared_ptr<Model>> Scene::getModels()
+std::vector<std::shared_ptr<Model>> Scene::GetModels()
 {
-	return _models;
+	return m_Models;
 }
 
-std::vector<std::shared_ptr<PointLight>> Scene::getPointLights()
+std::vector<std::shared_ptr<ILight>> Scene::GetLights()
 {
-	return _pointLights;
+	return m_Lights;
 }
 
-void Scene::attachModel(std::shared_ptr<Model> model)
+void Scene::AttachModel(std::shared_ptr<Model> model)
 {
-	_models.push_back(model);
+	m_Models.push_back(model);
 }
 
-void Scene::detachModel(std::shared_ptr<Model> model)
+void Scene::DetachModel(std::shared_ptr<Model> model)
 {
 	// TODO: 
 }
 
-void Scene::attachPointLight(std::shared_ptr<PointLight> pointLight)
+void Scene::AttachLight(std::shared_ptr<ILight> light)
 {
-	_pointLights.push_back(pointLight);
+	m_Lights.push_back(light);
 }
 
-void Scene::detachPointLight(std::shared_ptr<PointLight> pointLight)
+void Scene::DetachLight(std::shared_ptr<ILight> light)
 {
 	// TODO:
 }

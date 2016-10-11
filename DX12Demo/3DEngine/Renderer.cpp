@@ -76,7 +76,7 @@ void Renderer::RenderGBuffer(const Camera* pCamera, Scene* pScene)
 	m_RenderContext.SetViewMatrix(pCamera->GetViewMatrix());
 	m_RenderContext.SetProjMatrix(pCamera->GetProjectionMatrix());
 
-	for (auto model : pScene->getModels())
+	for (auto model : pScene->GetModels())
 	{
 		model->DrawPrimitives(&m_RenderContext, pGfxContext);
 	}

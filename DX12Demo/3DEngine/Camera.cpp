@@ -20,11 +20,16 @@ void Camera::LookAt(DirectX::XMVECTOR eye, DirectX::XMVECTOR target, DirectX::XM
 	// TODO: better code
 	// this will cause _localMatrix been updated again
 	// and lose precision due to float arithmetic
+	DirectX::XMVECTOR scaleVec;
 	DirectX::XMVECTOR rotationQuat;
-	DirectX::XMMatrixDecompose(&m_Scale, &rotationQuat, &m_Translation, mModel);
+	DirectX::XMVECTOR translationVec;
+	DirectX::XMMatrixDecompose(&scaleVec, &rotationQuat, &translationVec, mModel);
+
 	double pitch, yaw, roll;
 	EulerianToEulerAngle(rotationQuat, pitch, yaw, roll);
-	m_RotationPitchYawRoll = DirectX::XMVECTOR{ static_cast<float>(roll), static_cast<float>(yaw), static_cast<float>(pitch), 0.0f };
+	m_RotationPitchYawRoll = DirectX::XMFLOAT4{ static_cast<float>(roll), static_cast<float>(yaw), static_cast<float>(pitch), 0.0f };
+	DirectX::XMStoreFloat4(&m_Scale, scaleVec);
+	DirectX::XMStoreFloat4(&m_Translation, translationVec);
 
 	UpdateWorldMatrixDeferred();
 }

@@ -177,6 +177,6 @@ void DX12SponzaDemo::LoadAssets()
 	//std::vector<std::shared_ptr<Model>> models = Model::LoadOBJ(m_GraphicManager->GetDevice(), pGfxContext, "cornell-box/CornellBox-Glossy.obj", "cornell-box/");
 	for (auto m : models)
 	{
-		m_Scene->attachModel(m);
+		m_Scene->AttachModel(m);
 	}
 }

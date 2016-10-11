@@ -128,4 +128,9 @@ namespace DX
 		std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
 		return converter.from_bytes(s);
 	}
+
+	template<typename T> T Clamp(T x, T min, T max)
+	{
+		return std::min<T>(std::max<T>(min, x), max);
+	}
 }

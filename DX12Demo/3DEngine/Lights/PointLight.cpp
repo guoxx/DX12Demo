@@ -14,12 +14,15 @@ PointLight::~PointLight()
 {
 }
 
-void PointLight::SetIntensity(DirectX::XMFLOAT3 intensity)
+void PointLight::SetIntensity(float r, float g, float b)
 {
-	m_Intensity = intensity;
+	r = DX::Clamp(r, 0.0f, 1.0f);
+	g = DX::Clamp(g, 0.0f, 1.0f);
+	b = DX::Clamp(b, 0.0f, 1.0f);
+	m_Intensity= DirectX::XMFLOAT4{r, g, b, 0};
 }
 
-DirectX::XMFLOAT3 PointLight::GetIntensity() const
+DirectX::XMFLOAT4 PointLight::GetIntensity() const
 {
 	return m_Intensity;
 }
@@ -77,7 +80,7 @@ DirectX::XMMATRIX PointLight::GetViewProj(AXIS axis, uint32_t shadowMapSize) con
 		{0.0f, 1.0f, 0.0f, 0.0f},		// NEGATIVE_Z
 	};
 
-	DirectX::XMVECTOR position = GetPosition();
+	DirectX::XMVECTOR position = GetTranslation();
 	DirectX::XMMATRIX mView = DirectX::XMMatrixLookToRH(position, axes[axis], upDir[axis]);
 	
 	DirectX::XMMATRIX mViewProj = DirectX::XMMatrixMultiply(mView, mProj);

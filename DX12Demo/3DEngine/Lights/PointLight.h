@@ -20,8 +20,8 @@ public:
 	PointLight();
 	virtual ~PointLight();
 
-	void SetIntensity(DirectX::XMFLOAT3 intensity);
-	DirectX::XMFLOAT3 GetIntensity() const;
+	void SetIntensity(float r, float g, float b);
+	DirectX::XMFLOAT4 GetIntensity() const;
 
 	void SetRadius(float rStart, float rEnd);
 	float GetRadiusStart() const;
@@ -31,7 +31,7 @@ public:
 	DirectX::XMMATRIX GetViewProj(AXIS axis, uint32_t shadowMapSize) const;
 
 private:
-	DirectX::XMFLOAT3 m_Intensity;
+	DirectX::XMFLOAT4 m_Intensity;
 	float m_RadiusStart;
 	float m_RadiusEnd;
 };

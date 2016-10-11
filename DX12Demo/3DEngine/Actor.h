@@ -14,8 +14,8 @@ public:
 
 	void Update();
 
-	void SetPosition(DirectX::XMVECTOR position);
-	DirectX::XMVECTOR GetPosition() const;
+	void SetTranslation(DirectX::XMVECTOR translation);
+	DirectX::XMVECTOR GetTranslation() const;
 
 	void SetRotationPitchYawRoll(float pitch, float yaw, float roll);
 	void SetRotationPitchYawRoll(DirectX::XMVECTOR pitchYawRollInDegrees);
@@ -57,9 +57,9 @@ protected:
 
 	uint32_t m_DirtyFlags;
 
-	DirectX::XMVECTOR m_Translation;
-	DirectX::XMVECTOR m_RotationPitchYawRoll;
-	DirectX::XMVECTOR m_Scale;
+	DirectX::XMFLOAT4 m_Translation;
+	DirectX::XMFLOAT4 m_RotationPitchYawRoll;
+	DirectX::XMFLOAT4 m_Scale;
 
 	DirectX::XMFLOAT4X4 m_LocalMatrix;
 	DirectX::XMFLOAT4X4 m_WorldMatrix;

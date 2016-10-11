@@ -7,9 +7,9 @@ Actor::Actor()
 	, m_Children{}
 	, m_DirtyFlags{0}
 {
-	m_Translation = DirectX::XMVectorZero();
-	m_RotationPitchYawRoll = DirectX::XMVectorZero();
-	m_Scale = DirectX::XMVECTOR{1, 1, 1};
+	m_Translation = DirectX::XMFLOAT4(0, 0, 0, 0);
+	m_RotationPitchYawRoll = DirectX::XMFLOAT4(0, 0, 0, 0);
+	m_Scale = DirectX::XMFLOAT4(1, 1, 1, 0);
 
 	DirectX::XMStoreFloat4x4(&m_LocalMatrix, DirectX::XMMatrixIdentity());
 	DirectX::XMStoreFloat4x4(&m_WorldMatrix, DirectX::XMMatrixIdentity());
@@ -37,15 +37,15 @@ void Actor::Update()
 	}
 }
 
-void Actor::SetPosition(DirectX::XMVECTOR position)
+void Actor::SetTranslation(DirectX::XMVECTOR translation)
 {
-	m_Translation = position;
+	DirectX::XMStoreFloat4(&m_Translation, translation);
 	UpdateLocalMatrixDeferred();
 }
 
-DirectX::XMVECTOR Actor::GetPosition() const
+DirectX::XMVECTOR Actor::GetTranslation() const
 {
-	return m_Translation;
+	return DirectX::XMLoadFloat4(&m_Translation);
 }
 
 void Actor::SetRotationPitchYawRoll(float pitch, float yaw, float roll)
@@ -56,24 +56,24 @@ void Actor::SetRotationPitchYawRoll(float pitch, float yaw, float roll)
 void Actor::SetRotationPitchYawRoll(DirectX::XMVECTOR pitchYawRollInDegrees)
 {
 	float degreeToRadian = -DirectX::XM_PI / 180.0f;
-	m_RotationPitchYawRoll = DirectX::XMVectorMultiply(pitchYawRollInDegrees, DirectX::XMVECTOR{degreeToRadian, degreeToRadian, degreeToRadian, degreeToRadian});
+	DirectX::XMStoreFloat4(&m_RotationPitchYawRoll, DirectX::XMVectorMultiply(pitchYawRollInDegrees, DirectX::XMVECTOR{degreeToRadian, degreeToRadian, degreeToRadian, degreeToRadian}));
 	UpdateLocalMatrixDeferred();
 }
 
 DirectX::XMVECTOR Actor::GetRotationPitchYawRoll() const
 {
-	return m_RotationPitchYawRoll;
+	return DirectX::XMLoadFloat4(&m_RotationPitchYawRoll);
 }
 
 void Actor::SetScale(DirectX::XMVECTOR scale)
 {
-	m_Scale = scale;
+	DirectX::XMStoreFloat4(&m_Scale, scale);
 	UpdateLocalMatrixDeferred();
 }
 
 DirectX::XMVECTOR Actor::GetScale() const
 {
-	return m_Scale;
+	return DirectX::XMLoadFloat4(&m_Scale);
 }
 
 DirectX::XMMATRIX Actor::GetLocalMatrix() const
@@ -130,14 +130,16 @@ DirectX::XMVECTOR Actor::GetBackward() const
 
 void Actor::Move(DirectX::XMVECTOR direction, float distance)
 {
-	m_Translation = DirectX::XMVectorMultiplyAdd(direction, DirectX::XMVECTOR{distance, distance, distance, distance}, m_Translation);
+	DirectX::XMVECTOR newTranslation = DirectX::XMVectorMultiplyAdd(direction, DirectX::XMVECTOR{distance, distance, distance, distance}, DirectX::XMLoadFloat4(&m_Translation));
+	DirectX::XMStoreFloat4(&m_Translation, newTranslation);
 	UpdateLocalMatrixDeferred();
 }
 
 void Actor::RotatePitchYawRoll(float pitch, float yaw, float roll)
 {
 	DirectX::XMVECTOR rotation = DirectX::XMVECTOR{DirectX::XMConvertToRadians(pitch), DirectX::XMConvertToRadians(yaw), DirectX::XMConvertToRadians(roll), 0};
-	m_RotationPitchYawRoll = DirectX::XMVectorAdd(m_RotationPitchYawRoll, rotation);
+	DirectX::XMVECTOR newRotationPitchYawRoll = DirectX::XMVectorAdd(DirectX::XMLoadFloat4(&m_RotationPitchYawRoll), rotation);
+	DirectX::XMStoreFloat4(&m_RotationPitchYawRoll, newRotationPitchYawRoll);
 	UpdateLocalMatrixDeferred();
 }
 
@@ -146,9 +148,9 @@ void Actor::UpdateLocalMatrixImmediate()
 	if (true)
 	//if (_dirtyFlags & ACTOR_DIRTY_LOCAL_MATRIX)
 	{
-		DirectX::XMMATRIX mTrans = DirectX::XMMatrixTranslationFromVector(m_Translation);
-		DirectX::XMMATRIX mRot = DirectX::XMMatrixRotationRollPitchYawFromVector(m_RotationPitchYawRoll);
-		DirectX::XMMATRIX mScale = DirectX::XMMatrixScalingFromVector(m_Scale);
+		DirectX::XMMATRIX mTrans = DirectX::XMMatrixTranslationFromVector(DirectX::XMLoadFloat4(&m_Translation));
+		DirectX::XMMATRIX mRot = DirectX::XMMatrixRotationRollPitchYawFromVector(DirectX::XMLoadFloat4(&m_RotationPitchYawRoll));
+		DirectX::XMMATRIX mScale = DirectX::XMMatrixScalingFromVector(DirectX::XMLoadFloat4(&m_Scale));
 		// mRot * mTrans * mScale
 		DirectX::XMMATRIX mLocal = DirectX::XMMatrixMultiply(DirectX::XMMatrixMultiply(mRot, mTrans), mScale);
 		DirectX::XMStoreFloat4x4(&m_LocalMatrix, mLocal);
