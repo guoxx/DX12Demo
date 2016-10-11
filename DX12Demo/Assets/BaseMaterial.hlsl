@@ -65,17 +65,12 @@ VSOutput VSMain(uint vertid : SV_VertexID)
 RootSigDeclaration
 GBufferOutput PSMain(VSOutput In)
 {
-	GBufferOutput Out;
+	GBuffer gbuffer;
 
-	Out.Diffuse.xyz = g_DiffuseTexture.Sample(s_PointSampler, In.Texcoord).xyz;
-	Out.Diffuse.w = 0.0f;
+	gbuffer.Diffuse = g_DiffuseTexture.Sample(s_PointSampler, In.Texcoord).xyz;
+	gbuffer.Specular = IorToF0_Dielectric(g_Material.Ior.x).xxx;
+	gbuffer.Normal = In.Normal;
+	gbuffer.Roughness = saturate((100.0f - g_Material.Shininess) / 100.0f);
 
-	Out.Specular.xyz = IorToF0_Dielectric(g_Material.Ior.x).xxx;
-	Out.Specular.w = 0.0f;
-
-	// encode to [0, 1]
-	Out.Normal_Roughness.xyz = (In.Normal + 1.0f) * 0.5f;
-	Out.Normal_Roughness.w = saturate((100.0f - g_Material.Shininess) / 100.0f);
-
-	return Out;
+	return GBufferEncode(gbuffer);
 }

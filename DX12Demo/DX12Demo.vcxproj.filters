@@ -332,6 +332,9 @@
     <None Include="Assets\IdentityFilter2D.hlsl">
       <Filter>Assets</Filter>
     </None>
+    <None Include="Assets\DirectionalLight.hlsl">
+      <Filter>Assets</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="XboxOne/Package.appxmanifest">

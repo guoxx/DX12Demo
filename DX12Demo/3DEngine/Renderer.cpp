@@ -51,6 +51,12 @@ void Renderer::Flip()
 
 void Renderer::DeferredLighting(const Camera* pCamera, Scene* pScene)
 {
+	DX12GraphicContextAutoExecutor executor;
+	DX12GraphicContext* pGfxContext = executor.GetGraphicContext();
+
+	for (auto directionalLight : pScene->GetDirectionalLights())
+	{
+	}
 }
 
 void Renderer::RenderGBuffer(const Camera* pCamera, Scene* pScene)
