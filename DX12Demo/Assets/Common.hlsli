@@ -36,8 +36,7 @@ struct GBuffer
 
 	// --
 	float Depth;
-	float3 PositionWS;
-	float3 PositionCS;
+	float3 Position;
 };
 
 GBufferOutput GBufferEncode(GBuffer gbuffer)
@@ -52,7 +51,8 @@ GBufferOutput GBufferEncode(GBuffer gbuffer)
 	return Out;
 }
 
-GBuffer GBufferDecode(Texture2D<float4> RT0, Texture2D<float4> RT1, Texture2D<float4> RT2, SamplerState samp, float2 UV)
+GBuffer GBufferDecode(Texture2D<float4> RT0, Texture2D<float4> RT1, Texture2D<float4> RT2, Texture2D<float> DepthBuffer, SamplerState samp, float2 UV,
+	float4x4 mInvView, float4x4 mInvProj)
 {
 	GBuffer gbuffer;
 
@@ -63,6 +63,15 @@ GBuffer GBufferDecode(Texture2D<float4> RT0, Texture2D<float4> RT1, Texture2D<fl
 	gbuffer.Specular = Specular.xyz;
 	gbuffer.Normal = Normal_Roughness.xyz * 2.0f - 1.0f;
 	gbuffer.Roughness = Normal_Roughness.w;
+
+	gbuffer.Depth = DepthBuffer.Sample(samp, UV);
+
+	// Assume DX style texture coordinate
+	float3 ndcPos = float3(UV.x * 2.0f - 1.0f, (1.0f - UV.y) * 2.0f - 1.0f, gbuffer.Depth);
+	float4 csPos = mul(float4(ndcPos, 1), mInvProj);
+	csPos /= csPos.w;
+	// world space position
+	gbuffer.Position = mul(csPos, mInvView);
 
 	return gbuffer;
 }
