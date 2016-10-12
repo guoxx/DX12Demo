@@ -43,6 +43,7 @@ void DX12DepthSurface::CreateView(DX12Device * device)
 	srvdesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
 	srvdesc.Texture2D.MipLevels = 1;
 	srvdesc.Texture2D.MostDetailedMip = 0;
+	srvdesc.Texture2D.PlaneSlice = 0;
 	srvdesc.Texture2D.ResourceMinLODClamp = 0.0f;
 
 	D3D12_DEPTH_STENCIL_VIEW_DESC dsvdesc;
