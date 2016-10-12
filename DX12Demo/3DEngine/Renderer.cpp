@@ -6,6 +6,7 @@
 #include "Model.h"
 
 #include "Filters/Filter2D.h"
+#include "Filters/DirectionalLightFilter2D.h"
 
 
 Renderer::Renderer(GFX_HWND hwnd, int32_t width, int32_t height)
@@ -24,12 +25,14 @@ Renderer::Renderer(GFX_HWND hwnd, int32_t width, int32_t height)
 	m_SceneGBuffer2->InitAs2dSurface(DX12GraphicManager::GetInstance()->GetDevice(), DXGI_FORMAT_R8G8B8A8_UNORM, width, height);
 
 	m_SceneDepthSurface = std::make_shared<DX12DepthSurface>();
-	m_SceneDepthSurface->InitAs2dSurface(DX12GraphicManager::GetInstance()->GetDevice(), DXGI_FORMAT_D32_FLOAT, width, height);
+	m_SceneDepthSurface->InitAs2dSurface(DX12GraphicManager::GetInstance()->GetDevice(), DXGI_FORMAT_R32_TYPELESS, width, height);
 
 	m_LightingSurface = std::make_shared<DX12ColorSurface>();
-	m_LightingSurface->InitAs2dSurface(DX12GraphicManager::GetInstance()->GetDevice(), DXGI_FORMAT_R8G8B8A8_UNORM, width, height);
+	m_LightingSurface->InitAs2dSurface(DX12GraphicManager::GetInstance()->GetDevice(), DXGI_FORMAT_R32G32B32A32_FLOAT, width, height);
 
 	m_IdentityFilter2D = std::make_shared<Filter2D>(DX12GraphicManager::GetInstance()->GetDevice(), L"IdentityFilter2D.hlsl");
+
+	m_DirLightFilter2D = std::make_shared<DirectionalLightFilter2D>(DX12GraphicManager::GetInstance()->GetDevice());
 }
 
 Renderer::~Renderer()
@@ -54,9 +57,39 @@ void Renderer::DeferredLighting(const Camera* pCamera, Scene* pScene)
 	DX12GraphicContextAutoExecutor executor;
 	DX12GraphicContext* pGfxContext = executor.GetGraphicContext();
 
+	// setup color and depth buffers
+	DX12ColorSurface* pColorSurfaces[] = { m_LightingSurface.get() };
+    pGfxContext->SetRenderTargets(_countof(pColorSurfaces), pColorSurfaces, nullptr);
+
+	pGfxContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	pGfxContext->SetViewport(0, 0, m_Width, m_Height);
+
+	m_RenderContext.SetModelMatrix(DirectX::XMMatrixIdentity());
+	m_RenderContext.SetViewMatrix(pCamera->GetViewMatrix());
+	m_RenderContext.SetProjMatrix(pCamera->GetProjectionMatrix());
+
+	pGfxContext->ResourceTransitionBarrier(m_SceneGBuffer0.get(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_GENERIC_READ);
+	pGfxContext->ResourceTransitionBarrier(m_SceneGBuffer1.get(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_GENERIC_READ);
+	pGfxContext->ResourceTransitionBarrier(m_SceneGBuffer2.get(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_GENERIC_READ);
+	pGfxContext->ResourceTransitionBarrier(m_SceneDepthSurface.get(), D3D12_RESOURCE_STATE_DEPTH_WRITE, D3D12_RESOURCE_STATE_GENERIC_READ);
+
 	for (auto directionalLight : pScene->GetDirectionalLights())
 	{
+		m_DirLightFilter2D->Apply(pGfxContext, &m_RenderContext, directionalLight.get());
+
+		pGfxContext->SetGraphicsRootDescriptorTable(1, m_SceneGBuffer0->GetSRV());
+		pGfxContext->SetGraphicsRootDescriptorTable(2, m_SceneGBuffer1->GetSRV());
+		pGfxContext->SetGraphicsRootDescriptorTable(3, m_SceneGBuffer2->GetSRV());
+		pGfxContext->SetGraphicsRootDescriptorTable(4, m_SceneDepthSurface->GetSRV());
+
+		m_DirLightFilter2D->Draw(pGfxContext);
 	}
+
+	pGfxContext->ResourceTransitionBarrier(m_SceneGBuffer0.get(), D3D12_RESOURCE_STATE_GENERIC_READ, D3D12_RESOURCE_STATE_RENDER_TARGET);
+	pGfxContext->ResourceTransitionBarrier(m_SceneGBuffer1.get(), D3D12_RESOURCE_STATE_GENERIC_READ, D3D12_RESOURCE_STATE_RENDER_TARGET);
+	pGfxContext->ResourceTransitionBarrier(m_SceneGBuffer2.get(), D3D12_RESOURCE_STATE_GENERIC_READ, D3D12_RESOURCE_STATE_RENDER_TARGET);
+	pGfxContext->ResourceTransitionBarrier(m_SceneDepthSurface.get(), D3D12_RESOURCE_STATE_GENERIC_READ, D3D12_RESOURCE_STATE_DEPTH_WRITE);
 }
 
 void Renderer::RenderGBuffer(const Camera* pCamera, Scene* pScene)

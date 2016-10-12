@@ -188,6 +188,9 @@
     <ClInclude Include="3DEngine\Lights\DirectionalLight.h">
       <Filter>3DEngine\Lights</Filter>
     </ClInclude>
+    <ClInclude Include="3DEngine\Filters\DirectionalLightFilter2D.h">
+      <Filter>3DEngine\Filters</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -300,6 +303,9 @@
     </ClCompile>
     <ClCompile Include="3DEngine\Lights\DirectionalLight.cpp">
       <Filter>3DEngine\Lights</Filter>
+    </ClCompile>
+    <ClCompile Include="3DEngine\Filters\DirectionalLightFilter2D.cpp">
+      <Filter>3DEngine\Filters</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -45,7 +45,7 @@ GBufferOutput GBufferEncode(GBuffer gbuffer)
 
 	Out.Diffuse = float4(gbuffer.Diffuse, 1.0f);
 	Out.Specular = float4(gbuffer.Specular, 1.0f);
-	Out.Normal_Roughness.xyz = (gbuffer.Normal * + 1.0f) * 0.5f;
+	Out.Normal_Roughness.xyz = (gbuffer.Normal + 1.0f) * 0.5f;
 	Out.Normal_Roughness.w = gbuffer.Roughness;
 
 	return Out;

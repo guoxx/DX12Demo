@@ -2,6 +2,7 @@
 
 #define RootSigDeclaration \
 RootSigBegin \
+", CBV(b0, visibility = SHADER_VISIBILITY_ALL)" \
 ", DescriptorTable(SRV(t0, numDescriptors=1), visibility=SHADER_VISIBILITY_PIXEL)" \
 ", DescriptorTable(SRV(t1, numDescriptors=1), visibility=SHADER_VISIBILITY_PIXEL)" \
 ", DescriptorTable(SRV(t2, numDescriptors=1), visibility=SHADER_VISIBILITY_PIXEL)" \
@@ -9,12 +10,21 @@ RootSigBegin \
 ", StaticSampler(s0, filter=FILTER_MIN_MAG_MIP_POINT, visibility=SHADER_VISIBILITY_PIXEL)" \
 RootSigEnd
 
+struct Constants
+{
+	float4x4 mInvView;
+	float4x4 mInvProj;
+	float4 LightDirection;
+	float4 LightIrradiance;
+};
+
 Texture2D<float4> g_GBuffer0 : register(t0);
 Texture2D<float4> g_GBuffer1 : register(t1);
 Texture2D<float4> g_GBuffer2 : register(t2);
-Texture2D<float4> g_DepthTexture : register(t3);
+Texture2D<float> g_DepthTexture : register(t3);
 
 SamplerState g_Sampler : register(s0);
+ConstantBuffer<Constants> g_Constants : register(b0);
 
 struct VSOutput
 {
@@ -43,7 +53,6 @@ VSOutput VSMain(uint vertid : SV_VertexID)
 RootSigDeclaration
 float4 PSMain(VSOutput In) : SV_TARGET
 {
-	
-	float4 OutColor = g_Texture.Sample(g_Sampler, In.Texcoord);
-	return OutColor;
+	GBuffer gbuffer = GBufferDecode(g_GBuffer0, g_GBuffer1, g_GBuffer2, g_DepthTexture, g_Sampler, In.Texcoord, g_Constants.mInvView, g_Constants.mInvProj);
+	return float4(gbuffer.Position, 1);
 }

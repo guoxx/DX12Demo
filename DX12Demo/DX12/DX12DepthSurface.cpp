@@ -25,20 +25,36 @@ void DX12DepthSurface::InitAs2dSurface(DX12Device * device, DXGI_FORMAT fmt, uin
 	uint32_t sampleQuality = 0;
 	D3D12_RESOURCE_FLAGS flags = D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;
 
-	D3D12_CLEAR_VALUE optimizedClearValue;
-	optimizedClearValue.Format = fmt;
-	optimizedClearValue.DepthStencil.Depth = 1.0f;
-	optimizedClearValue.DepthStencil.Stencil = 0;
-	Init(device, fmt, width, height, arraySize, mipLevels, sampleCount, sampleQuality, flags, &optimizedClearValue, D3D12_RESOURCE_STATE_DEPTH_WRITE);
+	//D3D12_CLEAR_VALUE optimizedClearValue;
+	//optimizedClearValue.Format = fmt;
+	//optimizedClearValue.DepthStencil.Depth = 1.0f;
+	//optimizedClearValue.DepthStencil.Stencil = 0;
+	Init(device, fmt, width, height, arraySize, mipLevels, sampleCount, sampleQuality, flags, nullptr, D3D12_RESOURCE_STATE_DEPTH_WRITE);
 
 	CreateView(device);
 }
 
 void DX12DepthSurface::CreateView(DX12Device * device)
 {
-	//m_SRV = DX12GraphicManager::GetInstance()->RegisterResourceInDescriptorHeap(m_Resource.Get(), D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-	//device->CreateShaderResourceView(m_Resource.Get(), nullptr, m_SRV.GetCpuHandle());
+	// TODO: remove hardcode desc
+	D3D12_SHADER_RESOURCE_VIEW_DESC srvdesc;
+	srvdesc.Format = DXGI_FORMAT_R32_FLOAT;
+	srvdesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+	srvdesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	srvdesc.Texture2D.MipLevels = 1;
+	srvdesc.Texture2D.MostDetailedMip = 0;
+	srvdesc.Texture2D.ResourceMinLODClamp = 0.0f;
+
+	D3D12_DEPTH_STENCIL_VIEW_DESC dsvdesc;
+	dsvdesc.Format = DXGI_FORMAT_D32_FLOAT;
+	dsvdesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
+	dsvdesc.Flags = D3D12_DSV_FLAG_NONE;
+	dsvdesc.Texture2D.MipSlice = 0;
+
+
+	m_SRV = DX12GraphicManager::GetInstance()->RegisterResourceInDescriptorHeap(m_Resource.Get(), D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	device->CreateShaderResourceView(m_Resource.Get(), &srvdesc, m_SRV.GetCpuHandle());
 
 	m_DSV = DX12GraphicManager::GetInstance()->RegisterResourceInDescriptorHeap(m_Resource.Get(), D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
-	device->CreateDepthStencilView(m_Resource.Get(), nullptr, m_DSV.GetCpuHandle());
+	device->CreateDepthStencilView(m_Resource.Get(), &dsvdesc, m_DSV.GetCpuHandle());
 }
