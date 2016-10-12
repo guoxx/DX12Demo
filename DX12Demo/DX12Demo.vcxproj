@@ -291,6 +291,7 @@
     <Image Include="XboxOne\Resources\StoreLogo.png" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Assets\BRDF.hlsli" />
     <None Include="Assets\Common.hlsli" />
     <None Include="Assets\HelloTriangle.hlsl">
       <FileType>Document</FileType>

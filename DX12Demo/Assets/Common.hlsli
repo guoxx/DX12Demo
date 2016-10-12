@@ -1,3 +1,5 @@
+#include "BRDF.hlsli"
+
 
 #define RootSigBegin \
 [RootSignature("RootFlags(0)"

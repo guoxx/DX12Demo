@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "DirectionalLightFilter2D.h"
 
+#include "../Camera.h"
 #include "../RenderContext.h"
 #include "../Lights/DirectionalLight.h"
 
@@ -13,6 +14,7 @@ namespace
 		float4x4 mInvProj;
 		float4 LightDirection;
 		float4 LightIrradiance;
+		float4 CameraPosition;
 	};
 }
 
@@ -82,6 +84,7 @@ void DirectionalLightFilter2D::Apply(DX12GraphicContext * pGfxContext, const Ren
 	DirectX::XMStoreFloat4x4(&constants.mInvProj, DirectX::XMMatrixTranspose(mInvProj));
 	constants.LightDirection = pLight->GetDirection();
 	constants.LightIrradiance = pLight->GetIrradiance();
+	DirectX::XMStoreFloat4(&constants.CameraPosition, pRenderContext->GetCamera()->GetTranslation());
 
 	pGfxContext->ResourceTransitionBarrier(m_ConstantsBuffer.get(), D3D12_RESOURCE_STATE_GENERIC_READ, D3D12_RESOURCE_STATE_COPY_DEST);
 	DX12GraphicManager::GetInstance()->UpdateBufer(pGfxContext, m_ConstantsBuffer.get(), &constants, sizeof(constants));

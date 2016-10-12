@@ -341,6 +341,9 @@
     <None Include="Assets\DirectionalLight.hlsl">
       <Filter>Assets</Filter>
     </None>
+    <None Include="Assets\BRDF.hlsli">
+      <Filter>Assets</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="XboxOne/Package.appxmanifest">

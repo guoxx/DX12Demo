@@ -1,10 +1,16 @@
 #pragma once
 
+class Camera;
+
 class __declspec(align(16)) RenderContext
 {
 public:
 	RenderContext();
 	~RenderContext();
+
+	const Camera* GetCamera() const { return m_Camera; }
+
+	void SetCamera(const Camera* pCamera) { m_Camera = pCamera; }
 
 	DirectX::XMMATRIX GetModelMatrix() const { return m_mModel; };
 
@@ -40,6 +46,8 @@ public:
 	}
 
 private:
+	const Camera* m_Camera;
+
 	DirectX::XMMATRIX m_mModel;
 	DirectX::XMMATRIX m_mView;
 	DirectX::XMMATRIX m_mProj;

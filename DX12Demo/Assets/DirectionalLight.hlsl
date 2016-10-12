@@ -16,6 +16,7 @@ struct Constants
 	float4x4 mInvProj;
 	float4 LightDirection;
 	float4 LightIrradiance;
+	float4 CameraPosition;
 };
 
 Texture2D<float4> g_GBuffer0 : register(t0);
@@ -54,5 +55,14 @@ RootSigDeclaration
 float4 PSMain(VSOutput In) : SV_TARGET
 {
 	GBuffer gbuffer = GBufferDecode(g_GBuffer0, g_GBuffer1, g_GBuffer2, g_DepthTexture, g_Sampler, In.Texcoord, g_Constants.mInvView, g_Constants.mInvProj);
-	return float4(gbuffer.Position, 1);
+
+	float3 L = -g_Constants.LightDirection;
+	float3 V = normalize(g_Constants.CameraPosition.xyz - gbuffer.Position);
+	float3 N = gbuffer.Normal;
+	float NdotL = saturate(dot(N, L));
+	float3 E = g_Constants.LightIrradiance * NdotL * PI;
+
+	float3 diffuse = Diffuse_Lambert(gbuffer.Diffuse) * E;
+	float3 specular = MicrofacetSpecular(gbuffer.Specular, gbuffer.Roughness, V, N, L) * E;
+	return float4(diffuse + specular, 1);
 }
