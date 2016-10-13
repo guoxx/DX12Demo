@@ -120,6 +120,7 @@
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <None Include="Assets\BRDF.hlsli" />
     <None Include="Assets\Common.hlsli" />
     <None Include="Assets\HelloTexture.hlsl">
       <FileType>Document</FileType>

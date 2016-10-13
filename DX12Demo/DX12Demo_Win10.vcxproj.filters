@@ -334,5 +334,8 @@
     <None Include="Assets\DirectionalLight.hlsl">
       <Filter>Assets\Shaders</Filter>
     </None>
+    <None Include="Assets\BRDF.hlsli">
+      <Filter>Assets\Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>
