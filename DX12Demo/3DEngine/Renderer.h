@@ -20,6 +20,8 @@ public:
 	void Flip();
 
 private:
+	void RenderShadowMaps(const Camera* pCamera, Scene* pScene);
+
 	void DeferredLighting(const Camera* pCamera, Scene* pScene);
 
 	void RenderGBuffer(const Camera* pCamera, Scene* pScene);
@@ -30,6 +32,14 @@ private:
 	int32_t m_Height;
 
 	RenderContext m_RenderContext;	
+
+	// ----
+	// TODO: quick hack to render shadow map
+	std::shared_ptr<DX12ColorSurface> m_ShadowGBuffer0;
+	std::shared_ptr<DX12ColorSurface> m_ShadowGBuffer1;
+	std::shared_ptr<DX12ColorSurface> m_ShadowGBuffer2;
+	// ----
+	std::shared_ptr<DX12DepthSurface> m_ShadowMap0;
 
 	std::shared_ptr<DX12ColorSurface> m_SceneGBuffer0;
 	std::shared_ptr<DX12ColorSurface> m_SceneGBuffer1;

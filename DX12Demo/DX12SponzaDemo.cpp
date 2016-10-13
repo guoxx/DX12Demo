@@ -167,8 +167,8 @@ void DX12SponzaDemo::CreateResources()
 void DX12SponzaDemo::LoadAssets()
 {
 	m_Camera = std::make_shared<Camera>();
-	m_Camera->LookAt(DirectX::XMVECTOR{0, 1, 2}, DirectX::XMVECTOR{0, 1, 0}, DirectX::XMVECTOR{0, 1, 0});
-	m_Camera->SetViewParams(60, m_Width * 1.0f / m_Height, 0.1f, 5000.0f);
+	m_Camera->LookAt(DirectX::XMVECTOR{0, 1000, 40}, DirectX::XMVECTOR{0, 0, 0}, DirectX::XMVECTOR{0, 1, 0});
+	m_Camera->SetViewParams(60, m_Width * 1.0f / m_Height, 0.1f, 2000.0f);
 
 	DX12GraphicContextAutoExecutor executor;
 	DX12GraphicContext* pGfxContext = executor.GetGraphicContext();
@@ -182,7 +182,7 @@ void DX12SponzaDemo::LoadAssets()
 	}
 
 	std::shared_ptr<DirectionalLight> light = std::make_shared<DirectionalLight>();
-	light->SetDirection(1, -1, 0);
+	light->SetDirection(-0.335837096, -0.923879147, 0.183468640);
 	light->SetIrradiance(1, 1, 1);
 	m_Scene->AttachDirectionalLight(light);
 }

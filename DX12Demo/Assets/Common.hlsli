@@ -73,7 +73,7 @@ GBuffer GBufferDecode(Texture2D<float4> RT0, Texture2D<float4> RT1, Texture2D<fl
 	float4 csPos = mul(float4(ndcPos, 1), mInvProj);
 	csPos /= csPos.w;
 	// world space position
-	gbuffer.Position = mul(csPos, mInvView);
+	gbuffer.Position = mul(csPos, mInvView).xyz;
 
 	return gbuffer;
 }

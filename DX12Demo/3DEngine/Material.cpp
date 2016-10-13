@@ -58,7 +58,9 @@ void Material::Load(DX12GraphicContext* pGfxContext)
 	sigCompiler[1].InitAsConstantBufferView(1);
 	sigCompiler[2].InitAsShaderResourceView(0, 0, D3D12_SHADER_VISIBILITY_VERTEX);
 	sigCompiler[3].InitAsDescriptorTable(_countof(descriptorRanges), descriptorRanges, D3D12_SHADER_VISIBILITY_PIXEL);
-	sigCompiler.InitStaticSampler(CD3DX12_STATIC_SAMPLER_DESC(0, D3D12_FILTER_MIN_MAG_MIP_POINT));
+	CD3DX12_STATIC_SAMPLER_DESC staticSampDesc = CD3DX12_STATIC_SAMPLER_DESC(0, D3D12_FILTER_MIN_MAG_MIP_POINT);
+	staticSampDesc.ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+	sigCompiler.InitStaticSampler(staticSampDesc);
 	m_RootSig = sigCompiler.Compile(DX12GraphicManager::GetInstance()->GetDevice());
 
 	DX12GraphicPsoCompiler psoCompiler;
@@ -70,6 +72,7 @@ void Material::Load(DX12GraphicContext* pGfxContext)
 
 	CD3DX12_RASTERIZER_DESC rasterizerDesc{ D3D12_DEFAULT };
 	rasterizerDesc.FrontCounterClockwise = true;
+	rasterizerDesc.CullMode = D3D12_CULL_MODE_NONE;
 	psoCompiler.SetRasterizerState(rasterizerDesc);
 
 	m_PSO = psoCompiler.Compile(DX12GraphicManager::GetInstance()->GetDevice());

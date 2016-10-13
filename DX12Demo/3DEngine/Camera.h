@@ -21,9 +21,19 @@ public:
 	DirectX::XMMATRIX GetViewProjectionMatrix() const;
 	DirectX::XMMATRIX GetInvViewProjectionMatrix() const;
 
-private:
+	float GetNear() const { return m_Near; }
+	float GetFar() const { return m_Far; }
 
+	float GetFovY() const { return m_FovY; }
+
+	float GetAspectRatio() const { return m_AspectRatio; }
+
+private:
 	// column-major matrix data
 	DirectX::XMFLOAT4X4 m_ProjectionMatrix;
+	float m_Near;
+	float m_Far;
+	float m_FovY;
+	float m_AspectRatio;
 };
 

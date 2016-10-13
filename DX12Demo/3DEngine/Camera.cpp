@@ -36,6 +36,11 @@ void Camera::LookAt(DirectX::XMVECTOR eye, DirectX::XMVECTOR target, DirectX::XM
 
 void Camera::SetViewParams(float fovy, float aspectRatio, float zNear, float zFar)
 {
+	m_Near = zNear;
+	m_Far = zFar;
+	m_FovY = fovy;
+	m_AspectRatio = aspectRatio;
+
 	DirectX::XMMATRIX mProj = DirectX::XMMatrixPerspectiveFovRH(DirectX::XMConvertToRadians(fovy), aspectRatio, zNear, zFar);
 	DirectX::XMStoreFloat4x4(&m_ProjectionMatrix, mProj);
 }
