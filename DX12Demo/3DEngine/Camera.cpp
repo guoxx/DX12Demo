@@ -27,7 +27,7 @@ void Camera::LookAt(DirectX::XMVECTOR eye, DirectX::XMVECTOR target, DirectX::XM
 
 	double pitch, yaw, roll;
 	EulerianToEulerAngle(rotationQuat, pitch, yaw, roll);
-	m_RotationPitchYawRoll = DirectX::XMFLOAT4{ static_cast<float>(roll), static_cast<float>(yaw), static_cast<float>(pitch), 0.0f };
+	m_RotationPitchYawRoll = DirectX::XMFLOAT4{ static_cast<float>(roll), static_cast<float>(pitch), static_cast<float>(yaw), 0.0f };
 	DirectX::XMStoreFloat4(&m_Scale, scaleVec);
 	DirectX::XMStoreFloat4(&m_Translation, translationVec);
 
