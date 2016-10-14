@@ -9,13 +9,17 @@
 #include "DX12RootSignature.h"
 #include "DX12PipelineState.h"
 #include "DX12DescriptorHandle.h"
+#include "DX12GraphicManager.h"
 
 
 DX12GraphicContext::DX12GraphicContext(DX12Device* device)
 	: DX12CommandContext(device)
 {
+	m_FlushPendingBarriers = false;
+
 	m_CommandAllocator = device->CreateGraphicCommandAllocator();
 	m_CommandList = device->CreateGraphicCommandList(m_CommandAllocator.Get());
+	m_BarriersCommandList = device->CreateGraphicCommandList(m_CommandAllocator.Get());
 }
 
 DX12GraphicContext::~DX12GraphicContext()
@@ -86,14 +90,69 @@ void DX12GraphicContext::IASetPrimitiveTopology(D3D12_PRIMITIVE_TOPOLOGY primiti
 	m_CommandList->IASetPrimitiveTopology(primitiveTopology);
 }
 
-void DX12GraphicContext::ResourceTransitionBarrier(DX12GpuResource* resource, D3D12_RESOURCE_STATES stateBefore, D3D12_RESOURCE_STATES stateAfter, uint32_t subresource)
+void DX12GraphicContext::ResolvePendingBarriers()
+{
+	m_FlushPendingBarriers = m_PendingTransitionBarriers.size();
+
+	if (m_FlushPendingBarriers)
+	{
+		m_BarriersCommandList->Reset(m_CommandAllocator.Get(), nullptr);
+
+		for (auto pendingBarrier : m_PendingTransitionBarriers)
+		{
+			D3D12_RESOURCE_STATES stateBeforeThisCommandContext = pendingBarrier.m_DX12Resource->GetUsageState();
+			D3D12_RESOURCE_STATES stateAfterThisCommandContext = pendingBarrier.m_DX12Resource->GetPendingTransitionState(GetParallelId());
+			assert(stateBeforeThisCommandContext != D3D12_RESOURCE_STATE_INVALID);
+			assert(stateAfterThisCommandContext != D3D12_RESOURCE_STATE_INVALID);
+
+			// correct pending barrier
+			pendingBarrier.m_Barrier.Transition.StateBefore = stateBeforeThisCommandContext;
+
+			// update gpu resource state
+			pendingBarrier.m_DX12Resource->SetUsageState(stateAfterThisCommandContext);
+			pendingBarrier.m_DX12Resource->SetPendingTransitionState(D3D12_RESOURCE_STATE_INVALID, GetParallelId());
+
+			// populate resource barrier command list
+			m_BarriersCommandList->ResourceBarrier(1, &pendingBarrier.m_Barrier);
+		}
+
+		m_BarriersCommandList->Close();
+
+		m_PendingTransitionBarriers.clear();
+	}
+}
+
+#if 0
+void DX12GraphicContext::ResourceTransitionBarrier(DX12GpuResource* resource, D3D12_RESOURCE_STATES stateAfter, uint32_t subresource)
 {
 	// only support all subresources transition barrier for the moment
 	assert(subresource == D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES);
+#else
+void DX12GraphicContext::ResourceTransitionBarrier(DX12GpuResource* resource, D3D12_RESOURCE_STATES stateAfter)
+{
+	uint32_t subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+#endif
 
-    // Transition the render target into the correct state to allow for drawing into it.
-    D3D12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(resource->m_Resource.Get(), stateBefore, stateAfter, subresource);
-    m_CommandList->ResourceBarrier(1, &barrier);
+	assert(stateAfter != D3D12_RESOURCE_STATE_INVALID);
+
+	D3D12_RESOURCE_STATES usageStateForThisCommandContext = resource->GetPendingTransitionState(GetParallelId());
+	resource->SetPendingTransitionState(stateAfter, GetParallelId());
+
+	D3D12_RESOURCE_STATES stateBefore = usageStateForThisCommandContext;
+	D3D12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(resource->m_Resource.Get(), stateBefore, stateAfter, subresource);
+
+	if (usageStateForThisCommandContext != D3D12_RESOURCE_STATE_INVALID)
+	{
+		m_CommandList->ResourceBarrier(1, &barrier);
+	}
+	else
+	{
+		// push into a pending list and resolve it when executed in a queue
+		PendingResourcBarrier pendingBarrier;
+		pendingBarrier.m_DX12Resource = resource;
+		pendingBarrier.m_Barrier = barrier;
+		m_PendingTransitionBarriers.push_back(pendingBarrier);
+	}
 }
 
 void DX12GraphicContext::SetDescriptorHeaps(uint32_t numDescriptorHeaps, ID3D12DescriptorHeap** ppDescriptorHeaps)
@@ -178,4 +237,21 @@ void DX12GraphicContext::SetViewport(uint32_t topLeftX, uint32_t topLeftY, uint3
 	// TODO: remove this code
     D3D12_RECT scissorRect = { (float)topLeftX, (float)topLeftY, (float)(topLeftX + width), (float)(topLeftY + height) };
     m_CommandList->RSSetScissorRects(1, &scissorRect);
+}
+
+void DX12GraphicContext::ExecuteInQueue(ID3D12CommandQueue* pCommandQueue)
+{
+	if (m_FlushPendingBarriers)
+	{
+		m_FlushPendingBarriers = false;
+
+		ID3D12CommandList* lists[] = { m_BarriersCommandList.Get(), m_CommandList.Get() };
+		pCommandQueue->ExecuteCommandLists(_countof(lists), lists);
+
+		DX12GraphicManager::GetInstance()->GetFenceManager()->SignalAndAdvance(pCommandQueue);
+	}
+	else
+	{
+		super::ExecuteInQueue(pCommandQueue);
+	}
 }

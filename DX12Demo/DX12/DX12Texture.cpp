@@ -40,9 +40,9 @@ DX12Texture* DX12Texture::LoadTGAFromFile(DX12Device* device, DX12GraphicContext
 		texLoader.GetWidth(),
 		texLoader.GetHeight());
 
-	pGfxContext->ResourceTransitionBarrier(pTex, D3D12_RESOURCE_STATE_GENERIC_READ, D3D12_RESOURCE_STATE_COPY_DEST);
+	pGfxContext->ResourceTransitionBarrier(pTex, D3D12_RESOURCE_STATE_COPY_DEST);
 	DX12GraphicManager::GetInstance()->UpdateTexture(pGfxContext, pTex, 0, (uint8_t*)texLoader.GetData(), texLoader.GetDataSize());
-	pGfxContext->ResourceTransitionBarrier(pTex, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_GENERIC_READ);
+	pGfxContext->ResourceTransitionBarrier(pTex, D3D12_RESOURCE_STATE_GENERIC_READ);
 
 	return pTex;
 }

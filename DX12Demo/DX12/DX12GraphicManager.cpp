@@ -132,6 +132,8 @@ void DX12GraphicManager::EndGraphicContext(DX12GraphicContext * ctx)
 {
 	ctx->Close();
 
+	ctx->ResolvePendingBarriers();
+
 	int32_t parallelId = ctx->GetParallelId();
 	assert(parallelId >= 0 && parallelId < DX12MaxGraphicContextsInParallel);
 	assert((m_GraphicContextParallelBits & (0x01 << parallelId)) != 0);
@@ -141,16 +143,14 @@ void DX12GraphicManager::EndGraphicContext(DX12GraphicContext * ctx)
 
 void DX12GraphicManager::ExecuteGraphicContext(DX12GraphicContext* ctx)
 {
-	PIXBeginEvent(0, L"ExecuteCommandList");
-
-	ctx->ExecuteInQueue(m_GraphicQueues[0].Get());
-
-	PIXEndEvent();
+	ExecuteGraphicContextInQueue(ctx, m_GraphicQueues[0].Get());
 }
 
 void DX12GraphicManager::ExecuteGraphicContextInQueue(DX12GraphicContext* ctx, ID3D12CommandQueue* pQueue)
 {
+	PIXBeginEvent(0, L"ExecuteCommandList");
 	ctx->ExecuteInQueue(pQueue);
+	PIXEndEvent();
 }
 
 DX12DescriptorHandle DX12GraphicManager::RegisterResourceInDescriptorHeap(ID3D12Resource * resource, D3D12_DESCRIPTOR_HEAP_TYPE type)

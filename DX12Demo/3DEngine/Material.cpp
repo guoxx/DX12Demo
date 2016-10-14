@@ -140,13 +140,13 @@ void Material::Apply(RenderContext* pRenderContext, DX12GraphicContext* pGfxCont
 	baseMaterial.Ior = DirectX::XMFLOAT4{ m_Ior, m_Ior, m_Ior, m_Ior };
 	baseMaterial.Dissolve = DirectX::XMFLOAT4{ m_Dissolve, m_Dissolve, m_Dissolve, m_Dissolve };
 
-	pGfxContext->ResourceTransitionBarrier(m_ViewConstantsBuffer.get(), D3D12_RESOURCE_STATE_GENERIC_READ, D3D12_RESOURCE_STATE_COPY_DEST);
+	pGfxContext->ResourceTransitionBarrier(m_ViewConstantsBuffer.get(), D3D12_RESOURCE_STATE_COPY_DEST);
 	DX12GraphicManager::GetInstance()->UpdateBufer(pGfxContext, m_ViewConstantsBuffer.get(), &view, sizeof(view));
-	pGfxContext->ResourceTransitionBarrier(m_ViewConstantsBuffer.get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_GENERIC_READ);
+	pGfxContext->ResourceTransitionBarrier(m_ViewConstantsBuffer.get(), D3D12_RESOURCE_STATE_GENERIC_READ);
 
-	pGfxContext->ResourceTransitionBarrier(m_MaterialConstantsBuffer.get(), D3D12_RESOURCE_STATE_GENERIC_READ, D3D12_RESOURCE_STATE_COPY_DEST);
+	pGfxContext->ResourceTransitionBarrier(m_MaterialConstantsBuffer.get(), D3D12_RESOURCE_STATE_COPY_DEST);
 	DX12GraphicManager::GetInstance()->UpdateBufer(pGfxContext, m_MaterialConstantsBuffer.get(), &baseMaterial, sizeof(baseMaterial));
-	pGfxContext->ResourceTransitionBarrier(m_MaterialConstantsBuffer.get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_GENERIC_READ);
+	pGfxContext->ResourceTransitionBarrier(m_MaterialConstantsBuffer.get(), D3D12_RESOURCE_STATE_GENERIC_READ);
 
 	pGfxContext->SetGraphicsRootConstantBufferView(0, m_ViewConstantsBuffer.get());
 	pGfxContext->SetGraphicsRootConstantBufferView(1, m_MaterialConstantsBuffer.get());

@@ -28,9 +28,9 @@ DirectionalLightFilter2D::DirectionalLightFilter2D(DX12Device* device)
 	DX12GraphicContextAutoExecutor executor;
 	DX12GraphicContext* pGfxContext = executor.GetGraphicContext();
 
-	pGfxContext->ResourceTransitionBarrier(m_IndexBuffer.get(), D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_COPY_DEST);
+	pGfxContext->ResourceTransitionBarrier(m_IndexBuffer.get(), D3D12_RESOURCE_STATE_COPY_DEST);
 	DX12GraphicManager::GetInstance()->UpdateBufer(pGfxContext, m_IndexBuffer.get(), indices, sizeof(indices));
-	pGfxContext->ResourceTransitionBarrier(m_IndexBuffer.get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_GENERIC_READ);
+	pGfxContext->ResourceTransitionBarrier(m_IndexBuffer.get(), D3D12_RESOURCE_STATE_GENERIC_READ);
 
 	D3D12_DESCRIPTOR_RANGE descriptorRanges1[] = {
 		{ D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0, 0, 0 },
@@ -97,9 +97,9 @@ void DirectionalLightFilter2D::Apply(DX12GraphicContext * pGfxContext, const Ren
 	pLight->GetViewAndProjMatrix(pRenderContext->GetCamera(), &mLightView, &mLightProj);
 	DirectX::XMStoreFloat4x4(&constants.mLightViewProj, DirectX::XMMatrixTranspose(DirectX::XMMatrixMultiply(mLightView, mLightProj)));
 
-	pGfxContext->ResourceTransitionBarrier(m_ConstantsBuffer.get(), D3D12_RESOURCE_STATE_GENERIC_READ, D3D12_RESOURCE_STATE_COPY_DEST);
+	pGfxContext->ResourceTransitionBarrier(m_ConstantsBuffer.get(), D3D12_RESOURCE_STATE_COPY_DEST);
 	DX12GraphicManager::GetInstance()->UpdateBufer(pGfxContext, m_ConstantsBuffer.get(), &constants, sizeof(constants));
-	pGfxContext->ResourceTransitionBarrier(m_ConstantsBuffer.get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_GENERIC_READ);
+	pGfxContext->ResourceTransitionBarrier(m_ConstantsBuffer.get(), D3D12_RESOURCE_STATE_GENERIC_READ);
 }
 
 void DirectionalLightFilter2D::Draw(DX12GraphicContext* pGfxContext)

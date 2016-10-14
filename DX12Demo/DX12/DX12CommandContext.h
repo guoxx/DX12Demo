@@ -22,7 +22,7 @@ public:
 
 	void Close();
 
-	void ExecuteInQueue(ID3D12CommandQueue* pCommandQueue);
+	virtual void ExecuteInQueue(ID3D12CommandQueue* pCommandQueue);
 
 protected:
 	void ClearState();

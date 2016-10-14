@@ -240,13 +240,13 @@ void DX12Demo::LoadAssets()
 	DX12GraphicContextAutoExecutor executor;
 	DX12GraphicContext* pGfxContext = executor.GetGraphicContext();
 
-	pGfxContext->ResourceTransitionBarrier(m_VertexBuffer.get(), D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_COPY_DEST);
+	pGfxContext->ResourceTransitionBarrier(m_VertexBuffer.get(), D3D12_RESOURCE_STATE_COPY_DEST);
 	m_GraphicManager->UpdateBufer(pGfxContext, m_VertexBuffer.get(), verts, sizeof(verts));
-	pGfxContext->ResourceTransitionBarrier(m_VertexBuffer.get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_GENERIC_READ);
+	pGfxContext->ResourceTransitionBarrier(m_VertexBuffer.get(), D3D12_RESOURCE_STATE_GENERIC_READ);
 
-	pGfxContext->ResourceTransitionBarrier(m_IndexBuffer.get(), D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_COPY_DEST);
+	pGfxContext->ResourceTransitionBarrier(m_IndexBuffer.get(), D3D12_RESOURCE_STATE_COPY_DEST);
 	m_GraphicManager->UpdateBufer(pGfxContext, m_IndexBuffer.get(), indices, sizeof(indices));
-	pGfxContext->ResourceTransitionBarrier(m_IndexBuffer.get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_GENERIC_READ);
+	pGfxContext->ResourceTransitionBarrier(m_IndexBuffer.get(), D3D12_RESOURCE_STATE_GENERIC_READ);
 }
 
 void DX12Demo::LoadAssets1()
@@ -297,13 +297,13 @@ void DX12Demo::LoadAssets1()
 	DX12GraphicContextAutoExecutor executor;
 	DX12GraphicContext* pGfxContext = executor.GetGraphicContext();
 
-	pGfxContext->ResourceTransitionBarrier(m_VertexBuffer1.get(), D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_COPY_DEST);
+	pGfxContext->ResourceTransitionBarrier(m_VertexBuffer1.get(), D3D12_RESOURCE_STATE_COPY_DEST);
 	m_GraphicManager->UpdateBufer(pGfxContext, m_VertexBuffer1.get(), verts, sizeof(verts));
-	pGfxContext->ResourceTransitionBarrier(m_VertexBuffer1.get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_GENERIC_READ);
+	pGfxContext->ResourceTransitionBarrier(m_VertexBuffer1.get(), D3D12_RESOURCE_STATE_GENERIC_READ);
 
-	pGfxContext->ResourceTransitionBarrier(m_IndexBuffer1.get(), D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_COPY_DEST);
+	pGfxContext->ResourceTransitionBarrier(m_IndexBuffer1.get(), D3D12_RESOURCE_STATE_COPY_DEST);
 	m_GraphicManager->UpdateBufer(pGfxContext, m_IndexBuffer1.get(), indices, sizeof(indices));
-	pGfxContext->ResourceTransitionBarrier(m_IndexBuffer1.get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_GENERIC_READ);
+	pGfxContext->ResourceTransitionBarrier(m_IndexBuffer1.get(), D3D12_RESOURCE_STATE_GENERIC_READ);
 
 	m_Tex1.reset(DX12Texture::LoadTGAFromFile(m_GraphicManager->GetDevice(), pGfxContext, "tex_0.tga"));
 }

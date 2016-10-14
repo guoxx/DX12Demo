@@ -20,13 +20,21 @@ public:
 
 	void UnmapResource(uint32_t subresource);
 
-	D3D12_RESOURCE_STATES GetUsageState() const { m_UsageState; }
+	D3D12_RESOURCE_STATES GetUsageState() const { return m_UsageState; }
 
 	void SetUsageState(D3D12_RESOURCE_STATES usageState) { m_UsageState = usageState; }
 
-	D3D12_RESOURCE_STATES GetPendingTransitionState(int32_t parallelId) const { m_PendingTransitionState[parallelId]; }
+	D3D12_RESOURCE_STATES GetPendingTransitionState(int32_t parallelId) const
+	{
+		assert(parallelId != DX12ParallelIdInvalid);
+		return m_PendingTransitionState[parallelId];
+	}
 
-	void SetPendingTransitionState(D3D12_RESOURCE_STATES pendingState, int32_t parallelId) { m_PendingTransitionState[parallelId] = pendingState; }	
+	void SetPendingTransitionState(D3D12_RESOURCE_STATES pendingState, int32_t parallelId)
+	{
+		assert(parallelId != DX12ParallelIdInvalid);
+		m_PendingTransitionState[parallelId] = pendingState;
+	}	
 
 protected:
 	void SetGpuResource(ComPtr<ID3D12Resource> resource, D3D12_RESOURCE_STATES usageState);

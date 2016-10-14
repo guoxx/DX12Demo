@@ -122,11 +122,11 @@ void Renderer::DeferredLighting(const Camera* pCamera, Scene* pScene)
 	m_RenderContext.SetViewMatrix(pCamera->GetViewMatrix());
 	m_RenderContext.SetProjMatrix(pCamera->GetProjectionMatrix());
 
-	pGfxContext->ResourceTransitionBarrier(m_SceneGBuffer0.get(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_GENERIC_READ);
-	pGfxContext->ResourceTransitionBarrier(m_SceneGBuffer1.get(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_GENERIC_READ);
-	pGfxContext->ResourceTransitionBarrier(m_SceneGBuffer2.get(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_GENERIC_READ);
-	pGfxContext->ResourceTransitionBarrier(m_SceneDepthSurface.get(), D3D12_RESOURCE_STATE_DEPTH_WRITE, D3D12_RESOURCE_STATE_GENERIC_READ);
-	pGfxContext->ResourceTransitionBarrier(m_ShadowMap0.get(), D3D12_RESOURCE_STATE_DEPTH_WRITE, D3D12_RESOURCE_STATE_GENERIC_READ);
+	pGfxContext->ResourceTransitionBarrier(m_SceneGBuffer0.get(), D3D12_RESOURCE_STATE_GENERIC_READ);
+	pGfxContext->ResourceTransitionBarrier(m_SceneGBuffer1.get(), D3D12_RESOURCE_STATE_GENERIC_READ);
+	pGfxContext->ResourceTransitionBarrier(m_SceneGBuffer2.get(), D3D12_RESOURCE_STATE_GENERIC_READ);
+	pGfxContext->ResourceTransitionBarrier(m_SceneDepthSurface.get(), D3D12_RESOURCE_STATE_GENERIC_READ);
+	pGfxContext->ResourceTransitionBarrier(m_ShadowMap0.get(), D3D12_RESOURCE_STATE_GENERIC_READ);
 
 	for (auto directionalLight : pScene->GetDirectionalLights())
 	{
@@ -141,11 +141,11 @@ void Renderer::DeferredLighting(const Camera* pCamera, Scene* pScene)
 		m_DirLightFilter2D->Draw(pGfxContext);
 	}
 
-	pGfxContext->ResourceTransitionBarrier(m_SceneGBuffer0.get(), D3D12_RESOURCE_STATE_GENERIC_READ, D3D12_RESOURCE_STATE_RENDER_TARGET);
-	pGfxContext->ResourceTransitionBarrier(m_SceneGBuffer1.get(), D3D12_RESOURCE_STATE_GENERIC_READ, D3D12_RESOURCE_STATE_RENDER_TARGET);
-	pGfxContext->ResourceTransitionBarrier(m_SceneGBuffer2.get(), D3D12_RESOURCE_STATE_GENERIC_READ, D3D12_RESOURCE_STATE_RENDER_TARGET);
-	pGfxContext->ResourceTransitionBarrier(m_SceneDepthSurface.get(), D3D12_RESOURCE_STATE_GENERIC_READ, D3D12_RESOURCE_STATE_DEPTH_WRITE);
-	pGfxContext->ResourceTransitionBarrier(m_ShadowMap0.get(), D3D12_RESOURCE_STATE_GENERIC_READ, D3D12_RESOURCE_STATE_DEPTH_WRITE);
+	pGfxContext->ResourceTransitionBarrier(m_SceneGBuffer0.get(), D3D12_RESOURCE_STATE_RENDER_TARGET);
+	pGfxContext->ResourceTransitionBarrier(m_SceneGBuffer1.get(), D3D12_RESOURCE_STATE_RENDER_TARGET);
+	pGfxContext->ResourceTransitionBarrier(m_SceneGBuffer2.get(), D3D12_RESOURCE_STATE_RENDER_TARGET);
+	pGfxContext->ResourceTransitionBarrier(m_SceneDepthSurface.get(), D3D12_RESOURCE_STATE_DEPTH_WRITE);
+	pGfxContext->ResourceTransitionBarrier(m_ShadowMap0.get(), D3D12_RESOURCE_STATE_DEPTH_WRITE);
 
 	pGfxContext->PIXEndEvent();
 }
@@ -198,9 +198,9 @@ void Renderer::ResolveToSwapChain()
 	pGfxContext->SetViewport(0, 0, m_Width, m_Height);
 
 	m_IdentityFilter2D->Apply(pGfxContext);
-	pGfxContext->ResourceTransitionBarrier(m_LightingSurface.get(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_GENERIC_READ);
+	pGfxContext->ResourceTransitionBarrier(m_LightingSurface.get(), D3D12_RESOURCE_STATE_GENERIC_READ);
 	pGfxContext->SetGraphicsRootDescriptorTable(0, m_LightingSurface->GetSRV());
 	m_IdentityFilter2D->Draw(pGfxContext);
-	pGfxContext->ResourceTransitionBarrier(m_LightingSurface.get(), D3D12_RESOURCE_STATE_GENERIC_READ, D3D12_RESOURCE_STATE_RENDER_TARGET);
+	pGfxContext->ResourceTransitionBarrier(m_LightingSurface.get(), D3D12_RESOURCE_STATE_RENDER_TARGET);
 }
 
