@@ -55,6 +55,8 @@ private:
 	std::vector<ComPtr<ID3D12CommandQueue>> m_GraphicQueues;
 	ComPtr<ID3D12CommandQueue> m_SwapChainCommandQueue;
 
+	uint32_t m_GraphicContextParallelBits;
+
 	uint32_t m_GraphicContextIdx;
 	std::array<std::shared_ptr<DX12GraphicContext>, DX12NumGraphicContexts> m_GraphicContexts;
 

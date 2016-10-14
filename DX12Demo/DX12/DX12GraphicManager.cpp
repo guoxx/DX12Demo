@@ -42,6 +42,8 @@ DX12GraphicManager::DX12GraphicManager()
 
 	m_FenceManager = std::make_unique<DX12FenceManager>(m_Device.get());
 
+	m_GraphicContextParallelBits = 0x00;
+
 	m_GraphicContextIdx = 0;
 	for (uint32_t i = 0; i < m_GraphicContexts.size(); ++i)
 	{
@@ -102,18 +104,39 @@ void DX12GraphicManager::CreateGraphicCommandQueues(uint32_t cnt)
 
 DX12GraphicContext* DX12GraphicManager::BegineGraphicContext()
 {
+	int32_t parallelId = DX12ParallelIdInvalid;
+	for (int32_t i = 0; i < DX12MaxGraphicContextsInParallel; ++i)
+	{
+		if ((m_GraphicContextParallelBits & (0x01 << i)) == 0)
+		{
+			parallelId = i;
+			m_GraphicContextParallelBits |= (0x01 << i);
+			break;
+		}
+	}
+	assert(parallelId != DX12ParallelIdInvalid);
+
 	uint32_t idx = m_GraphicContextIdx % DX12NumGraphicContexts;
 	++m_GraphicContextIdx;
 
 	std::shared_ptr<DX12GraphicContext> ctx = m_GraphicContexts[idx];
 	ctx->Reset();
+	ctx->SetParallelId(parallelId);
+
 	m_DescriptorManager->SetupHeapsForCommandList(ctx.get());
+
 	return ctx.get();
 }
 
 void DX12GraphicManager::EndGraphicContext(DX12GraphicContext * ctx)
 {
 	ctx->Close();
+
+	int32_t parallelId = ctx->GetParallelId();
+	assert(parallelId >= 0 && parallelId < DX12MaxGraphicContextsInParallel);
+	assert((m_GraphicContextParallelBits & (0x01 << parallelId)) != 0);
+	m_GraphicContextParallelBits &= ~(0x01 << parallelId);
+	ctx->SetParallelId(DX12ParallelIdInvalid);
 }
 
 void DX12GraphicManager::ExecuteGraphicContext(DX12GraphicContext* ctx)

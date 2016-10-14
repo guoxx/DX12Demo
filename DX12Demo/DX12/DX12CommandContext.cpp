@@ -6,6 +6,7 @@
 
 DX12CommandContext::DX12CommandContext(DX12Device* device)
 	: m_FenceHandle{ }
+	, m_ParallelId{ DX12ParallelIdInvalid }
 {
 }
 

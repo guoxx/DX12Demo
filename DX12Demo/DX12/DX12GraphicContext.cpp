@@ -88,6 +88,9 @@ void DX12GraphicContext::IASetPrimitiveTopology(D3D12_PRIMITIVE_TOPOLOGY primiti
 
 void DX12GraphicContext::ResourceTransitionBarrier(DX12GpuResource* resource, D3D12_RESOURCE_STATES stateBefore, D3D12_RESOURCE_STATES stateAfter, uint32_t subresource)
 {
+	// only support all subresources transition barrier for the moment
+	assert(subresource == D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES);
+
     // Transition the render target into the correct state to allow for drawing into it.
     D3D12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(resource->m_Resource.Get(), stateBefore, stateAfter, subresource);
     m_CommandList->ResourceBarrier(1, &barrier);
