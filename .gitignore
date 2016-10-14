@@ -2,3 +2,6 @@
 *VC.opendb
 *.vcxproj.user
 Output/
+
+sponza.exr
+sponza*.mip
