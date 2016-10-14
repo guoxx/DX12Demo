@@ -39,7 +39,7 @@ DX12SwapChain::DX12SwapChain(DX12Device* device, const GFX_HWND hwnd, uint32_t b
 		DX::SetNameIndexed(backBuffer.Get(), L"SWAP CHAIN BUFFER", i);
 
 		m_BackBuffers[i] = std::make_shared<DX12ColorSurface>();
-		m_BackBuffers[i]->InitAs2dSurface(device, backBuffer.Get());
+		m_BackBuffers[i]->InitAs2dSurface(device, backBuffer, D3D12_RESOURCE_STATE_COMMON);
 	}
 }
 

@@ -13,3 +13,6 @@ constexpr uint32_t DX12MaxRenderTargetsCount = D3D12_SIMULTANEOUS_RENDER_TARGET_
 constexpr uint32_t DX12NumGraphicContexts = 256;
 constexpr uint32_t DX12MaxFences = 2048;
 constexpr uint64_t DX12UploadHeapSizeInBytes = 1024 * 1024 * 1024; // 1024MB
+constexpr uint64_t DX12MaxGraphicContextsInParallel = 8;
+
+constexpr D3D12_RESOURCE_STATES D3D12_RESOURCE_STATE_INVALID = (D3D12_RESOURCE_STATES)-1;

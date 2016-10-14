@@ -7,7 +7,7 @@
 
 DX12ConstantsBuffer::DX12ConstantsBuffer(DX12Device * device, uint64_t sizeInBytes, uint64_t alignInBytes)
 {
-	m_Resource = device->CreateCommittedBufferInDefaultHeap(sizeInBytes, alignInBytes, D3D12_RESOURCE_STATE_GENERIC_READ);
+	SetGpuResource(device->CreateCommittedBufferInDefaultHeap(sizeInBytes, alignInBytes, D3D12_RESOURCE_STATE_GENERIC_READ), D3D12_RESOURCE_STATE_GENERIC_READ);
 }
 
 DX12ConstantsBuffer::~DX12ConstantsBuffer()
@@ -19,8 +19,8 @@ DX12IndexBuffer::DX12IndexBuffer(DX12Device* device, uint64_t sizeInBytes, uint6
 	, m_Format{ fmt }
 	, m_View{}
 {
-	m_Resource = device->CreateCommittedBufferInDefaultHeap(sizeInBytes, alignInBytes, D3D12_RESOURCE_STATE_COMMON);
-	m_View = D3D12_INDEX_BUFFER_VIEW{ m_Resource->GetGPUVirtualAddress(), static_cast<uint32_t>(sizeInBytes), m_Format };
+	SetGpuResource(device->CreateCommittedBufferInDefaultHeap(sizeInBytes, alignInBytes, D3D12_RESOURCE_STATE_COMMON), D3D12_RESOURCE_STATE_COMMON);
+	m_View = D3D12_INDEX_BUFFER_VIEW{ GetGpuResource()->GetGPUVirtualAddress(), static_cast<uint32_t>(sizeInBytes), m_Format };
 }
 
 DX12IndexBuffer::~DX12IndexBuffer()
@@ -30,7 +30,7 @@ DX12IndexBuffer::~DX12IndexBuffer()
 DX12StructuredBuffer::DX12StructuredBuffer(DX12Device * device, uint64_t sizeInBytes, uint64_t alignInBytes, uint64_t strideInBytes)
 	: DX12GpuResource()
 {
-	m_Resource = device->CreateCommittedBufferInDefaultHeap(sizeInBytes, alignInBytes, D3D12_RESOURCE_STATE_COMMON);
+	SetGpuResource(device->CreateCommittedBufferInDefaultHeap(sizeInBytes, alignInBytes, D3D12_RESOURCE_STATE_COMMON), D3D12_RESOURCE_STATE_COMMON);
 
 	D3D12_SHADER_RESOURCE_VIEW_DESC desc;
 	desc.Format = DXGI_FORMAT_UNKNOWN;
@@ -42,8 +42,8 @@ DX12StructuredBuffer::DX12StructuredBuffer(DX12Device * device, uint64_t sizeInB
 	desc.Buffer.StructureByteStride = static_cast<uint32_t>(strideInBytes);
 	desc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
 
-	m_DescriptorHandle = DX12GraphicManager::GetInstance()->RegisterResourceInDescriptorHeap(m_Resource.Get(), D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-	device->CreateShaderResourceView(m_Resource.Get(), &desc, m_DescriptorHandle.GetCpuHandle());
+	m_DescriptorHandle = DX12GraphicManager::GetInstance()->RegisterResourceInDescriptorHeap(GetGpuResource(), D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	device->CreateShaderResourceView(GetGpuResource(), &desc, m_DescriptorHandle.GetCpuHandle());
 }
 
 DX12StructuredBuffer::~DX12StructuredBuffer()

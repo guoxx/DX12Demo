@@ -20,7 +20,8 @@ DX12Texture::DX12Texture(DX12Device* device, DXGI_FORMAT fmt, uint32_t width, ui
 	D3D12_TEXTURE_LAYOUT layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
 	D3D12_RESOURCE_STATES initialState = D3D12_RESOURCE_STATE_GENERIC_READ;
 
-	m_Resource = device->CreateCommittedTexture2DInDefaultHeap(m_Format, m_Width, m_Height, arraySize, m_MipLevels, sampleCount, sampleQuality, flags, layout, nullptr, initialState);
+	ComPtr<ID3D12Resource> res = device->CreateCommittedTexture2DInDefaultHeap(m_Format, m_Width, m_Height, arraySize, m_MipLevels, sampleCount, sampleQuality, flags, layout, nullptr, initialState);
+	SetGpuResource(res, initialState);
 
 	CreateView(device);
 }
@@ -48,6 +49,6 @@ DX12Texture* DX12Texture::LoadTGAFromFile(DX12Device* device, DX12GraphicContext
 
 void DX12Texture::CreateView(DX12Device * device)
 {
-	m_SRV = DX12GraphicManager::GetInstance()->RegisterResourceInDescriptorHeap(m_Resource.Get(), D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-	device->CreateShaderResourceView(m_Resource.Get(), nullptr, m_SRV.GetCpuHandle());
+	m_SRV = DX12GraphicManager::GetInstance()->RegisterResourceInDescriptorHeap(GetGpuResource(), D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	device->CreateShaderResourceView(GetGpuResource(), nullptr, m_SRV.GetCpuHandle());
 }

@@ -143,7 +143,7 @@ void DX12GraphicManager::UpdateBufer(DX12GraphicContext* pGfxContext, DX12GpuRes
 	// keep a reference to that resource to avoid it been released
 	m_TempResources[m_TempResourcePoolIdx].push_back(uploadResource);
 
-	DX12GpuResource srcResource{ uploadResource };
+	DX12GpuResource srcResource{ uploadResource, D3D12_RESOURCE_STATE_GENERIC_READ };
 
 	void* pUploadData = nullptr;
 	srcResource.MapResource(0, &pUploadData);
@@ -167,7 +167,7 @@ void DX12GraphicManager::UpdateTexture(DX12GraphicContext * pGfxContext, DX12Tex
 	// keep a reference to that resource to avoid it been released
 	m_TempResources[m_TempResourcePoolIdx].push_back(uploadResource);
 
-	DX12GpuResource srcResource{ uploadResource };
+	DX12GpuResource srcResource{ uploadResource, D3D12_RESOURCE_STATE_GENERIC_READ };
 
 	void* pUploadData = nullptr;
 	srcResource.MapResource(0, &pUploadData);

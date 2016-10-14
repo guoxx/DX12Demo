@@ -36,17 +36,18 @@ void DX12ColorSurface::InitAs2dSurface(DX12Device* device, DXGI_FORMAT fmt, uint
 	CreateView(device);
 }
 
-void DX12ColorSurface::InitAs2dSurface(DX12Device* device, ID3D12Resource* pResource)
+void DX12ColorSurface::InitAs2dSurface(DX12Device* device, ComPtr<ID3D12Resource> pResource, D3D12_RESOURCE_STATES usageState)
 {
-	m_Resource = pResource;
+	SetGpuResource(pResource, usageState);
+
 	CreateView(device);
 }
 
 void DX12ColorSurface::CreateView(DX12Device* device)
 {
-	m_SRV = DX12GraphicManager::GetInstance()->RegisterResourceInDescriptorHeap(m_Resource.Get(), D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-	device->CreateShaderResourceView(m_Resource.Get(), nullptr, m_SRV.GetCpuHandle());
+	m_SRV = DX12GraphicManager::GetInstance()->RegisterResourceInDescriptorHeap(GetGpuResource(), D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	device->CreateShaderResourceView(GetGpuResource(), nullptr, m_SRV.GetCpuHandle());
 
-	m_RTV = DX12GraphicManager::GetInstance()->RegisterResourceInDescriptorHeap(m_Resource.Get(), D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
-	device->CreateRenderTargetView(m_Resource.Get(), nullptr, m_RTV.GetCpuHandle());
+	m_RTV = DX12GraphicManager::GetInstance()->RegisterResourceInDescriptorHeap(GetGpuResource(), D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+	device->CreateRenderTargetView(GetGpuResource(), nullptr, m_RTV.GetCpuHandle());
 }

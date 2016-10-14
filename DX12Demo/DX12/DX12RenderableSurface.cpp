@@ -24,7 +24,7 @@ void DX12RenderableSurface::Init(DX12Device* device,
 	const D3D12_CLEAR_VALUE * pOptimizedClearValue,
 	D3D12_RESOURCE_STATES initialState)
 {
-	m_Resource = device->CreateCommittedTexture2DInDefaultHeap(fmt,
+	ComPtr<ID3D12Resource> res = device->CreateCommittedTexture2DInDefaultHeap(fmt,
 		width,
 		height,
 		arraySize,
@@ -35,4 +35,6 @@ void DX12RenderableSurface::Init(DX12Device* device,
 		D3D12_TEXTURE_LAYOUT_UNKNOWN,
 		pOptimizedClearValue,
 		initialState);
+
+	SetGpuResource(res, initialState);
 }

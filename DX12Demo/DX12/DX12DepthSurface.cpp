@@ -53,9 +53,9 @@ void DX12DepthSurface::CreateView(DX12Device * device)
 	dsvdesc.Texture2D.MipSlice = 0;
 
 
-	m_SRV = DX12GraphicManager::GetInstance()->RegisterResourceInDescriptorHeap(m_Resource.Get(), D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-	device->CreateShaderResourceView(m_Resource.Get(), &srvdesc, m_SRV.GetCpuHandle());
+	m_SRV = DX12GraphicManager::GetInstance()->RegisterResourceInDescriptorHeap(GetGpuResource(), D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	device->CreateShaderResourceView(GetGpuResource(), &srvdesc, m_SRV.GetCpuHandle());
 
-	m_DSV = DX12GraphicManager::GetInstance()->RegisterResourceInDescriptorHeap(m_Resource.Get(), D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
-	device->CreateDepthStencilView(m_Resource.Get(), &dsvdesc, m_DSV.GetCpuHandle());
+	m_DSV = DX12GraphicManager::GetInstance()->RegisterResourceInDescriptorHeap(GetGpuResource(), D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
+	device->CreateDepthStencilView(GetGpuResource(), &dsvdesc, m_DSV.GetCpuHandle());
 }
