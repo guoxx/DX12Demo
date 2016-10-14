@@ -118,7 +118,11 @@ void DX12GraphicManager::EndGraphicContext(DX12GraphicContext * ctx)
 
 void DX12GraphicManager::ExecuteGraphicContext(DX12GraphicContext* ctx)
 {
+	PIXBeginEvent(0, L"ExecuteCommandList");
+
 	ctx->ExecuteInQueue(m_GraphicQueues[0].Get());
+
+	PIXEndEvent();
 }
 
 void DX12GraphicManager::ExecuteGraphicContextInQueue(DX12GraphicContext* ctx, ID3D12CommandQueue* pQueue)
