@@ -169,7 +169,7 @@ void DX12GraphicContext::SetGraphicsRootDynamicConstantBufferView(uint32_t rootP
 {
 	void* pDestData = nullptr;
 	D3D12_GPU_VIRTUAL_ADDRESS GpuVirtualAddress;
-	DX12GraphicManager::GetInstance()->AllocateConstantsBuffer(sizeInBytes, 4, &pDestData, &GpuVirtualAddress);
+	DX12GraphicManager::GetInstance()->AllocateConstantsBuffer(sizeInBytes, D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT, &pDestData, &GpuVirtualAddress);
 	std::memcpy(pDestData, pData, sizeInBytes);
 
 	m_CommandList->SetGraphicsRootConstantBufferView(rootParameterIndex, GpuVirtualAddress);
