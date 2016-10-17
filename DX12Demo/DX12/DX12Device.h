@@ -27,6 +27,12 @@ public:
 		D3D12_RESOURCE_STATES initialState = D3D12_RESOURCE_STATE_COMMON,
 		const D3D12_CLEAR_VALUE* pOptimizedClearValue = nullptr);
 
+	ComPtr<ID3D12Resource> CreateCommittedResource(const D3D12_HEAP_PROPERTIES* pHeapProperties,
+		D3D12_HEAP_FLAGS heapFlags,
+		const D3D12_RESOURCE_DESC* pResourceDesc,
+		D3D12_RESOURCE_STATES initialState,
+		const D3D12_CLEAR_VALUE* pOptimizedClearValue);
+
 	ComPtr<ID3D12Resource> CreateCommittedBufferInDefaultHeap(uint64_t sizeInBytes, uint64_t alignInBytes, D3D12_RESOURCE_STATES initialState = D3D12_RESOURCE_STATE_COMMON);
 
 	ComPtr<ID3D12Resource> CreateCommittedTexture2DInDefaultHeap(DXGI_FORMAT format,

@@ -69,8 +69,6 @@ DirectionalLightFilter2D::DirectionalLightFilter2D(DX12Device* device)
 	psoCompiler.SetRenderTargetFormat(DXGI_FORMAT_R32G32B32A32_FLOAT);
 	psoCompiler.SetDespthStencilFormat(DXGI_FORMAT_UNKNOWN);
 	m_PSO = psoCompiler.Compile(device);
-
-	m_ConstantsBuffer = std::make_shared<DX12ConstantsBuffer>(device, sizeof(Constants), 0);
 }
 
 DirectionalLightFilter2D::~DirectionalLightFilter2D()
@@ -97,13 +95,10 @@ void DirectionalLightFilter2D::Apply(DX12GraphicContext * pGfxContext, const Ren
 	pLight->GetViewAndProjMatrix(pRenderContext->GetCamera(), &mLightView, &mLightProj);
 	DirectX::XMStoreFloat4x4(&constants.mLightViewProj, DirectX::XMMatrixTranspose(DirectX::XMMatrixMultiply(mLightView, mLightProj)));
 
-	pGfxContext->ResourceTransitionBarrier(m_ConstantsBuffer.get(), D3D12_RESOURCE_STATE_COPY_DEST);
-	DX12GraphicManager::GetInstance()->UpdateBufer(pGfxContext, m_ConstantsBuffer.get(), &constants, sizeof(constants));
-	pGfxContext->ResourceTransitionBarrier(m_ConstantsBuffer.get(), D3D12_RESOURCE_STATE_GENERIC_READ);
+	pGfxContext->SetGraphicsRootDynamicConstantBufferView(0, &constants, sizeof(constants));
 }
 
 void DirectionalLightFilter2D::Draw(DX12GraphicContext* pGfxContext)
 {
-	pGfxContext->SetGraphicsRootConstantBufferView(0, m_ConstantsBuffer.get());
 	pGfxContext->DrawIndexed(6, 0);
 }

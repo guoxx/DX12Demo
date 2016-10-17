@@ -77,9 +77,6 @@ void Material::Load(DX12GraphicContext* pGfxContext)
 
 	m_PSO = psoCompiler.Compile(DX12GraphicManager::GetInstance()->GetDevice());
 
-	m_ViewConstantsBuffer = std::make_shared<DX12ConstantsBuffer>(DX12GraphicManager::GetInstance()->GetDevice(), sizeof(View), 0);
-	m_MaterialConstantsBuffer = std::make_shared<DX12ConstantsBuffer>(DX12GraphicManager::GetInstance()->GetDevice(), sizeof(BaseMaterial), 0);
-
 	if (!m_AmbientTexName.empty())
 	{
 		m_AmbientTexture = LoadTexture(pGfxContext, m_AmbientTexName);
@@ -140,16 +137,8 @@ void Material::Apply(RenderContext* pRenderContext, DX12GraphicContext* pGfxCont
 	baseMaterial.Ior = DirectX::XMFLOAT4{ m_Ior, m_Ior, m_Ior, m_Ior };
 	baseMaterial.Dissolve = DirectX::XMFLOAT4{ m_Dissolve, m_Dissolve, m_Dissolve, m_Dissolve };
 
-	pGfxContext->ResourceTransitionBarrier(m_ViewConstantsBuffer.get(), D3D12_RESOURCE_STATE_COPY_DEST);
-	DX12GraphicManager::GetInstance()->UpdateBufer(pGfxContext, m_ViewConstantsBuffer.get(), &view, sizeof(view));
-	pGfxContext->ResourceTransitionBarrier(m_ViewConstantsBuffer.get(), D3D12_RESOURCE_STATE_GENERIC_READ);
-
-	pGfxContext->ResourceTransitionBarrier(m_MaterialConstantsBuffer.get(), D3D12_RESOURCE_STATE_COPY_DEST);
-	DX12GraphicManager::GetInstance()->UpdateBufer(pGfxContext, m_MaterialConstantsBuffer.get(), &baseMaterial, sizeof(baseMaterial));
-	pGfxContext->ResourceTransitionBarrier(m_MaterialConstantsBuffer.get(), D3D12_RESOURCE_STATE_GENERIC_READ);
-
-	pGfxContext->SetGraphicsRootConstantBufferView(0, m_ViewConstantsBuffer.get());
-	pGfxContext->SetGraphicsRootConstantBufferView(1, m_MaterialConstantsBuffer.get());
+	pGfxContext->SetGraphicsRootDynamicConstantBufferView(0, &view, sizeof(view));
+	pGfxContext->SetGraphicsRootDynamicConstantBufferView(1, &baseMaterial, sizeof(baseMaterial));
 
 	if (m_DiffuseTexture.get() == nullptr)
 	{

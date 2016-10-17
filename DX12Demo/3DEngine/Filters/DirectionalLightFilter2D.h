@@ -15,7 +15,6 @@ public:
 	void Draw(DX12GraphicContext* pGfxContext);
 
 private:
-	std::shared_ptr<DX12ConstantsBuffer> m_ConstantsBuffer;
 	std::shared_ptr<DX12RootSignature> m_RootSig;
 	std::shared_ptr<DX12PipelineState> m_PSO;
 	std::shared_ptr<DX12IndexBuffer> m_IndexBuffer;

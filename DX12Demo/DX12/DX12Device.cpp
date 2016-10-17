@@ -72,6 +72,22 @@ ComPtr<ID3D12Resource> DX12Device::CreatePlacedResource(ID3D12Heap * pHeap,
 	return pResource;
 }
 
+ComPtr<ID3D12Resource> DX12Device::CreateCommittedResource(const D3D12_HEAP_PROPERTIES * pHeapProperties,
+	D3D12_HEAP_FLAGS heapFlags,
+	const D3D12_RESOURCE_DESC * pResourceDesc,
+	D3D12_RESOURCE_STATES initialState,
+	const D3D12_CLEAR_VALUE * pOptimizedClearValue)
+{
+	ComPtr<ID3D12Resource> pResource;
+	DX::ThrowIfFailed(m_d3dDevice->CreateCommittedResource(pHeapProperties,
+		heapFlags,
+		pResourceDesc,
+		initialState,
+		pOptimizedClearValue,
+		IID_GRAPHICS_PPV_ARGS(pResource.GetAddressOf())));
+	return pResource;
+}
+
 ComPtr<ID3D12Resource> DX12Device::CreateCommittedBufferInDefaultHeap(uint64_t sizeInBytes, uint64_t alignInBytes, D3D12_RESOURCE_STATES initialState)
 {
 	ComPtr<ID3D12Resource> pResource;

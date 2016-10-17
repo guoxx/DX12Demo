@@ -5,13 +5,6 @@
 
 class DX12Device;
 
-class DX12ConstantsBuffer : public DX12GpuResource
-{
-public:
-	DX12ConstantsBuffer(DX12Device* device, uint64_t sizeInBytes, uint64_t alignInBytes);
-	virtual ~DX12ConstantsBuffer();
-};
-
 class DX12IndexBuffer : public DX12GpuResource
 {
 public:

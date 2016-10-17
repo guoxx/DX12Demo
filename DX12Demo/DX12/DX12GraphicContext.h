@@ -39,7 +39,7 @@ public:
 
 	void SetGraphicsRoot32BitConstants(uint32_t rootParameterIndex, uint32_t num32BitValuesToSet, const void *pSrcData, uint32_t destOffsetIn32BitValues);
 
-	void SetGraphicsRootConstantBufferView(uint32_t rootParameterIndex, const DX12ConstantsBuffer* pConstantsBuffer);
+	void SetGraphicsRootDynamicConstantBufferView(uint32_t rootParameterIndex, void* pData, uint32_t sizeInBytes);
 
 	void SetGraphicsRootStructuredBuffer(uint32_t rootParameterIndex, const DX12StructuredBuffer* pStructuredBuffer);
 

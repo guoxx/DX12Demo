@@ -52,8 +52,6 @@ private:
 
 	std::shared_ptr<DX12RootSignature> m_RootSig;
 	std::shared_ptr<DX12PipelineState> m_PSO;
-	std::shared_ptr<DX12ConstantsBuffer> m_ViewConstantsBuffer;
-	std::shared_ptr<DX12ConstantsBuffer> m_MaterialConstantsBuffer;
 
 	DX12DescriptorHandle m_NullDescriptorHandle;
 };

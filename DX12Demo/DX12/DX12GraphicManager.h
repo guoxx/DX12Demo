@@ -47,6 +47,8 @@ public:
 
 	void UpdateTexture(DX12GraphicContext* pGfxContext, DX12Texture* pTexture, uint32_t subresource, void* pSrcData, uint64_t sizeInBytes);
 
+	void AllocateConstantsBuffer(uint32_t sizeInBytes, uint32_t alignInBytes, void** pCpuWrittablePtr, D3D12_GPU_VIRTUAL_ADDRESS* pGpuVirtualAddress);
+
 private:
 	DX12GraphicManager();
 	~DX12GraphicManager();
@@ -63,6 +65,11 @@ private:
 	std::unique_ptr<DX12DescriptorManager> m_DescriptorManager;
 
 	std::unique_ptr<DX12FenceManager> m_FenceManager;
+
+	ComPtr<ID3D12Heap> m_ConstantsBufferHeap;
+	ComPtr<ID3D12Resource> m_ConstantsBuffer;
+	RingBufferAllocator m_ConstantsBufferAllocator;
+	uint8_t* m_ConstantsBufferBeginPtr;
 
 	ComPtr<ID3D12Heap> m_UploadHeap;
 	RingBufferAllocator m_UploadHeapAllocator;

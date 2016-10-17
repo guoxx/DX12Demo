@@ -5,15 +5,6 @@
 #include "DX12GraphicManager.h"
 
 
-DX12ConstantsBuffer::DX12ConstantsBuffer(DX12Device * device, uint64_t sizeInBytes, uint64_t alignInBytes)
-{
-	SetGpuResource(device->CreateCommittedBufferInDefaultHeap(sizeInBytes, alignInBytes, D3D12_RESOURCE_STATE_GENERIC_READ), D3D12_RESOURCE_STATE_GENERIC_READ);
-}
-
-DX12ConstantsBuffer::~DX12ConstantsBuffer()
-{
-}
-
 DX12IndexBuffer::DX12IndexBuffer(DX12Device* device, uint64_t sizeInBytes, uint64_t alignInBytes, DXGI_FORMAT fmt)
 	: DX12GpuResource()
 	, m_Format{ fmt }

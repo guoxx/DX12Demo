@@ -23,6 +23,7 @@ void DX12GraphicManager::Finalize()
 
 DX12GraphicManager::DX12GraphicManager()
 	: m_UploadHeapAllocator{ 0, DX12UploadHeapSizeInBytes }
+	, m_ConstantsBufferAllocator{ 0, DX12ConstantsBufferHeapSizeInBytes }
 	, m_TempResourcePoolIdx{ 0 }
 {
 #if defined(_DEBUG)
@@ -56,6 +57,16 @@ DX12GraphicManager::DX12GraphicManager()
 		D3D12_CPU_PAGE_PROPERTY_UNKNOWN,
 		D3D12_MEMORY_POOL_UNKNOWN,
 		D3D12_HEAP_FLAG_ALLOW_ONLY_BUFFERS);
+
+	m_ConstantsBufferHeap = m_Device->CreateHeap(DX12ConstantsBufferHeapSizeInBytes,
+		D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT,
+		D3D12_HEAP_TYPE_UPLOAD,
+		D3D12_CPU_PAGE_PROPERTY_UNKNOWN,
+		D3D12_MEMORY_POOL_UNKNOWN,
+		D3D12_HEAP_FLAG_ALLOW_ONLY_BUFFERS);
+
+	m_ConstantsBuffer = m_Device->CreatePlacedResource(m_ConstantsBufferHeap.Get(), 0, &CD3DX12_RESOURCE_DESC::Buffer(DX12ConstantsBufferHeapSizeInBytes), D3D12_RESOURCE_STATE_GENERIC_READ, nullptr);
+	m_ConstantsBuffer->Map(0, nullptr, (void**)&m_ConstantsBufferBeginPtr);
 
 #ifndef _XBOX_ONE
 	m_SwapChainCommandQueue = m_Device->CreateGraphicCommandQueue(0, D3D12_COMMAND_QUEUE_FLAG_NONE, 0);
@@ -214,5 +225,13 @@ void DX12GraphicManager::UpdateTexture(DX12GraphicContext * pGfxContext, DX12Tex
 	CD3DX12_TEXTURE_COPY_LOCATION Dst(pTexture->GetGpuResource(), subresource);
 	CD3DX12_TEXTURE_COPY_LOCATION Src(uploadResource.Get(), Layouts[0]);
 	pGfxContext->CopyTextureRegion(&Dst, 0, 0, 0, &Src, nullptr);
+}
+
+void DX12GraphicManager::AllocateConstantsBuffer(uint32_t sizeInBytes, uint32_t alignInBytes, void** pCpuWrittablePtr, D3D12_GPU_VIRTUAL_ADDRESS* pGpuVirtualAddress)
+{
+	//assert(alignInBytes == 0);
+	uint64_t offset = m_ConstantsBufferAllocator.Alloc(sizeInBytes, alignInBytes);
+	*pCpuWrittablePtr = (void*)((uint64_t)m_ConstantsBufferBeginPtr + offset);
+	*pGpuVirtualAddress = m_ConstantsBuffer->GetGPUVirtualAddress() + offset;
 }
 
