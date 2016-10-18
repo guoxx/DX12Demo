@@ -134,6 +134,30 @@ std::shared_ptr<DX12RootSignature> DX12RootSignatureCompiler::Compile(DX12Device
 	D3D12SerializeRootSignature(&rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1, &rootSignatureBlob, &errBlob);
 
 	ComPtr<ID3D12RootSignature> rootSig = device->CreateRootSignature(rootSignatureBlob->GetBufferPointer(), rootSignatureBlob->GetBufferSize());
-	return std::make_shared<DX12RootSignature>(rootSig);
+	std::shared_ptr<DX12RootSignature> d3dRootSig = std::make_shared<DX12RootSignature>(rootSig);
+
+	assert(m_NumRootParams <= DX12MaxSlotsPerShader);
+	for (uint32_t i = 0; i < m_NumRootParams; ++i)
+	{
+		CD3DX12_ROOT_PARAMETER* pParam = &m_RootParams.get()[i];
+		if (pParam->ParameterType == D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE)
+		{
+			int32_t numDescriptors = 0;
+			for (uint32_t j = 0; j < pParam->DescriptorTable.NumDescriptorRanges; ++j)
+			{
+				const D3D12_DESCRIPTOR_RANGE *pDescriptorRange = &pParam->DescriptorTable.pDescriptorRanges[j];
+				// TODO: aliasing is not supported
+				assert(pDescriptorRange->OffsetInDescriptorsFromTableStart == D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND);
+				numDescriptors += pDescriptorRange->NumDescriptors;
+			}
+			d3dRootSig->m_DescriptorTableSize[i] = numDescriptors;
+		}
+		else
+		{
+			d3dRootSig->m_DescriptorTableSize[i] = 0;
+		}
+	}
+
+	return d3dRootSig;
 }
 

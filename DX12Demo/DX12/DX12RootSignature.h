@@ -1,16 +1,27 @@
 #pragma once
 
+#include "DX12Constants.h"
+
 class DX12Device;
 
 class DX12RootSignature
 {
+	friend class DX12RootSignatureCompiler;
+
 public:
 	DX12RootSignature(ComPtr<ID3D12RootSignature> rootSig);
 	~DX12RootSignature();
 
 	ID3D12RootSignature* GetSignature() const { return m_RootSig.Get(); }
 
+	int32_t GetDescriptorTableSize(int32_t rootParameterIndex) const
+	{
+		assert(rootParameterIndex < DX12MaxSlotsPerShader);
+		return m_DescriptorTableSize[rootParameterIndex];
+	}
+
 private:
+	int32_t m_DescriptorTableSize[DX12MaxSlotsPerShader];
 	ComPtr<ID3D12RootSignature> m_RootSig;
 };
 

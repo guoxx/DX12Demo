@@ -17,4 +17,7 @@ constexpr uint64_t DX12ConstantsBufferHeapSizeInBytes = 256* 1024 * 1024; // 256
 constexpr uint64_t DX12MaxGraphicContextsInParallel = 8;
 constexpr int32_t DX12ParallelIdInvalid = -1;
 
+constexpr uint32_t DX12MaxSlotsPerShader = 32;
+constexpr uint32_t DX12MaxElemsPerDescriptorTable = 64;
+
 constexpr D3D12_RESOURCE_STATES D3D12_RESOURCE_STATE_INVALID = (D3D12_RESOURCE_STATES)-1;
