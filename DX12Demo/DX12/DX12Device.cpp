@@ -218,3 +218,8 @@ void DX12Device::CreateDepthStencilView(ID3D12Resource * pResource, const D3D12_
 {
     m_d3dDevice->CreateDepthStencilView(pResource, pDesc, DestDescriptor);
 }
+
+void DX12Device::CopyDescriptorsSimple(uint32_t numDescriptors, D3D12_CPU_DESCRIPTOR_HANDLE destDescriptorRangeStart, D3D12_CPU_DESCRIPTOR_HANDLE srcDescriptorRangeStart, D3D12_DESCRIPTOR_HEAP_TYPE descriptorHeapsType)
+{
+	m_d3dDevice->CopyDescriptorsSimple(numDescriptors, destDescriptorRangeStart, srcDescriptorRangeStart, descriptorHeapsType);
+}

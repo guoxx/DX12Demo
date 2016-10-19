@@ -50,4 +50,7 @@ void DX12ColorSurface::CreateView(DX12Device* device)
 
 	m_RTV = DX12GraphicManager::GetInstance()->RegisterResourceInDescriptorHeap(GetGpuResource(), D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 	device->CreateRenderTargetView(GetGpuResource(), nullptr, m_RTV.GetCpuHandle());
+
+	m_StagingSRV = DX12GraphicManager::GetInstance()->RegisterResourceInStagingDescriptorHeap(GetGpuResource(), D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	device->CreateShaderResourceView(GetGpuResource(), nullptr, m_StagingSRV.GetCpuHandle());
 }

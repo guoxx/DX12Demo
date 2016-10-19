@@ -132,11 +132,11 @@ void Renderer::DeferredLighting(const Camera* pCamera, Scene* pScene)
 	{
 		m_DirLightFilter2D->Apply(pGfxContext, &m_RenderContext, directionalLight.get());
 
-		pGfxContext->SetGraphicsRootDescriptorTable(1, m_SceneGBuffer0->GetSRV());
-		pGfxContext->SetGraphicsRootDescriptorTable(2, m_SceneGBuffer1->GetSRV());
-		pGfxContext->SetGraphicsRootDescriptorTable(3, m_SceneGBuffer2->GetSRV());
-		pGfxContext->SetGraphicsRootDescriptorTable(4, m_SceneDepthSurface->GetSRV());
-		pGfxContext->SetGraphicsRootDescriptorTable(5, m_ShadowMap0->GetSRV());
+		pGfxContext->SetGraphicsDynamicCbvSrvUav(1, 0, m_SceneGBuffer0->GetStagingSRV().GetCpuHandle());
+		pGfxContext->SetGraphicsDynamicCbvSrvUav(1, 1, m_SceneGBuffer1->GetStagingSRV().GetCpuHandle());
+		pGfxContext->SetGraphicsDynamicCbvSrvUav(1, 2, m_SceneGBuffer2->GetStagingSRV().GetCpuHandle());
+		pGfxContext->SetGraphicsDynamicCbvSrvUav(1, 3, m_SceneDepthSurface->GetStagingSRV().GetCpuHandle());
+		pGfxContext->SetGraphicsDynamicCbvSrvUav(1, 4, m_ShadowMap0->GetStagingSRV().GetCpuHandle());
 
 		m_DirLightFilter2D->Draw(pGfxContext);
 	}

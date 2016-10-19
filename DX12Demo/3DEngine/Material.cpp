@@ -47,7 +47,7 @@ void Material::Load(DX12GraphicContext* pGfxContext)
 	DX12GraphicManager::GetInstance()->GetDevice()->CreateShaderResourceView(nullptr, &nullSrvDesc, m_NullDescriptorHandle.GetCpuHandle());
 
 	D3D12_DESCRIPTOR_RANGE descriptorRanges[] = {
-		{ D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 1, 0, 0 },
+		{ D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 1, 0, D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND },
 	};
 
 

@@ -23,6 +23,8 @@ public:
 
 	DX12FenceManager* GetFenceManager() const { return m_FenceManager.get(); }
 
+	DX12DescriptorManager* GetDescriptorManager() const { return m_DescriptorManager.get(); }
+
 	ID3D12CommandQueue* GetSwapChainCommandQueue() const { return m_SwapChainCommandQueue.Get(); }
 
 	void Flip();
@@ -42,6 +44,8 @@ public:
 
 	// resource binding
 	DX12DescriptorHandle RegisterResourceInDescriptorHeap(ID3D12Resource* resource, D3D12_DESCRIPTOR_HEAP_TYPE type);
+
+	DX12DescriptorHandle RegisterResourceInStagingDescriptorHeap(ID3D12Resource* resource, D3D12_DESCRIPTOR_HEAP_TYPE type);
 
 	void UpdateBufer(DX12GraphicContext* pGfxContext, DX12GpuResource* pResource, void* pSrcData, uint64_t sizeInBytes);
 

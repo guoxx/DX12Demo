@@ -58,4 +58,7 @@ void DX12DepthSurface::CreateView(DX12Device * device)
 
 	m_DSV = DX12GraphicManager::GetInstance()->RegisterResourceInDescriptorHeap(GetGpuResource(), D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
 	device->CreateDepthStencilView(GetGpuResource(), &dsvdesc, m_DSV.GetCpuHandle());
+
+	m_StagingSRV = DX12GraphicManager::GetInstance()->RegisterResourceInStagingDescriptorHeap(GetGpuResource(), D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	device->CreateShaderResourceView(GetGpuResource(), &srvdesc, m_StagingSRV.GetCpuHandle());
 }

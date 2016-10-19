@@ -169,6 +169,11 @@ DX12DescriptorHandle DX12GraphicManager::RegisterResourceInDescriptorHeap(ID3D12
 	return m_DescriptorManager->AllocateInHeap(type);
 }
 
+DX12DescriptorHandle DX12GraphicManager::RegisterResourceInStagingDescriptorHeap(ID3D12Resource * resource, D3D12_DESCRIPTOR_HEAP_TYPE type)
+{
+	return m_DescriptorManager->AllocateInStagingHeap(type);
+}
+
 void DX12GraphicManager::UpdateBufer(DX12GraphicContext* pGfxContext, DX12GpuResource* pResource, void * pSrcData, uint64_t sizeInBytes)
 {
 	uint64_t heapOffset = m_UploadHeapAllocator.Alloc(sizeInBytes, D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT);

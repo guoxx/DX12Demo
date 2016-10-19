@@ -3,11 +3,7 @@
 #define RootSigDeclaration \
 RootSigBegin \
 ", CBV(b0, visibility = SHADER_VISIBILITY_ALL)" \
-", DescriptorTable(SRV(t0, numDescriptors=1), visibility=SHADER_VISIBILITY_PIXEL)" \
-", DescriptorTable(SRV(t1, numDescriptors=1), visibility=SHADER_VISIBILITY_PIXEL)" \
-", DescriptorTable(SRV(t2, numDescriptors=1), visibility=SHADER_VISIBILITY_PIXEL)" \
-", DescriptorTable(SRV(t3, numDescriptors=1), visibility=SHADER_VISIBILITY_PIXEL)" \
-", DescriptorTable(SRV(t4, numDescriptors=1), visibility=SHADER_VISIBILITY_PIXEL)" \
+", DescriptorTable(SRV(t0, numDescriptors=8), visibility=SHADER_VISIBILITY_PIXEL)" \
 ", StaticSampler(s0, filter=FILTER_MIN_MAG_MIP_POINT, visibility=SHADER_VISIBILITY_PIXEL)" \
 RootSigEnd
 

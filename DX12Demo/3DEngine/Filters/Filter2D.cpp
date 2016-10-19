@@ -16,7 +16,7 @@ Filter2D::Filter2D(DX12Device* device, const wchar_t* shaderfile)
 	pGfxContext->ResourceTransitionBarrier(m_IndexBuffer.get(), D3D12_RESOURCE_STATE_GENERIC_READ);
 
 	D3D12_DESCRIPTOR_RANGE descriptorRanges0[] = {
-		{ D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0, 0, 0 },
+		{ D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0, 0, D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND },
 	};
 
 	DX12RootSignatureCompiler sigCompiler;

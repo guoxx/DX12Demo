@@ -33,30 +33,14 @@ DirectionalLightFilter2D::DirectionalLightFilter2D(DX12Device* device)
 	pGfxContext->ResourceTransitionBarrier(m_IndexBuffer.get(), D3D12_RESOURCE_STATE_GENERIC_READ);
 
 	D3D12_DESCRIPTOR_RANGE descriptorRanges1[] = {
-		{ D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0, 0, 0 },
-	};
-	D3D12_DESCRIPTOR_RANGE descriptorRanges2[] = {
-		{ D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 1, 0, 0 },
-	};
-	D3D12_DESCRIPTOR_RANGE descriptorRanges3[] = {
-		{ D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 2, 0, 0 },
-	};
-	D3D12_DESCRIPTOR_RANGE descriptorRanges4[] = {
-		{ D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 3, 0, 0 },
-	};
-	D3D12_DESCRIPTOR_RANGE descriptorRanges5[] = {
-		{ D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 4, 0, 0 },
+		{ D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 8, 0, 0, D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND },
 	};
 
 	DX12RootSignatureCompiler sigCompiler;
-	sigCompiler.Begin(6, 1);
+	sigCompiler.Begin(2, 1);
 	sigCompiler.End();
 	sigCompiler[0].InitAsConstantBufferView(0);
 	sigCompiler[1].InitAsDescriptorTable(_countof(descriptorRanges1), descriptorRanges1, D3D12_SHADER_VISIBILITY_PIXEL);
-	sigCompiler[2].InitAsDescriptorTable(_countof(descriptorRanges2), descriptorRanges2, D3D12_SHADER_VISIBILITY_PIXEL);
-	sigCompiler[3].InitAsDescriptorTable(_countof(descriptorRanges3), descriptorRanges3, D3D12_SHADER_VISIBILITY_PIXEL);
-	sigCompiler[4].InitAsDescriptorTable(_countof(descriptorRanges4), descriptorRanges4, D3D12_SHADER_VISIBILITY_PIXEL);
-	sigCompiler[5].InitAsDescriptorTable(_countof(descriptorRanges5), descriptorRanges5, D3D12_SHADER_VISIBILITY_PIXEL);
 	CD3DX12_STATIC_SAMPLER_DESC staticSampDesc = CD3DX12_STATIC_SAMPLER_DESC(0, D3D12_FILTER_MIN_MAG_MIP_POINT);
 	staticSampDesc.ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 	sigCompiler.InitStaticSampler(staticSampDesc);

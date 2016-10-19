@@ -94,12 +94,6 @@ private:
 		D3D12_CPU_DESCRIPTOR_HANDLE m_CachedHandles[DX12MaxElemsPerDescriptorTable];
 	};
 
-	int32_t m_NumDescriptorHandlesCache;
 	CpuDescriptorHandlesCache m_DescriptorHandlesCache[DX12MaxSlotsPerShader];
-
-	enum
-	{
-		NumDynamicCbvSrvUavDescriptorsHeap = 4096 * 4,
-	};
-	ComPtr<ID3D12DescriptorHeap> m_DynamicCbvSrvUavDescriptorsHeap;
+	uint32_t m_DynamicCbvSrvUavDescriptorsTableDirty;
 };

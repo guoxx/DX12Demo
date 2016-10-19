@@ -16,6 +16,7 @@ public:
 
 	DX12DescriptorHandle GetSRV() const { return m_SRV; };
 	DX12DescriptorHandle GetDSV() const { return m_DSV; };
+	DX12DescriptorHandle GetStagingSRV() const { return m_StagingSRV; };
 
 private:
 	void CreateView(DX12Device* device);
@@ -23,5 +24,6 @@ private:
 private:
 	DX12DescriptorHandle m_SRV;
 	DX12DescriptorHandle m_DSV;
+	DX12DescriptorHandle m_StagingSRV;
 };
 

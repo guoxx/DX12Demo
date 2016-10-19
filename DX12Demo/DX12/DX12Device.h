@@ -69,6 +69,11 @@ public:
         
     void CreateDepthStencilView(ID3D12Resource* pResource, const D3D12_DEPTH_STENCIL_VIEW_DESC* pDesc, D3D12_CPU_DESCRIPTOR_HANDLE DestDescriptor);
 
+	void CopyDescriptorsSimple(uint32_t numDescriptors,
+		D3D12_CPU_DESCRIPTOR_HANDLE destDescriptorRangeStart,
+		D3D12_CPU_DESCRIPTOR_HANDLE srcDescriptorRangeStart,
+		D3D12_DESCRIPTOR_HEAP_TYPE  descriptorHeapsType);
+
 private:
 	ComPtr<ID3D12Device> m_d3dDevice;
 };
