@@ -116,7 +116,7 @@ std::shared_ptr<DX12Texture> Material::LoadTexture(DX12GraphicContext* pGfxConte
 
 void Material::Apply(RenderContext* pRenderContext, DX12GraphicContext* pGfxContext)
 {
-	pGfxContext->SetGraphicsRootSignature(m_RootSig.get());
+	pGfxContext->SetGraphicsRootSignature(m_RootSig);
 
 	pGfxContext->SetPipelineState(m_PSO.get());
 

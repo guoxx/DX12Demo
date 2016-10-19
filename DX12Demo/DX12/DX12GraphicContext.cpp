@@ -20,6 +20,13 @@ DX12GraphicContext::DX12GraphicContext(DX12Device* device)
 	m_CommandAllocator = device->CreateGraphicCommandAllocator();
 	m_CommandList = device->CreateGraphicCommandList(m_CommandAllocator.Get());
 	m_BarriersCommandList = device->CreateGraphicCommandList(m_CommandAllocator.Get());
+
+	D3D12_DESCRIPTOR_HEAP_DESC desc = {};
+	desc.NumDescriptors = NumDynamicCbvSrvUavDescriptorsHeap;
+	desc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+	desc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+	desc.NodeMask = 0;
+	m_DynamicCbvSrvUavDescriptorsHeap = device->CreateDescriptorHeap(&desc);
 }
 
 DX12GraphicContext::~DX12GraphicContext()
@@ -185,8 +192,15 @@ void DX12GraphicContext::SetGraphicsRootDescriptorTable(uint32_t rootParameterIn
 	m_CommandList->SetGraphicsRootDescriptorTable(rootParameterIndex, baseDescriptorHandle.GetGpuHandle());
 }
 
-void DX12GraphicContext::SetGraphicsRootSignature(DX12RootSignature * pRootSig)
+void DX12GraphicContext::SetGraphicsDynamicCbvSrvUav(uint32_t rootParameterIndex, uint32_t offsetInTable, D3D12_CPU_DESCRIPTOR_HANDLE descriptorHandle)
 {
+	StageDynamicDescriptor(rootParameterIndex, offsetInTable, descriptorHandle);
+}
+
+void DX12GraphicContext::SetGraphicsRootSignature(std::shared_ptr<DX12RootSignature> pRootSig)
+{
+	RootSignatureChanged(pRootSig);
+
 	m_CommandList->SetGraphicsRootSignature(pRootSig->GetSignature());
 }
 
@@ -197,6 +211,8 @@ void DX12GraphicContext::SetPipelineState(DX12PipelineState * pPSO)
 
 void DX12GraphicContext::DrawIndexed(uint32_t indexCount, uint32_t startIndexLocation, int32_t baseVertexLocation)
 {
+	ApplyDynamicDescriptors();
+
 	m_CommandList->DrawIndexedInstanced(indexCount, 1, startIndexLocation, baseVertexLocation, 0);
 }
 
@@ -259,4 +275,38 @@ void DX12GraphicContext::ExecuteInQueue(ID3D12CommandQueue* pCommandQueue)
 	{
 		super::ExecuteInQueue(pCommandQueue);
 	}
+}
+
+void DX12GraphicContext::RootSignatureChanged(std::shared_ptr<DX12RootSignature> pRootSig)
+{
+	m_CurrentRootSig = pRootSig;
+
+	m_NumDescriptorHandlesCache = 0;
+	for (int32_t i = 0; i < DX12MaxSlotsPerShader; ++i)
+	{
+		int32_t tableSize = m_CurrentRootSig->GetDescriptorTableSize(i);
+		if (tableSize > 0)
+		{
+			CpuDescriptorHandlesCache& cache = m_DescriptorHandlesCache[m_NumDescriptorHandlesCache];
+			cache.m_RootParamIndex = i;
+			cache.m_TableSize = tableSize;	
+			memset(cache.m_CachedHandles, 0x00, sizeof(cache.m_CachedHandles));
+
+			m_NumDescriptorHandlesCache += 1;
+		}
+	}
+}
+
+void DX12GraphicContext::StageDynamicDescriptor(uint32_t rootParameterIndex, uint32_t offsetInTable, D3D12_CPU_DESCRIPTOR_HANDLE descriptorHandle)
+{
+	assert(rootParameterIndex < m_NumDescriptorHandlesCache);
+
+	CpuDescriptorHandlesCache& cache = m_DescriptorHandlesCache[rootParameterIndex];
+	assert(offsetInTable < cache.m_TableSize);
+
+	cache.m_CachedHandles[offsetInTable] = descriptorHandle;
+}
+
+void DX12GraphicContext::ApplyDynamicDescriptors()
+{
 }

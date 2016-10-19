@@ -45,7 +45,9 @@ public:
 
 	void SetGraphicsRootDescriptorTable(uint32_t rootParameterIndex, DX12DescriptorHandle baseDescriptorHandle);
 
-	void SetGraphicsRootSignature(DX12RootSignature* pRootSig);
+	void SetGraphicsDynamicCbvSrvUav(uint32_t rootParameterIndex, uint32_t offsetInTable, D3D12_CPU_DESCRIPTOR_HANDLE descriptorHandle);
+
+	void SetGraphicsRootSignature(std::shared_ptr<DX12RootSignature> pRootSig);
 
 	void SetPipelineState(DX12PipelineState* pPSO);
 
@@ -66,6 +68,13 @@ public:
 	virtual void ExecuteInQueue(ID3D12CommandQueue* pCommandQueue) override final;
 
 private:
+
+	void RootSignatureChanged(std::shared_ptr<DX12RootSignature> pRootSig);
+
+	void StageDynamicDescriptor(uint32_t rootParameterIndex, uint32_t offsetInTable, D3D12_CPU_DESCRIPTOR_HANDLE descriptorHandle);
+
+	void ApplyDynamicDescriptors();
+
 	struct PendingResourcBarrier
 	{
 		D3D12_RESOURCE_BARRIER m_Barrier;
@@ -75,4 +84,22 @@ private:
 	bool m_FlushPendingBarriers;
 	ComPtr<ID3D12GraphicsCommandList> m_BarriersCommandList;
 	std::vector<PendingResourcBarrier> m_PendingTransitionBarriers;
+
+	std::shared_ptr<DX12RootSignature> m_CurrentRootSig;
+
+	struct CpuDescriptorHandlesCache
+	{
+		int32_t m_RootParamIndex;
+		int32_t m_TableSize;
+		D3D12_CPU_DESCRIPTOR_HANDLE m_CachedHandles[DX12MaxElemsPerDescriptorTable];
+	};
+
+	int32_t m_NumDescriptorHandlesCache;
+	CpuDescriptorHandlesCache m_DescriptorHandlesCache[DX12MaxSlotsPerShader];
+
+	enum
+	{
+		NumDynamicCbvSrvUavDescriptorsHeap = 4096 * 4,
+	};
+	ComPtr<ID3D12DescriptorHeap> m_DynamicCbvSrvUavDescriptorsHeap;
 };

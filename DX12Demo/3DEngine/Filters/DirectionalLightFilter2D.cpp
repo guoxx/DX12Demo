@@ -77,7 +77,7 @@ DirectionalLightFilter2D::~DirectionalLightFilter2D()
 
 void DirectionalLightFilter2D::Apply(DX12GraphicContext * pGfxContext, const RenderContext* pRenderContext, const DirectionalLight* pLight)
 {
-	pGfxContext->SetGraphicsRootSignature(m_RootSig.get());
+	pGfxContext->SetGraphicsRootSignature(m_RootSig);
 	pGfxContext->SetPipelineState(m_PSO.get());
 	pGfxContext->IASetIndexBuffer(m_IndexBuffer.get());
 	pGfxContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);

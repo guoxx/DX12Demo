@@ -107,7 +107,7 @@ void DX12Demo::DrawScene()
 	DX12ColorSurface* pColorSurfaces[] = { pColorSurface };
 	pGfxContext->SetRenderTargets(_countof(pColorSurfaces), pColorSurfaces, m_DepthSurface.get());
 
-	pGfxContext->SetGraphicsRootSignature(m_RootSig.get());
+	pGfxContext->SetGraphicsRootSignature(m_RootSig);
 	pGfxContext->SetGraphicsRoot32BitConstants(0, 1, &m_offsetX, 0);
 	pGfxContext->SetGraphicsRootStructuredBuffer(1, m_VertexBuffer.get());
 
@@ -130,7 +130,7 @@ void DX12Demo::DrawScene1()
 	DX12ColorSurface* pColorSurfaces[] = { pColorSurface };
 	pGfxContext->SetRenderTargets(_countof(pColorSurfaces), pColorSurfaces, m_DepthSurface.get());
 
-	pGfxContext->SetGraphicsRootSignature(m_RootSig1.get());
+	pGfxContext->SetGraphicsRootSignature(m_RootSig1);
 
 	pGfxContext->SetGraphicsRootDescriptorTable(0, m_VertexBuffer1->GetDescriptorHandle());
 	pGfxContext->SetGraphicsRootDescriptorTable(1, m_Tex1->GetSRV());

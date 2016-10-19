@@ -43,7 +43,7 @@ Filter2D::~Filter2D()
 
 void Filter2D::Apply(DX12GraphicContext * pGfxContext)
 {
-	pGfxContext->SetGraphicsRootSignature(m_RootSig.get());
+	pGfxContext->SetGraphicsRootSignature(m_RootSig);
 	pGfxContext->SetPipelineState(m_PSO.get());
 	pGfxContext->IASetIndexBuffer(m_IndexBuffer.get());
 	pGfxContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
