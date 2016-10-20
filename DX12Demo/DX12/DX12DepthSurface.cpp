@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "DX12DepthSurface.h"
 
+#include "DX12Wrapper.h"
 #include "DX12Device.h"
 #include "DX12GraphicManager.h"
 
@@ -37,14 +38,7 @@ void DX12DepthSurface::InitAs2dSurface(DX12Device * device, DXGI_FORMAT fmt, uin
 void DX12DepthSurface::CreateView(DX12Device * device)
 {
 	// TODO: remove hardcode desc
-	D3D12_SHADER_RESOURCE_VIEW_DESC srvdesc;
-	srvdesc.Format = DXGI_FORMAT_R32_FLOAT;
-	srvdesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
-	srvdesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-	srvdesc.Texture2D.MipLevels = 1;
-	srvdesc.Texture2D.MostDetailedMip = 0;
-	srvdesc.Texture2D.PlaneSlice = 0;
-	srvdesc.Texture2D.ResourceMinLODClamp = 0.0f;
+	CD3DX12_SHADER_RESOURCE_VIEW_DESC srvdesc = CD3DX12_SHADER_RESOURCE_VIEW_DESC::Tex2DView(D3D12_SRV_DIMENSION_TEXTURE2D, DXGI_FORMAT_R32_FLOAT);
 
 	D3D12_DEPTH_STENCIL_VIEW_DESC dsvdesc;
 	dsvdesc.Format = DXGI_FORMAT_D32_FLOAT;

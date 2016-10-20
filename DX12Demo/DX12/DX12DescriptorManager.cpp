@@ -4,8 +4,13 @@
 #include "DX12Device.h"
 #include "DX12GraphicContext.h"
 
+#ifdef _XBOX_ONE
+int32_t DefaultStaticDescriptorHeapSize[D3D12_DESCRIPTOR_HEAP_TYPE_NUM_TYPES] = { 2048 * 4, 1024, 1024, 1024, 1024 };
+int32_t DefaultDynamicDescriptorHeapSize[D3D12_DESCRIPTOR_HEAP_TYPE_NUM_TYPES] = { 2048 * 8, 1024, 1024, 1024, 1024 };
+#else
 int32_t DefaultStaticDescriptorHeapSize[D3D12_DESCRIPTOR_HEAP_TYPE_NUM_TYPES] = { 2048 * 4, 1024, 1024, 1024 };
 int32_t DefaultDynamicDescriptorHeapSize[D3D12_DESCRIPTOR_HEAP_TYPE_NUM_TYPES] = { 2048 * 8, 1024, 1024, 1024 };
+#endif
 
 DX12DescriptorManager::DX12DescriptorManager(DX12Device * device)
 {

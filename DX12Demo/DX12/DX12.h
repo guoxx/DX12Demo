@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Hash.h"
+#include "DX12Wrapper.h"
 #include "DX12Constants.h"
 #include "DX12Buffer.h"
 #include "DX12Texture.h"

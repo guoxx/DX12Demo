@@ -205,6 +205,7 @@
     <ClInclude Include="3DEngine\tiny_obj_loader.h" />
     <ClInclude Include="DX12Demo.h" />
     <ClInclude Include="DX12SponzaDemo.h" />
+    <ClInclude Include="DX12\d3dx12.h" />
     <ClInclude Include="DX12\DX12.h" />
     <ClInclude Include="DX12\DX12Buffer.h" />
     <ClInclude Include="DX12\DX12ColorSurface.h" />
@@ -225,6 +226,7 @@
     <ClInclude Include="DX12\DX12RootSignature.h" />
     <ClInclude Include="DX12\DX12SwapChain.h" />
     <ClInclude Include="DX12\DX12Texture.h" />
+    <ClInclude Include="DX12\DX12Wrapper.h" />
     <ClInclude Include="DX12\Hash.h" />
     <ClInclude Include="DX12\Texture\TextureLoaderTga.h" />
     <ClInclude Include="DX12\Texture\tga_reader.h" />

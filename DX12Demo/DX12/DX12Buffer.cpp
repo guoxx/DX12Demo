@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "DX12Buffer.h"
 
+#include "DX12Wrapper.h"
 #include "DX12Device.h"
 #include "DX12GraphicManager.h"
 
@@ -23,15 +24,11 @@ DX12StructuredBuffer::DX12StructuredBuffer(DX12Device * device, uint64_t sizeInB
 {
 	SetGpuResource(device->CreateCommittedBufferInDefaultHeap(sizeInBytes, alignInBytes, D3D12_RESOURCE_STATE_COMMON), D3D12_RESOURCE_STATE_COMMON);
 
-	D3D12_SHADER_RESOURCE_VIEW_DESC desc;
-	desc.Format = DXGI_FORMAT_UNKNOWN;
-	desc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
-	desc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-	desc.Buffer.FirstElement = 0;
-	desc.Buffer.NumElements = static_cast<uint32_t>(sizeInBytes / strideInBytes);
+	CD3DX12_SHADER_RESOURCE_VIEW_DESC desc = CD3DX12_SHADER_RESOURCE_VIEW_DESC::BufferView(DXGI_FORMAT_UNKNOWN,
+		0,
+		static_cast<uint32_t>(sizeInBytes / strideInBytes),
+		static_cast<uint32_t>(strideInBytes));
 	assert(desc.Buffer.NumElements * strideInBytes == sizeInBytes);
-	desc.Buffer.StructureByteStride = static_cast<uint32_t>(strideInBytes);
-	desc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
 
 	m_DescriptorHandle = DX12GraphicManager::GetInstance()->RegisterResourceInDescriptorHeap(GetGpuResource(), D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 	device->CreateShaderResourceView(GetGpuResource(), &desc, m_DescriptorHandle.GetCpuHandle());

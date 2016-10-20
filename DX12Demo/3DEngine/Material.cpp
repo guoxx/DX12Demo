@@ -35,13 +35,7 @@ Material::~Material()
 
 void Material::Load(DX12GraphicContext* pGfxContext)
 {
-	D3D12_SHADER_RESOURCE_VIEW_DESC nullSrvDesc = {};
-	nullSrvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
-	nullSrvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-	nullSrvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	nullSrvDesc.Texture2D.MipLevels = 1;
-	nullSrvDesc.Texture2D.MostDetailedMip = 0;
-	nullSrvDesc.Texture2D.ResourceMinLODClamp = 0.0f;
+	CD3DX12_SHADER_RESOURCE_VIEW_DESC nullSrvDesc = CD3DX12_SHADER_RESOURCE_VIEW_DESC::Tex2DView(D3D12_SRV_DIMENSION_TEXTURE2D, DXGI_FORMAT_R8G8B8A8_UNORM);
 
 	m_NullDescriptorHandle = DX12GraphicManager::GetInstance()->RegisterResourceInDescriptorHeap(nullptr, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 	DX12GraphicManager::GetInstance()->GetDevice()->CreateShaderResourceView(nullptr, &nullSrvDesc, m_NullDescriptorHandle.GetCpuHandle());

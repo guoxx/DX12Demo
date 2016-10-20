@@ -191,6 +191,12 @@
     <ClInclude Include="3DEngine\Filters\DirectionalLightFilter2D.h">
       <Filter>3DEngine\Filters</Filter>
     </ClInclude>
+    <ClInclude Include="DX12\DX12Wrapper.h">
+      <Filter>DX12\Private</Filter>
+    </ClInclude>
+    <ClInclude Include="DX12\d3dx12.h">
+      <Filter>DX12\Private</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
