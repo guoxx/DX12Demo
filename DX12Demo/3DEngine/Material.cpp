@@ -75,29 +75,6 @@ void Material::Load(DX12GraphicContext* pGfxContext)
 		m_PSO[shadingCfg] = psoCompiler.Compile(DX12GraphicManager::GetInstance()->GetDevice());
 	}
 
-	{
-		ShadingConfiguration shadingCfg = ShadingConfiguration_PointLightDepthOnly;
-
-		DX12RootSignatureCompiler sigCompiler;
-		sigCompiler.Begin(2, 0);
-		sigCompiler.End();
-		sigCompiler[0].InitAsShaderResourceView(0, 0, D3D12_SHADER_VISIBILITY_VERTEX);
-		sigCompiler[1].InitAsConstantBufferView(0);
-		m_RootSig[shadingCfg] = sigCompiler.Compile(DX12GraphicManager::GetInstance()->GetDevice());
-
-		DX12GraphicPsoCompiler psoCompiler;
-		psoCompiler.SetShaderFromFile(DX12ShaderTypeVertex, L"BaseMaterial_PointLightDepthOnly.hlsl", "VSMain");
-		psoCompiler.SetShaderFromFile(DX12ShaderTypeGeometry, L"BaseMaterial_PointLightDepthOnly.hlsl", "GSMain");
-		psoCompiler.SetRoogSignature(m_RootSig[shadingCfg].get());
-		psoCompiler.SetDespthStencilFormat(DXGI_FORMAT_D32_FLOAT);
-
-		CD3DX12_RASTERIZER_DESC rasterizerDesc{ D3D12_DEFAULT };
-		rasterizerDesc.FrontCounterClockwise = true;
-		psoCompiler.SetRasterizerState(rasterizerDesc);
-
-		m_PSO[shadingCfg] = psoCompiler.Compile(DX12GraphicManager::GetInstance()->GetDevice());
-	}
-
 	if (!m_AmbientTexName.empty())
 	{
 		m_AmbientTexture = LoadTexture(pGfxContext, m_AmbientTexName);
@@ -198,10 +175,6 @@ void Material::Apply(RenderContext* pRenderContext, DX12GraphicContext* pGfxCont
 		{
 			float4x4 mModelViewProj;
 		};
-
-		DirectX::XMMATRIX mModel = pRenderContext->GetModelMatrix();
-		DirectX::XMMATRIX mInverseModel = DirectX::XMMatrixInverse(nullptr, mModel);
-		DirectX::XMMATRIX mInverseTransposeModel = DirectX::XMMatrixTranspose(mInverseModel);
 
 		View view;
 		DirectX::XMStoreFloat4x4(&view.mModelViewProj, DirectX::XMMatrixTranspose(pRenderContext->GetModelViewProjMatrix()));

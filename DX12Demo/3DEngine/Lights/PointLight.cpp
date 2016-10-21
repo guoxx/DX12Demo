@@ -49,7 +49,7 @@ void PointLight::GetViewNearFar(float& zNear, float& zFar) const
 	zFar = m_RadiusEnd;
 }
 
-DirectX::XMMATRIX PointLight::GetViewProj(AXIS axis, uint32_t shadowMapSize) const
+void PointLight::GetViewAndProjMatrix(const Camera* pCamera, AXIS axis, uint32_t shadowMapSize, DirectX::XMMATRIX* mView, DirectX::XMMATRIX* mProj) const
 {
 	// tricks for seamless cubemap filtering
 	// http://www.gamedev.net/blog/73/entry-2005516-seamless-filtering-across-faces-of-dynamic-cube-map/
@@ -61,7 +61,7 @@ DirectX::XMMATRIX PointLight::GetViewProj(AXIS axis, uint32_t shadowMapSize) con
 	float aspect = 1.0f;
 	assert(zFar > zNear);
 
-	DirectX::XMMATRIX mProj = DirectX::XMMatrixPerspectiveFovRH(fov, aspect, zNear, zFar);
+	*mProj = DirectX::XMMatrixPerspectiveFovRH(fov, aspect, zNear, zFar);
 
 	static const DirectX::XMVECTOR axes[AXIS_END] = {
 		{1.0f, 0.0f, 0.0f, 0.0f},		// POSITIVE_X
@@ -81,8 +81,5 @@ DirectX::XMMATRIX PointLight::GetViewProj(AXIS axis, uint32_t shadowMapSize) con
 	};
 
 	DirectX::XMVECTOR position = GetTranslation();
-	DirectX::XMMATRIX mView = DirectX::XMMatrixLookToRH(position, axes[axis], upDir[axis]);
-	
-	DirectX::XMMATRIX mViewProj = DirectX::XMMatrixMultiply(mView, mProj);
-	return mViewProj;
+	*mView = DirectX::XMMatrixLookToRH(position, axes[axis], upDir[axis]);
 }

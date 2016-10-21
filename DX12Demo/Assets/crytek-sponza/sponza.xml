@@ -35,6 +35,14 @@
 		<vector name="direction" x="-0.8" y="-0.6" z="0.05"/>
 	</emitter>
 
+	<shape type="sphere">
+		<point name="center" x="-400" y="200" z="-100"/>
+		<float name="radius" value="200"/>
+		<emitter type="area">
+			<rgb name="radiance" value="13.25, 14.0, 14.0"/>
+		</emitter>
+	</shape>
+
 	<bsdf id="sponza:Material__25_material" type="diffuse">
 		<texture name="reflectance" type="bitmap" id="lion.tga">
 			<string name="filename" value="textures/lion.tga"/>

@@ -34,7 +34,7 @@ private:
 	RenderContext m_RenderContext;	
 
 	std::shared_ptr<DX12DepthSurface> m_ShadowMap_DirLight0;
-	std::shared_ptr<DX12DepthSurface> m_ShadowMap_PointLight0;
+	std::shared_ptr<DX12DepthSurface> m_ShadowMap_PointLight0[6];
 
 	std::shared_ptr<DX12ColorSurface> m_SceneGBuffer0;
 	std::shared_ptr<DX12ColorSurface> m_SceneGBuffer1;

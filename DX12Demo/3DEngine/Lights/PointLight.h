@@ -28,7 +28,7 @@ public:
 	float GetRadiusEnd() const;
 
 	void GetViewNearFar(float& zNear, float& zFar) const;
-	DirectX::XMMATRIX GetViewProj(AXIS axis, uint32_t shadowMapSize) const;
+	void GetViewAndProjMatrix(const Camera* pCamera, AXIS axis, uint32_t shadowMapSize, DirectX::XMMATRIX* mView, DirectX::XMMATRIX* mProj) const;
 
 private:
 	DirectX::XMFLOAT4 m_Intensity;
