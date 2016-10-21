@@ -44,6 +44,20 @@ Renderer::Renderer(GFX_HWND hwnd, int32_t width, int32_t height)
 	m_ShadowMap0 = std::make_shared<DX12DepthSurface>();
 	m_ShadowMap0->InitAs2dSurface(DX12GraphicManager::GetInstance()->GetDevice(), GFX_FORMAT_D32_FLOAT, 2048, 2048);
 
+	{
+		m_ShadowGBuffer0_PointLight0 = std::make_shared<DX12ColorSurface>();
+		m_ShadowGBuffer0_PointLight0->InitAsCubeSurface(DX12GraphicManager::GetInstance()->GetDevice(), GFX_FORMAT_R8G8B8A8_UNORM, 1024);
+
+		m_ShadowGBuffer1_PointLight0 = std::make_shared<DX12ColorSurface>();
+		m_ShadowGBuffer1_PointLight0->InitAsCubeSurface(DX12GraphicManager::GetInstance()->GetDevice(), GFX_FORMAT_R8G8B8A8_UNORM, 1024);
+
+		m_ShadowGBuffer2_PointLight0 = std::make_shared<DX12ColorSurface>();
+		m_ShadowGBuffer2_PointLight0->InitAsCubeSurface(DX12GraphicManager::GetInstance()->GetDevice(), GFX_FORMAT_R8G8B8A8_UNORM, 1024);
+
+		m_ShadowMap_PointLight0 = std::make_shared<DX12DepthSurface>();
+		m_ShadowMap_PointLight0->InitAsCubeSurface(DX12GraphicManager::GetInstance()->GetDevice(), GFX_FORMAT_D32_FLOAT, 1024);
+	}
+
 	m_IdentityFilter2D = std::make_shared<Filter2D>(DX12GraphicManager::GetInstance()->GetDevice(), L"IdentityFilter2D.hlsl");
 
 	m_DirLightFilter2D = std::make_shared<DirectionalLightFilter2D>(DX12GraphicManager::GetInstance()->GetDevice());

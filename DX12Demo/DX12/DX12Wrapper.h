@@ -297,7 +297,8 @@ namespace CD3DX12
 			if (isCube)
 			{
 				assert(desc.SampleDesc.Count == 1);
-				return desc.DepthOrArraySize > 1 ? D3D12_SRV_DIMENSION_TEXTURECUBEARRAY : D3D12_SRV_DIMENSION_TEXTURECUBE;
+				assert(desc.DepthOrArraySize == 6);
+				return D3D12_SRV_DIMENSION_TEXTURECUBE;
 			}
 			else
 			{
