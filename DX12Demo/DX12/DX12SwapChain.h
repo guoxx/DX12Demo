@@ -1,5 +1,6 @@
 #pragma once
 
+#include "DX12Wrapper.h"
 #include "DX12Constants.h"
 #include "DX12Fence.h"
 
@@ -9,7 +10,7 @@ class DX12ColorSurface;
 class DX12SwapChain
 {
 public:
-	DX12SwapChain(DX12Device* device, const GFX_HWND hwnd, uint32_t backBufferWidth, uint32_t backBufferHeight, DXGI_FORMAT backBufferFormat);
+	DX12SwapChain(DX12Device* device, const GFX_HWND hwnd, uint32_t backBufferWidth, uint32_t backBufferHeight, GFX_FORMAT_SET backBufferFormat);
 	~DX12SwapChain();
 
 	void Begin();

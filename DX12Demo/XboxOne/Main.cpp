@@ -3,7 +3,6 @@
 //
 
 #include "pch.h"
-#include "../DX12Demo.h"
 #include "../DX12SponzaDemo.h"
 
 #include <ppltasks.h>

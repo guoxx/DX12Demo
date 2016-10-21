@@ -74,9 +74,6 @@
     <ClInclude Include="DX12\Hash.h">
       <Filter>DX12\Public</Filter>
     </ClInclude>
-    <ClInclude Include="DX12Demo.h">
-      <Filter>Sources</Filter>
-    </ClInclude>
     <ClInclude Include="DXSample.h">
       <Filter>Sources</Filter>
     </ClInclude>
@@ -228,9 +225,6 @@
     </ClCompile>
     <ClCompile Include="XboxOne\Main.cpp">
       <Filter>Sources\XboxOne</Filter>
-    </ClCompile>
-    <ClCompile Include="DX12Demo.cpp">
-      <Filter>Sources</Filter>
     </ClCompile>
     <ClCompile Include="DXSample.cpp">
       <Filter>Sources</Filter>

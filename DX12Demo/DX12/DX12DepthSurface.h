@@ -1,5 +1,6 @@
 #pragma once
 
+#include "DX12Wrapper.h"
 #include "DX12RenderableSurface.h"
 #include "DX12DescriptorHandle.h"
 
@@ -11,15 +12,15 @@ public:
 	DX12DepthSurface();
 	virtual ~DX12DepthSurface();
 
-	void InitAs2dSurface(DX12Device* device, DXGI_FORMAT fmt, uint32_t width, uint32_t height);
-	void InitAs2dSurface(DX12Device* device, DXGI_FORMAT fmt, uint32_t width, uint32_t height, uint32_t mipLevels);
+	void InitAs2dSurface(DX12Device* device, GFX_FORMAT_SET fmt, uint32_t width, uint32_t height);
+	void InitAs2dSurface(DX12Device* device, GFX_FORMAT_SET fmt, uint32_t width, uint32_t height, uint32_t mipLevels);
 
 	DX12DescriptorHandle GetSRV() const { return m_SRV; };
 	DX12DescriptorHandle GetDSV() const { return m_DSV; };
 	DX12DescriptorHandle GetStagingSRV() const { return m_StagingSRV; };
 
 private:
-	void CreateView(DX12Device* device);
+	void CreateView(DX12Device* device, GFX_FORMAT_SET fmt);
 
 private:
 	DX12DescriptorHandle m_SRV;

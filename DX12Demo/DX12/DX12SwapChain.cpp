@@ -5,12 +5,12 @@
 #include "DX12ColorSurface.h"
 #include "DX12GraphicContextAutoExecutor.h"
 
-DX12SwapChain::DX12SwapChain(DX12Device* device, const GFX_HWND hwnd, uint32_t backBufferWidth, uint32_t backBufferHeight, DXGI_FORMAT backBufferFormat)
+DX12SwapChain::DX12SwapChain(DX12Device* device, const GFX_HWND hwnd, uint32_t backBufferWidth, uint32_t backBufferHeight, GFX_FORMAT_SET backBufferFormat)
 {
 	DXGI_SWAP_CHAIN_DESC1 swapChainDesc = {};
 	swapChainDesc.Width = backBufferWidth;
 	swapChainDesc.Height = backBufferHeight;
-	swapChainDesc.Format = backBufferFormat;
+	swapChainDesc.Format = backBufferFormat.BaseFormat;
 	swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 	swapChainDesc.BufferCount = DX12NumSwapChainBuffers;
 	swapChainDesc.SampleDesc.Count = 1;
@@ -39,7 +39,7 @@ DX12SwapChain::DX12SwapChain(DX12Device* device, const GFX_HWND hwnd, uint32_t b
 		DX::SetNameIndexed(backBuffer.Get(), L"SWAP CHAIN BUFFER", i);
 
 		m_BackBuffers[i] = std::make_shared<DX12ColorSurface>();
-		m_BackBuffers[i]->InitAs2dSurface(device, backBuffer, D3D12_RESOURCE_STATE_COMMON);
+		m_BackBuffers[i]->InitAs2dSurface(device, backBuffer, backBufferFormat, D3D12_RESOURCE_STATE_COMMON);
 	}
 }
 
