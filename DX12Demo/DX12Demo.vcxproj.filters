@@ -350,6 +350,9 @@
     <None Include="Assets\BaseMaterial_DepthOnly.hlsl">
       <Filter>Assets</Filter>
     </None>
+    <None Include="Assets\PointLight.hlsli">
+      <Filter>Assets</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="XboxOne/Package.appxmanifest">

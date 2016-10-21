@@ -297,6 +297,7 @@
     <None Include="Assets\HelloTriangle.hlsl">
       <FileType>Document</FileType>
     </None>
+    <None Include="Assets\PointLight.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\HelloTexture.hlsl">

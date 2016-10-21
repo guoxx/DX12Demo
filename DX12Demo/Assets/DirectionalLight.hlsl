@@ -1,11 +1,20 @@
 #include "Common.hlsli"
+#include "PointLight.hlsli"
 
 #define RootSigDeclaration \
 RootSigBegin \
 ", CBV(b0, visibility = SHADER_VISIBILITY_ALL)" \
-", DescriptorTable(SRV(t0, numDescriptors=8), visibility=SHADER_VISIBILITY_PIXEL)" \
+", DescriptorTable(SRV(t0, numDescriptors=16), visibility=SHADER_VISIBILITY_PIXEL)" \
 ", StaticSampler(s0, filter=FILTER_MIN_MAG_MIP_POINT, visibility=SHADER_VISIBILITY_PIXEL)" \
 RootSigEnd
+
+struct PointLightParam
+{
+	float4 Position;
+	float4 Intensity;
+	float4 Radius;
+	float4x4 mViewProj[6];
+};
 
 struct Constants
 {
@@ -15,6 +24,8 @@ struct Constants
 	float4 LightIrradiance;
 	float4 CameraPosition;
 	float4x4 mLightViewProj;
+
+	struct PointLightParam PointLight;
 };
 
 Texture2D<float4> g_GBuffer0 : register(t0);
@@ -22,6 +33,7 @@ Texture2D<float4> g_GBuffer1 : register(t1);
 Texture2D<float4> g_GBuffer2 : register(t2);
 Texture2D<float> g_DepthTexture : register(t3);
 Texture2D<float> g_ShadowMap : register(t4);
+Texture2D<float> g_PointLightShadowMap[6] : register(t5);
 
 SamplerState g_Sampler : register(s0);
 ConstantBuffer<Constants> g_Constants : register(b0);
@@ -55,20 +67,46 @@ float4 PSMain(VSOutput In) : SV_TARGET
 {
 	GBuffer gbuffer = GBufferDecode(g_GBuffer0, g_GBuffer1, g_GBuffer2, g_DepthTexture, g_Sampler, In.Texcoord, g_Constants.mInvView, g_Constants.mInvProj);
 
-	float3 shadowPos = mul(float4(gbuffer.Position, 1), g_Constants.mLightViewProj).xyz;
-	float2 shadowUV = float2((shadowPos.x + 1.0f) * 0.5f, (-shadowPos.y + 1.0f) * 0.5f);
-	float occluderDepth = g_ShadowMap.Sample(g_Sampler, shadowUV);
-	// TODO: shouldn't hard code depth bias
-	occluderDepth += 0.01;
-	float shadowMask = occluderDepth < shadowPos.z ? 0.0f : 1.0f;
+	float3 outRadiance = 0.0f;
 
-	float3 L = -g_Constants.LightDirection.xyz;
-	float3 V = normalize(g_Constants.CameraPosition.xyz - gbuffer.Position);
-	float3 N = gbuffer.Normal;
-	float NdotL = saturate(dot(N, L));
-	float3 E = g_Constants.LightIrradiance.xyz * NdotL * PI;
+	{
+		float3 shadowPos = mul(float4(gbuffer.Position, 1), g_Constants.mLightViewProj).xyz;
+		float2 shadowUV = float2((shadowPos.x + 1.0f) * 0.5f, (-shadowPos.y + 1.0f) * 0.5f);
+		float occluderDepth = g_ShadowMap.Sample(g_Sampler, shadowUV);
+		// TODO: shouldn't hard code depth bias
+		occluderDepth += 0.01;
+		float shadowMask = occluderDepth < shadowPos.z ? 0.0f : 1.0f;
 
-	float3 diffuse = Diffuse_Lambert(gbuffer.Diffuse) * E;
-	float3 specular = MicrofacetSpecular(gbuffer.Specular, gbuffer.Roughness, V, N, L) * E;
-	return float4((diffuse + specular) * shadowMask, 1);
+		float3 L = -g_Constants.LightDirection.xyz;
+		float3 V = normalize(g_Constants.CameraPosition.xyz - gbuffer.Position);
+		float3 N = gbuffer.Normal;
+		float NdotL = saturate(dot(N, L));
+		float3 E = g_Constants.LightIrradiance.xyz * NdotL * PI;
+
+		float3 diffuse = Diffuse_Lambert(gbuffer.Diffuse) * E;
+		float3 specular = MicrofacetSpecular(gbuffer.Specular, gbuffer.Roughness, V, N, L) * E;
+		outRadiance += (diffuse + specular) * shadowMask;
+	}
+
+	{
+		float shadowMask = 1.0f;
+
+		float3 L = normalize(g_Constants.PointLight.Position.xyz - gbuffer.Position);
+		float3 V = normalize(g_Constants.CameraPosition.xyz - gbuffer.Position);
+		float3 N = gbuffer.Normal;
+		float NdotL = saturate(dot(N, L));
+
+		float dist = length(g_Constants.PointLight.Position.xyz - gbuffer.Position);
+		float radiusStart = g_Constants.PointLight.Radius.x;
+		float radiusEnd = g_Constants.PointLight.Radius.y;
+		float3 E = PointLightIrradiance(g_Constants.PointLight.Intensity, dist, radiusStart, radiusEnd) * NdotL * PI;
+		//if (any(E))
+		{
+			float3 diffuse = Diffuse_Lambert(gbuffer.Diffuse) * E;
+			float3 specular = MicrofacetSpecular(gbuffer.Specular, gbuffer.Roughness, V, N, L) * E;
+			outRadiance += (diffuse + specular) * shadowMask;
+		}
+	}
+
+	return float4(outRadiance, 1);
 }

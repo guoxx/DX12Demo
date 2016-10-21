@@ -157,9 +157,15 @@ void Renderer::DeferredLighting(const Camera* pCamera, Scene* pScene)
 	pGfxContext->ResourceTransitionBarrier(m_SceneDepthSurface.get(), D3D12_RESOURCE_STATE_GENERIC_READ);
 	pGfxContext->ResourceTransitionBarrier(m_ShadowMap_DirLight0.get(), D3D12_RESOURCE_STATE_GENERIC_READ);
 
+	PointLight* pPointLight = nullptr;
+	if (pScene->GetPointLights().size() > 0)
+	{
+		pPointLight = pScene->GetPointLights()[0].get();
+	}
+
 	for (auto directionalLight : pScene->GetDirectionalLights())
 	{
-		m_DirLightFilter2D->Apply(pGfxContext, &m_RenderContext, directionalLight.get());
+		m_DirLightFilter2D->Apply(pGfxContext, &m_RenderContext, directionalLight.get(), pPointLight);
 
 		pGfxContext->SetGraphicsDynamicCbvSrvUav(1, 0, m_SceneGBuffer0->GetStagingSRV().GetCpuHandle());
 		pGfxContext->SetGraphicsDynamicCbvSrvUav(1, 1, m_SceneGBuffer1->GetStagingSRV().GetCpuHandle());

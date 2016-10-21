@@ -3,11 +3,20 @@
 
 #include "../Camera.h"
 #include "../RenderContext.h"
+#include "../Lights/PointLight.h"
 #include "../Lights/DirectionalLight.h"
 
 
 namespace
 {
+	struct PointLightParam
+	{
+		float4 Position;
+		float4 Intensity;
+		float4 Radius;
+		float4x4 mViewProj[6];
+	};
+
 	struct Constants
 	{
 		float4x4 mInvView;
@@ -16,6 +25,8 @@ namespace
 		float4 LightIrradiance;
 		float4 CameraPosition;
 		float4x4 mLightViewProj;
+
+		struct PointLightParam m_PointLight;
 	};
 }
 
@@ -33,7 +44,7 @@ DirectionalLightFilter2D::DirectionalLightFilter2D(DX12Device* device)
 	pGfxContext->ResourceTransitionBarrier(m_IndexBuffer.get(), D3D12_RESOURCE_STATE_GENERIC_READ);
 
 	D3D12_DESCRIPTOR_RANGE descriptorRanges1[] = {
-		{ D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 8, 0, 0, D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND },
+		{ D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 16, 0, 0, D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND },
 	};
 
 	DX12RootSignatureCompiler sigCompiler;
@@ -59,7 +70,7 @@ DirectionalLightFilter2D::~DirectionalLightFilter2D()
 {
 }
 
-void DirectionalLightFilter2D::Apply(DX12GraphicContext * pGfxContext, const RenderContext* pRenderContext, const DirectionalLight* pLight)
+void DirectionalLightFilter2D::Apply(DX12GraphicContext * pGfxContext, const RenderContext* pRenderContext, const DirectionalLight* pLight, const PointLight* pPointLight)
 {
 	pGfxContext->SetGraphicsRootSignature(m_RootSig);
 	pGfxContext->SetPipelineState(m_PSO.get());
@@ -78,6 +89,18 @@ void DirectionalLightFilter2D::Apply(DX12GraphicContext * pGfxContext, const Ren
 	DirectX::XMMATRIX mLightProj;
 	pLight->GetViewAndProjMatrix(pRenderContext->GetCamera(), &mLightView, &mLightProj);
 	DirectX::XMStoreFloat4x4(&constants.mLightViewProj, DirectX::XMMatrixTranspose(DirectX::XMMatrixMultiply(mLightView, mLightProj)));
+
+	DirectX::XMStoreFloat4(&constants.m_PointLight.Position, pPointLight->GetTranslation());
+	constants.m_PointLight.Intensity = pPointLight->GetIntensity();
+	constants.m_PointLight.Radius = DirectX::XMFLOAT4{ pPointLight->GetRadiusStart(), pPointLight->GetRadiusEnd(), 0, 0 };
+	for (int i = 0; i < 6; ++i)
+	{
+		DirectX::XMMATRIX mLightView;
+		DirectX::XMMATRIX mLightProj;
+		pPointLight->GetViewAndProjMatrix(nullptr, (PointLight::AXIS)i, 1024, &mLightView, &mLightProj);
+		DirectX::XMMATRIX mLightViewProj = DirectX::XMMatrixMultiply(mLightView, mLightProj);
+		DirectX::XMStoreFloat4x4(&constants.m_PointLight.mViewProj[i], DirectX::XMMatrixTranspose(mLightViewProj));
+	}
 
 	pGfxContext->SetGraphicsRootDynamicConstantBufferView(0, &constants, sizeof(constants));
 }
