@@ -32,31 +32,11 @@ Renderer::Renderer(GFX_HWND hwnd, int32_t width, int32_t height)
 	m_LightingSurface = std::make_shared<DX12ColorSurface>();
 	m_LightingSurface->InitAs2dSurface(DX12GraphicManager::GetInstance()->GetDevice(), GFX_FORMAT_R32G32B32A32_FLOAT, width, height);
 
-	m_ShadowGBuffer0 = std::make_shared<DX12ColorSurface>();
-	m_ShadowGBuffer0->InitAs2dSurface(DX12GraphicManager::GetInstance()->GetDevice(), GFX_FORMAT_R8G8B8A8_UNORM, 2048, 2048);
+	m_ShadowMap_DirLight0 = std::make_shared<DX12DepthSurface>();
+	m_ShadowMap_DirLight0->InitAs2dSurface(DX12GraphicManager::GetInstance()->GetDevice(), GFX_FORMAT_D32_FLOAT, 2048, 2048);
 
-	m_ShadowGBuffer1 = std::make_shared<DX12ColorSurface>();
-	m_ShadowGBuffer1->InitAs2dSurface(DX12GraphicManager::GetInstance()->GetDevice(), GFX_FORMAT_R8G8B8A8_UNORM, 2048, 2048);
-
-	m_ShadowGBuffer2 = std::make_shared<DX12ColorSurface>();
-	m_ShadowGBuffer2->InitAs2dSurface(DX12GraphicManager::GetInstance()->GetDevice(), GFX_FORMAT_R8G8B8A8_UNORM, 2048, 2048);
-
-	m_ShadowMap0 = std::make_shared<DX12DepthSurface>();
-	m_ShadowMap0->InitAs2dSurface(DX12GraphicManager::GetInstance()->GetDevice(), GFX_FORMAT_D32_FLOAT, 2048, 2048);
-
-	{
-		m_ShadowGBuffer0_PointLight0 = std::make_shared<DX12ColorSurface>();
-		m_ShadowGBuffer0_PointLight0->InitAsCubeSurface(DX12GraphicManager::GetInstance()->GetDevice(), GFX_FORMAT_R8G8B8A8_UNORM, 1024);
-
-		m_ShadowGBuffer1_PointLight0 = std::make_shared<DX12ColorSurface>();
-		m_ShadowGBuffer1_PointLight0->InitAsCubeSurface(DX12GraphicManager::GetInstance()->GetDevice(), GFX_FORMAT_R8G8B8A8_UNORM, 1024);
-
-		m_ShadowGBuffer2_PointLight0 = std::make_shared<DX12ColorSurface>();
-		m_ShadowGBuffer2_PointLight0->InitAsCubeSurface(DX12GraphicManager::GetInstance()->GetDevice(), GFX_FORMAT_R8G8B8A8_UNORM, 1024);
-
-		m_ShadowMap_PointLight0 = std::make_shared<DX12DepthSurface>();
-		m_ShadowMap_PointLight0->InitAsCubeSurface(DX12GraphicManager::GetInstance()->GetDevice(), GFX_FORMAT_D32_FLOAT, 1024);
-	}
+	m_ShadowMap_PointLight0 = std::make_shared<DX12DepthSurface>();
+	m_ShadowMap_PointLight0->InitAsCubeSurface(DX12GraphicManager::GetInstance()->GetDevice(), GFX_FORMAT_D32_FLOAT, 1024);
 
 	m_IdentityFilter2D = std::make_shared<Filter2D>(DX12GraphicManager::GetInstance()->GetDevice(), L"IdentityFilter2D.hlsl");
 
@@ -90,14 +70,12 @@ void Renderer::RenderShadowMaps(const Camera* pCamera, Scene * pScene)
 
 	for (auto directionalLight : pScene->GetDirectionalLights())
 	{
+		m_RenderContext.SetShadingCfg(ShadingConfiguration_DepthOnly);
+
 		pGfxContext->PIXBeginEvent(L"ShadowMap0");
 
-		pGfxContext->ClearRenderTarget(m_ShadowGBuffer0.get(), 0, 0, 0, 0);
-		pGfxContext->ClearRenderTarget(m_ShadowGBuffer1.get(), 0, 0, 0, 0);
-		pGfxContext->ClearRenderTarget(m_ShadowGBuffer2.get(), 0, 0, 0, 0);
-		pGfxContext->ClearDepthTarget(m_ShadowMap0.get(), 1.0f);
-		DX12ColorSurface* pColorSurfaces[] = { m_ShadowGBuffer0.get(), m_ShadowGBuffer1.get(), m_ShadowGBuffer2.get() };
-		pGfxContext->SetRenderTargets(_countof(pColorSurfaces), pColorSurfaces, m_ShadowMap0.get());
+		pGfxContext->ClearDepthTarget(m_ShadowMap_DirLight0.get(), 1.0f);
+		pGfxContext->SetRenderTargets(0, nullptr, m_ShadowMap_DirLight0.get());
 		pGfxContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		pGfxContext->SetViewport(0, 0, 2048, 2048);
 
@@ -140,7 +118,7 @@ void Renderer::DeferredLighting(const Camera* pCamera, Scene* pScene)
 	pGfxContext->ResourceTransitionBarrier(m_SceneGBuffer1.get(), D3D12_RESOURCE_STATE_GENERIC_READ);
 	pGfxContext->ResourceTransitionBarrier(m_SceneGBuffer2.get(), D3D12_RESOURCE_STATE_GENERIC_READ);
 	pGfxContext->ResourceTransitionBarrier(m_SceneDepthSurface.get(), D3D12_RESOURCE_STATE_GENERIC_READ);
-	pGfxContext->ResourceTransitionBarrier(m_ShadowMap0.get(), D3D12_RESOURCE_STATE_GENERIC_READ);
+	pGfxContext->ResourceTransitionBarrier(m_ShadowMap_DirLight0.get(), D3D12_RESOURCE_STATE_GENERIC_READ);
 
 	for (auto directionalLight : pScene->GetDirectionalLights())
 	{
@@ -150,7 +128,7 @@ void Renderer::DeferredLighting(const Camera* pCamera, Scene* pScene)
 		pGfxContext->SetGraphicsDynamicCbvSrvUav(1, 1, m_SceneGBuffer1->GetStagingSRV().GetCpuHandle());
 		pGfxContext->SetGraphicsDynamicCbvSrvUav(1, 2, m_SceneGBuffer2->GetStagingSRV().GetCpuHandle());
 		pGfxContext->SetGraphicsDynamicCbvSrvUav(1, 3, m_SceneDepthSurface->GetStagingSRV().GetCpuHandle());
-		pGfxContext->SetGraphicsDynamicCbvSrvUav(1, 4, m_ShadowMap0->GetStagingSRV().GetCpuHandle());
+		pGfxContext->SetGraphicsDynamicCbvSrvUav(1, 4, m_ShadowMap_DirLight0->GetStagingSRV().GetCpuHandle());
 
 		m_DirLightFilter2D->Draw(pGfxContext);
 	}
@@ -159,13 +137,15 @@ void Renderer::DeferredLighting(const Camera* pCamera, Scene* pScene)
 	pGfxContext->ResourceTransitionBarrier(m_SceneGBuffer1.get(), D3D12_RESOURCE_STATE_RENDER_TARGET);
 	pGfxContext->ResourceTransitionBarrier(m_SceneGBuffer2.get(), D3D12_RESOURCE_STATE_RENDER_TARGET);
 	pGfxContext->ResourceTransitionBarrier(m_SceneDepthSurface.get(), D3D12_RESOURCE_STATE_DEPTH_WRITE);
-	pGfxContext->ResourceTransitionBarrier(m_ShadowMap0.get(), D3D12_RESOURCE_STATE_DEPTH_WRITE);
+	pGfxContext->ResourceTransitionBarrier(m_ShadowMap_DirLight0.get(), D3D12_RESOURCE_STATE_DEPTH_WRITE);
 
 	pGfxContext->PIXEndEvent();
 }
 
 void Renderer::RenderGBuffer(const Camera* pCamera, Scene* pScene)
 {
+	m_RenderContext.SetShadingCfg(ShadingConfiguration_GBuffer);
+
 	DX12GraphicContextAutoExecutor executor;
 	DX12GraphicContext* pGfxContext = executor.GetGraphicContext();
 

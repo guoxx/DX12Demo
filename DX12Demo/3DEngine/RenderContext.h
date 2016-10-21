@@ -1,5 +1,7 @@
 #pragma once
 
+#include "3DEngineDefinition.h"
+
 class Camera;
 
 class __declspec(align(16)) RenderContext
@@ -45,7 +47,12 @@ public:
 		m_mModelViewProj = DirectX::XMMatrixMultiply(m_mModel, m_mViewProj);
 	}
 
+	ShadingConfiguration GetShadingCfg() const { return m_ShadingCfg; }
+	void SetShadingCfg(ShadingConfiguration shadingCfg) { m_ShadingCfg = shadingCfg; }
+
 private:
+	ShadingConfiguration m_ShadingCfg;
+
 	const Camera* m_Camera;
 
 	DirectX::XMMATRIX m_mModel;

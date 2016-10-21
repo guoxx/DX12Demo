@@ -2,9 +2,9 @@
 
 #define RootSigDeclaration \
 RootSigBegin \
+", SRV(t0, visibility = SHADER_VISIBILITY_VERTEX)" \
 ", CBV(b0, visibility = SHADER_VISIBILITY_ALL)" \
 ", CBV(b1, visibility = SHADER_VISIBILITY_ALL)" \
-", SRV(t0, visibility = SHADER_VISIBILITY_VERTEX)" \
 ", DescriptorTable(SRV(t1, numDescriptors=1), visibility=SHADER_VISIBILITY_PIXEL)" \
 ", StaticSampler(s0, filter=FILTER_MIN_MAG_MIP_POINT, visibility=SHADER_VISIBILITY_PIXEL)" \
 RootSigEnd

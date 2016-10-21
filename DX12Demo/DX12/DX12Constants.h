@@ -3,6 +3,7 @@
 enum DX12ShaderType
 {
 	DX12ShaderTypeVertex = 0,
+	DX12ShaderTypeGeometry,
 	DX12ShaderTypePixel,
 	DX12ShaderTypeCompute,
 	DX12ShaderTypeMax,

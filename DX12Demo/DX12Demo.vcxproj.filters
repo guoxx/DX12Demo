@@ -194,6 +194,9 @@
     <ClInclude Include="DX12\d3dx12.h">
       <Filter>DX12\Private</Filter>
     </ClInclude>
+    <ClInclude Include="3DEngine\3DEngineDefinition.h">
+      <Filter>3DEngine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -342,6 +345,12 @@
       <Filter>Assets</Filter>
     </None>
     <None Include="Assets\BRDF.hlsli">
+      <Filter>Assets</Filter>
+    </None>
+    <None Include="Assets\BaseMaterial_DepthOnly.hlsl">
+      <Filter>Assets</Filter>
+    </None>
+    <None Include="Assets\BaseMaterial_PointLightDepthOnly.hlsl">
       <Filter>Assets</Filter>
     </None>
   </ItemGroup>

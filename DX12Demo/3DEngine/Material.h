@@ -1,5 +1,6 @@
 #pragma once
 
+#include "3DEngineDefinition.h"
 #include "../DX12/DX12.h"
 
 class Model;
@@ -50,8 +51,8 @@ private:
 	std::shared_ptr<DX12Texture> m_DisplacementTexture;
 	std::shared_ptr<DX12Texture> m_AlphaTexture;
 
-	std::shared_ptr<DX12RootSignature> m_RootSig;
-	std::shared_ptr<DX12PipelineState> m_PSO;
+	std::shared_ptr<DX12RootSignature> m_RootSig[ShadingConfiguration_Max];
+	std::shared_ptr<DX12PipelineState> m_PSO[ShadingConfiguration_Max];
 
 	DX12DescriptorHandle m_NullDescriptorHandle;
 };

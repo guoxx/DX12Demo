@@ -52,6 +52,7 @@ bool DX12GraphicPsoCompiler::SetShaderFromFile(DX12ShaderType shaderType, const 
 
 	static char* profiles[DX12ShaderTypeMax] = {
 		"vs_5_1",
+		"gs_5_1",
 		"ps_5_1",
 		"cs_5_1",
 	};
@@ -67,6 +68,9 @@ bool DX12GraphicPsoCompiler::SetShaderFromFile(DX12ShaderType shaderType, const 
 	{
 	case DX12ShaderTypeVertex:
 		m_PsoDesc.VS = { bin->GetBufferPointer(), bin->GetBufferSize() };
+		break;
+	case DX12ShaderTypeGeometry:
+		m_PsoDesc.GS = { bin->GetBufferPointer(), bin->GetBufferSize() };
 		break;
 	case DX12ShaderTypePixel:
 		m_PsoDesc.PS = { bin->GetBufferPointer(), bin->GetBufferSize() };

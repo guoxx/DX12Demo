@@ -33,20 +33,7 @@ private:
 
 	RenderContext m_RenderContext;	
 
-	// ----
-	// TODO: quick hack to render shadow map
-	std::shared_ptr<DX12ColorSurface> m_ShadowGBuffer0;
-	std::shared_ptr<DX12ColorSurface> m_ShadowGBuffer1;
-	std::shared_ptr<DX12ColorSurface> m_ShadowGBuffer2;
-	// ----
-	std::shared_ptr<DX12DepthSurface> m_ShadowMap0;
-
-	// ----
-	// TODO: quick hack to render shadow map
-	std::shared_ptr<DX12ColorSurface> m_ShadowGBuffer0_PointLight0;
-	std::shared_ptr<DX12ColorSurface> m_ShadowGBuffer1_PointLight0;
-	std::shared_ptr<DX12ColorSurface> m_ShadowGBuffer2_PointLight0;
-	// ----
+	std::shared_ptr<DX12DepthSurface> m_ShadowMap_DirLight0;
 	std::shared_ptr<DX12DepthSurface> m_ShadowMap_PointLight0;
 
 	std::shared_ptr<DX12ColorSurface> m_SceneGBuffer0;
