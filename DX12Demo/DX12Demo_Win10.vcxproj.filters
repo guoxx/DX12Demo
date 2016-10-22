@@ -75,9 +75,6 @@
     <ClCompile Include="DXSample.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
-    <ClCompile Include="DX12Demo.cpp">
-      <Filter>Sources</Filter>
-    </ClCompile>
     <ClCompile Include="DX12\DX12DescriptorManager.cpp">
       <Filter>DX12\Private</Filter>
     </ClCompile>
@@ -198,9 +195,6 @@
       <Filter>Sources\Win10</Filter>
     </ClInclude>
     <ClInclude Include="DXSample.h">
-      <Filter>Sources</Filter>
-    </ClInclude>
-    <ClInclude Include="DX12Demo.h">
       <Filter>Sources</Filter>
     </ClInclude>
     <ClInclude Include="Utils\Heaponly.h">
@@ -335,6 +329,12 @@
       <Filter>Assets\Shaders</Filter>
     </None>
     <None Include="Assets\BRDF.hlsli">
+      <Filter>Assets\Shaders</Filter>
+    </None>
+    <None Include="Assets\PointLight.hlsli">
+      <Filter>Assets\Shaders</Filter>
+    </None>
+    <None Include="Assets\BaseMaterial_DepthOnly.hlsl">
       <Filter>Assets\Shaders</Filter>
     </None>
   </ItemGroup>

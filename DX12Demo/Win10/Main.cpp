@@ -11,7 +11,6 @@
 
 #include "pch.h"
 #include "Win32Application.h"
-#include "../DX12Demo.h"
 #include "../DX12SponzaDemo.h"
 
 _Use_decl_annotations_

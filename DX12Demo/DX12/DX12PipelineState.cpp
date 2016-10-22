@@ -148,9 +148,12 @@ ComPtr<ID3DBlob> DX12GraphicPsoCompiler::CompileShader(const wchar_t* file, cons
 	ComPtr<ID3DBlob> errBlob = nullptr;
 
 	uint32_t compileFlags = 0;
-//#ifdef _DEBUG
-//	compileFlags |= (D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION);
-//#endif
+	// TODO: fail to use those flags on X1
+#ifndef _XBOX_ONE
+#ifdef _DEBUG
+	compileFlags |= (D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION);
+#endif
+#endif
 	D3DCompileFromFile(file, nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, entry, profile, compileFlags, 0, &shaderBlob, &errBlob);
 	if (D3DCompileFromFile(file, nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, entry, profile, compileFlags, 0, &shaderBlob, &errBlob) != S_OK)
 	{

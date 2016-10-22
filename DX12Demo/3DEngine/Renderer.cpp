@@ -16,7 +16,7 @@ Renderer::Renderer(GFX_HWND hwnd, int32_t width, int32_t height)
 	: m_Width{ width}
 	, m_Height{ height }
 {
-	m_SwapChain = std::make_shared<DX12SwapChain>(DX12GraphicManager::GetInstance()->GetDevice(), hwnd, width, height, GFX_FORMAT_R8G8B8A8_UNORM);
+	m_SwapChain = std::make_shared<DX12SwapChain>(DX12GraphicManager::GetInstance()->GetDevice(), hwnd, width, height, GFX_FORMAT_R8G8B8A8_UNORM_SWAPCHAIN);
 
 	m_SceneGBuffer0 = std::make_shared<DX12ColorSurface>();
 	m_SceneGBuffer0->InitAs2dSurface(DX12GraphicManager::GetInstance()->GetDevice(), GFX_FORMAT_R8G8B8A8_UNORM, width, height);

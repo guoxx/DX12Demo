@@ -129,6 +129,7 @@
     <None Include="Assets\HelloTriangle.hlsl">
       <FileType>Document</FileType>
     </None>
+    <None Include="Assets\PointLight.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="3DEngine\Actor.cpp" />
@@ -148,7 +149,6 @@
     <ClCompile Include="3DEngine\RenderContext.cpp" />
     <ClCompile Include="3DEngine\Renderer.cpp" />
     <ClCompile Include="3DEngine\Scene.cpp" />
-    <ClCompile Include="DX12Demo.cpp" />
     <ClCompile Include="DX12SponzaDemo.cpp" />
     <ClCompile Include="DX12\DX12Buffer.cpp" />
     <ClCompile Include="DX12\DX12ColorSurface.cpp" />
@@ -194,7 +194,6 @@
     <ClInclude Include="3DEngine\Renderer.h" />
     <ClInclude Include="3DEngine\Scene.h" />
     <ClInclude Include="3DEngine\tiny_obj_loader.h" />
-    <ClInclude Include="DX12Demo.h" />
     <ClInclude Include="DX12SponzaDemo.h" />
     <ClInclude Include="DX12\d3dx12.h" />
     <ClInclude Include="DX12\DX12.h" />
@@ -240,6 +239,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\DirectionalLight.hlsl">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Assets\BaseMaterial_DepthOnly.hlsl">
       <FileType>Document</FileType>
     </None>
   </ItemGroup>
