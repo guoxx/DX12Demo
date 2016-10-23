@@ -21,4 +21,7 @@ constexpr int32_t DX12ParallelIdInvalid = -1;
 constexpr uint32_t DX12MaxSlotsPerShader = 32;
 constexpr uint32_t DX12MaxElemsPerDescriptorTable = 64;
 
+constexpr uint32_t DX12DirectionalLightShadowMapSize = 2048;
+constexpr uint32_t DX12PointLightShadowMapSize = 1024;
+
 constexpr D3D12_RESOURCE_STATES D3D12_RESOURCE_STATE_INVALID = (D3D12_RESOURCE_STATES)-1;

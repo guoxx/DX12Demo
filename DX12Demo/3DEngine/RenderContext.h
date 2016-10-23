@@ -1,8 +1,13 @@
 #pragma once
 
+#include "../DX12/DX12.h"
 #include "3DEngineDefinition.h"
+#include "RenderableSurfaceManager.h"
+
 
 class Camera;
+class PointLight;
+class DirectionalLight;
 
 class __declspec(align(16)) RenderContext
 {
@@ -50,6 +55,12 @@ public:
 	ShadingConfiguration GetShadingCfg() const { return m_ShadingCfg; }
 	void SetShadingCfg(ShadingConfiguration shadingCfg) { m_ShadingCfg = shadingCfg; }
 
+	DX12DepthSurface* AcquireDepthSurfaceForDirectionalLight(DirectionalLight* pDirLight);
+
+	std::array<DX12DepthSurface*, 6> AcquireDepthSurfaceForPointLight(PointLight* pPointLight);
+
+	void ReleaseDepthSurfacesForAllLights();
+
 private:
 	ShadingConfiguration m_ShadingCfg;
 
@@ -60,5 +71,8 @@ private:
 	DirectX::XMMATRIX m_mProj;
 	DirectX::XMMATRIX m_mViewProj;
 	DirectX::XMMATRIX m_mModelViewProj;
+
+	std::map<DirectionalLight*, RenderableSurfaceHandle> m_ShadowMapForDirLights;
+	std::map<PointLight*, std::array<RenderableSurfaceHandle, 6>> m_ShadowMapForPointLights;
 };
 

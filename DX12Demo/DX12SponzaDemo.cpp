@@ -13,6 +13,7 @@
 #include "3DEngine/Renderer.h"
 
 #include "3DEngine/MaterialManager.h"
+#include "3DEngine/RenderableSurfaceManager.h"
 #include "3DEngine/GameInput.h"
 
 #ifdef _XBOX_ONE
@@ -123,6 +124,7 @@ void DX12SponzaDemo::OnDestroy()
 {
 	DX12GraphicManager::Finalize();
 	MaterialManager::Finalize();
+	RenderableSurfaceManager::Finalize();
 	GameInput::Shutdown();
 }
 
@@ -151,6 +153,7 @@ void DX12SponzaDemo::CreateDevice()
 {
 	DX12GraphicManager::Initialize();
 	MaterialManager::Initialize();
+	RenderableSurfaceManager::Initialize();
 	GameInput::Initialize(m_Hwnd);
 
 	m_GraphicManager = DX12GraphicManager::GetInstance();

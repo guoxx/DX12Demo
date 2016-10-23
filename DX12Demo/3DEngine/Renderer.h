@@ -3,7 +3,9 @@
 #include "../DX12/DX12.h"
 
 #include "RenderContext.h"
+#include "RenderableSurfaceManager.h"
 
+class ILight;
 class Scene;
 class Camera;
 class Filter2D;
@@ -33,15 +35,12 @@ private:
 
 	RenderContext m_RenderContext;	
 
-	std::shared_ptr<DX12DepthSurface> m_ShadowMap_DirLight0;
-	std::shared_ptr<DX12DepthSurface> m_ShadowMap_PointLight0[6];
+	RenderableSurfaceHandle m_SceneGBuffer0;
+	RenderableSurfaceHandle m_SceneGBuffer1;
+	RenderableSurfaceHandle m_SceneGBuffer2;
+	RenderableSurfaceHandle m_SceneDepthSurface;
 
-	std::shared_ptr<DX12ColorSurface> m_SceneGBuffer0;
-	std::shared_ptr<DX12ColorSurface> m_SceneGBuffer1;
-	std::shared_ptr<DX12ColorSurface> m_SceneGBuffer2;
-	std::shared_ptr<DX12DepthSurface> m_SceneDepthSurface;
-
-	std::shared_ptr<DX12ColorSurface> m_LightingSurface;
+	RenderableSurfaceHandle m_LightingSurface;
 
 	std::shared_ptr<DX12SwapChain> m_SwapChain;
 

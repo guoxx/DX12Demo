@@ -153,6 +153,9 @@
     <ClCompile Include="3DEngine\Filters\DirectionalLightFilter2D.cpp">
       <Filter>3DEngine\Filters</Filter>
     </ClCompile>
+    <ClCompile Include="3DEngine\RenderableSurfaceManager.cpp">
+      <Filter>3DEngine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DX12\DX12GraphicContext.h">
@@ -307,6 +310,9 @@
     </ClInclude>
     <ClInclude Include="3DEngine\Filters\DirectionalLightFilter2D.h">
       <Filter>3DEngine\Filters</Filter>
+    </ClInclude>
+    <ClInclude Include="3DEngine\RenderableSurfaceManager.h">
+      <Filter>3DEngine</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
