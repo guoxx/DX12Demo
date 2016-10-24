@@ -26,7 +26,7 @@ Renderer::Renderer(GFX_HWND hwnd, int32_t width, int32_t height)
 
 	m_LightingSurface = RenderableSurfaceManager::GetInstance()->AcquireColorSurface(RenderableSurfaceDesc(GFX_FORMAT_R32G32B32A32_FLOAT, width, height));
 
-	m_IdentityFilter2D = std::make_shared<Filter2D>(DX12GraphicManager::GetInstance()->GetDevice(), L"IdentityFilter2D.hlsl");
+	m_IdentityFilter2D = std::make_shared<Filter2D>(DX12GraphicManager::GetInstance()->GetDevice());
 
 	m_PointLightFilter2D = std::make_shared<PointLightFilter2D>(DX12GraphicManager::GetInstance()->GetDevice());
 	m_DirLightFilter2D = std::make_shared<DirectionalLightFilter2D>(DX12GraphicManager::GetInstance()->GetDevice());

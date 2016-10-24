@@ -36,9 +36,11 @@
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="Shader.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="Shader.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -72,16 +74,13 @@
     <CustomBuildStep>
       <TreatOutputAsContent>true</TreatOutputAsContent>
     </CustomBuildStep>
-    <CustomBuild>
-      <Command>copy %(Identity) "$(OutDir)" &gt; NUL</Command>
-      <Outputs>$(OutDir)\%(Identity)</Outputs>
-      <TreatOutputAsContent>true</TreatOutputAsContent>
-    </CustomBuild>
+    <CustomBuild />
     <FxCompile>
       <EntryPointName />
     </FxCompile>
     <PreBuildEvent>
-      <Command>xcopy /s /Y "$(ProjectDir)Assets" "$(OutDir)"</Command>
+      <Command>
+      </Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -108,34 +107,21 @@
     <CustomBuildStep>
       <TreatOutputAsContent>true</TreatOutputAsContent>
     </CustomBuildStep>
-    <CustomBuild>
-      <Command>copy %(Identity) "$(OutDir)" &gt; NUL</Command>
-      <Outputs>$(OutDir)\%(Identity)</Outputs>
-      <TreatOutputAsContent>true</TreatOutputAsContent>
-    </CustomBuild>
+    <CustomBuild />
     <FxCompile>
       <EntryPointName />
     </FxCompile>
     <PreBuildEvent>
-      <Command>xcopy /s /Y "$(ProjectDir)Assets" "$(OutDir)"</Command>
+      <Command>
+      </Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <None Include="Assets\BRDF.hlsli" />
-    <None Include="Assets\Common.hlsli" />
-    <None Include="Assets\HelloTexture.hlsl">
-      <FileType>Document</FileType>
-    </None>
-    <None Include="Assets\HelloTriangle.hlsl">
-      <FileType>Document</FileType>
-    </None>
-    <None Include="Assets\PointLight.hlsli" />
-  </ItemGroup>
   <ItemGroup>
     <ClCompile Include="3DEngine\Actor.cpp" />
     <ClCompile Include="3DEngine\Camera.cpp" />
     <ClCompile Include="3DEngine\Filters\DirectionalLightFilter2D.cpp" />
     <ClCompile Include="3DEngine\Filters\Filter2D.cpp" />
+    <ClCompile Include="3DEngine\Filters\PointLightFilter2D.cpp" />
     <ClCompile Include="3DEngine\GameInput.cpp" />
     <ClCompile Include="3DEngine\Lights\DirectionalLight.cpp" />
     <ClCompile Include="3DEngine\Lights\ILight.cpp" />
@@ -182,6 +168,7 @@
     <ClInclude Include="3DEngine\Camera.h" />
     <ClInclude Include="3DEngine\Filters\DirectionalLightFilter2D.h" />
     <ClInclude Include="3DEngine\Filters\Filter2D.h" />
+    <ClInclude Include="3DEngine\Filters\PointLightFilter2D.h" />
     <ClInclude Include="3DEngine\GameInput.h" />
     <ClInclude Include="3DEngine\Lights\DirectionalLight.h" />
     <ClInclude Include="3DEngine\Lights\ILight.h" />
@@ -232,22 +219,26 @@
     <ClInclude Include="Win10\Win32Application.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\BaseMaterial.hlsl">
-      <FileType>Document</FileType>
-    </None>
-    <None Include="Assets\IdentityFilter2D.hlsl">
-      <FileType>Document</FileType>
-    </None>
+    <None Include="Shaders\Inc\BRDF.hlsli" />
+    <None Include="Shaders\Inc\Common.hlsli" />
+    <None Include="Shaders\Inc\PointLight.hlsli" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\DirectionalLight.hlsl">
+    <CustomBuild Include="Shaders\BaseMaterial.hlsl">
       <FileType>Document</FileType>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Assets\BaseMaterial_DepthOnly.hlsl">
+    </CustomBuild>
+    <CustomBuild Include="Shaders\BaseMaterial_DepthOnly.hlsl">
       <FileType>Document</FileType>
-    </None>
+    </CustomBuild>
+    <CustomBuild Include="Shaders\DirectionalLight.hlsl">
+      <FileType>Document</FileType>
+    </CustomBuild>
+    <CustomBuild Include="Shaders\IdentityFilter2D.hlsl">
+      <FileType>Document</FileType>
+    </CustomBuild>
+    <CustomBuild Include="Shaders\PointLight.hlsl">
+      <FileType>Document</FileType>
+    </CustomBuild>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -46,6 +46,29 @@ bool DX12GraphicPsoCompiler::SetRoogSignature(DX12RootSignature * rootSig)
 	return m_PsoDesc.pRootSignature != nullptr;
 }
 
+bool DX12GraphicPsoCompiler::SetShaderFromBin(DX12ShaderType shaderType, const void * pBinData, uint64_t dataSizeInBytes)
+{
+	D3D12_SHADER_BYTECODE bytecode = { pBinData, dataSizeInBytes };
+	switch (shaderType)
+	{
+	case DX12ShaderTypeVertex:
+		m_PsoDesc.VS = bytecode;
+		break;
+	case DX12ShaderTypeGeometry:
+		m_PsoDesc.GS = bytecode;
+		break;
+	case DX12ShaderTypePixel:
+		m_PsoDesc.PS = bytecode;
+		break;
+	case DX12ShaderTypeCompute:
+		assert(false);
+		break;
+	default:
+		break;
+	}
+	return true;
+}
+
 bool DX12GraphicPsoCompiler::SetShaderFromFile(DX12ShaderType shaderType, const wchar_t* file, const char* entry)
 {
 	assert(shaderType != DX12ShaderTypeCompute);
@@ -64,24 +87,7 @@ bool DX12GraphicPsoCompiler::SetShaderFromFile(DX12ShaderType shaderType, const 
 	}
 
 	m_ShaderBins[shaderType] = bin;
-	switch (shaderType)
-	{
-	case DX12ShaderTypeVertex:
-		m_PsoDesc.VS = { bin->GetBufferPointer(), bin->GetBufferSize() };
-		break;
-	case DX12ShaderTypeGeometry:
-		m_PsoDesc.GS = { bin->GetBufferPointer(), bin->GetBufferSize() };
-		break;
-	case DX12ShaderTypePixel:
-		m_PsoDesc.PS = { bin->GetBufferPointer(), bin->GetBufferSize() };
-		break;
-	case DX12ShaderTypeCompute:
-		assert(false);
-		break;
-	default:
-		break;
-	}
-	return true;
+	return SetShaderFromBin(shaderType, bin->GetBufferPointer(), bin->GetBufferSize());
 }
 
 bool DX12GraphicPsoCompiler::SetRasterizerState(const D3D12_RASTERIZER_DESC& rasterizerDesc)

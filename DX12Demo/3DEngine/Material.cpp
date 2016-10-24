@@ -4,6 +4,10 @@
 #include "../DX12/DX12.h"
 #include "RenderContext.h"
 
+#include "../../Shaders/CompiledShaders/BaseMaterial_VS.h"
+#include "../../Shaders/CompiledShaders/BaseMaterial_PS.h"
+#include "../../Shaders/CompiledShaders/BaseMaterial_DepthOnly_VS.h"
+
 
 Material::Material()
 {
@@ -40,8 +44,8 @@ void Material::Load(DX12GraphicContext* pGfxContext)
 		m_RootSig[shadingCfg] = sigCompiler.Compile(DX12GraphicManager::GetInstance()->GetDevice());
 
 		DX12GraphicPsoCompiler psoCompiler;
-		psoCompiler.SetShaderFromFile(DX12ShaderTypeVertex, L"BaseMaterial.hlsl", "VSMain");
-		psoCompiler.SetShaderFromFile(DX12ShaderTypePixel, L"BaseMaterial.hlsl", "PSMain");
+		psoCompiler.SetShaderFromBin(DX12ShaderTypeVertex, g_BaseMaterial_VS, sizeof(g_BaseMaterial_VS));
+		psoCompiler.SetShaderFromBin(DX12ShaderTypePixel, g_BaseMaterial_PS, sizeof(g_BaseMaterial_PS));
 		psoCompiler.SetRoogSignature(m_RootSig[shadingCfg].get());
 		psoCompiler.SetRenderTargetFormat(DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM);
 		psoCompiler.SetDespthStencilFormat(DXGI_FORMAT_D32_FLOAT);
@@ -64,7 +68,7 @@ void Material::Load(DX12GraphicContext* pGfxContext)
 		m_RootSig[shadingCfg] = sigCompiler.Compile(DX12GraphicManager::GetInstance()->GetDevice());
 
 		DX12GraphicPsoCompiler psoCompiler;
-		psoCompiler.SetShaderFromFile(DX12ShaderTypeVertex, L"BaseMaterial_DepthOnly.hlsl", "VSMain");
+		psoCompiler.SetShaderFromBin(DX12ShaderTypeVertex, g_BaseMaterial_DepthOnly_VS, sizeof(g_BaseMaterial_DepthOnly_VS));
 		psoCompiler.SetRoogSignature(m_RootSig[shadingCfg].get());
 		psoCompiler.SetDespthStencilFormat(DXGI_FORMAT_D32_FLOAT);
 

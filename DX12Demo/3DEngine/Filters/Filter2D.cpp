@@ -1,8 +1,11 @@
 #include "pch.h"
 #include "Filter2D.h"
 
+#include "../../Shaders/CompiledShaders/IdentityFilter2D_VS.h"
+#include "../../Shaders/CompiledShaders/IdentityFilter2D_PS.h"
 
-Filter2D::Filter2D(DX12Device* device, const wchar_t* shaderfile)
+
+Filter2D::Filter2D(DX12Device* device)
 {
 	uint32_t indices[] = {0, 2, 1, 1, 2, 3};
 
@@ -29,8 +32,8 @@ Filter2D::Filter2D(DX12Device* device, const wchar_t* shaderfile)
 	m_RootSig = sigCompiler.Compile(DX12GraphicManager::GetInstance()->GetDevice());
 
 	DX12GraphicPsoCompiler psoCompiler;
-	psoCompiler.SetShaderFromFile(DX12ShaderTypeVertex, shaderfile, "VSMain");
-	psoCompiler.SetShaderFromFile(DX12ShaderTypePixel, shaderfile, "PSMain");
+	psoCompiler.SetShaderFromBin(DX12ShaderTypeVertex, g_IdentityFilter2D_VS, sizeof(g_IdentityFilter2D_VS));
+	psoCompiler.SetShaderFromBin(DX12ShaderTypePixel, g_IdentityFilter2D_PS, sizeof(g_IdentityFilter2D_PS));
 	psoCompiler.SetRoogSignature(m_RootSig.get());
 	psoCompiler.SetRenderTargetFormat(DXGI_FORMAT_R8G8B8A8_UNORM);
 	psoCompiler.SetDespthStencilFormat(DXGI_FORMAT_UNKNOWN);

@@ -124,9 +124,9 @@ local function Compile(profile_name, shader_profile, entry)
 		local shader_varname = " /Vn g_" .. new_filename
 		local output_header_file = " /Fh " .. output_dir .. new_filename .. ".h"
 		local output_pdb_file = ""
-		if debug_shader then
-			output_pdb_file = " /Fd " .. output_dir .. new_filename .. ".pdb"
-		end
+		-- if debug_shader then
+		-- 	output_pdb_file = " /Fd " .. output_dir .. new_filename .. ".pdb"
+		-- end
 		local cmd = fxc
 		 			.. " /T " .. shader_profile
 		 			.. " /E " .. entry

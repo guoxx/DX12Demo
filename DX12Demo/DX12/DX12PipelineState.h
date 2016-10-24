@@ -25,6 +25,7 @@ public:
 
 	bool SetRoogSignature(DX12RootSignature* rootSig);
 
+	bool SetShaderFromBin(DX12ShaderType shaderType, const void* pBinData, uint64_t dataSizeInBytes);
 	bool SetShaderFromFile(DX12ShaderType shaderType, const wchar_t* file, const char* entry);
 
 	// optional

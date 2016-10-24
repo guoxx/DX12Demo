@@ -5,7 +5,7 @@
 class Filter2D
 {
 public:
-	Filter2D(DX12Device* device, const wchar_t* shaderfile);
+	Filter2D(DX12Device* device);
 	~Filter2D();
 
 	void Apply(DX12GraphicContext* pGfxContext);

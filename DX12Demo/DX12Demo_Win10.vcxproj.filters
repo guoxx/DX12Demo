@@ -1,12 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Assets">
-      <UniqueIdentifier>{09095d68-bcd7-45c4-b007-5c8ddb5d60a4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Assets\Shaders">
-      <UniqueIdentifier>{8b0cb0c9-e0d8-4107-91c8-11654fac88e7}</UniqueIdentifier>
-    </Filter>
     <Filter Include="DX12">
       <UniqueIdentifier>{a9ca38fd-7ef6-4951-8f3d-319972f94bb4}</UniqueIdentifier>
     </Filter>
@@ -36,6 +30,12 @@
     </Filter>
     <Filter Include="3DEngine\Lights">
       <UniqueIdentifier>{7757919e-1198-4c0d-b37c-f4a72ee9405d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{2738c1e2-8a19-4c9a-8b91-10752ce1e657}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\Inc">
+      <UniqueIdentifier>{ca3679e8-e60c-49d4-b102-8a7d93418ff4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -155,6 +155,9 @@
     </ClCompile>
     <ClCompile Include="3DEngine\RenderableSurfaceManager.cpp">
       <Filter>3DEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="3DEngine\Filters\PointLightFilter2D.cpp">
+      <Filter>3DEngine\Filters</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -314,34 +317,38 @@
     <ClInclude Include="3DEngine\RenderableSurfaceManager.h">
       <Filter>3DEngine</Filter>
     </ClInclude>
+    <ClInclude Include="3DEngine\Filters\PointLightFilter2D.h">
+      <Filter>3DEngine\Filters</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\HelloTexture.hlsl">
-      <Filter>Assets\Shaders</Filter>
+    <None Include="Shaders\Inc\BRDF.hlsli">
+      <Filter>Shaders\Inc</Filter>
     </None>
-    <None Include="Assets\HelloTriangle.hlsl">
-      <Filter>Assets\Shaders</Filter>
+    <None Include="Shaders\Inc\Common.hlsli">
+      <Filter>Shaders\Inc</Filter>
     </None>
-    <None Include="Assets\Common.hlsli">
-      <Filter>Assets\Shaders</Filter>
+    <None Include="Shaders\Inc\PointLight.hlsli">
+      <Filter>Shaders\Inc</Filter>
     </None>
-    <None Include="Assets\BaseMaterial.hlsl">
-      <Filter>Assets\Shaders</Filter>
-    </None>
-    <None Include="Assets\IdentityFilter2D.hlsl">
-      <Filter>Assets\Shaders</Filter>
-    </None>
-    <None Include="Assets\DirectionalLight.hlsl">
-      <Filter>Assets\Shaders</Filter>
-    </None>
-    <None Include="Assets\BRDF.hlsli">
-      <Filter>Assets\Shaders</Filter>
-    </None>
-    <None Include="Assets\PointLight.hlsli">
-      <Filter>Assets\Shaders</Filter>
-    </None>
-    <None Include="Assets\BaseMaterial_DepthOnly.hlsl">
-      <Filter>Assets\Shaders</Filter>
-    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Shaders\BaseMaterial.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Shaders\BaseMaterial_DepthOnly.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Shaders\DirectionalLight.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Shaders\IdentityFilter2D.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="Shaders\PointLight.hlsl">
+      <Filter>Shaders</Filter>
+    </CustomBuild>
   </ItemGroup>
 </Project>

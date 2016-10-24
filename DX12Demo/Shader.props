@@ -5,15 +5,14 @@
   <PropertyGroup />
   <ItemDefinitionGroup>
     <CustomBuild>
-      <Command>"$(SolutionDir)Tools/lua.exe" "$(SolutionDir)Tools/CompileShader.lua" --platform $(PlatformName) --file %(FullPath) --output $(ProjectDir)Assets\CompiledShaders\ --debug_shader
-</Command>
+      <Command>"$(SolutionDir)Tools/lua.exe" "$(SolutionDir)Tools/CompileShader.lua" --platform $(PlatformName) --file %(FullPath) --output $(ProjectDir)Shaders\CompiledShaders\ --debug_shader</Command>
     </CustomBuild>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup>
     <CustomBuild>
-      <Message>Compile Shader</Message>
-      <AdditionalInputs>$(ProjectDir)Assets\Shaders\Inc\BRDF.hlsli;$(ProjectDir)Assets\Shaders\Inc\Common.hlsli;$(ProjectDir)Assets\Shaders\Inc\PointLight.hlsli;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs>$(ProjectDir)Assets\CompiledShaders\%(Filename)_VS.h;$(ProjectDir)Assets\CompiledShaders\%(Filename)_GS.h;$(ProjectDir)Assets\CompiledShaders\%(Filename)_PS.h;$(ProjectDir)Assets\CompiledShaders\%(Filename)_CS.h;%(Outputs)</Outputs>
+      <Message>Compile Shader %(FullPath)</Message>
+      <AdditionalInputs>$(ProjectDir)Shaders\Inc\BRDF.hlsli;$(ProjectDir)Shaders\Inc\Common.hlsli;$(ProjectDir)Shaders\Inc\PointLight.hlsli;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs>$(ProjectDir)Shaders\CompiledShaders\%(Filename)_VS.h;$(ProjectDir)Shaders\CompiledShaders\%(Filename)_GS.h;$(ProjectDir)Shaders\CompiledShaders\%(Filename)_PS.h;$(ProjectDir)Shaders\CompiledShaders\%(Filename)_CS.h;%(Outputs)</Outputs>
     </CustomBuild>
   </ItemDefinitionGroup>
   <ItemGroup />

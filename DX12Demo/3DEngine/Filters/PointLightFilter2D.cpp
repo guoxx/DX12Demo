@@ -5,6 +5,9 @@
 #include "../RenderContext.h"
 #include "../Lights/PointLight.h"
 
+#include "../../Shaders/CompiledShaders/PointLight_VS.h"
+#include "../../Shaders/CompiledShaders/PointLight_PS.h"
+
 
 PointLightFilter2D::PointLightFilter2D(DX12Device* device)
 {
@@ -34,8 +37,8 @@ PointLightFilter2D::PointLightFilter2D(DX12Device* device)
 	m_RootSig = sigCompiler.Compile(device);
 
 	DX12GraphicPsoCompiler psoCompiler;
-	psoCompiler.SetShaderFromFile(DX12ShaderTypeVertex, L"PointLight.hlsl", "VSMain");
-	psoCompiler.SetShaderFromFile(DX12ShaderTypePixel, L"PointLight.hlsl", "PSMain");
+	psoCompiler.SetShaderFromBin(DX12ShaderTypeVertex, g_PointLight_VS, sizeof(g_PointLight_VS));
+	psoCompiler.SetShaderFromBin(DX12ShaderTypePixel, g_PointLight_PS, sizeof(g_PointLight_PS));
 	psoCompiler.SetRoogSignature(m_RootSig.get());
 	psoCompiler.SetRenderTargetFormat(DXGI_FORMAT_R32G32B32A32_FLOAT);
 	psoCompiler.SetDespthStencilFormat(DXGI_FORMAT_UNKNOWN);
