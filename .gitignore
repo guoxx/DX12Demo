@@ -3,5 +3,10 @@
 *.vcxproj.user
 Output/
 
+DX12Demo/Shaders/CompiledShaders/*_VS.h
+DX12Demo/Shaders/CompiledShaders/*_GS.h
+DX12Demo/Shaders/CompiledShaders/*_PS.h
+DX12Demo/Shaders/CompiledShaders/*_CS.h
+
 sponza.exr
 sponza*.mip
