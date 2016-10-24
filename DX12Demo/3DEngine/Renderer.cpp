@@ -9,6 +9,7 @@
 #include "Lights/DirectionalLight.h"
 
 #include "Filters/Filter2D.h"
+#include "Filters/PointLightFilter2D.h"
 #include "Filters/DirectionalLightFilter2D.h"
 
 
@@ -27,6 +28,7 @@ Renderer::Renderer(GFX_HWND hwnd, int32_t width, int32_t height)
 
 	m_IdentityFilter2D = std::make_shared<Filter2D>(DX12GraphicManager::GetInstance()->GetDevice(), L"IdentityFilter2D.hlsl");
 
+	m_PointLightFilter2D = std::make_shared<PointLightFilter2D>(DX12GraphicManager::GetInstance()->GetDevice());
 	m_DirLightFilter2D = std::make_shared<DirectionalLightFilter2D>(DX12GraphicManager::GetInstance()->GetDevice());
 }
 
@@ -61,7 +63,7 @@ void Renderer::RenderShadowMaps(const Camera* pCamera, Scene * pScene)
 
 		pGfxContext->PIXBeginEvent(L"ShadowMap - DirectionalLight");
 
-		DX12DepthSurface* pDepthSurface = m_RenderContext->AcquireDepthSurfaceForDirectionalLight(directionalLight.get());
+		DX12DepthSurface* pDepthSurface = m_RenderContext.AcquireDepthSurfaceForDirectionalLight(directionalLight.get());
 
 		pGfxContext->ClearDepthTarget(pDepthSurface, 1.0f);
 		pGfxContext->SetRenderTargets(0, nullptr, pDepthSurface);
@@ -89,7 +91,7 @@ void Renderer::RenderShadowMaps(const Camera* pCamera, Scene * pScene)
 
 		pGfxContext->PIXBeginEvent(L"ShadowMap - PointLight");
 
-		auto pDepthSurfaces = m_RenderContext->AcquireDepthSurfaceForDirectionalLight(pointLight.get());
+		auto pDepthSurfaces = m_RenderContext.AcquireDepthSurfaceForPointLight(pointLight.get());
 
 		for (int i = 0; i < 6; ++i)
 		{
@@ -126,8 +128,7 @@ void Renderer::DeferredLighting(const Camera* pCamera, Scene* pScene)
 
 	pGfxContext->PIXBeginEvent(L"DeferredLighting");
 
-	DX12DepthSurface* pShadowMapForDirLight = m_RenderContext->AcquireDepthSurfaceForDirectionalLight(directionalLight.get());
-	auto pShadowMapsForPointLight = m_RenderContext->AcquireDepthSurfaceForDirectionalLight(directionalLight.get());
+    pGfxContext->ClearRenderTarget(RenderableSurfaceManager::GetInstance()->GetColorSurface(m_LightingSurface), 0, 0, 0, 0);
 
 	// setup color and depth buffers
 	DX12ColorSurface* pColorSurfaces[] = { RenderableSurfaceManager::GetInstance()->GetColorSurface(m_LightingSurface) };
@@ -145,44 +146,57 @@ void Renderer::DeferredLighting(const Camera* pCamera, Scene* pScene)
 	pGfxContext->ResourceTransitionBarrier(RenderableSurfaceManager::GetInstance()->GetColorSurface(m_SceneGBuffer1), D3D12_RESOURCE_STATE_GENERIC_READ);
 	pGfxContext->ResourceTransitionBarrier(RenderableSurfaceManager::GetInstance()->GetColorSurface(m_SceneGBuffer2), D3D12_RESOURCE_STATE_GENERIC_READ);
 	pGfxContext->ResourceTransitionBarrier(RenderableSurfaceManager::GetInstance()->GetDepthSurface(m_SceneDepthSurface), D3D12_RESOURCE_STATE_GENERIC_READ);
-	pGfxContext->ResourceTransitionBarrier(m_ShadowMap_DirLight0.get(), D3D12_RESOURCE_STATE_GENERIC_READ);
-	for (int i = 0; i < 6; ++i)
-	{
-		pGfxContext->ResourceTransitionBarrier(m_ShadowMap_PointLight0[i].get(), D3D12_RESOURCE_STATE_GENERIC_READ);
-	}
-
-	PointLight* pPointLight = nullptr;
-	if (pScene->GetPointLights().size() > 0)
-	{
-		pPointLight = pScene->GetPointLights()[0].get();
-	}
 
 	for (auto directionalLight : pScene->GetDirectionalLights())
 	{
-		m_DirLightFilter2D->Apply(pGfxContext, &m_RenderContext, directionalLight.get(), pPointLight);
+		DX12DepthSurface* pShadowMapForDirLight = m_RenderContext.AcquireDepthSurfaceForDirectionalLight(directionalLight.get());
+		pGfxContext->ResourceTransitionBarrier(pShadowMapForDirLight, D3D12_RESOURCE_STATE_GENERIC_READ);
+
+		m_DirLightFilter2D->Apply(pGfxContext, &m_RenderContext, directionalLight.get());
 
 		pGfxContext->SetGraphicsDynamicCbvSrvUav(1, 0, RenderableSurfaceManager::GetInstance()->GetColorSurface(m_SceneGBuffer0)->GetStagingSRV().GetCpuHandle());
 		pGfxContext->SetGraphicsDynamicCbvSrvUav(1, 1, RenderableSurfaceManager::GetInstance()->GetColorSurface(m_SceneGBuffer1)->GetStagingSRV().GetCpuHandle());
 		pGfxContext->SetGraphicsDynamicCbvSrvUav(1, 2, RenderableSurfaceManager::GetInstance()->GetColorSurface(m_SceneGBuffer2)->GetStagingSRV().GetCpuHandle());
 		pGfxContext->SetGraphicsDynamicCbvSrvUav(1, 3, RenderableSurfaceManager::GetInstance()->GetDepthSurface(m_SceneDepthSurface)->GetStagingSRV().GetCpuHandle());
-		pGfxContext->SetGraphicsDynamicCbvSrvUav(1, 4, m_ShadowMap_DirLight0->GetStagingSRV().GetCpuHandle());
-		for (int i = 0; i < 6; ++i)
+		pGfxContext->SetGraphicsDynamicCbvSrvUav(1, 4, pShadowMapForDirLight->GetStagingSRV().GetCpuHandle());
+
+		m_DirLightFilter2D->Draw(pGfxContext);
+
+		pGfxContext->ResourceTransitionBarrier(pShadowMapForDirLight, D3D12_RESOURCE_STATE_DEPTH_WRITE);
+	}
+
+	for (auto pointLight : pScene->GetPointLights())
+	{
+		auto pShadowMapsForPointLight = m_RenderContext.AcquireDepthSurfaceForPointLight(pointLight.get());
+
+		for (int i = 0; i < pShadowMapsForPointLight.size(); ++i)
 		{
-			pGfxContext->SetGraphicsDynamicCbvSrvUav(1, 5 + i, m_ShadowMap_PointLight0[i]->GetStagingSRV().GetCpuHandle());
+			pGfxContext->ResourceTransitionBarrier(pShadowMapsForPointLight[i], D3D12_RESOURCE_STATE_GENERIC_READ);
+		}
+
+		m_PointLightFilter2D->Apply(pGfxContext, &m_RenderContext, pointLight.get());
+
+		pGfxContext->SetGraphicsDynamicCbvSrvUav(1, 0, RenderableSurfaceManager::GetInstance()->GetColorSurface(m_SceneGBuffer0)->GetStagingSRV().GetCpuHandle());
+		pGfxContext->SetGraphicsDynamicCbvSrvUav(1, 1, RenderableSurfaceManager::GetInstance()->GetColorSurface(m_SceneGBuffer1)->GetStagingSRV().GetCpuHandle());
+		pGfxContext->SetGraphicsDynamicCbvSrvUav(1, 2, RenderableSurfaceManager::GetInstance()->GetColorSurface(m_SceneGBuffer2)->GetStagingSRV().GetCpuHandle());
+		pGfxContext->SetGraphicsDynamicCbvSrvUav(1, 3, RenderableSurfaceManager::GetInstance()->GetDepthSurface(m_SceneDepthSurface)->GetStagingSRV().GetCpuHandle());
+		for (int i = 0; i < pShadowMapsForPointLight.size(); ++i)
+		{
+			pGfxContext->SetGraphicsDynamicCbvSrvUav(1, 4 + i, pShadowMapsForPointLight[i]->GetStagingSRV().GetCpuHandle());
 		}
 
 		m_DirLightFilter2D->Draw(pGfxContext);
+
+		for (int i = 0; i < pShadowMapsForPointLight.size(); ++i)
+		{
+			pGfxContext->ResourceTransitionBarrier(pShadowMapsForPointLight[i], D3D12_RESOURCE_STATE_DEPTH_WRITE);
+		}
 	}
 
 	pGfxContext->ResourceTransitionBarrier(RenderableSurfaceManager::GetInstance()->GetColorSurface(m_SceneGBuffer0), D3D12_RESOURCE_STATE_RENDER_TARGET);
 	pGfxContext->ResourceTransitionBarrier(RenderableSurfaceManager::GetInstance()->GetColorSurface(m_SceneGBuffer1), D3D12_RESOURCE_STATE_RENDER_TARGET);
 	pGfxContext->ResourceTransitionBarrier(RenderableSurfaceManager::GetInstance()->GetColorSurface(m_SceneGBuffer2), D3D12_RESOURCE_STATE_RENDER_TARGET);
 	pGfxContext->ResourceTransitionBarrier(RenderableSurfaceManager::GetInstance()->GetDepthSurface(m_SceneDepthSurface), D3D12_RESOURCE_STATE_DEPTH_WRITE);
-	pGfxContext->ResourceTransitionBarrier(m_ShadowMap_DirLight0.get(), D3D12_RESOURCE_STATE_DEPTH_WRITE);
-	for (int i = 0; i < 6; ++i)
-	{
-		pGfxContext->ResourceTransitionBarrier(m_ShadowMap_PointLight0[i].get(), D3D12_RESOURCE_STATE_DEPTH_WRITE);
-	}
 
 	pGfxContext->PIXEndEvent();
 }

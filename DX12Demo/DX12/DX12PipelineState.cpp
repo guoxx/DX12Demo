@@ -84,13 +84,13 @@ bool DX12GraphicPsoCompiler::SetShaderFromFile(DX12ShaderType shaderType, const 
 	return true;
 }
 
-bool DX12GraphicPsoCompiler::SetRasterizerState(D3D12_RASTERIZER_DESC & rasterizerDesc)
+bool DX12GraphicPsoCompiler::SetRasterizerState(const D3D12_RASTERIZER_DESC& rasterizerDesc)
 {
 	m_PsoDesc.RasterizerState = rasterizerDesc;
 	return true;
 }
 
-bool DX12GraphicPsoCompiler::SetBlendState(D3D12_BLEND_DESC & blendDesc)
+bool DX12GraphicPsoCompiler::SetBlendState(const D3D12_BLEND_DESC& blendDesc)
 {
 	m_PsoDesc.BlendState = blendDesc;
 	return true;

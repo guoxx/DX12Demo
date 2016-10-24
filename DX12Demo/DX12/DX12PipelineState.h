@@ -28,9 +28,9 @@ public:
 	bool SetShaderFromFile(DX12ShaderType shaderType, const wchar_t* file, const char* entry);
 
 	// optional
-	bool SetRasterizerState(D3D12_RASTERIZER_DESC& rasterizerDesc);
+	bool SetRasterizerState(const D3D12_RASTERIZER_DESC& rasterizerDesc);
 
-	bool SetBlendState(D3D12_BLEND_DESC& blendDesc);
+	bool SetBlendState(const D3D12_BLEND_DESC& blendDesc);
 
 	bool SetRenderTargetFormat(DXGI_FORMAT fmt0);
 	bool SetRenderTargetFormat(DXGI_FORMAT fmt0, DXGI_FORMAT fmt1);

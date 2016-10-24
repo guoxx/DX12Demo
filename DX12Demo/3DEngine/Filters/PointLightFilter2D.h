@@ -3,15 +3,15 @@
 #include "../../DX12/DX12.h"
 
 class RenderContext;
-class DirectionalLight;
+class PointLight;
 
-class DirectionalLightFilter2D
+class PointLightFilter2D
 {
 public:
-	DirectionalLightFilter2D(DX12Device* device);
-	~DirectionalLightFilter2D();
+	PointLightFilter2D(DX12Device* device);
+	~PointLightFilter2D();
 
-	void Apply(DX12GraphicContext* pGfxContext, const RenderContext* pRenderContext, const DirectionalLight* pLight);
+	void Apply(DX12GraphicContext* pGfxContext, const RenderContext* pRenderContext, const PointLight* pPointLight);
 	void Draw(DX12GraphicContext* pGfxContext);
 
 private:

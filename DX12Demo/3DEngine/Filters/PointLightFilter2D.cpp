@@ -1,12 +1,12 @@
 #include "pch.h"
-#include "DirectionalLightFilter2D.h"
+#include "PointLightFilter2D.h"
 
 #include "../Camera.h"
 #include "../RenderContext.h"
-#include "../Lights/DirectionalLight.h"
+#include "../Lights/PointLight.h"
 
 
-DirectionalLightFilter2D::DirectionalLightFilter2D(DX12Device* device)
+PointLightFilter2D::PointLightFilter2D(DX12Device* device)
 {
 	uint32_t indices[] = {0, 2, 1, 1, 2, 3};
 
@@ -34,8 +34,8 @@ DirectionalLightFilter2D::DirectionalLightFilter2D(DX12Device* device)
 	m_RootSig = sigCompiler.Compile(device);
 
 	DX12GraphicPsoCompiler psoCompiler;
-	psoCompiler.SetShaderFromFile(DX12ShaderTypeVertex, L"DirectionalLight.hlsl", "VSMain");
-	psoCompiler.SetShaderFromFile(DX12ShaderTypePixel, L"DirectionalLight.hlsl", "PSMain");
+	psoCompiler.SetShaderFromFile(DX12ShaderTypeVertex, L"PointLight.hlsl", "VSMain");
+	psoCompiler.SetShaderFromFile(DX12ShaderTypePixel, L"PointLight.hlsl", "PSMain");
 	psoCompiler.SetRoogSignature(m_RootSig.get());
 	psoCompiler.SetRenderTargetFormat(DXGI_FORMAT_R32G32B32A32_FLOAT);
 	psoCompiler.SetDespthStencilFormat(DXGI_FORMAT_UNKNOWN);
@@ -43,11 +43,11 @@ DirectionalLightFilter2D::DirectionalLightFilter2D(DX12Device* device)
 	m_PSO = psoCompiler.Compile(device);
 }
 
-DirectionalLightFilter2D::~DirectionalLightFilter2D()
+PointLightFilter2D::~PointLightFilter2D()
 {
 }
 
-void DirectionalLightFilter2D::Apply(DX12GraphicContext * pGfxContext, const RenderContext* pRenderContext, const DirectionalLight* pLight)
+void PointLightFilter2D::Apply(DX12GraphicContext * pGfxContext, const RenderContext* pRenderContext, const PointLight* pPointLight)
 {
 	pGfxContext->SetGraphicsRootSignature(m_RootSig);
 	pGfxContext->SetPipelineState(m_PSO.get());
@@ -58,10 +58,12 @@ void DirectionalLightFilter2D::Apply(DX12GraphicContext * pGfxContext, const Ren
 	{
 		float4x4 mInvView;
 		float4x4 mInvProj;
-		float4 LightDirection;
-		float4 LightIrradiance;
 		float4 CameraPosition;
-		float4x4 mLightViewProj;
+
+		float4 LightPosition;
+		float4 LightIntensity;
+		float4 LightRadius;
+		float4x4 mLightViewProj[6];
 	};
 	Constants constants;
 
@@ -69,18 +71,24 @@ void DirectionalLightFilter2D::Apply(DX12GraphicContext * pGfxContext, const Ren
 	DirectX::XMMATRIX mInvProj = DirectX::XMMatrixInverse(nullptr, pRenderContext->GetProjMatrix());
 	DirectX::XMStoreFloat4x4(&constants.mInvView, DirectX::XMMatrixTranspose(mInvView));
 	DirectX::XMStoreFloat4x4(&constants.mInvProj, DirectX::XMMatrixTranspose(mInvProj));
-	constants.LightDirection = pLight->GetDirection();
-	constants.LightIrradiance = pLight->GetIrradiance();
 	DirectX::XMStoreFloat4(&constants.CameraPosition, pRenderContext->GetCamera()->GetTranslation());
-	DirectX::XMMATRIX mLightView;
-	DirectX::XMMATRIX mLightProj;
-	pLight->GetViewAndProjMatrix(pRenderContext->GetCamera(), &mLightView, &mLightProj);
-	DirectX::XMStoreFloat4x4(&constants.mLightViewProj, DirectX::XMMatrixTranspose(DirectX::XMMatrixMultiply(mLightView, mLightProj)));
+
+	DirectX::XMStoreFloat4(&constants.LightPosition, pPointLight->GetTranslation());
+	constants.LightIntensity = pPointLight->GetIntensity();
+	constants.LightRadius = DirectX::XMFLOAT4{ pPointLight->GetRadiusStart(), pPointLight->GetRadiusEnd(), 0, 0 };
+	for (int i = 0; i < 6; ++i)
+	{
+		DirectX::XMMATRIX mLightView;
+		DirectX::XMMATRIX mLightProj;
+		pPointLight->GetViewAndProjMatrix(nullptr, (PointLight::AXIS)i, DX12PointLightShadowMapSize, &mLightView, &mLightProj);
+		DirectX::XMMATRIX mLightViewProj = DirectX::XMMatrixMultiply(mLightView, mLightProj);
+		DirectX::XMStoreFloat4x4(&constants.mLightViewProj[i], DirectX::XMMatrixTranspose(mLightViewProj));
+	}
 
 	pGfxContext->SetGraphicsRootDynamicConstantBufferView(0, &constants, sizeof(constants));
 }
 
-void DirectionalLightFilter2D::Draw(DX12GraphicContext* pGfxContext)
+void PointLightFilter2D::Draw(DX12GraphicContext* pGfxContext)
 {
 	pGfxContext->DrawIndexed(6, 0);
 }

@@ -73,7 +73,7 @@ T* RenderableSurfaceManager::GetRenderableSurface(const RenderableSurfaceHandle&
 
 	RenderableSurfaceItem& item = m_Surfaces[handle.m_Handle];
 	assert(handle.m_Hash == item.m_Hash);
-	assert(item.m_State = RS_Used);
+	assert(item.m_State == RS_Used);
 
 	DX12RenderableSurface* surf = item.m_Surface.get();
 	return dynamic_cast<T*>(surf);
@@ -84,7 +84,7 @@ RenderableSurfaceHandle RenderableSurfaceManager::AcquireRenderableSurface(const
 {
 	RenderableSurfaceHandle handle;
 	handle.m_Hash = 0;
-	handle.m_Handle = -1;
+	handle.m_Handle = (uint64_t)-1;
 
 	uint64_t hashVal = Utility::HashState(&desc);
 

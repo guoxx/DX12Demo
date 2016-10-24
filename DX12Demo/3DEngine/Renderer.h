@@ -9,6 +9,7 @@ class ILight;
 class Scene;
 class Camera;
 class Filter2D;
+class PointLightFilter2D;
 class DirectionalLightFilter2D;
 
 class Renderer
@@ -45,6 +46,7 @@ private:
 	std::shared_ptr<DX12SwapChain> m_SwapChain;
 
 	std::shared_ptr<Filter2D> m_IdentityFilter2D;
+	std::shared_ptr<PointLightFilter2D> m_PointLightFilter2D;
 	std::shared_ptr<DirectionalLightFilter2D> m_DirLightFilter2D;
 };
 

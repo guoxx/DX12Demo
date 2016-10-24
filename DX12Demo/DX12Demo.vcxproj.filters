@@ -188,14 +188,20 @@
     <ClInclude Include="3DEngine\Filters\DirectionalLightFilter2D.h">
       <Filter>3DEngine\Filters</Filter>
     </ClInclude>
-    <ClInclude Include="DX12\DX12Wrapper.h">
-      <Filter>DX12\Private</Filter>
-    </ClInclude>
-    <ClInclude Include="DX12\d3dx12.h">
-      <Filter>DX12\Private</Filter>
-    </ClInclude>
     <ClInclude Include="3DEngine\3DEngineDefinition.h">
       <Filter>3DEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="DX12\d3dx12.h">
+      <Filter>DX12\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="DX12\DX12Wrapper.h">
+      <Filter>DX12\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="3DEngine\RenderableSurfaceManager.h">
+      <Filter>3DEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="3DEngine\Filters\PointLightFilter2D.h">
+      <Filter>3DEngine\Filters</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -310,6 +316,12 @@
     <ClCompile Include="3DEngine\Filters\DirectionalLightFilter2D.cpp">
       <Filter>3DEngine\Filters</Filter>
     </ClCompile>
+    <ClCompile Include="3DEngine\RenderableSurfaceManager.cpp">
+      <Filter>3DEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="3DEngine\Filters\PointLightFilter2D.cpp">
+      <Filter>3DEngine\Filters</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="XboxOne\Resources\Logo.png">
@@ -351,6 +363,9 @@
       <Filter>Assets</Filter>
     </None>
     <None Include="Assets\PointLight.hlsli">
+      <Filter>Assets</Filter>
+    </None>
+    <None Include="Assets\PointLight.hlsl">
       <Filter>Assets</Filter>
     </None>
   </ItemGroup>
