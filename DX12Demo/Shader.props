@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Label="PropertySheets" />
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup />
+  <ItemDefinitionGroup>
+    <CustomBuild>
+      <Command>"$(SolutionDir)Tools/lua.exe" "$(SolutionDir)Tools/CompileShader.lua" --verbose --platform $(PlatformName) --file %(FullPath) --output $(ProjectDir)Assets\CompiledShaders\
+</Command>
+    </CustomBuild>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup>
+    <CustomBuild>
+      <Message>Compile Shader</Message>
+      <AdditionalInputs>$(ProjectDir)Assets\Shaders\Inc\BRDF.hlsli;$(ProjectDir)Assets\Shaders\Inc\Common.hlsli;$(ProjectDir)Assets\Shaders\Inc\PointLight.hlsli;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs>$(ProjectDir)Assets\CompiledShaders\%(Filename)_VS.h;$(ProjectDir)Assets\CompiledShaders\%(Filename)_GS.h;$(ProjectDir)Assets\CompiledShaders\%(Filename)_PS.h;$(ProjectDir)Assets\CompiledShaders\%(Filename)_CS.h;%(Outputs)</Outputs>
+    </CustomBuild>
+  </ItemDefinitionGroup>
+  <ItemGroup />
+</Project>

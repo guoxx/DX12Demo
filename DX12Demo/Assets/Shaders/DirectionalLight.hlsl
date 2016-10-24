@@ -1,5 +1,5 @@
-#include "Common.hlsli"
-#include "PointLight.hlsli"
+#include "Inc/Common.hlsli"
+#include "Inc/PointLight.hlsli"
 
 #define RootSigDeclaration \
 RootSigBegin \
@@ -12,19 +12,17 @@ struct Constants
 {
 	float4x4 mInvView;
 	float4x4 mInvProj;
+	float4 LightDirection;
+	float4 LightIrradiance;
 	float4 CameraPosition;
-
-	float4 LightPosition;
-	float4 LightIntensity;
-	float4 LightRadius;
-	float4x4 mLightViewProj[6];
+	float4x4 mLightViewProj;
 };
 
 Texture2D<float4> g_GBuffer0 : register(t0);
 Texture2D<float4> g_GBuffer1 : register(t1);
 Texture2D<float4> g_GBuffer2 : register(t2);
 Texture2D<float> g_DepthTexture : register(t3);
-Texture2D<float> g_PointLightShadowMap[6] : register(t4);
+Texture2D<float> g_ShadowMap : register(t4);
 
 SamplerState g_Sampler : register(s0);
 ConstantBuffer<Constants> g_Constants : register(b0);
@@ -60,29 +58,22 @@ float4 PSMain(VSOutput In) : SV_TARGET
 
 	float3 outRadiance = 0.0f;
 
-	int face = GetFaceOfPointLightShadowMap(g_Constants.LightPosition.xyz, gbuffer.Position);
-	float4 shadowPos = mul(float4(gbuffer.Position, 1), g_Constants.mLightViewProj[face]);
-	shadowPos /= shadowPos.w;
-	float occluderDepth = g_PointLightShadowMap[face].Sample(g_Sampler, shadowPos.xy * float2(1, -1) * 0.5 + 0.5);
+	float3 shadowPos = mul(float4(gbuffer.Position, 1), g_Constants.mLightViewProj).xyz;
+	float2 shadowUV = float2((shadowPos.x + 1.0f) * 0.5f, (-shadowPos.y + 1.0f) * 0.5f);
+	float occluderDepth = g_ShadowMap.Sample(g_Sampler, shadowUV);
 	// TODO: shouldn't hard code depth bias
-	occluderDepth += 0.00001;
+	occluderDepth += 0.01;
 	float shadowMask = occluderDepth < shadowPos.z ? 0.0f : 1.0f;
 
-	float3 L = normalize(g_Constants.LightPosition.xyz - gbuffer.Position);
+	float3 L = -g_Constants.LightDirection.xyz;
 	float3 V = normalize(g_Constants.CameraPosition.xyz - gbuffer.Position);
 	float3 N = gbuffer.Normal;
 	float NdotL = saturate(dot(N, L));
+	float3 E = g_Constants.LightIrradiance.xyz * NdotL * PI;
 
-	float dist = length(g_Constants.LightPosition.xyz - gbuffer.Position);
-	float radiusStart = g_Constants.LightRadius.x;
-	float radiusEnd = g_Constants.LightRadius.y;
-	float3 E = PointLightIrradiance(g_Constants.LightIntensity.xyz, dist, radiusStart, radiusEnd) * NdotL * PI;
-	//if (any(E))
-	{
-		float3 diffuse = Diffuse_Lambert(gbuffer.Diffuse) * E;
-		float3 specular = MicrofacetSpecular(gbuffer.Specular, gbuffer.Roughness, V, N, L) * E;
-		outRadiance += (diffuse + specular) * shadowMask;
-	}
+	float3 diffuse = Diffuse_Lambert(gbuffer.Diffuse) * E;
+	float3 specular = MicrofacetSpecular(gbuffer.Specular, gbuffer.Roughness, V, N, L) * E;
+	outRadiance += (diffuse + specular) * shadowMask;
 
 	return float4(outRadiance, 1);
 }

@@ -1,5 +1,5 @@
-#include "Common.hlsli"
-#include "PointLight.hlsli"
+#include "Inc/Common.hlsli"
+#include "Inc/PointLight.hlsli"
 
 #define RootSigDeclaration \
 RootSigBegin \

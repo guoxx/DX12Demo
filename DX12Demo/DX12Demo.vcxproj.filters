@@ -39,6 +39,12 @@
     <Filter Include="3DEngine\Lights">
       <UniqueIdentifier>{e5f17825-3465-498c-a2d9-39d70b64763c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Assets\Shaders">
+      <UniqueIdentifier>{2066bdbd-185b-48cb-94fb-939b490bab74}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\Shaders\Inc">
+      <UniqueIdentifier>{86e582c1-404f-4706-a7b4-82d1f3389e6b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -338,40 +344,38 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\HelloTexture.hlsl">
-      <Filter>Assets</Filter>
-    </None>
-    <None Include="Assets\HelloTriangle.hlsl">
-      <Filter>Assets</Filter>
-    </None>
-    <None Include="Assets\Common.hlsli">
-      <Filter>Assets</Filter>
-    </None>
-    <None Include="Assets\BaseMaterial.hlsl">
-      <Filter>Assets</Filter>
-    </None>
-    <None Include="Assets\IdentityFilter2D.hlsl">
-      <Filter>Assets</Filter>
-    </None>
-    <None Include="Assets\DirectionalLight.hlsl">
-      <Filter>Assets</Filter>
-    </None>
-    <None Include="Assets\BRDF.hlsli">
-      <Filter>Assets</Filter>
-    </None>
-    <None Include="Assets\BaseMaterial_DepthOnly.hlsl">
-      <Filter>Assets</Filter>
-    </None>
-    <None Include="Assets\PointLight.hlsli">
-      <Filter>Assets</Filter>
-    </None>
-    <None Include="Assets\PointLight.hlsl">
-      <Filter>Assets</Filter>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <AppxManifest Include="XboxOne/Package.appxmanifest">
       <Filter>Sources\XboxOne</Filter>
     </AppxManifest>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Assets\Shaders\BaseMaterial_DepthOnly.hlsl">
+      <Filter>Assets\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Assets\Shaders\DirectionalLight.hlsl">
+      <Filter>Assets\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Assets\Shaders\IdentityFilter2D.hlsl">
+      <Filter>Assets\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Assets\Shaders\PointLight.hlsl">
+      <Filter>Assets\Shaders</Filter>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Assets\Shaders\Inc\BRDF.hlsli">
+      <Filter>Assets\Shaders\Inc</Filter>
+    </None>
+    <None Include="Assets\Shaders\Inc\Common.hlsli">
+      <Filter>Assets\Shaders\Inc</Filter>
+    </None>
+    <None Include="Assets\Shaders\Inc\PointLight.hlsli">
+      <Filter>Assets\Shaders\Inc</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="Assets\Shaders\BaseMaterial.hlsl">
+      <Filter>Assets\Shaders</Filter>
+    </CustomBuild>
   </ItemGroup>
 </Project>
