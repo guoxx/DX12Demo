@@ -5,7 +5,7 @@
   <PropertyGroup />
   <ItemDefinitionGroup>
     <CustomBuild>
-      <Command>"$(SolutionDir)Tools/lua.exe" "$(SolutionDir)Tools/CompileShader.lua" --verbose --platform $(PlatformName) --file %(FullPath) --output $(ProjectDir)Assets\CompiledShaders\
+      <Command>"$(SolutionDir)Tools/lua.exe" "$(SolutionDir)Tools/CompileShader.lua" --platform $(PlatformName) --file %(FullPath) --output $(ProjectDir)Assets\CompiledShaders\ --debug_shader
 </Command>
     </CustomBuild>
   </ItemDefinitionGroup>
