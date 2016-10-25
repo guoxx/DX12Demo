@@ -131,7 +131,8 @@
       </Command>
     </PostBuildEvent>
     <PreBuildEvent>
-      <Command>xcopy /s /Y "$(ProjectDir)Assets" "$(OutDir)"</Command>
+      <Command>
+      </Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Durango'">
@@ -160,7 +161,8 @@
       </Command>
     </PostBuildEvent>
     <PreBuildEvent>
-      <Command>xcopy /s /Y "$(ProjectDir)Assets" "$(OutDir)"</Command>
+      <Command>
+      </Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Durango'">
@@ -185,7 +187,8 @@
       </Command>
     </PostBuildEvent>
     <PreBuildEvent>
-      <Command>xcopy /s /Y "$(ProjectDir)Assets" "$(OutDir)"</Command>
+      <Command>
+      </Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -299,26 +302,26 @@
     <Image Include="XboxOne\Resources\StoreLogo.png" />
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="Assets\Shaders\BaseMaterial.hlsl">
-      <FileType>Document</FileType>
-    </CustomBuild>
-    <CustomBuild Include="Assets\Shaders\BaseMaterial_DepthOnly.hlsl">
-      <FileType>Document</FileType>
-    </CustomBuild>
-    <CustomBuild Include="Assets\Shaders\DirectionalLight.hlsl">
-      <FileType>Document</FileType>
-    </CustomBuild>
-    <CustomBuild Include="Assets\Shaders\IdentityFilter2D.hlsl">
-      <FileType>Document</FileType>
-    </CustomBuild>
-    <CustomBuild Include="Assets\Shaders\PointLight.hlsl">
-      <FileType>Document</FileType>
-    </CustomBuild>
+    <None Include="Shaders\Inc\BRDF.hlsli" />
+    <None Include="Shaders\Inc\Common.hlsli" />
+    <None Include="Shaders\Inc\PointLight.hlsli" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\Shaders\Inc\BRDF.hlsli" />
-    <None Include="Assets\Shaders\Inc\Common.hlsli" />
-    <None Include="Assets\Shaders\Inc\PointLight.hlsli" />
+    <CustomBuild Include="Shaders\BaseMaterial.hlsl">
+      <FileType>Document</FileType>
+    </CustomBuild>
+    <CustomBuild Include="Shaders\BaseMaterial_DepthOnly.hlsl">
+      <FileType>Document</FileType>
+    </CustomBuild>
+    <CustomBuild Include="Shaders\DirectionalLight.hlsl">
+      <FileType>Document</FileType>
+    </CustomBuild>
+    <CustomBuild Include="Shaders\IdentityFilter2D.hlsl">
+      <FileType>Document</FileType>
+    </CustomBuild>
+    <CustomBuild Include="Shaders\PointLight.hlsl">
+      <FileType>Document</FileType>
+    </CustomBuild>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

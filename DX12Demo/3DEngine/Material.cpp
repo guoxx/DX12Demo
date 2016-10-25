@@ -4,9 +4,9 @@
 #include "../DX12/DX12.h"
 #include "RenderContext.h"
 
-#include "../../Shaders/CompiledShaders/BaseMaterial_VS.h"
-#include "../../Shaders/CompiledShaders/BaseMaterial_PS.h"
-#include "../../Shaders/CompiledShaders/BaseMaterial_DepthOnly_VS.h"
+#include "../Shaders/CompiledShaders/BaseMaterial_VS.h"
+#include "../Shaders/CompiledShaders/BaseMaterial_PS.h"
+#include "../Shaders/CompiledShaders/BaseMaterial_DepthOnly_VS.h"
 
 
 Material::Material()
