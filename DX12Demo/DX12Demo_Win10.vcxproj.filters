@@ -37,6 +37,9 @@
     <Filter Include="Shaders\Inc">
       <UniqueIdentifier>{ca3679e8-e60c-49d4-b102-8a7d93418ff4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="3DEngine\Pass">
+      <UniqueIdentifier>{a69b1388-d787-4f9c-98fa-e11e7a644ff9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DX12\DX12Buffer.cpp">
@@ -158,6 +161,9 @@
     </ClCompile>
     <ClCompile Include="3DEngine\Filters\PointLightFilter2D.cpp">
       <Filter>3DEngine\Filters</Filter>
+    </ClCompile>
+    <ClCompile Include="3DEngine\Pass\LightCullingPass.cpp">
+      <Filter>3DEngine\Pass</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -320,6 +326,9 @@
     <ClInclude Include="3DEngine\Filters\PointLightFilter2D.h">
       <Filter>3DEngine\Filters</Filter>
     </ClInclude>
+    <ClInclude Include="3DEngine\Pass\LightCullingPass.h">
+      <Filter>3DEngine\Pass</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\Inc\BRDF.hlsli">
@@ -329,6 +338,9 @@
       <Filter>Shaders\Inc</Filter>
     </None>
     <None Include="Shaders\Inc\PointLight.hlsli">
+      <Filter>Shaders\Inc</Filter>
+    </None>
+    <None Include="Shaders\Inc\LightCulling.hlsli">
       <Filter>Shaders\Inc</Filter>
     </None>
   </ItemGroup>
@@ -346,6 +358,9 @@
       <Filter>Shaders</Filter>
     </CustomBuild>
     <CustomBuild Include="Shaders\IdentityFilter2D.hlsl">
+      <Filter>Shaders</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Shaders\LightCulling.hlsl">
       <Filter>Shaders</Filter>
     </CustomBuild>
   </ItemGroup>

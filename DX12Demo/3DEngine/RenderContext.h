@@ -15,7 +15,7 @@ public:
 	RenderContext();
 	~RenderContext();
 
-	void SetScreenSize(uint32 w, uint32 h)
+	void SetScreenSize(uint32_t w, uint32_t h)
 	{
 		m_ScreenWidth = w;
 		m_ScreenHeight = h;
