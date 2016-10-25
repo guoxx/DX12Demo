@@ -15,6 +15,16 @@ public:
 	RenderContext();
 	~RenderContext();
 
+	void SetScreenSize(uint32 w, uint32 h)
+	{
+		m_ScreenWidth = w;
+		m_ScreenHeight = h;
+	}
+
+	uint32_t GetScreenWidth() const { return m_ScreenWidth; }
+
+	uint32_t GetScreenHeight() const { return m_ScreenHeight; }
+
 	const Camera* GetCamera() const { return m_Camera; }
 
 	void SetCamera(const Camera* pCamera) { m_Camera = pCamera; }
@@ -65,6 +75,9 @@ private:
 	ShadingConfiguration m_ShadingCfg;
 
 	const Camera* m_Camera;
+
+	uint32_t m_ScreenWidth;
+	uint32_t m_ScreenHeight;
 
 	DirectX::XMMATRIX m_mModel;
 	DirectX::XMMATRIX m_mView;

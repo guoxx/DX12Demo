@@ -22,17 +22,17 @@ void Scene::Update(double delta)
 	}
 }
 
-std::vector<std::shared_ptr<Model>> Scene::GetModels()
+std::vector<std::shared_ptr<Model>> Scene::GetModels() const
 {
 	return m_Models;
 }
 
-std::vector<std::shared_ptr<PointLight>> Scene::GetPointLights()
+std::vector<std::shared_ptr<PointLight>> Scene::GetPointLights() const
 {
 	return m_PointLights;
 }
 
-std::vector<std::shared_ptr<DirectionalLight>> Scene::GetDirectionalLights()
+std::vector<std::shared_ptr<DirectionalLight>> Scene::GetDirectionalLights() const
 {
 	return m_DirectionalLights;
 }

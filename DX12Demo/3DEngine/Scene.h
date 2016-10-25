@@ -10,9 +10,9 @@ public:
 	Scene();
 	~Scene();
 
-	std::vector<std::shared_ptr<Model>> GetModels();
-	std::vector<std::shared_ptr<PointLight>> GetPointLights();
-	std::vector<std::shared_ptr<DirectionalLight>> GetDirectionalLights();
+	std::vector<std::shared_ptr<Model>> GetModels() const;
+	std::vector<std::shared_ptr<PointLight>> GetPointLights() const;
+	std::vector<std::shared_ptr<DirectionalLight>> GetDirectionalLights() const;
 
 	void AttachModel(std::shared_ptr<Model> model);
 	void DetachModel(std::shared_ptr<Model> model);

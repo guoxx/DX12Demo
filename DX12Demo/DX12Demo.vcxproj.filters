@@ -42,6 +42,9 @@
     <Filter Include="Shaders\Inc">
       <UniqueIdentifier>{92ca008b-9b92-41da-8f9b-70d97daed3e2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="3DEngine\Pass">
+      <UniqueIdentifier>{a30133f5-a4db-4b78-97c0-8ca2dbca7d5d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -206,6 +209,9 @@
     <ClInclude Include="3DEngine\Filters\PointLightFilter2D.h">
       <Filter>3DEngine\Filters</Filter>
     </ClInclude>
+    <ClInclude Include="3DEngine\Pass\LightCullingPass.h">
+      <Filter>3DEngine\Pass</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -324,6 +330,9 @@
     </ClCompile>
     <ClCompile Include="3DEngine\Filters\PointLightFilter2D.cpp">
       <Filter>3DEngine\Filters</Filter>
+    </ClCompile>
+    <ClCompile Include="3DEngine\Pass\LightCullingPass.cpp">
+      <Filter>3DEngine\Pass</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -206,6 +206,7 @@
     <ClInclude Include="3DEngine\MaterialManager.h" />
     <ClInclude Include="3DEngine\Mesh.h" />
     <ClInclude Include="3DEngine\Model.h" />
+    <ClInclude Include="3DEngine\Pass\LightCullingPass.h" />
     <ClInclude Include="3DEngine\Primitive.h" />
     <ClInclude Include="3DEngine\RenderableSurfaceManager.h" />
     <ClInclude Include="3DEngine\RenderContext.h" />
@@ -262,6 +263,7 @@
     <ClCompile Include="3DEngine\Mesh.cpp" />
     <ClCompile Include="3DEngine\Model.cpp" />
     <ClCompile Include="3DEngine\Model_OBJ.cpp" />
+    <ClCompile Include="3DEngine\Pass\LightCullingPass.cpp" />
     <ClCompile Include="3DEngine\Primitive.cpp" />
     <ClCompile Include="3DEngine\RenderableSurfaceManager.cpp" />
     <ClCompile Include="3DEngine\RenderContext.cpp" />

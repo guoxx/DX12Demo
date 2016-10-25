@@ -3,7 +3,8 @@
 
 #define RootSigDeclaration \
 RootSigBegin \
-", DescriptorTable(CBV(b0), SRV(t0), UAV(u0), visibility = SHADER_VISIBILITY_ALL)" \
+", CBV(b0) " \
+", DescriptorTable(SRV(t0), UAV(u0))" \
 RootSigEnd
 
 struct Constants
