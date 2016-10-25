@@ -355,6 +355,9 @@
     <None Include="Shaders\Inc\PointLight.hlsli">
       <Filter>Shaders\Inc</Filter>
     </None>
+    <None Include="Shaders\Inc\LightCulling.hlsli">
+      <Filter>Shaders\Inc</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="Shaders\PointLight.hlsl">
@@ -370,6 +373,9 @@
       <Filter>Shaders</Filter>
     </CustomBuild>
     <CustomBuild Include="Shaders\IdentityFilter2D.hlsl">
+      <Filter>Shaders</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Shaders\LightCulling.hlsl">
       <Filter>Shaders</Filter>
     </CustomBuild>
   </ItemGroup>
