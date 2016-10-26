@@ -497,7 +497,7 @@ namespace CD3DX12
 			assert(false);
 			return D3D12_UAV_DIMENSION_UNKNOWN;
 		}
-		else if (srvDimension == D3D12_SRV_DIMENSION_TEXTURE2DMS || D3D12_SRV_DIMENSION_TEXTURE2DMSARRAY)
+		else if (srvDimension == D3D12_SRV_DIMENSION_TEXTURE2DMS || srvDimension == D3D12_SRV_DIMENSION_TEXTURE2DMSARRAY)
 		{
 			assert(false);
 			return D3D12_UAV_DIMENSION_UNKNOWN;
