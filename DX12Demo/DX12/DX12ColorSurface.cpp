@@ -23,7 +23,7 @@ void DX12ColorSurface::InitAs2dSurface(DX12Device* device, GFX_FORMAT_SET fmt, u
 	uint32_t arraySize = 1;
 	uint32_t sampleCount = 1;
 	uint32_t sampleQuality = 0;
-	D3D12_RESOURCE_FLAGS flags = D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET;
+	D3D12_RESOURCE_FLAGS flags = D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET | D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
 	D3D12_RESOURCE_STATES initialState = D3D12_RESOURCE_STATE_RENDER_TARGET;
 
 	D3D12_CLEAR_VALUE optimizedClearValue;
@@ -37,9 +37,9 @@ void DX12ColorSurface::InitAs2dSurface(DX12Device* device, GFX_FORMAT_SET fmt, u
 	Create2DView(device, fmt);
 }
 
-void DX12ColorSurface::InitAs2dSurface(DX12Device* device, ComPtr<ID3D12Resource> pResource, GFX_FORMAT_SET fmt, D3D12_RESOURCE_STATES usageState)
+void DX12ColorSurface::InitAs2dSurface(DX12Device* device, ComPtr<ID3D12Resource> pResource, GFX_FORMAT_SET fmt, D3D12_RESOURCE_STATES initialState)
 {
-	SetGpuResource(pResource, usageState);
+	SetGpuResource(pResource, initialState);
 
 	Create2DView(device, fmt);
 }
@@ -50,14 +50,24 @@ void DX12ColorSurface::Create2DView(DX12Device* device, GFX_FORMAT_SET fmt)
 	assert(resourceDesc.Dimension == D3D12_RESOURCE_DIMENSION_TEXTURE2D);
 
 	CD3DX12_SHADER_RESOURCE_VIEW_DESC srvDesc = CD3DX12_SHADER_RESOURCE_VIEW_DESC::Tex2DView(CD3DX12::GetSRVDimension(resourceDesc), fmt.SRVFormat);
+	CD3DX12_UNORDERED_ACCESS_VIEW_DESC uavDesc = CD3DX12_UNORDERED_ACCESS_VIEW_DESC::Tex2DView(CD3DX12::GetUAVDimension(resourceDesc), fmt.RTVFormat);
 	CD3DX12_RENDER_TARGET_VIEW_DESC rtvDesc = CD3DX12_RENDER_TARGET_VIEW_DESC::Tex2DView(CD3DX12::GetRTVDimension(resourceDesc), fmt.RTVFormat);
 
 	m_SRV = DX12GraphicManager::GetInstance()->RegisterResourceInDescriptorHeap(GetGpuResource(), D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 	device->CreateShaderResourceView(GetGpuResource(), &srvDesc, m_SRV.GetCpuHandle());
 
-	m_RTV = DX12GraphicManager::GetInstance()->RegisterResourceInDescriptorHeap(GetGpuResource(), D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
-	device->CreateRenderTargetView(GetGpuResource(), &rtvDesc, m_RTV.GetCpuHandle());
-
 	m_StagingSRV = DX12GraphicManager::GetInstance()->RegisterResourceInStagingDescriptorHeap(GetGpuResource(), D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 	device->CreateShaderResourceView(GetGpuResource(), &srvDesc, m_StagingSRV.GetCpuHandle());
+
+	if (resourceDesc.Flags & D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS)
+	{
+		m_UAV = DX12GraphicManager::GetInstance()->RegisterResourceInDescriptorHeap(GetGpuResource(), D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+		device->CreateUnorderedAccessView(GetGpuResource(), &uavDesc, m_UAV.GetCpuHandle());
+
+		m_StagingUAV = DX12GraphicManager::GetInstance()->RegisterResourceInStagingDescriptorHeap(GetGpuResource(), D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+		device->CreateUnorderedAccessView(GetGpuResource(), &uavDesc, m_StagingUAV.GetCpuHandle());
+	}
+
+	m_RTV = DX12GraphicManager::GetInstance()->RegisterResourceInDescriptorHeap(GetGpuResource(), D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+	device->CreateRenderTargetView(GetGpuResource(), &rtvDesc, m_RTV.GetCpuHandle());
 }

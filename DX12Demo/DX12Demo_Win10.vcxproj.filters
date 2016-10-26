@@ -165,6 +165,9 @@
     <ClCompile Include="3DEngine\Pass\LightCullingPass.cpp">
       <Filter>3DEngine\Pass</Filter>
     </ClCompile>
+    <ClCompile Include="3DEngine\Pass\TiledShadingPass.cpp">
+      <Filter>3DEngine\Pass</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DX12\DX12GraphicContext.h">
@@ -329,6 +332,9 @@
     <ClInclude Include="3DEngine\Pass\LightCullingPass.h">
       <Filter>3DEngine\Pass</Filter>
     </ClInclude>
+    <ClInclude Include="3DEngine\Pass\TiledShadingPass.h">
+      <Filter>3DEngine\Pass</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\Inc\BRDF.hlsli">
@@ -363,7 +369,7 @@
     <CustomBuild Include="Shaders\LightCulling.hlsl">
       <Filter>Shaders</Filter>
     </CustomBuild>
-    <CustomBuild Include="Shaders\TileDeferredShading.hlsl">
+    <CustomBuild Include="Shaders\TiledShading.hlsl">
       <Filter>Shaders</Filter>
     </CustomBuild>
   </ItemGroup>

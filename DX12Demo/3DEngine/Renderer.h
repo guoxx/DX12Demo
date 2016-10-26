@@ -12,6 +12,7 @@ class Filter2D;
 class PointLightFilter2D;
 class DirectionalLightFilter2D;
 class LightCullingPass;
+class TiledShadingPass;
 
 class Renderer
 {
@@ -35,6 +36,8 @@ private:
 	int32_t m_Width;
 	int32_t m_Height;
 
+	bool m_TiledShading;
+
 	RenderContext m_RenderContext;	
 
 	RenderableSurfaceHandle m_SceneGBuffer0;
@@ -51,6 +54,7 @@ private:
 	std::shared_ptr<DirectionalLightFilter2D> m_DirLightFilter2D;
 
 	std::shared_ptr<LightCullingPass> m_LightCullingPass;
+	std::shared_ptr<TiledShadingPass> m_TiledShadingPass;
 	std::shared_ptr<DX12StructuredBuffer> m_AllPointLightForCulling;
 	std::shared_ptr<DX12StructuredBuffer> m_VisiblePointLights;
 };
