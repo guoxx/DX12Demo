@@ -21,7 +21,7 @@ private:
 class DX12StructuredBuffer : public DX12GpuResource
 {
 public:
-	DX12StructuredBuffer(DX12Device* device, uint64_t sizeInBytes, uint64_t alignInBytes, uint64_t strideInBytes);
+	DX12StructuredBuffer(DX12Device* device, uint64_t sizeInBytes, uint64_t alignInBytes, uint64_t strideInBytes, DX12GpuResourceUsage resourceUsage);
 	virtual ~DX12StructuredBuffer();
 
 	const DX12DescriptorHandle& GetDescriptorHandle() const { return m_DescriptorHandle; }

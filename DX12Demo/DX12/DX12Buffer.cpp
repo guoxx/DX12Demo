@@ -19,10 +19,16 @@ DX12IndexBuffer::~DX12IndexBuffer()
 {
 }
 
-DX12StructuredBuffer::DX12StructuredBuffer(DX12Device * device, uint64_t sizeInBytes, uint64_t alignInBytes, uint64_t strideInBytes)
+DX12StructuredBuffer::DX12StructuredBuffer(DX12Device * device, uint64_t sizeInBytes, uint64_t alignInBytes, uint64_t strideInBytes, DX12GpuResourceUsage resourceUsage)
 	: DX12GpuResource()
 {
-	SetGpuResource(device->CreateCommittedBufferInDefaultHeap(sizeInBytes, alignInBytes, D3D12_RESOURCE_STATE_COMMON), D3D12_RESOURCE_STATE_COMMON);
+	CD3DX12_RESOURCE_DESC resourceDesc = CD3DX12_RESOURCE_DESC::Buffer(D3D12_RESOURCE_ALLOCATION_INFO{ sizeInBytes, alignInBytes });
+	if (resourceUsage & DX12GpuResourceUsage_GpuWritable)
+	{
+		resourceDesc.Flags |= D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
+	}
+
+	InitializeResource(device, resourceUsage, &resourceDesc, D3D12_RESOURCE_STATE_COMMON);
 
 	CD3DX12_SHADER_RESOURCE_VIEW_DESC desc = CD3DX12_SHADER_RESOURCE_VIEW_DESC::BufferView(DXGI_FORMAT_UNKNOWN,
 		0,

@@ -9,6 +9,19 @@ enum DX12ShaderType
 	DX12ShaderTypeMax,
 };
 
+enum DX12GpuResourceUsage
+{
+	DX12GpuResourceUsage_CpuReadable = 0x01,
+	DX12GpuResourceUsage_CpuWritable = 0x02,
+	DX12GpuResourceUsage_GpuReadable = 0x04,
+	DX12GpuResourceUsage_GpuWritable = 0x08,
+
+	DX12GpuResourceUsage_GpuReadOnly = DX12GpuResourceUsage_GpuReadable,
+	DX12GpuResourceUsage_GpuReadWrite = DX12GpuResourceUsage_GpuReadable | DX12GpuResourceUsage_GpuWritable,
+	DX12GpuResourceUsage_CpuWrite_GpuRead = DX12GpuResourceUsage_CpuWritable | DX12GpuResourceUsage_GpuReadable,
+	DX12GpuResourceUsage_CpuRead_GpuWrite = DX12GpuResourceUsage_CpuReadable | DX12GpuResourceUsage_GpuWritable,
+};
+
 constexpr uint32_t DX12NumSwapChainBuffers = 3;
 constexpr uint32_t DX12MaxRenderTargetsCount = D3D12_SIMULTANEOUS_RENDER_TARGET_COUNT;
 constexpr uint32_t DX12NumGraphicContexts = 256;

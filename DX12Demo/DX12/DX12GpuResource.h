@@ -3,6 +3,7 @@
 #include "DX12Constants.h"
 
 
+class DX12Device;
 class DX12GraphicContext;
 
 class DX12GpuResource
@@ -37,11 +38,19 @@ public:
 	}	
 
 protected:
-	void SetGpuResource(ComPtr<ID3D12Resource> resource, D3D12_RESOURCE_STATES usageState);
+
+	void InitializeResource(DX12Device* device,
+		DX12GpuResourceUsage resourceUsage,
+		const D3D12_RESOURCE_DESC* pResourceDesc,
+		D3D12_RESOURCE_STATES initialState,
+		const D3D12_CLEAR_VALUE* pOptimizedClearValue = nullptr);
+
+	void SetGpuResource(ComPtr<ID3D12Resource> resource, D3D12_RESOURCE_STATES usageState, DX12GpuResourceUsage resourceUsage = DX12GpuResourceUsage_GpuReadOnly);
 
 private:
 	ComPtr<ID3D12Resource> m_Resource;
 
+	DX12GpuResourceUsage m_ResourceUsage;
 	D3D12_RESOURCE_STATES m_UsageState;
 	D3D12_RESOURCE_STATES m_PendingTransitionState[DX12MaxGraphicContextsInParallel];
 };

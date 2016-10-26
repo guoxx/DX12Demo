@@ -8,9 +8,6 @@
 #include "../../Shaders/CompiledShaders/LightCulling_CS.h"
 
 
-// Keep the same as LightCulling.hlsli
-#define LIGHT_CULLING_NUM_THREADS_XY 16
-
 LightCullingPass::LightCullingPass(DX12Device* device)
 {
 	D3D12_DESCRIPTOR_RANGE descriptorRanges[] = {

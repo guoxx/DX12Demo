@@ -120,7 +120,7 @@ std::vector<std::shared_ptr<Model>> Model::LoadOBJ(DX12Device* device, DX12Graph
 				}
 			}
 
-			mod->m_Mesh->m_VertexBuffer = std::make_shared<DX12StructuredBuffer>(device, vertexDataSizeInBytes, 0, vertexDataStrideInBytes);
+			mod->m_Mesh->m_VertexBuffer = std::make_shared<DX12StructuredBuffer>(device, vertexDataSizeInBytes, 0, vertexDataStrideInBytes, DX12GpuResourceUsage_GpuReadOnly);
 			mod->m_Mesh->m_IndexBuffer = std::make_shared<DX12IndexBuffer>(device, indexDataSizeInBytes, 0, DXGI_FORMAT_R32_UINT);
 
 			pGfxContext->ResourceTransitionBarrier(mod->m_Mesh->m_VertexBuffer.get(), D3D12_RESOURCE_STATE_COPY_DEST);
