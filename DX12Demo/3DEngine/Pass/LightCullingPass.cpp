@@ -37,7 +37,7 @@ void LightCullingPass::Apply(DX12GraphicContext * pGfxContext, const RenderConte
 	m_NumTileX = (pRenderContext->GetScreenWidth() + LIGHT_CULLING_NUM_THREADS_XY - 1) / LIGHT_CULLING_NUM_THREADS_XY;
 	m_NumTileY = (pRenderContext->GetScreenHeight() + LIGHT_CULLING_NUM_THREADS_XY - 1) / LIGHT_CULLING_NUM_THREADS_XY;
 
-	pGfxContext->SetGraphicsRootSignature(m_RootSig);
+	pGfxContext->SetComputeRootSignature(m_RootSig);
 	pGfxContext->SetPipelineState(m_PSO.get());
 
 	struct Constants
@@ -61,7 +61,7 @@ void LightCullingPass::Apply(DX12GraphicContext * pGfxContext, const RenderConte
 
 	constants.m_InvScreenSize = DirectX::XMFLOAT4{ 1.0f / pRenderContext->GetScreenWidth(), 1.0f / pRenderContext->GetScreenHeight(), 0, 0 };
 
-	pGfxContext->SetGraphicsRootDynamicConstantBufferView(0, &constants, sizeof(constants));
+	pGfxContext->SetComputeRootDynamicConstantBufferView(0, &constants, sizeof(constants));
 }
 
 void LightCullingPass::Exec(DX12GraphicContext* pGfxContext)

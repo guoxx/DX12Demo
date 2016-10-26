@@ -16,6 +16,7 @@ class DX12DescriptorHandle;
 class DX12GraphicContext : public DX12CommandContext
 {
 	using super = DX12CommandContext;
+
 public:
 	DX12GraphicContext(DX12Device* device);
 	virtual ~DX12GraphicContext();
@@ -47,7 +48,15 @@ public:
 
 	void SetGraphicsDynamicCbvSrvUav(uint32_t rootParameterIndex, uint32_t offsetInTable, D3D12_CPU_DESCRIPTOR_HANDLE descriptorHandle);
 
+	void SetComputeRootDynamicConstantBufferView(uint32_t rootParameterIndex, void* pData, uint32_t sizeInBytes);
+
+	void SetComputeRootDescriptorTable(uint32_t rootParameterIndex, DX12DescriptorHandle baseDescriptorHandle);
+
+	void SetComputeDynamicCbvSrvUav(uint32_t rootParameterIndex, uint32_t offsetInTable, D3D12_CPU_DESCRIPTOR_HANDLE descriptorHandle);
+
 	void SetGraphicsRootSignature(std::shared_ptr<DX12RootSignature> pRootSig);
+
+	void SetComputeRootSignature(std::shared_ptr<DX12RootSignature> pRootSig);
 
 	void SetPipelineState(DX12PipelineState* pPSO);
 
@@ -77,7 +86,7 @@ private:
 
 	void StageDynamicDescriptor(uint32_t rootParameterIndex, uint32_t offsetInTable, D3D12_CPU_DESCRIPTOR_HANDLE descriptorHandle);
 
-	void ApplyDynamicDescriptors();
+	void ApplyDynamicDescriptors(bool bComputeCommand);
 
 	struct PendingResourcBarrier
 	{

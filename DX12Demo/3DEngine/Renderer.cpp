@@ -163,8 +163,8 @@ void Renderer::DeferredLighting(const Camera* pCamera, Scene* pScene)
 		m_AllPointLightForCulling->UnmapResource(0);
 
 		m_LightCullingPass->Apply(pGfxContext, &m_RenderContext, pScene);
-		pGfxContext->SetGraphicsDynamicCbvSrvUav(1, 0, m_AllPointLightForCulling->GetSRV().GetCpuHandle());
-		pGfxContext->SetGraphicsDynamicCbvSrvUav(1, 1, m_VisiblePointLights->GetUAV().GetCpuHandle());
+		pGfxContext->SetComputeDynamicCbvSrvUav(1, 0, m_AllPointLightForCulling->GetStagingSRV().GetCpuHandle());
+		pGfxContext->SetComputeDynamicCbvSrvUav(1, 1, m_VisiblePointLights->GetStagingUAV().GetCpuHandle());
 		m_LightCullingPass->Exec(pGfxContext);
 
 		pGfxContext->PIXEndEvent();

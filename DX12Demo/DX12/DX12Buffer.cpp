@@ -40,6 +40,9 @@ DX12StructuredBuffer::DX12StructuredBuffer(DX12Device * device, uint64_t sizeInB
 
 		m_SRV = DX12GraphicManager::GetInstance()->RegisterResourceInDescriptorHeap(GetGpuResource(), D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 		device->CreateShaderResourceView(GetGpuResource(), &srvDesc, m_SRV.GetCpuHandle());
+
+		m_StagingSRV = DX12GraphicManager::GetInstance()->RegisterResourceInStagingDescriptorHeap(GetGpuResource(), D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+		device->CreateShaderResourceView(GetGpuResource(), &srvDesc, m_StagingSRV.GetCpuHandle());
 	}
 
 	if (bGpuWritable)
@@ -52,6 +55,9 @@ DX12StructuredBuffer::DX12StructuredBuffer(DX12Device * device, uint64_t sizeInB
 
 		m_UAV = DX12GraphicManager::GetInstance()->RegisterResourceInDescriptorHeap(GetGpuResource(), D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 		device->CreateUnorderedAccessView(GetGpuResource(), &uavDesc, m_UAV.GetCpuHandle());
+
+		m_StagingUAV = DX12GraphicManager::GetInstance()->RegisterResourceInStagingDescriptorHeap(GetGpuResource(), D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+		device->CreateUnorderedAccessView(GetGpuResource(), &uavDesc, m_StagingUAV.GetCpuHandle());
 	}
 }
 

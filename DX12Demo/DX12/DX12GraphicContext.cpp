@@ -193,11 +193,38 @@ void DX12GraphicContext::SetGraphicsDynamicCbvSrvUav(uint32_t rootParameterIndex
 	StageDynamicDescriptor(rootParameterIndex, offsetInTable, descriptorHandle);
 }
 
+void DX12GraphicContext::SetComputeRootDynamicConstantBufferView(uint32_t rootParameterIndex, void * pData, uint32_t sizeInBytes)
+{
+	void* pDestData = nullptr;
+	D3D12_GPU_VIRTUAL_ADDRESS GpuVirtualAddress;
+	DX12GraphicManager::GetInstance()->AllocateConstantsBuffer(sizeInBytes, D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT, &pDestData, &GpuVirtualAddress);
+	std::memcpy(pDestData, pData, sizeInBytes);
+
+	m_CommandList->SetComputeRootConstantBufferView(rootParameterIndex, GpuVirtualAddress);
+}
+
+void DX12GraphicContext::SetComputeRootDescriptorTable(uint32_t rootParameterIndex, DX12DescriptorHandle baseDescriptorHandle)
+{
+	m_CommandList->SetComputeRootDescriptorTable(rootParameterIndex, baseDescriptorHandle.GetGpuHandle());
+}
+
+void DX12GraphicContext::SetComputeDynamicCbvSrvUav(uint32_t rootParameterIndex, uint32_t offsetInTable, D3D12_CPU_DESCRIPTOR_HANDLE descriptorHandle)
+{
+	StageDynamicDescriptor(rootParameterIndex, offsetInTable, descriptorHandle);
+}
+
 void DX12GraphicContext::SetGraphicsRootSignature(std::shared_ptr<DX12RootSignature> pRootSig)
 {
 	RootSignatureChanged(pRootSig);
 
 	m_CommandList->SetGraphicsRootSignature(pRootSig->GetSignature());
+}
+
+void DX12GraphicContext::SetComputeRootSignature(std::shared_ptr<DX12RootSignature> pRootSig)
+{
+	RootSignatureChanged(pRootSig);
+
+	m_CommandList->SetComputeRootSignature(pRootSig->GetSignature());
 }
 
 void DX12GraphicContext::SetPipelineState(DX12PipelineState * pPSO)
@@ -207,6 +234,8 @@ void DX12GraphicContext::SetPipelineState(DX12PipelineState * pPSO)
 
 void DX12GraphicContext::Dispatch(uint32_t threadGroupCountX, uint32_t threadGroupCountY, uint32_t threadGroupCountZ)
 {
+	ApplyDynamicDescriptors(true);
+
 	m_CommandList->Dispatch(threadGroupCountX, threadGroupCountY, threadGroupCountZ);
 }
 
@@ -219,7 +248,7 @@ void DX12GraphicContext::Dispatch2D(uint32_t threadCountX, uint32_t threadCountY
 
 void DX12GraphicContext::DrawIndexed(uint32_t indexCount, uint32_t startIndexLocation, int32_t baseVertexLocation)
 {
-	ApplyDynamicDescriptors();
+	ApplyDynamicDescriptors(false);
 
 	m_CommandList->DrawIndexedInstanced(indexCount, 1, startIndexLocation, baseVertexLocation, 0);
 }
@@ -320,7 +349,7 @@ void DX12GraphicContext::StageDynamicDescriptor(uint32_t rootParameterIndex, uin
 	m_DynamicCbvSrvUavDescriptorsTableDirty |= (0x01 << rootParameterIndex);
 }
 
-void DX12GraphicContext::ApplyDynamicDescriptors()
+void DX12GraphicContext::ApplyDynamicDescriptors(bool bComputeCommand)
 {
 	for (int32_t i = 0; i < DX12MaxSlotsPerShader; ++i)
 	{
@@ -340,7 +369,15 @@ void DX12GraphicContext::ApplyDynamicDescriptors()
 					DX12GraphicManager::GetInstance()->GetDevice()->CopyDescriptorsSimple(1, destCpuHandle, cache.m_CachedHandles[j], D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 				}
 			}
-			m_CommandList->SetGraphicsRootDescriptorTable(cache.m_RootParamIndex, baseDescriptorHandle.GetGpuHandle());
+
+			if (bComputeCommand)
+			{
+				SetComputeRootDescriptorTable(cache.m_RootParamIndex, baseDescriptorHandle);
+			}
+			else
+			{
+				SetGraphicsRootDescriptorTable(cache.m_RootParamIndex, baseDescriptorHandle);
+			}
 		}
 	}
 

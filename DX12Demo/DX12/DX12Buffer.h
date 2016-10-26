@@ -26,8 +26,12 @@ public:
 
 	const DX12DescriptorHandle& GetSRV() const { return m_SRV; }
 	const DX12DescriptorHandle& GetUAV() const { return m_UAV; }
+	const DX12DescriptorHandle& GetStagingSRV() const { return m_StagingSRV; }
+	const DX12DescriptorHandle& GetStagingUAV() const { return m_StagingUAV; }
 
 private:
 	DX12DescriptorHandle m_SRV;
 	DX12DescriptorHandle m_UAV;
+	DX12DescriptorHandle m_StagingSRV;
+	DX12DescriptorHandle m_StagingUAV;
 };
