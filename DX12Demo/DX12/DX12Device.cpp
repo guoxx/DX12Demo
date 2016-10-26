@@ -148,6 +148,13 @@ ComPtr<ID3D12PipelineState> DX12Device::CreateGraphicsPipelineState(const D3D12_
 	return pPSO;	
 }
 
+ComPtr<ID3D12PipelineState> DX12Device::CreateComputePipelineState(const D3D12_COMPUTE_PIPELINE_STATE_DESC* desc)
+{
+	ComPtr<ID3D12PipelineState> pPSO;
+    DX::ThrowIfFailed(m_d3dDevice->CreateComputePipelineState(desc, IID_GRAPHICS_PPV_ARGS(pPSO.GetAddressOf())));
+	return pPSO;	
+}
+
 #ifdef _XBOX_ONE
 ComPtr<IDXGISwapChain1> DX12Device::CreateSwapChain(const DXGI_SWAP_CHAIN_DESC1* swapChainDesc, const GFX_HWND hwnd)
 {
@@ -207,6 +214,11 @@ ComPtr<ID3D12Fence> DX12Device::CreateFence(uint64_t initialValue)
 void DX12Device::CreateShaderResourceView(ID3D12Resource * pResource, const D3D12_SHADER_RESOURCE_VIEW_DESC * pDesc, D3D12_CPU_DESCRIPTOR_HANDLE DestDescriptor)
 {
     m_d3dDevice->CreateShaderResourceView(pResource, pDesc, DestDescriptor);
+}
+
+void DX12Device::CreateUnorderedAccessView(ID3D12Resource * pResource, const D3D12_UNORDERED_ACCESS_VIEW_DESC * pDesc, D3D12_CPU_DESCRIPTOR_HANDLE DestDescriptor)
+{
+    m_d3dDevice->CreateUnorderedAccessView(pResource, nullptr, pDesc, DestDescriptor);
 }
 
 void DX12Device::CreateRenderTargetView(ID3D12Resource * pResource, const D3D12_RENDER_TARGET_VIEW_DESC * pDesc, D3D12_CPU_DESCRIPTOR_HANDLE DestDescriptor)

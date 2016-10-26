@@ -24,8 +24,10 @@ public:
 	DX12StructuredBuffer(DX12Device* device, uint64_t sizeInBytes, uint64_t alignInBytes, uint64_t strideInBytes, DX12GpuResourceUsage resourceUsage);
 	virtual ~DX12StructuredBuffer();
 
-	const DX12DescriptorHandle& GetDescriptorHandle() const { return m_DescriptorHandle; }
+	const DX12DescriptorHandle& GetSRV() const { return m_SRV; }
+	const DX12DescriptorHandle& GetUAV() const { return m_UAV; }
 
 private:
-	DX12DescriptorHandle m_DescriptorHandle;
+	DX12DescriptorHandle m_SRV;
+	DX12DescriptorHandle m_UAV;
 };

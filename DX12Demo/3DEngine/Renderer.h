@@ -11,6 +11,7 @@ class Camera;
 class Filter2D;
 class PointLightFilter2D;
 class DirectionalLightFilter2D;
+class LightCullingPass;
 
 class Renderer
 {
@@ -48,5 +49,9 @@ private:
 	std::shared_ptr<Filter2D> m_IdentityFilter2D;
 	std::shared_ptr<PointLightFilter2D> m_PointLightFilter2D;
 	std::shared_ptr<DirectionalLightFilter2D> m_DirLightFilter2D;
+
+	std::shared_ptr<LightCullingPass> m_LightCullingPass;
+	std::shared_ptr<DX12StructuredBuffer> m_AllPointLightForCulling;
+	std::shared_ptr<DX12StructuredBuffer> m_VisiblePointLights;
 };
 

@@ -49,3 +49,20 @@ private:
 	ComPtr<ID3DBlob> m_ShaderBins[DX12ShaderTypeMax];
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC m_PsoDesc;
 };
+
+class DX12ComputePsoCompiler
+{
+public:
+	DX12ComputePsoCompiler();
+	~DX12ComputePsoCompiler();
+
+	bool SetRoogSignature(DX12RootSignature* rootSig);
+
+	bool SetShaderFromBin(const void* pBinData, uint64_t dataSizeInBytes);
+
+	std::shared_ptr<DX12PipelineState> Compile(DX12Device* device);
+
+private:
+	ComPtr<ID3D12RootSignature> m_RootSig;
+	D3D12_COMPUTE_PIPELINE_STATE_DESC m_PsoDesc;
+};

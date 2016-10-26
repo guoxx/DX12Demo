@@ -205,6 +205,18 @@ void DX12GraphicContext::SetPipelineState(DX12PipelineState * pPSO)
 	m_CommandList->SetPipelineState(pPSO->GetPSO());
 }
 
+void DX12GraphicContext::Dispatch(uint32_t threadGroupCountX, uint32_t threadGroupCountY, uint32_t threadGroupCountZ)
+{
+	m_CommandList->Dispatch(threadGroupCountX, threadGroupCountY, threadGroupCountZ);
+}
+
+void DX12GraphicContext::Dispatch2D(uint32_t threadCountX, uint32_t threadCountY, uint32_t groupSizeX, uint32_t groupSizeY)
+{
+	uint32_t dispatchX = (threadCountX + groupSizeX - 1) / groupSizeX;
+	uint32_t dispatchY = (threadCountY + groupSizeY - 1) / groupSizeY;
+	Dispatch(dispatchX, dispatchY, 1);
+}
+
 void DX12GraphicContext::DrawIndexed(uint32_t indexCount, uint32_t startIndexLocation, int32_t baseVertexLocation)
 {
 	ApplyDynamicDescriptors();

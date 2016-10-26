@@ -387,5 +387,8 @@
     <CustomBuild Include="Shaders\LightCulling.hlsl">
       <Filter>Shaders</Filter>
     </CustomBuild>
+    <CustomBuild Include="Shaders\TileDeferredShading.hlsl">
+      <Filter>Shaders</Filter>
+    </CustomBuild>
   </ItemGroup>
 </Project>

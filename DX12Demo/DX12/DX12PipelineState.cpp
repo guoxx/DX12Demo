@@ -169,3 +169,31 @@ ComPtr<ID3DBlob> DX12GraphicPsoCompiler::CompileShader(const wchar_t* file, cons
 	return shaderBlob;
 }
 
+
+DX12ComputePsoCompiler::DX12ComputePsoCompiler()
+{
+	std::memset(&m_PsoDesc, 0, sizeof(m_PsoDesc));
+}
+
+DX12ComputePsoCompiler::~DX12ComputePsoCompiler()
+{
+}
+
+bool DX12ComputePsoCompiler::SetRoogSignature(DX12RootSignature * rootSig)
+{
+	m_RootSig = rootSig->GetSignature();
+	m_PsoDesc.pRootSignature = m_RootSig.Get();
+	return m_PsoDesc.pRootSignature != nullptr;
+}
+
+bool DX12ComputePsoCompiler::SetShaderFromBin(const void * pBinData, uint64_t dataSizeInBytes)
+{
+	D3D12_SHADER_BYTECODE bytecode = { pBinData, dataSizeInBytes };
+	m_PsoDesc.CS = bytecode;
+	return true;
+}
+
+std::shared_ptr<DX12PipelineState> DX12ComputePsoCompiler::Compile(DX12Device* device)
+{
+	return std::make_shared<DX12PipelineState>(device->CreateComputePipelineState(&m_PsoDesc));
+}

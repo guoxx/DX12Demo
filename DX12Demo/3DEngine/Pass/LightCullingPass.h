@@ -17,5 +17,8 @@ public:
 private:
 	std::shared_ptr<DX12RootSignature> m_RootSig;
 	std::shared_ptr<DX12PipelineState> m_PSO;
+
+	uint32_t m_NumTileX;
+	uint32_t m_NumTileY;
 };
 

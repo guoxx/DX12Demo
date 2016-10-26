@@ -22,8 +22,8 @@ LightCullingPass::LightCullingPass(DX12Device* device)
 	sigCompiler[1].InitAsDescriptorTable(_countof(descriptorRanges), descriptorRanges, D3D12_SHADER_VISIBILITY_ALL);
 	m_RootSig = sigCompiler.Compile(device);
 
-	DX12GraphicPsoCompiler psoCompiler;
-	psoCompiler.SetShaderFromBin(DX12ShaderTypeCompute, g_LightCulling_CS, sizeof(g_LightCulling_CS));
+	DX12ComputePsoCompiler psoCompiler;
+	psoCompiler.SetShaderFromBin(g_LightCulling_CS, sizeof(g_LightCulling_CS));
 	psoCompiler.SetRoogSignature(m_RootSig.get());
 	m_PSO = psoCompiler.Compile(device);
 }
@@ -34,6 +34,9 @@ LightCullingPass::~LightCullingPass()
 
 void LightCullingPass::Apply(DX12GraphicContext * pGfxContext, const RenderContext* pRenderContext, const Scene* pScene)
 {
+	m_NumTileX = (pRenderContext->GetScreenWidth() + LIGHT_CULLING_NUM_THREADS_XY - 1) / LIGHT_CULLING_NUM_THREADS_XY;
+	m_NumTileY = (pRenderContext->GetScreenHeight() + LIGHT_CULLING_NUM_THREADS_XY - 1) / LIGHT_CULLING_NUM_THREADS_XY;
+
 	pGfxContext->SetGraphicsRootSignature(m_RootSig);
 	pGfxContext->SetPipelineState(m_PSO.get());
 
@@ -49,8 +52,8 @@ void LightCullingPass::Apply(DX12GraphicContext * pGfxContext, const RenderConte
 	Constants constants;
 
 	constants.m_NumPointLights = static_cast<uint32_t>(pScene->GetPointLights().size());
-	constants.m_NumTileX = (pRenderContext->GetScreenWidth() + LIGHT_CULLING_NUM_THREADS_XY - 1) / LIGHT_CULLING_NUM_THREADS_XY;
-	constants.m_NumTileY = (pRenderContext->GetScreenHeight() + LIGHT_CULLING_NUM_THREADS_XY - 1) / LIGHT_CULLING_NUM_THREADS_XY;
+	constants.m_NumTileX = m_NumTileX;
+	constants.m_NumTileY = m_NumTileY;
 
 	DirectX::XMMATRIX mViewProj = pRenderContext->GetViewPorjMatrix();
 	DirectX::XMMATRIX mInvViewProj = DirectX::XMMatrixInverse(nullptr, mViewProj);
@@ -63,5 +66,5 @@ void LightCullingPass::Apply(DX12GraphicContext * pGfxContext, const RenderConte
 
 void LightCullingPass::Exec(DX12GraphicContext* pGfxContext)
 {
-	pGfxContext->DrawIndexed(6, 0);
+	pGfxContext->Dispatch(m_NumTileX, m_NumTileY, 1);
 }

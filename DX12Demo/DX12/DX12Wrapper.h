@@ -199,6 +199,109 @@ struct CD3DX12_SHADER_RESOURCE_VIEW_DESC : public D3D12_SHADER_RESOURCE_VIEW_DES
 	}
 };
 
+struct CD3DX12_UNORDERED_ACCESS_VIEW_DESC : public D3D12_UNORDERED_ACCESS_VIEW_DESC
+{
+	CD3DX12_UNORDERED_ACCESS_VIEW_DESC() = default;
+	~CD3DX12_UNORDERED_ACCESS_VIEW_DESC() = default;
+
+    operator const CD3DX12_UNORDERED_ACCESS_VIEW_DESC&() const { return *this; }
+
+	explicit CD3DX12_UNORDERED_ACCESS_VIEW_DESC(const D3D12_UNORDERED_ACCESS_VIEW_DESC& o) :
+		D3D12_UNORDERED_ACCESS_VIEW_DESC(o)
+	{}
+
+	static inline CD3DX12_UNORDERED_ACCESS_VIEW_DESC BufferView(
+		DXGI_FORMAT format,
+		UINT firstElement,
+		UINT numElements,
+		UINT structureByteStride,
+		UINT64 counterOffsetInBytes = 0,
+		D3D12_BUFFER_UAV_FLAGS flags = D3D12_BUFFER_UAV_FLAG_NONE)
+	{
+		CD3DX12_UNORDERED_ACCESS_VIEW_DESC desc;
+		desc.Format = format;
+		desc.ViewDimension = D3D12_UAV_DIMENSION_BUFFER;
+		desc.Buffer.FirstElement = firstElement;
+		desc.Buffer.NumElements = numElements;
+		desc.Buffer.StructureByteStride = structureByteStride;
+		desc.Buffer.CounterOffsetInBytes = counterOffsetInBytes;
+		desc.Buffer.Flags = flags;
+		return desc;
+	}
+
+	static inline CD3DX12_UNORDERED_ACCESS_VIEW_DESC Tex1DView(
+		D3D12_UAV_DIMENSION viewDimension,
+		DXGI_FORMAT format,
+		UINT mipSlice = 0,
+		UINT firstArraySlice = 0,
+		UINT arraySize = -1)
+	{
+		CD3DX12_UNORDERED_ACCESS_VIEW_DESC desc;
+		desc.Format = format;
+		desc.ViewDimension = viewDimension;
+
+		switch (viewDimension)
+		{
+		case D3D12_SRV_DIMENSION_TEXTURE1D:
+			desc.Texture1D.MipSlice = mipSlice;
+			break;
+		case D3D12_SRV_DIMENSION_TEXTURE1DARRAY:
+			desc.Texture1DArray.MipSlice = mipSlice;
+			desc.Texture1DArray.FirstArraySlice = firstArraySlice;
+			desc.Texture1DArray.ArraySize = arraySize;
+			break;
+		default:
+			assert(false);
+		}
+		return desc;
+	}
+
+	static inline CD3DX12_UNORDERED_ACCESS_VIEW_DESC Tex2DView(
+		D3D12_UAV_DIMENSION viewDimension,
+		DXGI_FORMAT format,
+		UINT mipSlice = 0,
+		UINT planeSlice = 0,
+		UINT firstArraySlice = 0,
+		UINT arraySize = -1)
+	{
+		CD3DX12_UNORDERED_ACCESS_VIEW_DESC desc;
+		desc.Format = format;
+		desc.ViewDimension = viewDimension;
+
+		switch (viewDimension)
+		{
+		case D3D12_SRV_DIMENSION_TEXTURE2D:
+			desc.Texture2D.MipSlice = mipSlice;
+			desc.Texture2D.PlaneSlice = planeSlice;
+			break;
+		case D3D12_SRV_DIMENSION_TEXTURE2DARRAY:
+			desc.Texture2DArray.MipSlice = mipSlice;
+			desc.Texture2DArray.FirstArraySlice = firstArraySlice;
+			desc.Texture2DArray.ArraySize = arraySize;
+			desc.Texture2DArray.PlaneSlice = planeSlice;
+			break;
+		default:
+			assert(false);
+		}
+		return desc;
+	}
+
+	static inline CD3DX12_UNORDERED_ACCESS_VIEW_DESC Tex3DView(
+		DXGI_FORMAT format,
+		UINT mipSlice,
+		UINT firstWSlice,
+		UINT wSize)
+	{
+		CD3DX12_UNORDERED_ACCESS_VIEW_DESC desc;
+		desc.Format = format;
+		desc.ViewDimension = D3D12_UAV_DIMENSION_TEXTURE3D;
+		desc.Texture3D.MipSlice = mipSlice;
+		desc.Texture3D.FirstWSlice = firstWSlice;
+		desc.Texture3D.WSize = wSize;
+		return desc;
+	}
+};
+
 struct CD3DX12_RENDER_TARGET_VIEW_DESC : public D3D12_RENDER_TARGET_VIEW_DESC
 {
 	CD3DX12_RENDER_TARGET_VIEW_DESC() = default;

@@ -55,6 +55,8 @@ public:
 
 	ComPtr<ID3D12PipelineState> CreateGraphicsPipelineState(const D3D12_GRAPHICS_PIPELINE_STATE_DESC* desc);
 
+	ComPtr<ID3D12PipelineState> CreateComputePipelineState(const D3D12_COMPUTE_PIPELINE_STATE_DESC* desc);
+
 #ifdef _XBOX_ONE
 	ComPtr<IDXGISwapChain1> CreateSwapChain(const DXGI_SWAP_CHAIN_DESC1* swapChainDesc, const GFX_HWND hwnd);
 #else
@@ -64,6 +66,8 @@ public:
 	ComPtr<ID3D12Fence> CreateFence(uint64_t initialValue = 0);
 
     void CreateShaderResourceView(ID3D12Resource* pResource, const D3D12_SHADER_RESOURCE_VIEW_DESC* pDesc, D3D12_CPU_DESCRIPTOR_HANDLE DestDescriptor);
+
+    void CreateUnorderedAccessView(ID3D12Resource* pResource, const D3D12_UNORDERED_ACCESS_VIEW_DESC* pDesc, D3D12_CPU_DESCRIPTOR_HANDLE DestDescriptor);
 
     void CreateRenderTargetView(ID3D12Resource* pResource, const D3D12_RENDER_TARGET_VIEW_DESC* pDesc, D3D12_CPU_DESCRIPTOR_HANDLE DestDescriptor);
         

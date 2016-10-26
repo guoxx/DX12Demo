@@ -12,12 +12,16 @@
 #include "Filters/PointLightFilter2D.h"
 #include "Filters/DirectionalLightFilter2D.h"
 
+#include "Pass/LightCullingPass.h"
+
 
 Renderer::Renderer(GFX_HWND hwnd, int32_t width, int32_t height)
 	: m_Width{ width}
 	, m_Height{ height }
 {
-	m_SwapChain = std::make_shared<DX12SwapChain>(DX12GraphicManager::GetInstance()->GetDevice(), hwnd, width, height, GFX_FORMAT_R8G8B8A8_UNORM_SWAPCHAIN);
+	DX12Device* pDevice = DX12GraphicManager::GetInstance()->GetDevice();
+
+	m_SwapChain = std::make_shared<DX12SwapChain>(pDevice, hwnd, width, height, GFX_FORMAT_R8G8B8A8_UNORM_SWAPCHAIN);
 
 	m_SceneGBuffer0 = RenderableSurfaceManager::GetInstance()->AcquireColorSurface(RenderableSurfaceDesc(GFX_FORMAT_R8G8B8A8_UNORM, width, height));
 	m_SceneGBuffer1 = RenderableSurfaceManager::GetInstance()->AcquireColorSurface(RenderableSurfaceDesc(GFX_FORMAT_R8G8B8A8_UNORM, width, height));
@@ -26,10 +30,21 @@ Renderer::Renderer(GFX_HWND hwnd, int32_t width, int32_t height)
 
 	m_LightingSurface = RenderableSurfaceManager::GetInstance()->AcquireColorSurface(RenderableSurfaceDesc(GFX_FORMAT_R32G32B32A32_FLOAT, width, height));
 
-	m_IdentityFilter2D = std::make_shared<Filter2D>(DX12GraphicManager::GetInstance()->GetDevice());
+	m_IdentityFilter2D = std::make_shared<Filter2D>(pDevice);
 
-	m_PointLightFilter2D = std::make_shared<PointLightFilter2D>(DX12GraphicManager::GetInstance()->GetDevice());
-	m_DirLightFilter2D = std::make_shared<DirectionalLightFilter2D>(DX12GraphicManager::GetInstance()->GetDevice());
+	m_PointLightFilter2D = std::make_shared<PointLightFilter2D>(pDevice);
+	m_DirLightFilter2D = std::make_shared<DirectionalLightFilter2D>(pDevice);
+
+	uint32_t numTileX = (m_Width + LIGHT_CULLING_NUM_THREADS_XY - 1) / LIGHT_CULLING_NUM_THREADS_XY;
+	uint32_t numTileY = (m_Height + LIGHT_CULLING_NUM_THREADS_XY - 1) / LIGHT_CULLING_NUM_THREADS_XY;
+	m_AllPointLightForCulling = std::make_shared<DX12StructuredBuffer>(pDevice,
+		sizeof(ShapeSphere) * MAX_POINT_LIGHTS_PER_FRAME, 0, sizeof(ShapeSphere),
+		DX12GpuResourceUsage_CpuWrite_GpuRead);
+	m_VisiblePointLights = std::make_shared<DX12StructuredBuffer>(pDevice,
+		sizeof(LightNode) * numTileX * numTileY * MAX_LIGHT_NODES_PER_TILE, 0, sizeof(LightNode),
+		DX12GpuResourceUsage_GpuReadWrite);
+
+	m_LightCullingPass = std::make_shared<LightCullingPass>(pDevice);
 }
 
 Renderer::~Renderer()
@@ -39,6 +54,7 @@ Renderer::~Renderer()
 void Renderer::Render(const Camera* pCamera, Scene* pScene)
 {
 	m_RenderContext.SetCamera(pCamera);
+	m_RenderContext.SetScreenSize(m_Width, m_Height);
 
 	RenderShadowMaps(pCamera, pScene);
 	RenderGBuffer(pCamera, pScene);
@@ -127,6 +143,32 @@ void Renderer::DeferredLighting(const Camera* pCamera, Scene* pScene)
 	DX12GraphicContext* pGfxContext = executor.GetGraphicContext();
 
 	pGfxContext->PIXBeginEvent(L"DeferredLighting");
+
+	{
+		pGfxContext->PIXBeginEvent(L"LightCulling");
+
+		ShapeSphere* pData;
+		m_AllPointLightForCulling->MapResource(0, (void**)&pData);
+
+		int i = 0;
+		for (auto pointLight : pScene->GetPointLights())
+		{
+			DirectX::XMVECTOR pos = pointLight->GetTranslation();
+			pData[i].m_Position = DirectX::XMFLOAT3{ DirectX::XMVectorGetX(pos), DirectX::XMVectorGetY(pos), DirectX::XMVectorGetZ(pos) };
+			pData[i].m_Radius = pointLight->GetRadiusEnd();
+
+			i += 1;
+		}
+
+		m_AllPointLightForCulling->UnmapResource(0);
+
+		m_LightCullingPass->Apply(pGfxContext, &m_RenderContext, pScene);
+		pGfxContext->SetGraphicsDynamicCbvSrvUav(1, 0, m_AllPointLightForCulling->GetSRV().GetCpuHandle());
+		pGfxContext->SetGraphicsDynamicCbvSrvUav(1, 1, m_VisiblePointLights->GetUAV().GetCpuHandle());
+		m_LightCullingPass->Exec(pGfxContext);
+
+		pGfxContext->PIXEndEvent();
+	}
 
     pGfxContext->ClearRenderTarget(RenderableSurfaceManager::GetInstance()->GetColorSurface(m_LightingSurface), 0, 0, 0, 0);
 
