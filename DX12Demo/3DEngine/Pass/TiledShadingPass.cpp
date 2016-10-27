@@ -5,7 +5,7 @@
 #include "../Camera.h"
 #include "../RenderContext.h"
 
-#include "../../Shaders/CompiledShaders/TileDeferredShading_CS.h"
+#include "../../Shaders/CompiledShaders/TiledShading_CS.h"
 
 
 TiledShadingPass::TiledShadingPass(DX12Device* device)
@@ -23,7 +23,7 @@ TiledShadingPass::TiledShadingPass(DX12Device* device)
 	m_RootSig = sigCompiler.Compile(device);
 
 	DX12ComputePsoCompiler psoCompiler;
-	psoCompiler.SetShaderFromBin(g_TileDeferredShading_CS, sizeof(g_TileDeferredShading_CS));
+	psoCompiler.SetShaderFromBin(g_TiledShading_CS, sizeof(g_TiledShading_CS));
 	psoCompiler.SetRoogSignature(m_RootSig.get());
 	m_PSO = psoCompiler.Compile(device);
 }

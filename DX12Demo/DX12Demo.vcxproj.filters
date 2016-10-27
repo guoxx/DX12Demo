@@ -212,6 +212,9 @@
     <ClInclude Include="3DEngine\Pass\LightCullingPass.h">
       <Filter>3DEngine\Pass</Filter>
     </ClInclude>
+    <ClInclude Include="3DEngine\Pass\TiledShadingPass.h">
+      <Filter>3DEngine\Pass</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -334,6 +337,9 @@
     <ClCompile Include="3DEngine\Pass\LightCullingPass.cpp">
       <Filter>3DEngine\Pass</Filter>
     </ClCompile>
+    <ClCompile Include="3DEngine\Pass\TiledShadingPass.cpp">
+      <Filter>3DEngine\Pass</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="XboxOne\Resources\Logo.png">
@@ -387,7 +393,7 @@
     <CustomBuild Include="Shaders\LightCulling.hlsl">
       <Filter>Shaders</Filter>
     </CustomBuild>
-    <CustomBuild Include="Shaders\TileDeferredShading.hlsl">
+    <CustomBuild Include="Shaders\TiledShading.hlsl">
       <Filter>Shaders</Filter>
     </CustomBuild>
   </ItemGroup>
