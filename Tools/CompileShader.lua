@@ -91,14 +91,14 @@ else
 	common_flags = common_flags .. " /enable_unbounded_descriptor_tables"
 end
 
--- TODO: fix it
-if is_durango then
-	debug_shader = false
-end
-
 local optimization_flags = " /O3"
 if debug_shader then
 	optimization_flags = " /Od /Zi"
+end
+
+-- TODO: fix it
+if is_durango then
+	optimization_flags = string.gsub(optimization_flags, "/Zi", "")
 end
 
 local shader_pathcomponents = str_split(shader_file, "/")
