@@ -11,15 +11,16 @@
 TiledShadingPass::TiledShadingPass(DX12Device* device)
 {
 	D3D12_DESCRIPTOR_RANGE descriptorRanges[] = {
-		{ D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 2, 0, 0, D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND },
 		{ D3D12_DESCRIPTOR_RANGE_TYPE_UAV, 1, 0, 0, D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND },
 	};
 
 	DX12RootSignatureCompiler sigCompiler;
-	sigCompiler.Begin(2, 0);
+	sigCompiler.Begin(4, 0);
 	sigCompiler.End();
 	sigCompiler[0].InitAsConstantBufferView(0);
-	sigCompiler[1].InitAsDescriptorTable(_countof(descriptorRanges), descriptorRanges, D3D12_SHADER_VISIBILITY_ALL);
+	sigCompiler[1].InitAsShaderResourceView(0);
+	sigCompiler[2].InitAsShaderResourceView(1);
+	sigCompiler[3].InitAsDescriptorTable(_countof(descriptorRanges), descriptorRanges, D3D12_SHADER_VISIBILITY_ALL);
 	m_RootSig = sigCompiler.Compile(device);
 
 	DX12ComputePsoCompiler psoCompiler;

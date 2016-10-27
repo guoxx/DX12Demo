@@ -14,21 +14,31 @@ struct LightNode
 	int m_LightIndex;
 };
 
-bool SphereCulling(float3 frustumPoints[8], ShapeSphere sphere)
+float4 PlaneEquation(float3 p0, float3 p1, float3 p2)
 {
-	for (uint i = 0; i < 8; ++i)
+	float3 v0 = p1 - p0;
+	float3 v1 = p2 - p0;
+	float3 n = normalize(cross(v0, v1));
+	float t = - dot(n, p0);
+	return float4(n, t);
+}
+
+bool SphereCulling(float4 frustumPlanes[4], float3 center, float radius)
+{
+	for (uint i = 0; i < 4; ++i)
 	{
-		if (length(frustumPoints[i] - sphere.m_Position_Radius.xyz) <= sphere.m_Position_Radius.w)
+		float dis = dot(frustumPlanes[i].xyz, center) + frustumPlanes[i].w;
+		if (dis > radius)
 		{
-			return false;
+			return true;
 		}
 	}
-	return true;
+	return false;
 }
 
 uint LinearizeTileId(uint2 tileId, uint numTileX, uint numTileY)
 {
-	return tileId.x + tileId.y * numTileY;
+	return tileId.x + tileId.y * numTileX;
 }
 
 uint LinearizeThreadId(uint2 threadId)

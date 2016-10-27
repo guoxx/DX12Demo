@@ -4,7 +4,9 @@
 #define RootSigDeclaration \
 RootSigBegin \
 ", CBV(b0) " \
-", DescriptorTable(SRV(t0, numDescriptors=2), UAV(u0))" \
+", SRV(t0) " \
+", SRV(t1) " \
+", DescriptorTable(UAV(u0))" \
 RootSigEnd
 
 struct Constants
@@ -42,7 +44,7 @@ void CSMain(uint3 Gid : SV_GroupID, uint3 GTid : SV_GroupThreadID, uint3 DTid : 
 		for (uint i = 0; i < MAX_LIGHT_NODES_PER_TILE; ++i)
 		{
 			uint offset = startOffset + i;
-			if (g_LightNodes[offset].m_LightIndex == MAX_LIGHT_NODES_PER_TILE)
+			if (g_LightNodes[offset].m_LightIndex == LIGHT_NODE_INVALID)
 			{
 				break;
 			}

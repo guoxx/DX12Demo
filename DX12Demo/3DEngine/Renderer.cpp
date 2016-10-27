@@ -169,8 +169,8 @@ void Renderer::DeferredLighting(const Camera* pCamera, Scene* pScene)
 			pGfxContext->ResourceTransitionBarrier(m_VisiblePointLights.get(), D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
 
 			m_LightCullingPass->Apply(pGfxContext, &m_RenderContext, pScene);
-			pGfxContext->SetComputeDynamicCbvSrvUav(1, 0, m_AllPointLightForCulling->GetStagingSRV().GetCpuHandle());
-			pGfxContext->SetComputeDynamicCbvSrvUav(1, 1, m_VisiblePointLights->GetStagingUAV().GetCpuHandle());
+			pGfxContext->SetComputeRootStructuredBuffer(1, m_AllPointLightForCulling.get());
+			pGfxContext->SetComputeRootRWStructuredBuffer(2, m_VisiblePointLights.get());
 			m_LightCullingPass->Exec(pGfxContext);
 
 			pGfxContext->ResourceTransitionBarrier(m_VisiblePointLights.get(), D3D12_RESOURCE_STATE_GENERIC_READ);
@@ -184,9 +184,9 @@ void Renderer::DeferredLighting(const Camera* pCamera, Scene* pScene)
 			pGfxContext->ResourceTransitionBarrier(RenderableSurfaceManager::GetInstance()->GetColorSurface(m_LightingSurface), D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
 
 			m_TiledShadingPass->Apply(pGfxContext, &m_RenderContext, pScene);
-			pGfxContext->SetComputeDynamicCbvSrvUav(1, 0, m_AllPointLightForCulling->GetStagingSRV().GetCpuHandle());
-			pGfxContext->SetComputeDynamicCbvSrvUav(1, 1, m_VisiblePointLights->GetStagingSRV().GetCpuHandle());
-			pGfxContext->SetComputeDynamicCbvSrvUav(1, 2, RenderableSurfaceManager::GetInstance()->GetColorSurface(m_LightingSurface)->GetStagingUAV().GetCpuHandle());
+			pGfxContext->SetComputeRootStructuredBuffer(1, m_AllPointLightForCulling.get());
+			pGfxContext->SetComputeRootStructuredBuffer(2, m_VisiblePointLights.get());
+			pGfxContext->SetComputeDynamicCbvSrvUav(3, 0, RenderableSurfaceManager::GetInstance()->GetColorSurface(m_LightingSurface)->GetStagingUAV().GetCpuHandle());
 			m_TiledShadingPass->Exec(pGfxContext);
 
 			pGfxContext->ResourceTransitionBarrier(RenderableSurfaceManager::GetInstance()->GetColorSurface(m_LightingSurface), D3D12_RESOURCE_STATE_RENDER_TARGET);

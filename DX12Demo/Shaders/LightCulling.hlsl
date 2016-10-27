@@ -4,7 +4,8 @@
 #define RootSigDeclaration \
 RootSigBegin \
 ", CBV(b0) " \
-", DescriptorTable(SRV(t0), UAV(u0))" \
+", SRV(t0) " \
+", UAV(u0)" \
 RootSigEnd
 
 struct Constants
@@ -13,7 +14,8 @@ struct Constants
 	uint m_NumTileX;
 	uint m_NumTileY;
 	uint m_Padding0;
-	float4x4 mInvViewProj;
+	float4x4 m_mView;
+	float4x4 m_mInvProj;
 	float4 m_InvScreenSize;
 };
 
@@ -56,27 +58,35 @@ void CSMain(uint3 Gid : SV_GroupID, uint3 GTid : SV_GroupThreadID, uint3 DTid : 
 	bottomY = bottomY * 2 - 1;
 
 	// frustom points in ndc space
-	float3 frustumPoints[8];
-	frustumPoints[0] = float3( leftX,  bottomY, nearZ );
-	frustumPoints[1] = float3( rightX, bottomY, nearZ );
-	frustumPoints[2] = float3( rightX, topY,    nearZ );
-	frustumPoints[3] = float3( leftX,  topY,    nearZ );
-	frustumPoints[4] = float3( leftX,  bottomY, farZ );
-	frustumPoints[5] = float3( rightX, bottomY, farZ );
-	frustumPoints[6] = float3( rightX, topY,    farZ );
-	frustumPoints[7] = float3( leftX,  topY,    farZ );
+	float3 frustumPoints[4];
+	frustumPoints[0] = float3( leftX,  bottomY, farZ );
+	frustumPoints[1] = float3( rightX, bottomY, farZ );
+	frustumPoints[2] = float3( rightX, topY,    farZ );
+	frustumPoints[3] = float3( leftX,  topY,    farZ );
 
-	float3 frustomPointsWS[8];
-	for (int i = 0; i < 8; ++i)
+	float3 frustomPointsCS[4];
+	[loop]
+	for (int frustumPtIdx = 0; frustumPtIdx < 4; ++frustumPtIdx)
 	{
-		float4 p = mul(float4(frustumPoints[i], 1.0f), g_Constants.mInvViewProj);
-		frustomPointsWS[i] = p.xyz / p.w;
+		float4 p = mul(float4(frustumPoints[frustumPtIdx], 1.0f), g_Constants.m_mInvProj);
+		frustomPointsCS[frustumPtIdx] = p.xyz / p.w;
 	}
 
+	float4 frustumPlanes[4];
+	frustumPlanes[0] = PlaneEquation(frustomPointsCS[0], frustomPointsCS[1], float3(0, 0, 0));
+	frustumPlanes[1] = PlaneEquation(frustomPointsCS[1], frustomPointsCS[2], float3(0, 0, 0));
+	frustumPlanes[2] = PlaneEquation(frustomPointsCS[2], frustomPointsCS[3], float3(0, 0, 0));
+	frustumPlanes[3] = PlaneEquation(frustomPointsCS[3], frustomPointsCS[0], float3(0, 0, 0));
+
 	uint maxNumLights = min(g_Constants.m_NumPointLights, MAX_LIGHT_NODES_PER_TILE);
+	[loop]
 	for (uint lightIdx = linearThreadId; lightIdx < maxNumLights; lightIdx += NUM_THREADS_PER_LIGHT_CULLING_TILE)
 	{
-		if (!SphereCulling(frustomPointsWS, g_PointLights[lightIdx].m_Shape))
+		float3 lightPositionWS = g_PointLights[lightIdx].m_Shape.m_Position_Radius.xyz;
+		float3 lightPositionCS = mul(float4(lightPositionWS, 1.0f), g_Constants.m_mView).xyz;
+		float lightRadius = g_PointLights[lightIdx].m_Shape.m_Position_Radius.w;
+
+		if (!SphereCulling(frustumPlanes, lightPositionCS, lightRadius))
 		{
 			uint ptr = AllocateLightNodeInLDS();
 			gs_LightIdxPerTile[ptr] = lightIdx;
@@ -87,10 +97,11 @@ void CSMain(uint3 Gid : SV_GroupID, uint3 GTid : SV_GroupThreadID, uint3 DTid : 
 
 	uint startOffset = linearTileId * MAX_LIGHT_NODES_PER_TILE;
 	uint numVisibleLights = gs_LightListPerTilePtr;
-	for (uint j = 0; j < numVisibleLights; j += NUM_THREADS_PER_LIGHT_CULLING_TILE)
+	[loop]
+	for (uint visLightIdx = 0; visLightIdx < numVisibleLights; visLightIdx += NUM_THREADS_PER_LIGHT_CULLING_TILE)
 	{
-		uint offset = startOffset + i;
-		g_LightNodes[offset].m_LightIndex = gs_LightIdxPerTile[i];
+		uint offset = startOffset + visLightIdx;
+		g_LightNodes[offset].m_LightIndex = gs_LightIdxPerTile[visLightIdx];
 	}
 
 	if (linearThreadId == 0)

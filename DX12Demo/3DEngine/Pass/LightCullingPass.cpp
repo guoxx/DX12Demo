@@ -10,16 +10,12 @@
 
 LightCullingPass::LightCullingPass(DX12Device* device)
 {
-	D3D12_DESCRIPTOR_RANGE descriptorRanges[] = {
-		{ D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0, 0, D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND },
-		{ D3D12_DESCRIPTOR_RANGE_TYPE_UAV, 1, 0, 0, D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND },
-	};
-
 	DX12RootSignatureCompiler sigCompiler;
-	sigCompiler.Begin(2, 0);
+	sigCompiler.Begin(3, 0);
 	sigCompiler.End();
 	sigCompiler[0].InitAsConstantBufferView(0);
-	sigCompiler[1].InitAsDescriptorTable(_countof(descriptorRanges), descriptorRanges, D3D12_SHADER_VISIBILITY_ALL);
+	sigCompiler[1].InitAsShaderResourceView(0);
+	sigCompiler[2].InitAsUnorderedAccessView(0);
 	m_RootSig = sigCompiler.Compile(device);
 
 	DX12ComputePsoCompiler psoCompiler;
@@ -46,7 +42,8 @@ void LightCullingPass::Apply(DX12GraphicContext * pGfxContext, const RenderConte
 		uint32_t m_NumTileX;
 		uint32_t m_NumTileY;
 		uint32_t m_Padding;
-		float4x4 m_mInvViewProj;
+		float4x4 m_mView;
+		float4x4 m_mInvProj;
 		float4 m_InvScreenSize;
 	};
 	Constants constants;
@@ -55,9 +52,11 @@ void LightCullingPass::Apply(DX12GraphicContext * pGfxContext, const RenderConte
 	constants.m_NumTileX = m_NumTileX;
 	constants.m_NumTileY = m_NumTileY;
 
-	DirectX::XMMATRIX mViewProj = pRenderContext->GetViewPorjMatrix();
-	DirectX::XMMATRIX mInvViewProj = DirectX::XMMatrixInverse(nullptr, mViewProj);
-	DirectX::XMStoreFloat4x4(&constants.m_mInvViewProj, DirectX::XMMatrixTranspose(mInvViewProj));
+	DirectX::XMMATRIX mView = pRenderContext->GetViewMatrix();
+	DirectX::XMMATRIX mProj = pRenderContext->GetProjMatrix();
+	DirectX::XMMATRIX mInvProj = DirectX::XMMatrixInverse(nullptr, mProj);
+	DirectX::XMStoreFloat4x4(&constants.m_mView, DirectX::XMMatrixTranspose(mView));
+	DirectX::XMStoreFloat4x4(&constants.m_mInvProj, DirectX::XMMatrixTranspose(mInvProj));
 
 	constants.m_InvScreenSize = DirectX::XMFLOAT4{ 1.0f / pRenderContext->GetScreenWidth(), 1.0f / pRenderContext->GetScreenHeight(), 0, 0 };
 
