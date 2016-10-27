@@ -57,7 +57,7 @@ void LightCullingPass::Apply(DX12GraphicContext * pGfxContext, const RenderConte
 
 	DirectX::XMMATRIX mViewProj = pRenderContext->GetViewPorjMatrix();
 	DirectX::XMMATRIX mInvViewProj = DirectX::XMMatrixInverse(nullptr, mViewProj);
-	DirectX::XMStoreFloat4x4(&constants.m_mInvViewProj, mInvViewProj);
+	DirectX::XMStoreFloat4x4(&constants.m_mInvViewProj, DirectX::XMMatrixTranspose(mInvViewProj));
 
 	constants.m_InvScreenSize = DirectX::XMFLOAT4{ 1.0f / pRenderContext->GetScreenWidth(), 1.0f / pRenderContext->GetScreenHeight(), 0, 0 };
 

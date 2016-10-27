@@ -159,8 +159,7 @@ void Renderer::DeferredLighting(const Camera* pCamera, Scene* pScene)
 			for (auto pointLight : pScene->GetPointLights())
 			{
 				DirectX::XMVECTOR pos = pointLight->GetTranslation();
-				pData[i].m_Position = DirectX::XMFLOAT3{ DirectX::XMVectorGetX(pos), DirectX::XMVectorGetY(pos), DirectX::XMVectorGetZ(pos) };
-				pData[i].m_Radius = pointLight->GetRadiusEnd();
+				pData[i].m_Position_Radius = DirectX::XMFLOAT4{ DirectX::XMVectorGetX(pos), DirectX::XMVectorGetY(pos), DirectX::XMVectorGetZ(pos), pointLight->GetRadiusEnd() };
 
 				i += 1;
 			}
@@ -174,13 +173,14 @@ void Renderer::DeferredLighting(const Camera* pCamera, Scene* pScene)
 			pGfxContext->SetComputeDynamicCbvSrvUav(1, 1, m_VisiblePointLights->GetStagingUAV().GetCpuHandle());
 			m_LightCullingPass->Exec(pGfxContext);
 
+			pGfxContext->ResourceTransitionBarrier(m_VisiblePointLights.get(), D3D12_RESOURCE_STATE_GENERIC_READ);
+
 			pGfxContext->PIXEndEvent();
 		}
 
 		{
 			pGfxContext->PIXBeginEvent(L"TiledShading");
 
-			pGfxContext->ResourceTransitionBarrier(m_VisiblePointLights.get(), D3D12_RESOURCE_STATE_GENERIC_READ);
 			pGfxContext->ResourceTransitionBarrier(RenderableSurfaceManager::GetInstance()->GetColorSurface(m_LightingSurface), D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
 
 			m_TiledShadingPass->Apply(pGfxContext, &m_RenderContext, pScene);

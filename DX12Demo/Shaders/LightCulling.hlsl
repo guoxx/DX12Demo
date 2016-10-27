@@ -12,6 +12,7 @@ struct Constants
 	uint m_NumPointLights;
 	uint m_NumTileX;
 	uint m_NumTileY;
+	uint m_Padding0;
 	float4x4 mInvViewProj;
 	float4 m_InvScreenSize;
 };
@@ -43,7 +44,7 @@ void CSMain(uint3 Gid : SV_GroupID, uint3 GTid : SV_GroupThreadID, uint3 DTid : 
 	uint linearTileId = LinearizeTileId(tileId, g_Constants.m_NumTileX, g_Constants.m_NumTileY);
 	uint linearThreadId = LinearizeThreadId(GTid.xy);
 
-	float nearZ = 0.0f;
+	float nearZ = 0.1f;
 	float farZ = 1.0f;
 	float leftX = (float)tileId.x * LIGHT_CULLING_NUM_THREADS_XY * g_Constants.m_InvScreenSize.x;
 	float rightX = saturate(leftX + LIGHT_CULLING_NUM_THREADS_XY * g_Constants.m_InvScreenSize.x);
@@ -94,6 +95,6 @@ void CSMain(uint3 Gid : SV_GroupID, uint3 GTid : SV_GroupThreadID, uint3 DTid : 
 
 	if (linearThreadId == 0)
 	{
-		g_LightNodes[numVisibleLights].m_LightIndex = LIGHT_NODE_INVALID;
+		g_LightNodes[startOffset + numVisibleLights].m_LightIndex = LIGHT_NODE_INVALID;
 	}
 }

@@ -16,8 +16,7 @@ enum ShadingConfiguration
 
 struct ShapeSphere
 {
-	float3 m_Position;
-	float m_Radius;
+	float4 m_Position_Radius;
 };
 
 struct LightNode

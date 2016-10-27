@@ -50,6 +50,10 @@ public:
 
 	void SetComputeRootDynamicConstantBufferView(uint32_t rootParameterIndex, void* pData, uint32_t sizeInBytes);
 
+	void SetComputeRootStructuredBuffer(uint32_t rootParameterIndex, const DX12StructuredBuffer * pStructuredBuffer);
+
+	void SetComputeRootRWStructuredBuffer(uint32_t rootParameterIndex, const DX12StructuredBuffer * pStructuredBuffer);
+
 	void SetComputeRootDescriptorTable(uint32_t rootParameterIndex, DX12DescriptorHandle baseDescriptorHandle);
 
 	void SetComputeDynamicCbvSrvUav(uint32_t rootParameterIndex, uint32_t offsetInTable, D3D12_CPU_DESCRIPTOR_HANDLE descriptorHandle);

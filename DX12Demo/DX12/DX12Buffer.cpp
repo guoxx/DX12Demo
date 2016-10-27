@@ -22,6 +22,8 @@ DX12IndexBuffer::~DX12IndexBuffer()
 DX12StructuredBuffer::DX12StructuredBuffer(DX12Device * device, uint64_t sizeInBytes, uint64_t alignInBytes, uint64_t strideInBytes, DX12GpuResourceUsage resourceUsage)
 	: DX12GpuResource()
 {
+	D3D12_RESOURCE_STATES initialState = D3D12_RESOURCE_STATE_GENERIC_READ;
+
 	bool bGpuWritable = (resourceUsage & DX12GpuResourceUsage_GpuWritable) != 0;
 	CD3DX12_RESOURCE_DESC resourceDesc = CD3DX12_RESOURCE_DESC::Buffer(D3D12_RESOURCE_ALLOCATION_INFO{ sizeInBytes, alignInBytes });
 	if (bGpuWritable)
@@ -29,7 +31,7 @@ DX12StructuredBuffer::DX12StructuredBuffer(DX12Device * device, uint64_t sizeInB
 		resourceDesc.Flags |= D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
 	}
 
-	InitializeResource(device, resourceUsage, &resourceDesc, D3D12_RESOURCE_STATE_GENERIC_READ);
+	InitializeResource(device, resourceUsage, &resourceDesc, initialState);
 
 	{
 		CD3DX12_SHADER_RESOURCE_VIEW_DESC srvDesc = CD3DX12_SHADER_RESOURCE_VIEW_DESC::BufferView(DXGI_FORMAT_UNKNOWN,

@@ -203,6 +203,16 @@ void DX12GraphicContext::SetComputeRootDynamicConstantBufferView(uint32_t rootPa
 	m_CommandList->SetComputeRootConstantBufferView(rootParameterIndex, GpuVirtualAddress);
 }
 
+void DX12GraphicContext::SetComputeRootStructuredBuffer(uint32_t rootParameterIndex, const DX12StructuredBuffer * pStructuredBuffer)
+{
+	m_CommandList->SetComputeRootShaderResourceView(rootParameterIndex, pStructuredBuffer->GetGpuResource()->GetGPUVirtualAddress());
+}
+
+void DX12GraphicContext::SetComputeRootRWStructuredBuffer(uint32_t rootParameterIndex, const DX12StructuredBuffer * pStructuredBuffer)
+{
+	m_CommandList->SetComputeRootUnorderedAccessView(rootParameterIndex, pStructuredBuffer->GetGpuResource()->GetGPUVirtualAddress());
+}
+
 void DX12GraphicContext::SetComputeRootDescriptorTable(uint32_t rootParameterIndex, DX12DescriptorHandle baseDescriptorHandle)
 {
 	m_CommandList->SetComputeRootDescriptorTable(rootParameterIndex, baseDescriptorHandle.GetGpuHandle());

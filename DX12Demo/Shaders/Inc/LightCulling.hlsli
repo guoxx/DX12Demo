@@ -6,8 +6,7 @@
 
 struct ShapeSphere
 {
-	float3 m_Position;
-	float m_Radius;
+	float4 m_Position_Radius;
 };
 
 struct LightNode
@@ -19,7 +18,7 @@ bool SphereCulling(float3 frustumPoints[8], ShapeSphere sphere)
 {
 	for (uint i = 0; i < 8; ++i)
 	{
-		if (length(frustumPoints[i] - sphere.m_Position) <= sphere.m_Radius)
+		if (length(frustumPoints[i] - sphere.m_Position_Radius.xyz) <= sphere.m_Position_Radius.w)
 		{
 			return false;
 		}
