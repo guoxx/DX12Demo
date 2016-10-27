@@ -166,6 +166,7 @@
     <ClCompile Include="Win10\Win32Application.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="3DEngine\3DEngineDefinition.h" />
     <ClInclude Include="3DEngine\Actor.h" />
     <ClInclude Include="3DEngine\Camera.h" />
     <ClInclude Include="3DEngine\Filters\DirectionalLightFilter2D.h" />

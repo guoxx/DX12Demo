@@ -28,7 +28,7 @@ ConstantBuffer<Constants> g_Constants : register(b0);
 StructuredBuffer<PointLightParam> g_PointLights : register(t0);
 RWStructuredBuffer<LightNode> g_LightNodes: register(u0);
 
-groupshared uint gs_LightListPerTilePtr = 0;
+groupshared uint gs_LightListPerTilePtr;
 groupshared uint gs_LightIdxPerTile[MAX_LIGHT_NODES_PER_TILE];
 
 uint AllocateLightNodeInLDS()
@@ -46,11 +46,17 @@ void CSMain(uint3 Gid : SV_GroupID, uint3 GTid : SV_GroupThreadID, uint3 DTid : 
 	uint linearTileId = LinearizeTileId(tileId, g_Constants.m_NumTileX, g_Constants.m_NumTileY);
 	uint linearThreadId = LinearizeThreadId(GTid.xy);
 
-	float nearZ = 0.1f;
+	if (linearThreadId == 0)
+	{
+		gs_LightListPerTilePtr = 0;
+	}
+	GroupMemoryBarrierWithGroupSync();
+
+	float nearZ = 0.001f;
 	float farZ = 1.0f;
 	float leftX = (float)tileId.x * LIGHT_CULLING_NUM_THREADS_XY * g_Constants.m_InvScreenSize.x;
-	float rightX = saturate(leftX + LIGHT_CULLING_NUM_THREADS_XY * g_Constants.m_InvScreenSize.x);
 	float topY = 1.0f - (float)tileId.y * LIGHT_CULLING_NUM_THREADS_XY * g_Constants.m_InvScreenSize.y;
+	float rightX = saturate(leftX + LIGHT_CULLING_NUM_THREADS_XY * g_Constants.m_InvScreenSize.x);
 	float bottomY = saturate(topY - LIGHT_CULLING_NUM_THREADS_XY * g_Constants.m_InvScreenSize.y);
 	leftX   = leftX   * 2 - 1;
 	rightX  = rightX  * 2 - 1;
@@ -73,10 +79,10 @@ void CSMain(uint3 Gid : SV_GroupID, uint3 GTid : SV_GroupThreadID, uint3 DTid : 
 	}
 
 	float4 frustumPlanes[4];
-	frustumPlanes[0] = PlaneEquation(frustomPointsCS[0], frustomPointsCS[1], float3(0, 0, 0));
-	frustumPlanes[1] = PlaneEquation(frustomPointsCS[1], frustomPointsCS[2], float3(0, 0, 0));
-	frustumPlanes[2] = PlaneEquation(frustomPointsCS[2], frustomPointsCS[3], float3(0, 0, 0));
-	frustumPlanes[3] = PlaneEquation(frustomPointsCS[3], frustomPointsCS[0], float3(0, 0, 0));
+	frustumPlanes[0] = PlaneEquation(float3(0, 0, 0), frustomPointsCS[0], frustomPointsCS[1]);
+	frustumPlanes[1] = PlaneEquation(float3(0, 0, 0), frustomPointsCS[1], frustomPointsCS[2]);
+	frustumPlanes[2] = PlaneEquation(float3(0, 0, 0), frustomPointsCS[2], frustomPointsCS[3]);
+	frustumPlanes[3] = PlaneEquation(float3(0, 0, 0), frustomPointsCS[3], frustomPointsCS[0]);
 
 	uint maxNumLights = min(g_Constants.m_NumPointLights, MAX_LIGHT_NODES_PER_TILE);
 	[loop]

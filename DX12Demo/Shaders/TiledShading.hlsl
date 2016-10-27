@@ -25,7 +25,7 @@ StructuredBuffer<PointLightParam> g_PointLights : register(t0);
 StructuredBuffer<LightNode> g_LightNodes: register(t1);
 RWTexture2D<float4> g_LightingSurface : register(u0);
 
-groupshared uint gs_NumLightsPerTile = 0;
+groupshared uint gs_NumLightsPerTile;
 groupshared uint gs_LightIdxPerTile[MAX_LIGHT_NODES_PER_TILE];
 
 [numthreads(LIGHT_CULLING_NUM_THREADS_XY, LIGHT_CULLING_NUM_THREADS_XY, 1)]
@@ -35,6 +35,12 @@ void CSMain(uint3 Gid : SV_GroupID, uint3 GTid : SV_GroupThreadID, uint3 DTid : 
 	uint2 tileId = Gid.xy;
 	uint linearTileId = LinearizeTileId(tileId, g_Constants.m_NumTileX, g_Constants.m_NumTileY);
 	uint linearThreadId = LinearizeThreadId(GTid.xy);
+
+	if (linearThreadId == 0)
+	{
+		gs_NumLightsPerTile = 0;
+	}
+	GroupMemoryBarrierWithGroupSync();
 
 	uint startOffset = linearTileId * MAX_LIGHT_NODES_PER_TILE;
 
@@ -56,5 +62,5 @@ void CSMain(uint3 Gid : SV_GroupID, uint3 GTid : SV_GroupThreadID, uint3 DTid : 
 
 	GroupMemoryBarrierWithGroupSync();
 
-	g_LightingSurface[DTid.xy] = float4(gs_NumLightsPerTile, 0, 0, 1);
+	g_LightingSurface[DTid.xy] = float4(gs_NumLightsPerTile * 0.25f, 0, 0, 1);
 }
