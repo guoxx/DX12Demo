@@ -11,7 +11,7 @@
   <ItemDefinitionGroup>
     <CustomBuild>
       <Message>Compile Shader %(FullPath)</Message>
-      <AdditionalInputs>$(ProjectDir)Shaders\Inc\BRDF.hlsli;$(ProjectDir)Shaders\Inc\Common.hlsli;$(ProjectDir)Shaders\Inc\PointLight.hlsli;$(ProjectDir)Shaders\Inc\LightCulling.hlsli;%(AdditionalInputs)</AdditionalInputs>
+      <AdditionalInputs>$(ProjectDir)Shaders\Inc\HLSLShared.h;$(ProjectDir)Shaders\Inc\BRDF.hlsli;$(ProjectDir)Shaders\Inc\Common.hlsli;$(ProjectDir)Shaders\Inc\PointLight.hlsli;$(ProjectDir)Shaders\Inc\LightCulling.hlsli;%(AdditionalInputs)</AdditionalInputs>
       <Outputs>$(ProjectDir)Shaders\CompiledShaders\%(Filename)_VS.h;$(ProjectDir)Shaders\CompiledShaders\%(Filename)_GS.h;$(ProjectDir)Shaders\CompiledShaders\%(Filename)_PS.h;$(ProjectDir)Shaders\CompiledShaders\%(Filename)_CS.h;%(Outputs)</Outputs>
     </CustomBuild>
   </ItemDefinitionGroup>
