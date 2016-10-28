@@ -2,10 +2,6 @@
 #define __HLSL_SHARED_H__
 
 #ifdef __cplusplus
-namespace HLSL {
-#endif
-
-#ifdef __cplusplus
 	using float4x4 = DirectX::XMFLOAT4X4;
 	using float4 = DirectX::XMFLOAT4;
 	using float3 = DirectX::XMFLOAT3;
@@ -18,8 +14,13 @@ namespace HLSL {
 	using uint4 = DirectX::XMUINT4;
 	using uint3 = DirectX::XMUINT3;
 	using uint2 = DirectX::XMUINT2;
+	using uint = uint32_t;
 #endif
- 
+
+#ifdef __cplusplus
+namespace HLSL {
+#endif
+
 const static float PI           = 3.141592654f;
 const static float DIVPI		= 0.318309886f;
 
@@ -37,6 +38,17 @@ struct PointLight
 struct LightNode
 {
 	int			m_LightIndex;
+};
+
+struct TiledShadingConstants
+{
+	uint m_NumTileX;
+	uint m_NumTileY;
+	uint m_ScreenWidth;
+	uint m_ScreenHeight;
+	float4 m_CameraPosition;
+	float4x4 m_mInvView;
+	float4x4 m_mInvProj;
 };
 
 #ifdef __cplusplus

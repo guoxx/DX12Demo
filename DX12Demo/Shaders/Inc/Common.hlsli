@@ -59,15 +59,15 @@ GBuffer GBufferDecode(Texture2D<float4> RT0, Texture2D<float4> RT1, Texture2D<fl
 {
 	GBuffer gbuffer;
 
-	float4 Diffuse = RT0.Sample(samp, UV);
-	float4 Specular = RT1.Sample(samp, UV);
-	float4 Normal_Roughness = RT2.Sample(samp, UV);
+	float4 Diffuse = RT0.SampleLevel(samp, UV, 0);
+	float4 Specular = RT1.SampleLevel(samp, UV, 0);
+	float4 Normal_Roughness = RT2.SampleLevel(samp, UV, 0);
 	gbuffer.Diffuse = Diffuse.xyz;
 	gbuffer.Specular = Specular.xyz;
 	gbuffer.Normal = Normal_Roughness.xyz * 2.0f - 1.0f;
 	gbuffer.Roughness = Normal_Roughness.w;
 
-	gbuffer.Depth = DepthBuffer.Sample(samp, UV);
+	gbuffer.Depth = DepthBuffer.SampleLevel(samp, UV, 0);
 
 	// Assume DX style texture coordinate
 	float3 ndcPos = float3(UV.x * 2.0f - 1.0f, (1.0f - UV.y) * 2.0f - 1.0f, gbuffer.Depth);

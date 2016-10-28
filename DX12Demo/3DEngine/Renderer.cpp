@@ -192,14 +192,26 @@ void Renderer::DeferredLighting(const Camera* pCamera, Scene* pScene)
 		{
 			pGfxContext->PIXBeginEvent(L"TiledShading");
 
+			pGfxContext->ResourceTransitionBarrier(RenderableSurfaceManager::GetInstance()->GetColorSurface(m_SceneGBuffer0), D3D12_RESOURCE_STATE_GENERIC_READ);
+			pGfxContext->ResourceTransitionBarrier(RenderableSurfaceManager::GetInstance()->GetColorSurface(m_SceneGBuffer1), D3D12_RESOURCE_STATE_GENERIC_READ);
+			pGfxContext->ResourceTransitionBarrier(RenderableSurfaceManager::GetInstance()->GetColorSurface(m_SceneGBuffer2), D3D12_RESOURCE_STATE_GENERIC_READ);
+			pGfxContext->ResourceTransitionBarrier(RenderableSurfaceManager::GetInstance()->GetDepthSurface(m_SceneDepthSurface), D3D12_RESOURCE_STATE_GENERIC_READ);
 			pGfxContext->ResourceTransitionBarrier(RenderableSurfaceManager::GetInstance()->GetColorSurface(m_LightingSurface), D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
 
 			m_TiledShadingPass->Apply(pGfxContext, &m_RenderContext, pScene);
 			pGfxContext->SetComputeRootStructuredBuffer(1, m_AllPointLightForCulling.get());
 			pGfxContext->SetComputeRootStructuredBuffer(2, m_VisiblePointLights.get());
-			pGfxContext->SetComputeDynamicCbvSrvUav(3, 0, RenderableSurfaceManager::GetInstance()->GetColorSurface(m_LightingSurface)->GetStagingUAV().GetCpuHandle());
+			pGfxContext->SetComputeDynamicCbvSrvUav(3, 0, RenderableSurfaceManager::GetInstance()->GetColorSurface(m_SceneGBuffer0)->GetStagingSRV().GetCpuHandle());
+			pGfxContext->SetComputeDynamicCbvSrvUav(3, 1, RenderableSurfaceManager::GetInstance()->GetColorSurface(m_SceneGBuffer1)->GetStagingSRV().GetCpuHandle());
+			pGfxContext->SetComputeDynamicCbvSrvUav(3, 2, RenderableSurfaceManager::GetInstance()->GetColorSurface(m_SceneGBuffer2)->GetStagingSRV().GetCpuHandle());
+			pGfxContext->SetComputeDynamicCbvSrvUav(3, 3, RenderableSurfaceManager::GetInstance()->GetDepthSurface(m_SceneDepthSurface)->GetStagingSRV().GetCpuHandle());
+			pGfxContext->SetComputeDynamicCbvSrvUav(3, 4, RenderableSurfaceManager::GetInstance()->GetColorSurface(m_LightingSurface)->GetStagingUAV().GetCpuHandle());
 			m_TiledShadingPass->Exec(pGfxContext);
 
+			pGfxContext->ResourceTransitionBarrier(RenderableSurfaceManager::GetInstance()->GetColorSurface(m_SceneGBuffer0), D3D12_RESOURCE_STATE_RENDER_TARGET);
+			pGfxContext->ResourceTransitionBarrier(RenderableSurfaceManager::GetInstance()->GetColorSurface(m_SceneGBuffer1), D3D12_RESOURCE_STATE_RENDER_TARGET);
+			pGfxContext->ResourceTransitionBarrier(RenderableSurfaceManager::GetInstance()->GetColorSurface(m_SceneGBuffer2), D3D12_RESOURCE_STATE_RENDER_TARGET);
+			pGfxContext->ResourceTransitionBarrier(RenderableSurfaceManager::GetInstance()->GetDepthSurface(m_SceneDepthSurface), D3D12_RESOURCE_STATE_DEPTH_WRITE);
 			pGfxContext->ResourceTransitionBarrier(RenderableSurfaceManager::GetInstance()->GetColorSurface(m_LightingSurface), D3D12_RESOURCE_STATE_RENDER_TARGET);
 
 			pGfxContext->PIXEndEvent();
