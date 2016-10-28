@@ -64,25 +64,31 @@ void CSMain(uint3 Gid : SV_GroupID, uint3 GTid : SV_GroupThreadID, uint3 DTid : 
 	bottomY = bottomY * 2 - 1;
 
 	// frustom points in ndc space
-	float3 frustumPoints[4];
-	frustumPoints[0] = float3( leftX,  bottomY, farZ );
-	frustumPoints[1] = float3( rightX, bottomY, farZ );
-	frustumPoints[2] = float3( rightX, topY,    farZ );
-	frustumPoints[3] = float3( leftX,  topY,    farZ );
+	float3 frustumPoints[8];
+	frustumPoints[0] = float3( leftX,  bottomY, nearZ );
+	frustumPoints[1] = float3( rightX, bottomY, nearZ );
+	frustumPoints[2] = float3( rightX, topY,    nearZ );
+	frustumPoints[3] = float3( leftX,  topY,    nearZ );
+	frustumPoints[4] = float3( leftX,  bottomY, farZ );
+	frustumPoints[5] = float3( rightX, bottomY, farZ );
+	frustumPoints[6] = float3( rightX, topY,    farZ );
+	frustumPoints[7] = float3( leftX,  topY,    farZ );
 
-	float3 frustomPointsCS[4];
+	float3 frustomPointsCS[8];
 	[loop]
-	for (int frustumPtIdx = 0; frustumPtIdx < 4; ++frustumPtIdx)
+	for (int frustumPtIdx = 0; frustumPtIdx < 8; ++frustumPtIdx)
 	{
 		float4 p = mul(float4(frustumPoints[frustumPtIdx], 1.0f), g_Constants.m_mInvProj);
 		frustomPointsCS[frustumPtIdx] = p.xyz / p.w;
 	}
 
-	float4 frustumPlanes[4];
-	frustumPlanes[0] = PlaneEquation(float3(0, 0, 0), frustomPointsCS[0], frustomPointsCS[1]);
-	frustumPlanes[1] = PlaneEquation(float3(0, 0, 0), frustomPointsCS[1], frustomPointsCS[2]);
-	frustumPlanes[2] = PlaneEquation(float3(0, 0, 0), frustomPointsCS[2], frustomPointsCS[3]);
-	frustumPlanes[3] = PlaneEquation(float3(0, 0, 0), frustomPointsCS[3], frustomPointsCS[0]);
+	float4 frustumPlanes[6];
+	frustumPlanes[0] = PlaneEquation(frustomPointsCS[0], frustomPointsCS[3], frustomPointsCS[4]); // left
+	frustumPlanes[1] = PlaneEquation(frustomPointsCS[5], frustomPointsCS[6], frustomPointsCS[1]); // right
+	frustumPlanes[2] = PlaneEquation(frustomPointsCS[1], frustomPointsCS[2], frustomPointsCS[0]); // near
+	frustumPlanes[3] = PlaneEquation(frustomPointsCS[4], frustomPointsCS[7], frustomPointsCS[5]); // far
+	frustumPlanes[4] = PlaneEquation(frustomPointsCS[2], frustomPointsCS[6], frustomPointsCS[3]); // top
+	frustumPlanes[5] = PlaneEquation(frustomPointsCS[5], frustomPointsCS[1], frustomPointsCS[4]); // bottom
 
 	uint maxNumLights = min(g_Constants.m_NumPointLights, MAX_LIGHT_NODES_PER_TILE);
 	[loop]
@@ -104,7 +110,7 @@ void CSMain(uint3 Gid : SV_GroupID, uint3 GTid : SV_GroupThreadID, uint3 DTid : 
 	uint startOffset = linearTileId * MAX_LIGHT_NODES_PER_TILE;
 	uint numVisibleLights = gs_LightListPerTilePtr;
 	[loop]
-	for (uint visLightIdx = 0; visLightIdx < numVisibleLights; visLightIdx += NUM_THREADS_PER_LIGHT_CULLING_TILE)
+	for (uint visLightIdx = linearThreadId; visLightIdx < numVisibleLights; visLightIdx += NUM_THREADS_PER_LIGHT_CULLING_TILE)
 	{
 		uint offset = startOffset + visLightIdx;
 		g_LightNodes[offset].m_LightIndex = gs_LightIdxPerTile[visLightIdx];

@@ -23,9 +23,9 @@ float4 PlaneEquation(float3 p0, float3 p1, float3 p2)
 	return float4(n, t);
 }
 
-bool SphereCulling(float4 frustumPlanes[4], float3 center, float radius)
+bool SphereCulling(float4 frustumPlanes[6], float3 center, float radius)
 {
-	for (uint i = 0; i < 4; ++i)
+	for (uint i = 0; i < 6; ++i)
 	{
 		float dis = dot(frustumPlanes[i].xyz, center) + frustumPlanes[i].w;
 		if (dis > radius)
