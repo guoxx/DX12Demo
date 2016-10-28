@@ -1,5 +1,6 @@
 #include "Inc/Common.hlsli"
 #include "Inc/LightCulling.hlsli"
+#include "Inc/PointLight.hlsli"
 
 #define RootSigDeclaration \
 RootSigBegin \
@@ -19,13 +20,8 @@ struct Constants
 	float4 m_InvScreenSize;
 };
 
-struct PointLightParam
-{
-	struct ShapeSphere m_Shape;
-};
-
 ConstantBuffer<Constants> g_Constants : register(b0);
-StructuredBuffer<PointLightParam> g_PointLights : register(t0);
+StructuredBuffer<PointLight> g_PointLights : register(t0);
 RWStructuredBuffer<LightNode> g_LightNodes: register(u0);
 
 groupshared uint gs_LightListPerTilePtr;
@@ -94,9 +90,9 @@ void CSMain(uint3 Gid : SV_GroupID, uint3 GTid : SV_GroupThreadID, uint3 DTid : 
 	[loop]
 	for (uint lightIdx = linearThreadId; lightIdx < maxNumLights; lightIdx += NUM_THREADS_PER_LIGHT_CULLING_TILE)
 	{
-		float3 lightPositionWS = g_PointLights[lightIdx].m_Shape.m_Position_Radius.xyz;
+		float3 lightPositionWS = g_PointLights[lightIdx].m_Position.xyz;
 		float3 lightPositionCS = mul(float4(lightPositionWS, 1.0f), g_Constants.m_mView).xyz;
-		float lightRadius = g_PointLights[lightIdx].m_Shape.m_Position_Radius.w;
+		float lightRadius = g_PointLights[lightIdx].m_RadiusParam.y;
 
 		if (!SphereCulling(frustumPlanes, lightPositionCS, lightRadius))
 		{

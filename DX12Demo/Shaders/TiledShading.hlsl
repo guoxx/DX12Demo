@@ -1,5 +1,6 @@
 #include "Inc/Common.hlsli"
 #include "Inc/LightCulling.hlsli"
+#include "Inc/PointLight.hlsli"
 
 #define RootSigDeclaration \
 RootSigBegin \
@@ -15,13 +16,8 @@ struct Constants
 	uint m_NumTileY;
 };
 
-struct PointLightParam
-{
-	struct ShapeSphere m_Shape;
-};
-
 ConstantBuffer<Constants> g_Constants : register(b0);
-StructuredBuffer<PointLightParam> g_PointLights : register(t0);
+StructuredBuffer<PointLight> g_PointLights : register(t0);
 StructuredBuffer<LightNode> g_LightNodes: register(t1);
 RWTexture2D<float4> g_LightingSurface : register(u0);
 

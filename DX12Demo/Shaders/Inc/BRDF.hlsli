@@ -2,9 +2,6 @@
 // Vis = G / (4*NoL*NoV)
 
 
-const static float PI           = 3.141592654f;
-const static float DIVPI		= 0.318309886f;
-
 // ----
 // copy from UE4
 // Clamp the base, so it's never <= 0.0f (INF/NaN).

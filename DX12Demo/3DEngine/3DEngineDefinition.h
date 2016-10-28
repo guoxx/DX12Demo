@@ -13,13 +13,3 @@ enum ShadingConfiguration
 #define MAX_LIGHT_NODES_PER_TILE 128
 #define MAX_POINT_LIGHTS_PER_FRAME 1024
 #define LIGHT_NODE_INVALID 0x7FFFFFFF
-
-struct ShapeSphere
-{
-	float4 m_Position_Radius;
-};
-
-struct LightNode
-{
-	int m_LightIndex;
-};

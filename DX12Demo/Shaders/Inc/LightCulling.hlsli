@@ -3,17 +3,6 @@
 #define MAX_LIGHT_NODES_PER_TILE 128
 #define LIGHT_NODE_INVALID 0x7FFFFFFF
 
-
-struct ShapeSphere
-{
-	float4 m_Position_Radius;
-};
-
-struct LightNode
-{
-	int m_LightIndex;
-};
-
 float4 PlaneEquation(float3 p0, float3 p1, float3 p2)
 {
 	float3 v0 = p1 - p0;

@@ -39,10 +39,10 @@ Renderer::Renderer(GFX_HWND hwnd, int32_t width, int32_t height)
 	uint32_t numTileX = (m_Width + LIGHT_CULLING_NUM_THREADS_XY - 1) / LIGHT_CULLING_NUM_THREADS_XY;
 	uint32_t numTileY = (m_Height + LIGHT_CULLING_NUM_THREADS_XY - 1) / LIGHT_CULLING_NUM_THREADS_XY;
 	m_AllPointLightForCulling = std::make_shared<DX12StructuredBuffer>(pDevice,
-		sizeof(ShapeSphere) * MAX_POINT_LIGHTS_PER_FRAME, 0, sizeof(ShapeSphere),
+		sizeof(HLSL::PointLight) * MAX_POINT_LIGHTS_PER_FRAME, 0, sizeof(HLSL::PointLight),
 		DX12GpuResourceUsage_CpuWrite_GpuRead);
 	m_VisiblePointLights = std::make_shared<DX12StructuredBuffer>(pDevice,
-		sizeof(LightNode) * numTileX * numTileY * MAX_LIGHT_NODES_PER_TILE, 0, sizeof(LightNode),
+		sizeof(HLSL::LightNode) * numTileX * numTileY * MAX_LIGHT_NODES_PER_TILE, 0, sizeof(HLSL::LightNode),
 		DX12GpuResourceUsage_GpuReadWrite);
 
 	m_LightCullingPass = std::make_shared<LightCullingPass>(pDevice);
@@ -152,14 +152,25 @@ void Renderer::DeferredLighting(const Camera* pCamera, Scene* pScene)
 		{
 			pGfxContext->PIXBeginEvent(L"LightCulling");
 
-			ShapeSphere* pData;
+			HLSL::PointLight* pData;
 			m_AllPointLightForCulling->MapResource(0, (void**)&pData);
 
 			int i = 0;
 			for (auto pointLight : pScene->GetPointLights())
 			{
-				DirectX::XMVECTOR pos = pointLight->GetTranslation();
-				pData[i].m_Position_Radius = DirectX::XMFLOAT4{ DirectX::XMVectorGetX(pos), DirectX::XMVectorGetY(pos), DirectX::XMVectorGetZ(pos), pointLight->GetRadiusEnd() };
+				DirectX::XMStoreFloat4(&pData[i].m_Position, pointLight->GetTranslation());
+				pData[i].m_RadiusParam = DirectX::XMFLOAT4{ pointLight->GetRadiusStart(), pointLight->GetRadiusEnd(), 0, 0 };
+				pData[i].m_Intensity = pointLight->GetIntensity();
+				for (int face = 0; face < 6; ++face)
+				{
+					DirectX::XMMATRIX mLightView;
+					DirectX::XMMATRIX mLightProj;
+					pointLight->GetViewAndProjMatrix(nullptr, (PointLight::AXIS)face, DX12PointLightShadowMapSize, &mLightView, &mLightProj);
+					DirectX::XMMATRIX mLightViewProj = DirectX::XMMatrixMultiply(mLightView, mLightProj);
+					DirectX::XMStoreFloat4x4(&pData[i].m_mViewProj[face], DirectX::XMMatrixTranspose(mLightViewProj));
+				}
+				// TODO: FIXME
+				pData[i].m_FirstShadowMapTexId = DirectX::XMINT4{ -1, 0, 0, 0 };
 
 				i += 1;
 			}

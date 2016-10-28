@@ -241,6 +241,7 @@
     <ClInclude Include="DX12\Texture\TextureLoaderTga.h" />
     <ClInclude Include="DX12\Texture\tga_reader.h" />
     <ClInclude Include="DXSample.h" />
+    <ClInclude Include="Shaders\Inc\HLSLShared.h" />
     <ClInclude Include="StepTimer.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Utils\Heaponly.h" />

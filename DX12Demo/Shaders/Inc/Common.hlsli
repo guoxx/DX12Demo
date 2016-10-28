@@ -1,3 +1,4 @@
+#include "HLSLShared.h"
 #include "BRDF.hlsli"
 
 

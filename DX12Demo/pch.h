@@ -44,11 +44,7 @@
 #include "Utils/Nonmovable.h"
 #include "Utils/Helpers.h"
 
-
-using float4x4 = DirectX::XMFLOAT4X4;
-using float4 = DirectX::XMFLOAT4;
-using float3 = DirectX::XMFLOAT3;
-using float2 = DirectX::XMFLOAT2;
+#include "Shaders/Inc/HLSLShared.h"
 
 #define ConstantBuffer(typename) \
 struct __declspec(align(16)) typename
