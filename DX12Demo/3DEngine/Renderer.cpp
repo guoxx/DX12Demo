@@ -38,8 +38,11 @@ Renderer::Renderer(GFX_HWND hwnd, int32_t width, int32_t height)
 
 	uint32_t numTileX = (m_Width + LIGHT_CULLING_NUM_THREADS_XY - 1) / LIGHT_CULLING_NUM_THREADS_XY;
 	uint32_t numTileY = (m_Height + LIGHT_CULLING_NUM_THREADS_XY - 1) / LIGHT_CULLING_NUM_THREADS_XY;
-	m_AllPointLightForCulling = std::make_shared<DX12StructuredBuffer>(pDevice,
+	m_AllPointLights = std::make_shared<DX12StructuredBuffer>(pDevice,
 		sizeof(HLSL::PointLight) * MAX_POINT_LIGHTS_PER_FRAME, 0, sizeof(HLSL::PointLight),
+		DX12GpuResourceUsage_CpuWrite_GpuRead);
+	m_AllDirectionalLights = std::make_shared<DX12StructuredBuffer>(pDevice,
+		sizeof(HLSL::DirectionalLight) * MAX_DIRECTIONAL_LIGHTS_PER_FRAME, 0, sizeof(HLSL::DirectionalLight),
 		DX12GpuResourceUsage_CpuWrite_GpuRead);
 	m_VisiblePointLights = std::make_shared<DX12StructuredBuffer>(pDevice,
 		sizeof(HLSL::LightNode) * numTileX * numTileY * MAX_LIGHT_NODES_PER_TILE, 0, sizeof(HLSL::LightNode),
@@ -152,35 +155,60 @@ void Renderer::DeferredLighting(const Camera* pCamera, Scene* pScene)
 		{
 			pGfxContext->PIXBeginEvent(L"LightCulling");
 
-			HLSL::PointLight* pData;
-			m_AllPointLightForCulling->MapResource(0, (void**)&pData);
+			int32_t firstTextureId = 0;
 
-			int i = 0;
-			for (auto pointLight : pScene->GetPointLights())
+			assert(pScene->GetDirectionalLights().size() <= MAX_DIRECTIONAL_LIGHTS_PER_FRAME);
+			assert(pScene->GetPointLights().size() <= MAX_POINT_LIGHTS_PER_FRAME);
+
+			// upload directional lights data
+			HLSL::DirectionalLight* pDirLightData;
+			m_AllDirectionalLights->MapResource(0, (void**)&pDirLightData);
+			for (int i = 0; i < pScene->GetDirectionalLights().size(); ++i)
 			{
-				DirectX::XMStoreFloat4(&pData[i].m_Position, pointLight->GetTranslation());
-				pData[i].m_RadiusParam = DirectX::XMFLOAT4{ pointLight->GetRadiusStart(), pointLight->GetRadiusEnd(), 0, 0 };
-				pData[i].m_Intensity = pointLight->GetIntensity();
+				auto directionalLight = pScene->GetDirectionalLights()[i];
+
+				DirectX::XMFLOAT4 dir = directionalLight->GetDirection();
+				pDirLightData[i].m_Direction = DirectX::XMFLOAT3{ dir.x, dir.y, dir.z };
+				pDirLightData[i].m_Irradiance = directionalLight->GetIrradiance();
+
+				DirectX::XMMATRIX mLightView;
+				DirectX::XMMATRIX mLightProj;
+				directionalLight->GetViewAndProjMatrix(m_RenderContext.GetCamera(), &mLightView, &mLightProj);
+				DirectX::XMStoreFloat4x4(&pDirLightData[i].m_mViewProj, DirectX::XMMatrixTranspose(DirectX::XMMatrixMultiply(mLightView, mLightProj)));
+
+				pDirLightData[i].m_ShadowMapTexId = firstTextureId;
+				firstTextureId += 1;
+			}
+			m_AllDirectionalLights->UnmapResource(0);
+
+			// upload point light data
+			HLSL::PointLight* pPointLightData;
+			m_AllPointLights->MapResource(0, (void**)&pPointLightData);
+			for (int i = 0; i < pScene->GetPointLights().size(); ++i)
+			{
+				auto pointLight = pScene->GetPointLights()[i];
+
+				DirectX::XMStoreFloat4(&pPointLightData[i].m_Position, pointLight->GetTranslation());
+				pPointLightData[i].m_RadiusParam = DirectX::XMFLOAT4{ pointLight->GetRadiusStart(), pointLight->GetRadiusEnd(), 0, 0 };
+				pPointLightData[i].m_Intensity = pointLight->GetIntensity();
 				for (int face = 0; face < 6; ++face)
 				{
 					DirectX::XMMATRIX mLightView;
 					DirectX::XMMATRIX mLightProj;
 					pointLight->GetViewAndProjMatrix(nullptr, (PointLight::AXIS)face, DX12PointLightShadowMapSize, &mLightView, &mLightProj);
 					DirectX::XMMATRIX mLightViewProj = DirectX::XMMatrixMultiply(mLightView, mLightProj);
-					DirectX::XMStoreFloat4x4(&pData[i].m_mViewProj[face], DirectX::XMMatrixTranspose(mLightViewProj));
+					DirectX::XMStoreFloat4x4(&pPointLightData[i].m_mViewProj[face], DirectX::XMMatrixTranspose(mLightViewProj));
 				}
-				// TODO: FIXME
-				pData[i].m_FirstShadowMapTexId = DirectX::XMINT4{ -1, 0, 0, 0 };
 
-				i += 1;
+				pPointLightData[i].m_FirstShadowMapTexId = firstTextureId;
+				firstTextureId += 6;
 			}
-
-			m_AllPointLightForCulling->UnmapResource(0);
+			m_AllPointLights->UnmapResource(0);
 
 			pGfxContext->ResourceTransitionBarrier(m_VisiblePointLights.get(), D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
 
 			m_LightCullingPass->Apply(pGfxContext, &m_RenderContext, pScene);
-			pGfxContext->SetComputeRootStructuredBuffer(1, m_AllPointLightForCulling.get());
+			pGfxContext->SetComputeRootStructuredBuffer(1, m_AllPointLights.get());
 			pGfxContext->SetComputeRootRWStructuredBuffer(2, m_VisiblePointLights.get());
 			m_LightCullingPass->Exec(pGfxContext);
 
@@ -198,14 +226,49 @@ void Renderer::DeferredLighting(const Camera* pCamera, Scene* pScene)
 			pGfxContext->ResourceTransitionBarrier(RenderableSurfaceManager::GetInstance()->GetDepthSurface(m_SceneDepthSurface), D3D12_RESOURCE_STATE_GENERIC_READ);
 			pGfxContext->ResourceTransitionBarrier(RenderableSurfaceManager::GetInstance()->GetColorSurface(m_LightingSurface), D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
 
+			for (int i = 0; i < pScene->GetDirectionalLights().size(); ++i)
+			{
+				auto directionalLight = pScene->GetDirectionalLights()[i];
+				DX12DepthSurface* pShadowMapForDirLight = m_RenderContext.AcquireDepthSurfaceForDirectionalLight(directionalLight.get());
+				pGfxContext->ResourceTransitionBarrier(pShadowMapForDirLight, D3D12_RESOURCE_STATE_GENERIC_READ);
+			}
+			for (int i = 0; i < pScene->GetPointLights().size(); ++i)
+			{
+				auto pointLight = pScene->GetPointLights()[i];
+				auto pShadowMapsForPointLight = m_RenderContext.AcquireDepthSurfaceForPointLight(pointLight.get());
+				for (int j = 0; j < pShadowMapsForPointLight.size(); ++j)
+				{
+					pGfxContext->ResourceTransitionBarrier(pShadowMapsForPointLight[j], D3D12_RESOURCE_STATE_GENERIC_READ);
+				}
+			}
+
 			m_TiledShadingPass->Apply(pGfxContext, &m_RenderContext, pScene);
-			pGfxContext->SetComputeRootStructuredBuffer(1, m_AllPointLightForCulling.get());
-			pGfxContext->SetComputeRootStructuredBuffer(2, m_VisiblePointLights.get());
-			pGfxContext->SetComputeDynamicCbvSrvUav(3, 0, RenderableSurfaceManager::GetInstance()->GetColorSurface(m_SceneGBuffer0)->GetStagingSRV().GetCpuHandle());
-			pGfxContext->SetComputeDynamicCbvSrvUav(3, 1, RenderableSurfaceManager::GetInstance()->GetColorSurface(m_SceneGBuffer1)->GetStagingSRV().GetCpuHandle());
-			pGfxContext->SetComputeDynamicCbvSrvUav(3, 2, RenderableSurfaceManager::GetInstance()->GetColorSurface(m_SceneGBuffer2)->GetStagingSRV().GetCpuHandle());
-			pGfxContext->SetComputeDynamicCbvSrvUav(3, 3, RenderableSurfaceManager::GetInstance()->GetDepthSurface(m_SceneDepthSurface)->GetStagingSRV().GetCpuHandle());
-			pGfxContext->SetComputeDynamicCbvSrvUav(3, 4, RenderableSurfaceManager::GetInstance()->GetColorSurface(m_LightingSurface)->GetStagingUAV().GetCpuHandle());
+			pGfxContext->SetComputeRootStructuredBuffer(1, m_AllDirectionalLights.get());
+			pGfxContext->SetComputeRootStructuredBuffer(2, m_AllPointLights.get());
+			pGfxContext->SetComputeRootStructuredBuffer(3, m_VisiblePointLights.get());
+			pGfxContext->SetComputeDynamicCbvSrvUav(4, 0, RenderableSurfaceManager::GetInstance()->GetColorSurface(m_SceneGBuffer0)->GetStagingSRV().GetCpuHandle());
+			pGfxContext->SetComputeDynamicCbvSrvUav(4, 1, RenderableSurfaceManager::GetInstance()->GetColorSurface(m_SceneGBuffer1)->GetStagingSRV().GetCpuHandle());
+			pGfxContext->SetComputeDynamicCbvSrvUav(4, 2, RenderableSurfaceManager::GetInstance()->GetColorSurface(m_SceneGBuffer2)->GetStagingSRV().GetCpuHandle());
+			pGfxContext->SetComputeDynamicCbvSrvUav(4, 3, RenderableSurfaceManager::GetInstance()->GetDepthSurface(m_SceneDepthSurface)->GetStagingSRV().GetCpuHandle());
+			pGfxContext->SetComputeDynamicCbvSrvUav(4, 4, RenderableSurfaceManager::GetInstance()->GetColorSurface(m_LightingSurface)->GetStagingUAV().GetCpuHandle());
+			int firstTextureId = 0;
+			for (int i = 0; i < pScene->GetDirectionalLights().size(); ++i)
+			{
+				auto directionalLight = pScene->GetDirectionalLights()[i];
+				DX12DepthSurface* pShadowMapForDirLight = m_RenderContext.AcquireDepthSurfaceForDirectionalLight(directionalLight.get());
+				pGfxContext->SetComputeDynamicCbvSrvUav(5, firstTextureId, pShadowMapForDirLight->GetStagingSRV().GetCpuHandle());
+				firstTextureId += 1;
+			}
+			for (int i = 0; i < pScene->GetPointLights().size(); ++i)
+			{
+				auto pointLight = pScene->GetPointLights()[i];
+				auto pShadowMapsForPointLight = m_RenderContext.AcquireDepthSurfaceForPointLight(pointLight.get());
+				for (int j = 0; j < pShadowMapsForPointLight.size(); ++j)
+				{
+					pGfxContext->SetComputeDynamicCbvSrvUav(5, firstTextureId, pShadowMapsForPointLight[j]->GetStagingSRV().GetCpuHandle());
+					firstTextureId += 1;
+				}
+			}
 			m_TiledShadingPass->Exec(pGfxContext);
 
 			pGfxContext->ResourceTransitionBarrier(RenderableSurfaceManager::GetInstance()->GetColorSurface(m_SceneGBuffer0), D3D12_RESOURCE_STATE_RENDER_TARGET);
@@ -213,6 +276,22 @@ void Renderer::DeferredLighting(const Camera* pCamera, Scene* pScene)
 			pGfxContext->ResourceTransitionBarrier(RenderableSurfaceManager::GetInstance()->GetColorSurface(m_SceneGBuffer2), D3D12_RESOURCE_STATE_RENDER_TARGET);
 			pGfxContext->ResourceTransitionBarrier(RenderableSurfaceManager::GetInstance()->GetDepthSurface(m_SceneDepthSurface), D3D12_RESOURCE_STATE_DEPTH_WRITE);
 			pGfxContext->ResourceTransitionBarrier(RenderableSurfaceManager::GetInstance()->GetColorSurface(m_LightingSurface), D3D12_RESOURCE_STATE_RENDER_TARGET);
+
+			for (int i = 0; i < pScene->GetDirectionalLights().size(); ++i)
+			{
+				auto directionalLight = pScene->GetDirectionalLights()[i];
+				DX12DepthSurface* pShadowMapForDirLight = m_RenderContext.AcquireDepthSurfaceForDirectionalLight(directionalLight.get());
+				pGfxContext->ResourceTransitionBarrier(pShadowMapForDirLight, D3D12_RESOURCE_STATE_DEPTH_WRITE);
+			}
+			for (int i = 0; i < pScene->GetPointLights().size(); ++i)
+			{
+				auto pointLight = pScene->GetPointLights()[i];
+				auto pShadowMapsForPointLight = m_RenderContext.AcquireDepthSurfaceForPointLight(pointLight.get());
+				for (int j = 0; j < pShadowMapsForPointLight.size(); ++j)
+				{
+					pGfxContext->ResourceTransitionBarrier(pShadowMapsForPointLight[j], D3D12_RESOURCE_STATE_DEPTH_WRITE);
+				}
+			}
 
 			pGfxContext->PIXEndEvent();
 		}

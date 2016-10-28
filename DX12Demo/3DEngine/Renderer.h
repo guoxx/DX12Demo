@@ -55,7 +55,8 @@ private:
 
 	std::shared_ptr<LightCullingPass> m_LightCullingPass;
 	std::shared_ptr<TiledShadingPass> m_TiledShadingPass;
-	std::shared_ptr<DX12StructuredBuffer> m_AllPointLightForCulling;
+	std::shared_ptr<DX12StructuredBuffer> m_AllPointLights;
+	std::shared_ptr<DX12StructuredBuffer> m_AllDirectionalLights;
 	std::shared_ptr<DX12StructuredBuffer> m_VisiblePointLights;
 };
 

@@ -112,5 +112,5 @@ private:
 	};
 
 	CpuDescriptorHandlesCache m_DescriptorHandlesCache[DX12MaxSlotsPerShader];
-	uint32_t m_DynamicCbvSrvUavDescriptorsTableDirty;
+	uint64_t m_DynamicCbvSrvUavDescriptorsTableDirty;
 };

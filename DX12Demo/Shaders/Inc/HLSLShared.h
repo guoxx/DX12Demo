@@ -17,6 +17,8 @@
 	using uint = uint32_t;
 #endif
 
+#define MAX_DIRECTIONAL_LIGHTS_PER_FRAME 4
+
 #ifdef __cplusplus
 namespace HLSL {
 #endif
@@ -32,7 +34,19 @@ struct PointLight
 	float4		m_Intensity;
 	float4x4	m_mViewProj[6];
 	//  x: first texture index of 6 shadow maps per point light, -1 means invalid
-	int4		m_FirstShadowMapTexId;
+	int			m_FirstShadowMapTexId;
+	int			m_Padding0;
+	int			m_Padding1;
+	int			m_Padding2;
+};
+
+struct DirectionalLight
+{
+	float3		m_Direction;
+	// -1 means invalid
+	int			m_ShadowMapTexId;
+	float4		m_Irradiance;
+	float4x4	m_mViewProj;
 };
 
 struct LightNode
@@ -46,6 +60,10 @@ struct TiledShadingConstants
 	uint m_NumTileY;
 	uint m_ScreenWidth;
 	uint m_ScreenHeight;
+	uint m_NumDirectionalLights;
+	uint m_Padding0;
+	uint m_Padding1;
+	uint m_Padding2;
 	float4 m_CameraPosition;
 	float4x4 m_mInvView;
 	float4x4 m_mInvProj;

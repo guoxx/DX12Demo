@@ -7,19 +7,24 @@ RootSigBegin \
 ", CBV(b0) " \
 ", SRV(t0) " \
 ", SRV(t1) " \
-", DescriptorTable(SRV(t2, numDescriptors=4), UAV(u0))" \
+", SRV(t2) " \
+", DescriptorTable(SRV(t3, numDescriptors=4), UAV(u0))" \
+", DescriptorTable(SRV(t16, numDescriptors=32))" \
 ", StaticSampler(s0, filter=FILTER_MIN_MAG_MIP_POINT)" \
 RootSigEnd
 
 ConstantBuffer<TiledShadingConstants> g_Constants : register(b0);
 
-StructuredBuffer<PointLight> g_PointLights : register(t0);
-StructuredBuffer<LightNode> g_LightNodes: register(t1);
+StructuredBuffer<DirectionalLight> g_DirectionalLights : register(t0);
+StructuredBuffer<PointLight> g_PointLights : register(t1);
+StructuredBuffer<LightNode> g_LightNodes: register(t2);
 
-Texture2D<float4> g_GBuffer0 : register(t2);
-Texture2D<float4> g_GBuffer1 : register(t3);
-Texture2D<float4> g_GBuffer2 : register(t4);
-Texture2D<float> g_DepthTexture : register(t5);
+Texture2D<float4> g_GBuffer0 : register(t3);
+Texture2D<float4> g_GBuffer1 : register(t4);
+Texture2D<float4> g_GBuffer2 : register(t5);
+Texture2D<float> g_DepthTexture : register(t6);
+
+Texture2D<float> g_ShadowMaps[] : register(t16);
 
 SamplerState g_PointSampler : register(s0);
 
@@ -28,18 +33,43 @@ RWTexture2D<float4> g_LightingSurface : register(u0);
 groupshared uint gs_NumLightsPerTile;
 groupshared uint gs_LightIdxPerTile[MAX_LIGHT_NODES_PER_TILE];
 
+float3 ShadeDirectionalLight(GBuffer gbuffer, DirectionalLight directionalLight)
+{
+	float shadowMask = 1.0f;
+	if (directionalLight.m_ShadowMapTexId != -1)
+	{
+		float3 shadowPos = mul(float4(gbuffer.Position, 1), directionalLight.m_mViewProj).xyz;
+		float2 shadowUV = float2((shadowPos.x + 1.0f) * 0.5f, (-shadowPos.y + 1.0f) * 0.5f);
+		float occluderDepth = g_ShadowMaps[directionalLight.m_ShadowMapTexId].SampleLevel(g_PointSampler, shadowUV, 0);
+		// TODO: shouldn't hard code depth bias
+		occluderDepth += 0.01;
+		shadowMask = occluderDepth < shadowPos.z ? 0.0f : 1.0f;
+	}
+
+	float3 L = -directionalLight.m_Direction.xyz;
+	float3 V = normalize(g_Constants.m_CameraPosition.xyz - gbuffer.Position);
+	float3 N = gbuffer.Normal;
+	float NdotL = saturate(dot(N, L));
+	float3 E = directionalLight.m_Irradiance.xyz * NdotL * PI;
+
+	float3 diffuse = Diffuse_Lambert(gbuffer.Diffuse) * E;
+	float3 specular = MicrofacetSpecular(gbuffer.Specular, gbuffer.Roughness, V, N, L) * E;
+	return (diffuse + specular) * shadowMask;
+}
+
 float3 ShadePointLight(GBuffer gbuffer, PointLight pointLight)
 {
-	/*
-	int face = GetFaceOfPointLightShadowMap(pointLight.m_Position.xyz, gbuffer.Position);
-	float4 shadowPos = mul(float4(gbuffer.Position, 1), pointLight.m_mViewProj[face]);
-	shadowPos /= shadowPos.w;
-	float occluderDepth = g_PointLightShadowMap[face].Sample(g_PointSampler, shadowPos.xy * float2(1, -1) * 0.5 + 0.5);
-	// TODO: shouldn't hard code depth bias
-	occluderDepth += 0.00001;
-	float shadowMask = occluderDepth < shadowPos.z ? 0.0f : 1.0f;
-	*/
 	float shadowMask = 1.0f;
+	if (pointLight.m_FirstShadowMapTexId != -1)
+	{
+		int face = GetFaceOfPointLightShadowMap(pointLight.m_Position.xyz, gbuffer.Position);
+		float4 shadowPos = mul(float4(gbuffer.Position, 1), pointLight.m_mViewProj[face]);
+		shadowPos /= shadowPos.w;
+		float occluderDepth = g_ShadowMaps[pointLight.m_FirstShadowMapTexId + face].SampleLevel(g_PointSampler, shadowPos.xy * float2(1, -1) * 0.5 + 0.5, 0);
+		// TODO: shouldn't hard code depth bias
+		occluderDepth += 0.00001;
+		shadowMask = occluderDepth < shadowPos.z ? 0.0f : 1.0f;
+	}
 
 	float3 L = normalize(pointLight.m_Position.xyz - gbuffer.Position);
 	float3 V = normalize(g_Constants.m_CameraPosition.xyz - gbuffer.Position);
@@ -94,6 +124,11 @@ void CSMain(uint3 Gid : SV_GroupID, uint3 GTid : SV_GroupThreadID, uint3 DTid : 
 	GBuffer gbuffer = GBufferDecode(g_GBuffer0, g_GBuffer1, g_GBuffer2, g_DepthTexture, g_PointSampler, uv, g_Constants.m_mInvView, g_Constants.m_mInvProj);
 
 	float3 outRadiance = 0.0f;
+
+	for (uint visDirectionalLightIdx = 0; visDirectionalLightIdx < g_Constants.m_NumDirectionalLights; ++visDirectionalLightIdx)
+	{
+		outRadiance += ShadeDirectionalLight(gbuffer, g_DirectionalLights[visDirectionalLightIdx]);
+	}
 
 	for (uint visPointLightIdx = 0; visPointLightIdx < gs_NumLightsPerTile; ++visPointLightIdx)
 	{
