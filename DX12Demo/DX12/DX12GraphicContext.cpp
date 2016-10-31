@@ -105,18 +105,23 @@ void DX12GraphicContext::ResolvePendingBarriers()
 		{
 			D3D12_RESOURCE_STATES stateBeforeThisCommandContext = pendingBarrier.m_DX12Resource->GetUsageState();
 			D3D12_RESOURCE_STATES stateAfterThisCommandContext = pendingBarrier.m_DX12Resource->GetPendingTransitionState(GetParallelId());
-			assert(stateBeforeThisCommandContext != D3D12_RESOURCE_STATE_INVALID);
-			assert(stateAfterThisCommandContext != D3D12_RESOURCE_STATE_INVALID);
+			D3D12_RESOURCE_STATES stateAfterThisBarrier = pendingBarrier.m_Barrier.Transition.StateAfter;
 
-			// correct pending barrier
-			pendingBarrier.m_Barrier.Transition.StateBefore = stateBeforeThisCommandContext;
+			if (stateBeforeThisCommandContext != stateAfterThisBarrier)
+			{
+				assert(stateBeforeThisCommandContext != D3D12_RESOURCE_STATE_INVALID);
+				assert(stateAfterThisCommandContext != D3D12_RESOURCE_STATE_INVALID);
 
-			// update gpu resource state
-			pendingBarrier.m_DX12Resource->SetUsageState(stateAfterThisCommandContext);
-			pendingBarrier.m_DX12Resource->SetPendingTransitionState(D3D12_RESOURCE_STATE_INVALID, GetParallelId());
+				// correct pending barrier
+				pendingBarrier.m_Barrier.Transition.StateBefore = stateBeforeThisCommandContext;
 
-			// populate resource barrier command list
-			m_BarriersCommandList->ResourceBarrier(1, &pendingBarrier.m_Barrier);
+				// update gpu resource state
+				pendingBarrier.m_DX12Resource->SetUsageState(stateAfterThisCommandContext);
+				pendingBarrier.m_DX12Resource->SetPendingTransitionState(D3D12_RESOURCE_STATE_INVALID, GetParallelId());
+
+				// populate resource barrier command list
+				m_BarriersCommandList->ResourceBarrier(1, &pendingBarrier.m_Barrier);
+			}
 		}
 
 		m_BarriersCommandList->Close();
@@ -125,26 +130,24 @@ void DX12GraphicContext::ResolvePendingBarriers()
 	}
 }
 
-#if 0
 void DX12GraphicContext::ResourceTransitionBarrier(DX12GpuResource* resource, D3D12_RESOURCE_STATES stateAfter, uint32_t subresource)
 {
-	// only support all subresources transition barrier for the moment
+	// TODO: only support all subresources transition barrier for the moment
 	assert(subresource == D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES);
-#else
-void DX12GraphicContext::ResourceTransitionBarrier(DX12GpuResource* resource, D3D12_RESOURCE_STATES stateAfter)
-{
-	uint32_t subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
-#endif
 
 	assert(stateAfter != D3D12_RESOURCE_STATE_INVALID);
 
-	D3D12_RESOURCE_STATES usageStateForThisCommandContext = resource->GetPendingTransitionState(GetParallelId());
+	D3D12_RESOURCE_STATES stateBefore = resource->GetPendingTransitionState(GetParallelId());
+	if (stateBefore == stateAfter)
+	{
+		return;
+	}
+
+	// update state for this command context
 	resource->SetPendingTransitionState(stateAfter, GetParallelId());
 
-	D3D12_RESOURCE_STATES stateBefore = usageStateForThisCommandContext;
 	D3D12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(resource->m_Resource.Get(), stateBefore, stateAfter, subresource);
-
-	if (usageStateForThisCommandContext != D3D12_RESOURCE_STATE_INVALID)
+	if (stateBefore != D3D12_RESOURCE_STATE_INVALID)
 	{
 		m_CommandList->ResourceBarrier(1, &barrier);
 	}

@@ -1,6 +1,5 @@
 #include "Inc/Common.hlsli"
 #include "Inc/LightCulling.hlsli"
-#include "Inc/PointLight.hlsli"
 
 #define RootSigDeclaration \
 RootSigBegin \
