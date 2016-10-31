@@ -50,7 +50,7 @@ void DX12ColorSurface::Create2DView(DX12Device* device, GFX_FORMAT_SET fmt)
 	assert(resourceDesc.Dimension == D3D12_RESOURCE_DIMENSION_TEXTURE2D);
 
 	CD3DX12_SHADER_RESOURCE_VIEW_DESC srvDesc = CD3DX12_SHADER_RESOURCE_VIEW_DESC::Tex2DView(CD3DX12::GetSRVDimension(resourceDesc), fmt.SRVFormat);
-	CD3DX12_UNORDERED_ACCESS_VIEW_DESC uavDesc = CD3DX12_UNORDERED_ACCESS_VIEW_DESC::Tex2DView(CD3DX12::GetUAVDimension(resourceDesc), fmt.RTVFormat);
+	CD3DX12_UNORDERED_ACCESS_VIEW_DESC uavDesc = CD3DX12_UNORDERED_ACCESS_VIEW_DESC::Tex2DView(CD3DX12::GetUAVDimension(resourceDesc), fmt.UAVFormat);
 	CD3DX12_RENDER_TARGET_VIEW_DESC rtvDesc = CD3DX12_RENDER_TARGET_VIEW_DESC::Tex2DView(CD3DX12::GetRTVDimension(resourceDesc), fmt.RTVFormat);
 
 	m_SRV = DX12GraphicManager::GetInstance()->RegisterResourceInDescriptorHeap(GetGpuResource(), D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
