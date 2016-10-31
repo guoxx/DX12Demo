@@ -86,6 +86,7 @@ DX12Texture* DX12Texture::LoadFromDDSFile(DX12Device* device, DX12GraphicContext
 	DirectX::LoadDDSTextureFromFile(device, DX::UTF8StrToUTF16(filename).c_str(), res, ddsData, subesources);
 
 	DX12Texture* pTex = new DX12Texture(device, res, D3D12_RESOURCE_STATE_COPY_DEST);
+	pGfxContext->ResourceTransitionBarrier(pTex, D3D12_RESOURCE_STATE_COPY_DEST);
 	pGfxContext->UploadGpuResource(pTex, 0, static_cast<uint32_t>(subesources.size()), subesources.data());
 	pGfxContext->ResourceTransitionBarrier(pTex, D3D12_RESOURCE_STATE_GENERIC_READ);
 

@@ -168,6 +168,9 @@
     <ClCompile Include="3DEngine\Pass\TiledShadingPass.cpp">
       <Filter>3DEngine\Pass</Filter>
     </ClCompile>
+    <ClCompile Include="DX12\Texture\DDSTextureLoader.cpp">
+      <Filter>DX12\Private\Texture</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DX12\DX12GraphicContext.h">
@@ -340,6 +343,18 @@
     </ClInclude>
     <ClInclude Include="Shaders\Inc\HLSLShared.h">
       <Filter>Shaders\Inc</Filter>
+    </ClInclude>
+    <ClInclude Include="DX12\Texture\PlatformHelpers.h">
+      <Filter>DX12\Private\Texture</Filter>
+    </ClInclude>
+    <ClInclude Include="DX12\Texture\dds.h">
+      <Filter>DX12\Private\Texture</Filter>
+    </ClInclude>
+    <ClInclude Include="DX12\Texture\DDSTextureLoader.h">
+      <Filter>DX12\Private\Texture</Filter>
+    </ClInclude>
+    <ClInclude Include="DX12\Texture\LoaderHelpers.h">
+      <Filter>DX12\Private\Texture</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

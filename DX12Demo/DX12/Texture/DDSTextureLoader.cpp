@@ -653,7 +653,7 @@ HRESULT DirectX::LoadDDSTextureFromFileEx(
                     pstrName++;
                 }
 
-                if (texture != 0 && *texture != 0)
+                if (texture.Get() != nullptr)
                 {
                     texture->SetName(pstrName);
                 }
