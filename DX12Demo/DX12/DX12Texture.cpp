@@ -29,6 +29,19 @@ DX12Texture::DX12Texture(DX12Device* device, DXGI_FORMAT fmt, uint32_t width, ui
 	CreateView(device);
 }
 
+DX12Texture::DX12Texture(DX12Device* device, ComPtr<ID3D12Resource> texture, D3D12_RESOURCE_STATES initialState)
+{
+	D3D12_RESOURCE_DESC resoureDesc = texture->GetDesc();
+	m_Format = resoureDesc.Format;
+	m_Width = static_cast<uint32_t>(resoureDesc.Width);
+	m_Height = resoureDesc.Height;
+	m_MipLevels = resoureDesc.MipLevels;
+
+	SetGpuResource(texture, initialState);
+
+	CreateView(device);
+}
+
 DX12Texture::~DX12Texture()
 {
 }
@@ -72,7 +85,11 @@ DX12Texture* DX12Texture::LoadFromDDSFile(DX12Device* device, DX12GraphicContext
 
 	DirectX::LoadDDSTextureFromFile(device, DX::UTF8StrToUTF16(filename).c_str(), res, ddsData, subesources);
 
-	return nullptr;
+	DX12Texture* pTex = new DX12Texture(device, res, D3D12_RESOURCE_STATE_COPY_DEST);
+	pGfxContext->UploadGpuResource(pTex, 0, static_cast<uint32_t>(subesources.size()), subesources.data());
+	pGfxContext->ResourceTransitionBarrier(pTex, D3D12_RESOURCE_STATE_GENERIC_READ);
+
+	return pTex;
 }
 
 void DX12Texture::CreateView(DX12Device * device)

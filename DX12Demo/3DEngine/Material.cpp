@@ -112,7 +112,15 @@ void Material::Load(DX12GraphicContext* pGfxContext)
 std::shared_ptr<DX12Texture> Material::LoadTexture(DX12GraphicContext* pGfxContext, std::string texname)
 {
 	std::shared_ptr<DX12Texture> tex = std::shared_ptr<DX12Texture>();
-	tex.reset(DX12Texture::LoadFromTGAFile(DX12GraphicManager::GetInstance()->GetDevice(), pGfxContext, texname.c_str()));
+	std::string ext = texname.substr(texname.length() - 4, 4);
+	if (ext == ".tga")
+	{
+		tex.reset(DX12Texture::LoadFromTGAFile(DX12GraphicManager::GetInstance()->GetDevice(), pGfxContext, texname.c_str()));
+	}
+	else
+	{
+		tex.reset(DX12Texture::LoadFromDDSFile(DX12GraphicManager::GetInstance()->GetDevice(), pGfxContext, texname.c_str()));
+	}
 	return tex;	
 }
 

@@ -10,6 +10,7 @@ class DX12Texture : public DX12GpuResource
 {
 public:
 	DX12Texture(DX12Device* device, DXGI_FORMAT fmt, uint32_t width, uint32_t height);
+	DX12Texture(DX12Device* device, ComPtr<ID3D12Resource> texture, D3D12_RESOURCE_STATES initialState);
 	virtual ~DX12Texture();
 
 	static DX12Texture* LoadFromTGAFile(DX12Device* device, DX12GraphicContext* pGfxContext, const char* filename, bool sRGB = false);

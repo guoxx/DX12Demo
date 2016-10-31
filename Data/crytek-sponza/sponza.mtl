@@ -60,10 +60,10 @@ newmtl Material__298
 	Kd 0.5880 0.5880 0.5880
 	Ks 0.0000 0.0000 0.0000
 	Ke 0.0000 0.0000 0.0000
-	map_Ka crytek-sponza/textures/background.tga
-	map_Kd crytek-sponza/textures/background.tga
-	map_bump crytek-sponza/textures/background_bump.tga
-	bump crytek-sponza/textures/background_bump.tga
+	map_Ka crytek-sponza/textures/background.dds
+	map_Kd crytek-sponza/textures/background.dds
+	map_bump crytek-sponza/textures/background_normal.dds
+	bump crytek-sponza/textures/background_normal.dds
 
 newmtl 16___Default
 	Ns 10.0000
