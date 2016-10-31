@@ -47,9 +47,7 @@ public:
 
 	DX12DescriptorHandle RegisterResourceInStagingDescriptorHeap(ID3D12Resource* resource, D3D12_DESCRIPTOR_HEAP_TYPE type);
 
-	void UpdateBufer(DX12GraphicContext* pGfxContext, DX12GpuResource* pResource, void* pSrcData, uint64_t sizeInBytes);
-
-	void UpdateTexture(DX12GraphicContext* pGfxContext, DX12Texture* pTexture, uint32_t subresource, void* pSrcData, uint64_t sizeInBytes);
+	std::shared_ptr<DX12GpuResource> AllocateTempGpuResourceInUploadHeap(uint32_t sizeInBytes, uint32_t alignInBytes = D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT);
 
 	void AllocateConstantsBuffer(uint32_t sizeInBytes, uint32_t alignInBytes, void** pCpuWrittablePtr, D3D12_GPU_VIRTUAL_ADDRESS* pGpuVirtualAddress);
 
@@ -84,7 +82,7 @@ private:
 		NumTempResourcesPool = 4,
 	};
 	int32_t m_TempResourcePoolIdx;
-	std::vector<ComPtr<ID3D12Resource>> m_TempResources[NumTempResourcesPool];
+	std::vector<std::shared_ptr<DX12GpuResource>> m_TempResources[NumTempResourcesPool];
 
 private:
 	static DX12GraphicManager* s_GfxManager;

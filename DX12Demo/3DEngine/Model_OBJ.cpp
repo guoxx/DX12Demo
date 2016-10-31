@@ -124,11 +124,11 @@ std::vector<std::shared_ptr<Model>> Model::LoadOBJ(DX12Device* device, DX12Graph
 			mod->m_Mesh->m_IndexBuffer = std::make_shared<DX12IndexBuffer>(device, indexDataSizeInBytes, 0, DXGI_FORMAT_R32_UINT);
 
 			pGfxContext->ResourceTransitionBarrier(mod->m_Mesh->m_VertexBuffer.get(), D3D12_RESOURCE_STATE_COPY_DEST);
-			DX12GraphicManager::GetInstance()->UpdateBufer(pGfxContext, mod->m_Mesh->m_VertexBuffer.get(), pVertexData, vertexDataSizeInBytes);
+			pGfxContext->UploadBuffer(mod->m_Mesh->m_VertexBuffer.get(), pVertexData, vertexDataSizeInBytes);
 			pGfxContext->ResourceTransitionBarrier(mod->m_Mesh->m_VertexBuffer.get(), D3D12_RESOURCE_STATE_GENERIC_READ);
 
 			pGfxContext->ResourceTransitionBarrier(mod->m_Mesh->m_IndexBuffer.get(), D3D12_RESOURCE_STATE_COPY_DEST);
-			DX12GraphicManager::GetInstance()->UpdateBufer(pGfxContext, mod->m_Mesh->m_IndexBuffer.get(), pIndexData, indexDataSizeInBytes);
+			pGfxContext->UploadBuffer(mod->m_Mesh->m_IndexBuffer.get(), pIndexData, indexDataSizeInBytes);
 			pGfxContext->ResourceTransitionBarrier(mod->m_Mesh->m_IndexBuffer.get(), D3D12_RESOURCE_STATE_GENERIC_READ);
 
 			delete[] pVertexData;

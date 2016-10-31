@@ -238,6 +238,10 @@
     <ClInclude Include="DX12\DX12Texture.h" />
     <ClInclude Include="DX12\DX12Wrapper.h" />
     <ClInclude Include="DX12\Hash.h" />
+    <ClInclude Include="DX12\Texture\dds.h" />
+    <ClInclude Include="DX12\Texture\DDSTextureLoader.h" />
+    <ClInclude Include="DX12\Texture\LoaderHelpers.h" />
+    <ClInclude Include="DX12\Texture\PlatformHelpers.h" />
     <ClInclude Include="DX12\Texture\TextureLoaderTga.h" />
     <ClInclude Include="DX12\Texture\tga_reader.h" />
     <ClInclude Include="DXSample.h" />
@@ -288,6 +292,7 @@
     <ClCompile Include="DX12\DX12RootSignature.cpp" />
     <ClCompile Include="DX12\DX12SwapChain.cpp" />
     <ClCompile Include="DX12\DX12Texture.cpp" />
+    <ClCompile Include="DX12\Texture\DDSTextureLoader.cpp" />
     <ClCompile Include="DX12\Texture\tga_reader.cpp" />
     <ClCompile Include="DXSample.cpp" />
     <ClCompile Include="pch.cpp">

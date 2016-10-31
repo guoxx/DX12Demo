@@ -271,6 +271,29 @@ void DX12GraphicContext::CopyTextureRegion(const D3D12_TEXTURE_COPY_LOCATION * p
 	m_CommandList->CopyTextureRegion(pDst, dstX, dstY, dstZ, pSrc, pSrcBox);
 }
 
+void DX12GraphicContext::UploadBuffer(DX12GpuResource* pResource, void* pSrcData, uint64_t sizeInBytes)
+{
+	D3D12_SUBRESOURCE_DATA subData;
+	subData.pData = pSrcData;
+	subData.RowPitch = sizeInBytes;
+	subData.SlicePitch = sizeInBytes;
+	UploadGpuResource(pResource, 0, 1, &subData);
+}
+
+void DX12GraphicContext::UploadGpuResource(DX12GpuResource* pDstResource, uint32_t firstSubresource, uint32_t numSubresources, D3D12_SUBRESOURCE_DATA* pSubData)
+{
+	uint32_t uploadBufferSize = static_cast<uint32_t>(GetRequiredIntermediateSize(pDstResource->GetGpuResource(), firstSubresource, numSubresources));
+	std::shared_ptr<DX12GpuResource> tempGpuResource = DX12GraphicManager::GetInstance()->AllocateTempGpuResourceInUploadHeap(uploadBufferSize);
+
+	UpdateSubresources(m_CommandList.Get(),
+		pDstResource->GetGpuResource(),
+		tempGpuResource->GetGpuResource(),
+		0,
+		firstSubresource,
+		numSubresources,
+		pSubData);
+}
+
 void DX12GraphicContext::CopyResource(DX12GpuResource* srcResource, DX12GpuResource* dstResource)
 {
 	m_CommandList->CopyResource(dstResource->GetGpuResource(), srcResource->GetGpuResource());

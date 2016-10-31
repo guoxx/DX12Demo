@@ -12,7 +12,9 @@ public:
 	DX12Texture(DX12Device* device, DXGI_FORMAT fmt, uint32_t width, uint32_t height);
 	virtual ~DX12Texture();
 
-	static DX12Texture* LoadTGAFromFile(DX12Device* device, DX12GraphicContext* pGfxContext, const char* filename, bool sRGB = false);
+	static DX12Texture* LoadFromTGAFile(DX12Device* device, DX12GraphicContext* pGfxContext, const char* filename, bool sRGB = false);
+
+	static DX12Texture* LoadFromDDSFile(DX12Device* device, DX12GraphicContext* pGfxContext, const char* filename);
 
 	DX12DescriptorHandle GetSRV() const { return m_SRV; }
 

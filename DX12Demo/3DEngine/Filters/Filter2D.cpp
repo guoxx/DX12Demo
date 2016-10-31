@@ -15,7 +15,7 @@ Filter2D::Filter2D(DX12Device* device)
 	DX12GraphicContext* pGfxContext = executor.GetGraphicContext();
 
 	pGfxContext->ResourceTransitionBarrier(m_IndexBuffer.get(), D3D12_RESOURCE_STATE_COPY_DEST);
-	DX12GraphicManager::GetInstance()->UpdateBufer(pGfxContext, m_IndexBuffer.get(), indices, sizeof(indices));
+	pGfxContext->UploadBuffer(m_IndexBuffer.get(), indices, sizeof(indices));
 	pGfxContext->ResourceTransitionBarrier(m_IndexBuffer.get(), D3D12_RESOURCE_STATE_GENERIC_READ);
 
 	D3D12_DESCRIPTOR_RANGE descriptorRanges0[] = {

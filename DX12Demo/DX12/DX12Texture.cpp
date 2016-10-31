@@ -4,7 +4,10 @@
 #include "DX12Device.h"
 #include "DX12GraphicContext.h"
 #include "DX12GraphicManager.h"
+
+#include "Texture/LoaderHelpers.h"
 #include "Texture/TextureLoaderTga.h"
+#include "Texture/DDSTextureLoader.h"
 
 
 DX12Texture::DX12Texture(DX12Device* device, DXGI_FORMAT fmt, uint32_t width, uint32_t height)
@@ -30,7 +33,7 @@ DX12Texture::~DX12Texture()
 {
 }
 
-DX12Texture* DX12Texture::LoadTGAFromFile(DX12Device* device, DX12GraphicContext* pGfxContext, const char * filename, bool sRGB)
+DX12Texture* DX12Texture::LoadFromTGAFile(DX12Device* device, DX12GraphicContext* pGfxContext, const char * filename, bool sRGB)
 {
 	TextureLoaderTga texLoader{ };
 	texLoader.LoadTga(filename);
@@ -40,11 +43,36 @@ DX12Texture* DX12Texture::LoadTGAFromFile(DX12Device* device, DX12GraphicContext
 		texLoader.GetWidth(),
 		texLoader.GetHeight());
 
+	size_t NumBytes = 0;
+	size_t RowBytes = 0;
+	DirectX::LoaderHelpers::GetSurfaceInfo(texLoader.GetWidth(),
+		texLoader.GetHeight(),
+		sRGB ? DXGI_FORMAT_R8G8B8A8_UNORM_SRGB : DXGI_FORMAT_R8G8B8A8_UNORM,
+		&NumBytes,
+		&RowBytes,
+		nullptr);
+
+	D3D12_SUBRESOURCE_DATA subesources;
+	subesources.pData = texLoader.GetData();
+	subesources.RowPitch = RowBytes;
+	subesources.SlicePitch = NumBytes;
+
 	pGfxContext->ResourceTransitionBarrier(pTex, D3D12_RESOURCE_STATE_COPY_DEST);
-	DX12GraphicManager::GetInstance()->UpdateTexture(pGfxContext, pTex, 0, (uint8_t*)texLoader.GetData(), texLoader.GetDataSize());
+	pGfxContext->UploadGpuResource(pTex, 0, 1, &subesources);
 	pGfxContext->ResourceTransitionBarrier(pTex, D3D12_RESOURCE_STATE_GENERIC_READ);
 
 	return pTex;
+}
+
+DX12Texture* DX12Texture::LoadFromDDSFile(DX12Device* device, DX12GraphicContext* pGfxContext, const char* filename)
+{
+	ComPtr<ID3D12Resource> res;
+	std::unique_ptr<uint8_t[]> ddsData;
+	std::vector<D3D12_SUBRESOURCE_DATA> subesources;
+
+	DirectX::LoadDDSTextureFromFile(device, DX::UTF8StrToUTF16(filename).c_str(), res, ddsData, subesources);
+
+	return nullptr;
 }
 
 void DX12Texture::CreateView(DX12Device * device)

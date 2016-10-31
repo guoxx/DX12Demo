@@ -174,62 +174,17 @@ DX12DescriptorHandle DX12GraphicManager::RegisterResourceInStagingDescriptorHeap
 	return m_DescriptorManager->AllocateInStagingHeap(type);
 }
 
-void DX12GraphicManager::UpdateBufer(DX12GraphicContext* pGfxContext, DX12GpuResource* pResource, void * pSrcData, uint64_t sizeInBytes)
+std::shared_ptr<DX12GpuResource> DX12GraphicManager::AllocateTempGpuResourceInUploadHeap(uint32_t sizeInBytes, uint32_t alignInBytes)
 {
-	uint64_t heapOffset = m_UploadHeapAllocator.Alloc(sizeInBytes, D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT);
-	ComPtr<ID3D12Resource> uploadResource = m_Device->CreatePlacedResource(m_UploadHeap.Get(), heapOffset, &pResource->GetGpuResource()->GetDesc(), D3D12_RESOURCE_STATE_GENERIC_READ);
+	D3D12_RESOURCE_STATES initialState = D3D12_RESOURCE_STATE_GENERIC_READ;
+	uint64_t heapOffset = m_UploadHeapAllocator.Alloc(sizeInBytes, alignInBytes);
+	ComPtr<ID3D12Resource> uploadResource = m_Device->CreatePlacedResource(m_UploadHeap.Get(), heapOffset, &CD3DX12_RESOURCE_DESC::Buffer({sizeInBytes, 0}), initialState);
+	std::shared_ptr<DX12GpuResource> tempGpuResource = std::make_shared<DX12GpuResource>(uploadResource, initialState);
 
 	// keep a reference to that resource to avoid it been released
-	m_TempResources[m_TempResourcePoolIdx].push_back(uploadResource);
+	m_TempResources[m_TempResourcePoolIdx].push_back(tempGpuResource);
 
-	DX12GpuResource srcResource{ uploadResource, D3D12_RESOURCE_STATE_GENERIC_READ };
-
-	void* pUploadData = nullptr;
-	srcResource.MapResource(0, &pUploadData);
-	std::memcpy(pUploadData, pSrcData, sizeInBytes);
-	srcResource.UnmapResource(0);
-
-	pGfxContext->CopyResource(&srcResource, pResource);
-}
-
-void DX12GraphicManager::UpdateTexture(DX12GraphicContext * pGfxContext, DX12Texture * pTexture, uint32_t subresource, void * pSrcData, uint64_t sizeInBytes)
-{
-	uint32_t FirstSubresource = subresource;
-	uint32_t NumSubresources = 1;
-
-	uint64_t uploadBufferSize = GetRequiredIntermediateSize(pTexture->GetGpuResource(), FirstSubresource, NumSubresources);
-	assert(uploadBufferSize >= sizeInBytes);
-
-	uint64_t heapOffset = m_UploadHeapAllocator.Alloc(uploadBufferSize, D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT);
-	ComPtr<ID3D12Resource> uploadResource = m_Device->CreatePlacedResource(m_UploadHeap.Get(), heapOffset, &CD3DX12_RESOURCE_DESC::Buffer({uploadBufferSize, 0}), D3D12_RESOURCE_STATE_GENERIC_READ);
-
-	// keep a reference to that resource to avoid it been released
-	m_TempResources[m_TempResourcePoolIdx].push_back(uploadResource);
-
-	DX12GpuResource srcResource{ uploadResource, D3D12_RESOURCE_STATE_GENERIC_READ };
-
-	void* pUploadData = nullptr;
-	srcResource.MapResource(0, &pUploadData);
-	std::memcpy(pUploadData, pSrcData, sizeInBytes);
-	srcResource.UnmapResource(0);
-
-    D3D12_PLACED_SUBRESOURCE_FOOTPRINT Layouts[16];
-    UINT NumRows[16];
-    UINT64 RowSizesInBytes[16];
-
-	{
-		D3D12_RESOURCE_DESC Desc = pTexture->GetGpuResource()->GetDesc();
-		UINT64 RequiredSize = 0;
-
-		ID3D12Device* pDevice;
-		pTexture->GetGpuResource()->GetDevice(__uuidof(*pDevice), reinterpret_cast<void**>(&pDevice));
-		pDevice->GetCopyableFootprints(&Desc, FirstSubresource, NumSubresources, 0, Layouts, NumRows, RowSizesInBytes, &RequiredSize);
-		pDevice->Release();
-	}
-
-	CD3DX12_TEXTURE_COPY_LOCATION Dst(pTexture->GetGpuResource(), subresource);
-	CD3DX12_TEXTURE_COPY_LOCATION Src(uploadResource.Get(), Layouts[0]);
-	pGfxContext->CopyTextureRegion(&Dst, 0, 0, 0, &Src, nullptr);
+	return tempGpuResource;
 }
 
 void DX12GraphicManager::AllocateConstantsBuffer(uint32_t sizeInBytes, uint32_t alignInBytes, void** pCpuWrittablePtr, D3D12_GPU_VIRTUAL_ADDRESS* pGpuVirtualAddress)
