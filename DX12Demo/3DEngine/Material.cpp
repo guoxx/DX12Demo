@@ -38,7 +38,7 @@ void Material::Load(DX12GraphicContext* pGfxContext)
 		sigCompiler[1].InitAsConstantBufferView(0);
 		sigCompiler[2].InitAsConstantBufferView(1);
 		sigCompiler[3].InitAsDescriptorTable(_countof(descriptorRanges), descriptorRanges, D3D12_SHADER_VISIBILITY_PIXEL);
-		CD3DX12_STATIC_SAMPLER_DESC staticSampDesc = CD3DX12_STATIC_SAMPLER_DESC(0, D3D12_FILTER_MIN_MAG_MIP_POINT);
+		CD3DX12_STATIC_SAMPLER_DESC staticSampDesc = CD3DX12_STATIC_SAMPLER_DESC(0, D3D12_FILTER_ANISOTROPIC);
 		staticSampDesc.ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 		sigCompiler.InitStaticSampler(staticSampDesc);
 		m_RootSig[shadingCfg] = sigCompiler.Compile(DX12GraphicManager::GetInstance()->GetDevice());
