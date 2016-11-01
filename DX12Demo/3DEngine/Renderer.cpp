@@ -22,7 +22,7 @@ Renderer::Renderer(GFX_HWND hwnd, int32_t width, int32_t height)
 {
 	DX12Device* pDevice = DX12GraphicManager::GetInstance()->GetDevice();
 
-	m_SwapChain = std::make_shared<DX12SwapChain>(pDevice, hwnd, width, height, GFX_FORMAT_R8G8B8A8_UNORM_SWAPCHAIN);
+	m_SwapChain = std::make_shared<DX12SwapChain>(pDevice, hwnd, width, height, GFX_FORMAT_R8G8B8A8_UNORM_SRGB_SWAPCHAIN);
 
 	m_SceneGBuffer0 = RenderableSurfaceManager::GetInstance()->AcquireColorSurface(RenderableSurfaceDesc(GFX_FORMAT_R8G8B8A8_UNORM, width, height));
 	m_SceneGBuffer1 = RenderableSurfaceManager::GetInstance()->AcquireColorSurface(RenderableSurfaceDesc(GFX_FORMAT_R8G8B8A8_UNORM, width, height));

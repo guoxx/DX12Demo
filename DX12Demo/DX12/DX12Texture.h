@@ -15,7 +15,7 @@ public:
 
 	static DX12Texture* LoadFromTGAFile(DX12Device* device, DX12GraphicContext* pGfxContext, const char* filename, bool sRGB = false);
 
-	static DX12Texture* LoadFromDDSFile(DX12Device* device, DX12GraphicContext* pGfxContext, const char* filename);
+	static DX12Texture* LoadFromDDSFile(DX12Device* device, DX12GraphicContext* pGfxContext, const char* filename, bool sRGB = false);
 
 	DX12DescriptorHandle GetSRV() const { return m_SRV; }
 

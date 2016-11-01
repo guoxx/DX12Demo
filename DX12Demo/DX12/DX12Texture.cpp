@@ -77,18 +77,27 @@ DX12Texture* DX12Texture::LoadFromTGAFile(DX12Device* device, DX12GraphicContext
 	return pTex;
 }
 
-DX12Texture* DX12Texture::LoadFromDDSFile(DX12Device* device, DX12GraphicContext* pGfxContext, const char* filename)
+DX12Texture* DX12Texture::LoadFromDDSFile(DX12Device* device, DX12GraphicContext* pGfxContext, const char* filename, bool sRGB)
 {
 	ComPtr<ID3D12Resource> res;
 	std::unique_ptr<uint8_t[]> ddsData;
 	std::vector<D3D12_SUBRESOURCE_DATA> subesources;
 
-	DirectX::LoadDDSTextureFromFile(device, DX::UTF8StrToUTF16(filename).c_str(), res, ddsData, subesources);
+	size_t maxsize = 0;
+	D3D12_RESOURCE_FLAGS resFlags = D3D12_RESOURCE_FLAG_NONE;
+	unsigned int loadFlags = sRGB ? DirectX::DDS_LOADER_FORCE_SRGB : DirectX::DDS_LOADER_DEFAULT;
+
+	DirectX::LoadDDSTextureFromFileEx(device, DX::UTF8StrToUTF16(filename).c_str(), maxsize, resFlags, loadFlags, res, ddsData, subesources);
 
 	DX12Texture* pTex = new DX12Texture(device, res, D3D12_RESOURCE_STATE_COPY_DEST);
 	pGfxContext->ResourceTransitionBarrier(pTex, D3D12_RESOURCE_STATE_COPY_DEST);
 	pGfxContext->UploadGpuResource(pTex, 0, static_cast<uint32_t>(subesources.size()), subesources.data());
 	pGfxContext->ResourceTransitionBarrier(pTex, D3D12_RESOURCE_STATE_GENERIC_READ);
+
+	if (sRGB)
+	{
+		assert(DirectX::LoaderHelpers::MakeSRGB(pTex->m_Format) == pTex->m_Format);
+	}
 
 	return pTex;
 }

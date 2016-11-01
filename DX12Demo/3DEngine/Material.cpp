@@ -81,45 +81,45 @@ void Material::Load(DX12GraphicContext* pGfxContext)
 
 	if (!m_AmbientTexName.empty())
 	{
-		m_AmbientTexture = LoadTexture(pGfxContext, m_AmbientTexName);
+		m_AmbientTexture = LoadTexture(pGfxContext, m_AmbientTexName, true);
 	}
 	if (!m_DiffuseTexName.empty())
 	{
-		m_DiffuseTexture = LoadTexture(pGfxContext, m_DiffuseTexName);
+		m_DiffuseTexture = LoadTexture(pGfxContext, m_DiffuseTexName, true);
 	}
 	if (!m_SpecularTexName.empty())
 	{
-		m_SpecularTexture = LoadTexture(pGfxContext, m_SpecularTexName);
+		m_SpecularTexture = LoadTexture(pGfxContext, m_SpecularTexName, true);
 	}
 	if (!m_SpecularHighlightTexName.empty())
 	{
-		m_SpecularHighlightTexture = LoadTexture(pGfxContext, m_SpecularHighlightTexName);
+		m_SpecularHighlightTexture = LoadTexture(pGfxContext, m_SpecularHighlightTexName, true);
 	}
 	if (!m_BumpTexName.empty())
 	{
-		m_BumpTexture = LoadTexture(pGfxContext, m_BumpTexName);
+		m_BumpTexture = LoadTexture(pGfxContext, m_BumpTexName, false);
 	}
 	if (!m_DisplacementTexName.empty())
 	{
-		m_DisplacementTexture = LoadTexture(pGfxContext, m_DisplacementTexName);
+		m_DisplacementTexture = LoadTexture(pGfxContext, m_DisplacementTexName, false);
 	}
 	if (!m_AlphaTexName.empty())
 	{
-		m_AlphaTexture = LoadTexture(pGfxContext, m_AlphaTexName);
+		m_AlphaTexture = LoadTexture(pGfxContext, m_AlphaTexName, false);
 	}
 }
 
-std::shared_ptr<DX12Texture> Material::LoadTexture(DX12GraphicContext* pGfxContext, std::string texname)
+std::shared_ptr<DX12Texture> Material::LoadTexture(DX12GraphicContext* pGfxContext, std::string texname, bool sRGB)
 {
 	std::shared_ptr<DX12Texture> tex = std::shared_ptr<DX12Texture>();
 	std::string ext = texname.substr(texname.length() - 4, 4);
 	if (ext == ".tga")
 	{
-		tex.reset(DX12Texture::LoadFromTGAFile(DX12GraphicManager::GetInstance()->GetDevice(), pGfxContext, texname.c_str()));
+		tex.reset(DX12Texture::LoadFromTGAFile(DX12GraphicManager::GetInstance()->GetDevice(), pGfxContext, texname.c_str(), sRGB));
 	}
 	else
 	{
-		tex.reset(DX12Texture::LoadFromDDSFile(DX12GraphicManager::GetInstance()->GetDevice(), pGfxContext, texname.c_str()));
+		tex.reset(DX12Texture::LoadFromDDSFile(DX12GraphicManager::GetInstance()->GetDevice(), pGfxContext, texname.c_str(), sRGB));
 	}
 	return tex;	
 }

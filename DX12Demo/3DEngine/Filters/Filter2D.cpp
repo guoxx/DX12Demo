@@ -35,7 +35,7 @@ Filter2D::Filter2D(DX12Device* device)
 	psoCompiler.SetShaderFromBin(DX12ShaderTypeVertex, g_IdentityFilter2D_VS, sizeof(g_IdentityFilter2D_VS));
 	psoCompiler.SetShaderFromBin(DX12ShaderTypePixel, g_IdentityFilter2D_PS, sizeof(g_IdentityFilter2D_PS));
 	psoCompiler.SetRoogSignature(m_RootSig.get());
-	psoCompiler.SetRenderTargetFormat(DXGI_FORMAT_R8G8B8A8_UNORM);
+	psoCompiler.SetRenderTargetFormat(DXGI_FORMAT_R8G8B8A8_UNORM_SRGB);
 	psoCompiler.SetDespthStencilFormat(DXGI_FORMAT_UNKNOWN);
 	m_PSO = psoCompiler.Compile(DX12GraphicManager::GetInstance()->GetDevice());
 }

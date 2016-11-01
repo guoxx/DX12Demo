@@ -19,7 +19,7 @@ public:
 	void Apply(RenderContext* pRenderContext, DX12GraphicContext* pGfxContext);
 
 private:
-	std::shared_ptr<DX12Texture> LoadTexture(DX12GraphicContext* pGfxContext, std::string texname);
+	std::shared_ptr<DX12Texture> LoadTexture(DX12GraphicContext* pGfxContext, std::string texname, bool sRGB);
 
 	std::string m_Name;
 
