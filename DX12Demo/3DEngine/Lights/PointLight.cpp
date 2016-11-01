@@ -16,9 +16,9 @@ PointLight::~PointLight()
 
 void PointLight::SetIntensity(float r, float g, float b)
 {
-	r = DX::Clamp(r, 0.0f, 1.0f);
-	g = DX::Clamp(g, 0.0f, 1.0f);
-	b = DX::Clamp(b, 0.0f, 1.0f);
+	//r = DX::Clamp(r, 0.0f, 1.0f);
+	//g = DX::Clamp(g, 0.0f, 1.0f);
+	//b = DX::Clamp(b, 0.0f, 1.0f);
 	m_Intensity= DirectX::XMFLOAT4{r, g, b, 0};
 }
 

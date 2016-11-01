@@ -230,6 +230,9 @@
     <ClInclude Include="DX12\Texture\PlatformHelpers.h">
       <Filter>DX12\Private\Texture</Filter>
     </ClInclude>
+    <ClInclude Include="3DEngine\Filters\ToneMapFilter2D.h">
+      <Filter>3DEngine\Filters</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -358,6 +361,9 @@
     <ClCompile Include="DX12\Texture\DDSTextureLoader.cpp">
       <Filter>DX12\Private\Texture</Filter>
     </ClCompile>
+    <ClCompile Include="3DEngine\Filters\ToneMapFilter2D.cpp">
+      <Filter>3DEngine\Filters</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="XboxOne\Resources\Logo.png">
@@ -412,6 +418,9 @@
       <Filter>Shaders</Filter>
     </CustomBuild>
     <CustomBuild Include="Shaders\TiledShading.hlsl">
+      <Filter>Shaders</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Shaders\ToneMapFilter2D.hlsl">
       <Filter>Shaders</Filter>
     </CustomBuild>
   </ItemGroup>

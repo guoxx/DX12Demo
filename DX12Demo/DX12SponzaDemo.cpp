@@ -189,7 +189,7 @@ void DX12SponzaDemo::LoadAssets()
 	{
 		std::shared_ptr<DirectionalLight> light = std::make_shared<DirectionalLight>();
 		light->SetDirection(-0.8f, -0.6f, 0.05f);
-		light->SetIrradiance(1, 1, 1);
+		light->SetIrradiance(1.4, 1.4, 1.4);
 		m_Scene->AttachDirectionalLight(light);
 	}
 

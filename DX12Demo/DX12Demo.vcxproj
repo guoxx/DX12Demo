@@ -198,6 +198,7 @@
     <ClInclude Include="3DEngine\Filters\DirectionalLightFilter2D.h" />
     <ClInclude Include="3DEngine\Filters\Filter2D.h" />
     <ClInclude Include="3DEngine\Filters\PointLightFilter2D.h" />
+    <ClInclude Include="3DEngine\Filters\ToneMapFilter2D.h" />
     <ClInclude Include="3DEngine\GameInput.h" />
     <ClInclude Include="3DEngine\Lights\DirectionalLight.h" />
     <ClInclude Include="3DEngine\Lights\ILight.h" />
@@ -260,6 +261,7 @@
     <ClCompile Include="3DEngine\Filters\DirectionalLightFilter2D.cpp" />
     <ClCompile Include="3DEngine\Filters\Filter2D.cpp" />
     <ClCompile Include="3DEngine\Filters\PointLightFilter2D.cpp" />
+    <ClCompile Include="3DEngine\Filters\ToneMapFilter2D.cpp" />
     <ClCompile Include="3DEngine\GameInput.cpp" />
     <ClCompile Include="3DEngine\Lights\DirectionalLight.cpp" />
     <ClCompile Include="3DEngine\Lights\ILight.cpp" />
@@ -341,6 +343,11 @@
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="Shaders\TiledShading.hlsl">
+      <FileType>Document</FileType>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="Shaders\ToneMapFilter2D.hlsl">
       <FileType>Document</FileType>
     </CustomBuild>
   </ItemGroup>

@@ -9,6 +9,7 @@
 #include "Lights/DirectionalLight.h"
 
 #include "Filters/Filter2D.h"
+#include "Filters/ToneMapFilter2D.h"
 #include "Filters/PointLightFilter2D.h"
 #include "Filters/DirectionalLightFilter2D.h"
 
@@ -29,9 +30,10 @@ Renderer::Renderer(GFX_HWND hwnd, int32_t width, int32_t height)
 	m_SceneGBuffer2 = RenderableSurfaceManager::GetInstance()->AcquireColorSurface(RenderableSurfaceDesc(GFX_FORMAT_R8G8B8A8_UNORM, width, height));
 	m_SceneDepthSurface = RenderableSurfaceManager::GetInstance()->AcquireDepthSurface(RenderableSurfaceDesc(GFX_FORMAT_D32_FLOAT, width, height));
 
-	m_LightingSurface = RenderableSurfaceManager::GetInstance()->AcquireColorSurface(RenderableSurfaceDesc(GFX_FORMAT_R32G32B32A32_FLOAT, width, height));
+	m_LightingSurface = RenderableSurfaceManager::GetInstance()->AcquireColorSurface(RenderableSurfaceDesc(GFX_FORMAT_HDR, width, height));
 
 	m_IdentityFilter2D = std::make_shared<Filter2D>(pDevice);
+	m_ToneMapFilter2D = std::make_shared<ToneMapFilter2D>(pDevice);
 
 	m_PointLightFilter2D = std::make_shared<PointLightFilter2D>(pDevice);
 	m_DirLightFilter2D = std::make_shared<DirectionalLightFilter2D>(pDevice);
@@ -52,6 +54,8 @@ Renderer::Renderer(GFX_HWND hwnd, int32_t width, int32_t height)
 	m_TiledShadingPass = std::make_shared<TiledShadingPass>(pDevice);
 
 	m_TiledShading = true;
+	m_ToneMapEnabled = true;
+	m_ToneMapExposure = 4.0f;
 }
 
 Renderer::~Renderer()
@@ -427,10 +431,22 @@ void Renderer::ResolveToSwapChain()
 
 	pGfxContext->SetViewport(0, 0, m_Width, m_Height);
 
-	m_IdentityFilter2D->Apply(pGfxContext);
-	pGfxContext->ResourceTransitionBarrier(RenderableSurfaceManager::GetInstance()->GetColorSurface(m_LightingSurface), D3D12_RESOURCE_STATE_GENERIC_READ);
-	pGfxContext->SetGraphicsRootDescriptorTable(0, RenderableSurfaceManager::GetInstance()->GetColorSurface(m_LightingSurface)->GetSRV());
-	m_IdentityFilter2D->Draw(pGfxContext);
-	pGfxContext->ResourceTransitionBarrier(RenderableSurfaceManager::GetInstance()->GetColorSurface(m_LightingSurface), D3D12_RESOURCE_STATE_RENDER_TARGET);
+	if (m_ToneMapEnabled)
+	{
+		m_ToneMapFilter2D->Apply(pGfxContext);
+		pGfxContext->SetGraphicsRoot32BitConstants(0, 1, &m_ToneMapExposure, 0);
+		pGfxContext->ResourceTransitionBarrier(RenderableSurfaceManager::GetInstance()->GetColorSurface(m_LightingSurface), D3D12_RESOURCE_STATE_GENERIC_READ);
+		pGfxContext->SetGraphicsRootDescriptorTable(0, RenderableSurfaceManager::GetInstance()->GetColorSurface(m_LightingSurface)->GetSRV());
+		m_ToneMapFilter2D->Draw(pGfxContext);
+		pGfxContext->ResourceTransitionBarrier(RenderableSurfaceManager::GetInstance()->GetColorSurface(m_LightingSurface), D3D12_RESOURCE_STATE_RENDER_TARGET);
+	}
+	else
+	{
+		m_IdentityFilter2D->Apply(pGfxContext);
+		pGfxContext->ResourceTransitionBarrier(RenderableSurfaceManager::GetInstance()->GetColorSurface(m_LightingSurface), D3D12_RESOURCE_STATE_GENERIC_READ);
+		pGfxContext->SetGraphicsRootDescriptorTable(0, RenderableSurfaceManager::GetInstance()->GetColorSurface(m_LightingSurface)->GetSRV());
+		m_IdentityFilter2D->Draw(pGfxContext);
+		pGfxContext->ResourceTransitionBarrier(RenderableSurfaceManager::GetInstance()->GetColorSurface(m_LightingSurface), D3D12_RESOURCE_STATE_RENDER_TARGET);
+	}
 }
 

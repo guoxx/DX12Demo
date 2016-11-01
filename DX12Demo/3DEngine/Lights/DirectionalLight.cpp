@@ -15,9 +15,9 @@ DirectionalLight::~DirectionalLight()
 
 void DirectionalLight::SetIrradiance(float r, float g, float b)
 {
-	r = DX::Clamp(r, 0.0f, 1.0f);
-	g = DX::Clamp(g, 0.0f, 1.0f);
-	b = DX::Clamp(b, 0.0f, 1.0f);
+	//r = DX::Clamp(r, 0.0f, 1.0f);
+	//g = DX::Clamp(g, 0.0f, 1.0f);
+	//b = DX::Clamp(b, 0.0f, 1.0f);
 	m_Irradiance = DirectX::XMFLOAT4{r, g, b, 0};
 }
 
