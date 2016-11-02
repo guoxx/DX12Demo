@@ -41,7 +41,7 @@ VSOutput VSMain(uint vertid : SV_VertexID)
 
 float3 ToneMap( float3 hdr, float E = 4.0 )
 {
-	return (1 - exp2(-E * hdr)) / (1 - exp2(-E));
+	return hdr * pow(2, E);
 }
 
 RootSigDeclaration

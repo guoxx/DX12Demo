@@ -55,7 +55,8 @@ Renderer::Renderer(GFX_HWND hwnd, int32_t width, int32_t height)
 
 	m_TiledShading = true;
 	m_ToneMapEnabled = true;
-	m_ToneMapExposure = 4.0f;
+	// disabled by default
+	m_ToneMapExposure = 0.0f;
 }
 
 Renderer::~Renderer()
