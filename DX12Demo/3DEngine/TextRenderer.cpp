@@ -254,7 +254,7 @@ void TextRenderer::Initialize( void )
 	psoCompiler.SetInputLayout(_countof(vertElem), vertElem);
 	psoCompiler.SetShaderFromBin(DX12ShaderTypeVertex, g_TextRender_VS, sizeof(g_TextRender_VS));
 	psoCompiler.SetShaderFromBin(DX12ShaderTypePixel, g_TextRender_PS, sizeof(g_TextRender_PS));
-	psoCompiler.SetRenderTargetFormat(GFX_FORMAT_R8G8B8A8_UNORM_SRGB_SWAPCHAIN.RTVFormat);
+	psoCompiler.SetRenderTargetFormat(GFX_FORMAT_SWAPCHAIN.RTVFormat);
 	s_TextPSO = psoCompiler.Compile(device);
 }
 

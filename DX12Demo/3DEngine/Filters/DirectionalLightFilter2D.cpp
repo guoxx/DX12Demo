@@ -40,9 +40,10 @@ DirectionalLightFilter2D::DirectionalLightFilter2D(DX12Device* device)
 	psoCompiler.SetShaderFromBin(DX12ShaderTypeVertex, g_DirectionalLight_VS, sizeof(g_DirectionalLight_VS));
 	psoCompiler.SetShaderFromBin(DX12ShaderTypePixel, g_DirectionalLight_PS, sizeof(g_DirectionalLight_PS));
 	psoCompiler.SetRoogSignature(m_RootSig.get());
-	psoCompiler.SetRenderTargetFormat(DXGI_FORMAT_R32G32B32A32_FLOAT);
+	psoCompiler.SetRenderTargetFormat(GFX_FORMAT_HDR.RTVFormat);
 	psoCompiler.SetDespthStencilFormat(DXGI_FORMAT_UNKNOWN);
-	psoCompiler.SetBlendState(BLEND_STATE_ADD);
+	psoCompiler.SetBlendState(CD3DX12::BlendAdditive());
+	psoCompiler.SetDepthStencilState(CD3DX12::DepthStateDisabled());
 	m_PSO = psoCompiler.Compile(device);
 }
 

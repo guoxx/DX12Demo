@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../DX12/DX12.h"
-#include "3DEngineDefinition.h"
+#include "GraphicsEngineDefinition.h"
 #include "RenderableSurfaceManager.h"
 
 

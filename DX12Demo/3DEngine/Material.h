@@ -1,6 +1,6 @@
 #pragma once
 
-#include "3DEngineDefinition.h"
+#include "GraphicsEngineDefinition.h"
 #include "../DX12/DX12.h"
 
 class Model;

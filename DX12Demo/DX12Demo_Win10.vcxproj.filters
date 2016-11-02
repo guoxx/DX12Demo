@@ -171,6 +171,15 @@
     <ClCompile Include="DX12\Texture\DDSTextureLoader.cpp">
       <Filter>DX12\Private\Texture</Filter>
     </ClCompile>
+    <ClCompile Include="3DEngine\EngineTuning.cpp">
+      <Filter>3DEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="3DEngine\TextRenderer.cpp">
+      <Filter>3DEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="3DEngine\Filters\ToneMapFilter2D.cpp">
+      <Filter>3DEngine\Filters</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DX12\DX12GraphicContext.h">
@@ -338,9 +347,6 @@
     <ClInclude Include="3DEngine\Pass\TiledShadingPass.h">
       <Filter>3DEngine\Pass</Filter>
     </ClInclude>
-    <ClInclude Include="3DEngine\3DEngineDefinition.h">
-      <Filter>3DEngine</Filter>
-    </ClInclude>
     <ClInclude Include="Shaders\Inc\HLSLShared.h">
       <Filter>Shaders\Inc</Filter>
     </ClInclude>
@@ -355,6 +361,21 @@
     </ClInclude>
     <ClInclude Include="DX12\Texture\LoaderHelpers.h">
       <Filter>DX12\Private\Texture</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\Color.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="3DEngine\EngineTuning.h">
+      <Filter>3DEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="3DEngine\TextRenderer.h">
+      <Filter>3DEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="3DEngine\Filters\ToneMapFilter2D.h">
+      <Filter>3DEngine\Filters</Filter>
+    </ClInclude>
+    <ClInclude Include="3DEngine\GraphicsEngineDefinition.h">
+      <Filter>3DEngine</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -391,6 +412,12 @@
       <Filter>Shaders</Filter>
     </CustomBuild>
     <CustomBuild Include="Shaders\TiledShading.hlsl">
+      <Filter>Shaders</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Shaders\TextRender.hlsl">
+      <Filter>Shaders</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Shaders\ToneMapFilter2D.hlsl">
       <Filter>Shaders</Filter>
     </CustomBuild>
   </ItemGroup>

@@ -36,8 +36,9 @@ ToneMapFilter2D::ToneMapFilter2D(DX12Device* device)
 	psoCompiler.SetShaderFromBin(DX12ShaderTypeVertex, g_ToneMapFilter2D_VS, sizeof(g_ToneMapFilter2D_VS));
 	psoCompiler.SetShaderFromBin(DX12ShaderTypePixel, g_ToneMapFilter2D_PS, sizeof(g_ToneMapFilter2D_PS));
 	psoCompiler.SetRoogSignature(m_RootSig.get());
-	psoCompiler.SetRenderTargetFormat(GFX_FORMAT_R8G8B8A8_UNORM_SRGB_SWAPCHAIN.RTVFormat);
+	psoCompiler.SetRenderTargetFormat(GFX_FORMAT_SWAPCHAIN.RTVFormat);
 	psoCompiler.SetDespthStencilFormat(DXGI_FORMAT_UNKNOWN);
+	psoCompiler.SetDepthStencilState(CD3DX12::DepthStateDisabled());
 	m_PSO = psoCompiler.Compile(DX12GraphicManager::GetInstance()->GetDevice());
 }
 

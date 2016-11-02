@@ -19,7 +19,7 @@
 #include "EngineTuning.h"
 
 BoolVar g_TiledShading("Graphics/Tiled Shading", true);
-BoolVar g_ToneMapping("Graphics/HDR/Tiled Shading", true);
+BoolVar g_ToneMapping("Graphics/HDR/Tone Mapping", true);
 NumVar g_ToneMapExposure("Graphics/HDR/Exposure", 0.0f, -10.0f, 10.0f);
 
 Renderer::Renderer(GFX_HWND hwnd, int32_t width, int32_t height)
@@ -28,7 +28,7 @@ Renderer::Renderer(GFX_HWND hwnd, int32_t width, int32_t height)
 {
 	DX12Device* pDevice = DX12GraphicManager::GetInstance()->GetDevice();
 
-	m_SwapChain = std::make_shared<DX12SwapChain>(pDevice, hwnd, width, height, GFX_FORMAT_R8G8B8A8_UNORM_SRGB_SWAPCHAIN);
+	m_SwapChain = std::make_shared<DX12SwapChain>(pDevice, hwnd, width, height, GFX_FORMAT_SWAPCHAIN);
 
 	m_SceneGBuffer0 = RenderableSurfaceManager::GetInstance()->AcquireColorSurface(RenderableSurfaceDesc(GFX_FORMAT_R8G8B8A8_UNORM, width, height));
 	m_SceneGBuffer1 = RenderableSurfaceManager::GetInstance()->AcquireColorSurface(RenderableSurfaceDesc(GFX_FORMAT_R8G8B8A8_UNORM, width, height));
