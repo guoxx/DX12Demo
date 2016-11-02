@@ -531,8 +531,8 @@ namespace CD3DX12
 	static inline D3D12_RASTERIZER_DESC RasterizerShadow()
 	{
 		auto desc = RasterizerDefault();
-		desc.SlopeScaledDepthBias = -1.5f;
-		desc.DepthBias = -100;
+		desc.SlopeScaledDepthBias = 2.0f;
+		desc.DepthBias = 20000;
 		return desc;
 	}
 

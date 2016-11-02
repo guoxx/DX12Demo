@@ -61,8 +61,6 @@ float4 PSMain(VSOutput In) : SV_TARGET
 	float3 shadowPos = mul(float4(gbuffer.Position, 1), g_Constants.mLightViewProj).xyz;
 	float2 shadowUV = float2((shadowPos.x + 1.0f) * 0.5f, (-shadowPos.y + 1.0f) * 0.5f);
 	float occluderDepth = g_ShadowMap.Sample(g_Sampler, shadowUV);
-	// TODO: shouldn't hard code depth bias
-	occluderDepth += 0.01;
 	float shadowMask = occluderDepth < shadowPos.z ? 0.0f : 1.0f;
 
 	float3 L = -g_Constants.LightDirection.xyz;

@@ -41,8 +41,6 @@ float3 ShadeDirectionalLight(GBuffer gbuffer, DirectionalLight directionalLight)
 		float3 shadowPos = mul(float4(gbuffer.Position, 1), directionalLight.m_mViewProj).xyz;
 		float2 shadowUV = float2((shadowPos.x + 1.0f) * 0.5f, (-shadowPos.y + 1.0f) * 0.5f);
 		float occluderDepth = g_ShadowMaps[directionalLight.m_ShadowMapTexId].SampleLevel(g_PointSampler, shadowUV, 0);
-		// TODO: shouldn't hard code depth bias
-		occluderDepth += 0.01;
 		shadowMask = occluderDepth < shadowPos.z ? 0.0f : 1.0f;
 	}
 
@@ -66,8 +64,6 @@ float3 ShadePointLight(GBuffer gbuffer, PointLight pointLight)
 		float4 shadowPos = mul(float4(gbuffer.Position, 1), pointLight.m_mViewProj[face]);
 		shadowPos /= shadowPos.w;
 		float occluderDepth = g_ShadowMaps[pointLight.m_FirstShadowMapTexId + face].SampleLevel(g_PointSampler, shadowPos.xy * float2(1, -1) * 0.5 + 0.5, 0);
-		// TODO: shouldn't hard code depth bias
-		occluderDepth += 0.00001;
 		shadowMask = occluderDepth < shadowPos.z ? 0.0f : 1.0f;
 	}
 

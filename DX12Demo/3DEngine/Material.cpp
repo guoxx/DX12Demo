@@ -49,10 +49,7 @@ void Material::Load(DX12GraphicContext* pGfxContext)
 		psoCompiler.SetRoogSignature(m_RootSig[shadingCfg].get());
 		psoCompiler.SetRenderTargetFormat(DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM);
 		psoCompiler.SetDespthStencilFormat(DXGI_FORMAT_D32_FLOAT);
-
-		CD3DX12_RASTERIZER_DESC rasterizerDesc{ D3D12_DEFAULT };
-		rasterizerDesc.FrontCounterClockwise = true;
-		psoCompiler.SetRasterizerState(rasterizerDesc);
+		psoCompiler.SetRasterizerState(CD3DX12::RasterizerDefault());
 
 		m_PSO[shadingCfg] = psoCompiler.Compile(DX12GraphicManager::GetInstance()->GetDevice());
 	}
@@ -71,10 +68,7 @@ void Material::Load(DX12GraphicContext* pGfxContext)
 		psoCompiler.SetShaderFromBin(DX12ShaderTypeVertex, g_BaseMaterial_DepthOnly_VS, sizeof(g_BaseMaterial_DepthOnly_VS));
 		psoCompiler.SetRoogSignature(m_RootSig[shadingCfg].get());
 		psoCompiler.SetDespthStencilFormat(DXGI_FORMAT_D32_FLOAT);
-
-		CD3DX12_RASTERIZER_DESC rasterizerDesc{ D3D12_DEFAULT };
-		rasterizerDesc.FrontCounterClockwise = true;
-		psoCompiler.SetRasterizerState(rasterizerDesc);
+		psoCompiler.SetRasterizerState(CD3DX12::RasterizerShadow());
 
 		m_PSO[shadingCfg] = psoCompiler.Compile(DX12GraphicManager::GetInstance()->GetDevice());
 	}
