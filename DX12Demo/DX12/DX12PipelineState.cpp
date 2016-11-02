@@ -102,6 +102,12 @@ bool DX12GraphicPsoCompiler::SetBlendState(const D3D12_BLEND_DESC& blendDesc)
 	return true;
 }
 
+bool DX12GraphicPsoCompiler::SetDepthStencilState(const D3D12_DEPTH_STENCIL_DESC & depthStencilDesc)
+{
+	m_PsoDesc.DepthStencilState = depthStencilDesc;
+	return true;
+}
+
 bool DX12GraphicPsoCompiler::SetRenderTargetFormat(DXGI_FORMAT fmt0)
 {
 	m_PsoDesc.NumRenderTargets = 1;
@@ -140,6 +146,12 @@ bool DX12GraphicPsoCompiler::SetRenderTargetFormats(uint32_t numRenderTargets, D
 bool DX12GraphicPsoCompiler::SetDespthStencilFormat(DXGI_FORMAT fmt)
 {
 	m_PsoDesc.DSVFormat = fmt;
+	return true;
+}
+
+bool DX12GraphicPsoCompiler::SetInputLayout(uint32_t numElements, const D3D12_INPUT_ELEMENT_DESC * pInputElementDescs)
+{
+	m_PsoDesc.InputLayout = { pInputElementDescs, numElements };
 	return true;
 }
 

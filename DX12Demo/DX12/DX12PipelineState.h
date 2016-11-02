@@ -33,12 +33,16 @@ public:
 
 	bool SetBlendState(const D3D12_BLEND_DESC& blendDesc);
 
+	bool SetDepthStencilState(const D3D12_DEPTH_STENCIL_DESC& depthStencilDesc);
+
 	bool SetRenderTargetFormat(DXGI_FORMAT fmt0);
 	bool SetRenderTargetFormat(DXGI_FORMAT fmt0, DXGI_FORMAT fmt1);
 	bool SetRenderTargetFormat(DXGI_FORMAT fmt0, DXGI_FORMAT fmt1, DXGI_FORMAT fmt2);
 	bool SetRenderTargetFormats(uint32_t numRenderTargets, DXGI_FORMAT* fmts);
 
 	bool SetDespthStencilFormat(DXGI_FORMAT fmt);
+
+	bool SetInputLayout(uint32_t numElements, const D3D12_INPUT_ELEMENT_DESC* pInputElementDescs);
 
 	std::shared_ptr<DX12PipelineState> Compile(DX12Device* device);
 

@@ -82,7 +82,6 @@ void DX12GraphicContext::PIXSetMarker(const wchar_t* label)
 #endif
 }
 
-
 void DX12GraphicContext::IASetIndexBuffer(const DX12IndexBuffer* pIndexBuffer)
 {
 	m_CommandList->IASetIndexBuffer(&pIndexBuffer->GetView());
@@ -181,6 +180,12 @@ void DX12GraphicContext::SetGraphicsRootDynamicConstantBufferView(uint32_t rootP
 	m_CommandList->SetGraphicsRootConstantBufferView(rootParameterIndex, GpuVirtualAddress);
 }
 
+void DX12GraphicContext::SetGraphicsDynamicVertexBuffer(uint32_t slot, void * pData, uint32_t sizeInBytes, uint32_t strideInBytes)
+{
+	// TODO
+	assert(false);
+}
+
 void DX12GraphicContext::SetGraphicsRootStructuredBuffer(uint32_t rootParameterIndex, const DX12StructuredBuffer * pStructuredBuffer)
 {
 	m_CommandList->SetGraphicsRootShaderResourceView(rootParameterIndex, pStructuredBuffer->GetGpuResource()->GetGPUVirtualAddress());
@@ -264,6 +269,13 @@ void DX12GraphicContext::DrawIndexed(uint32_t indexCount, uint32_t startIndexLoc
 	ApplyDynamicDescriptors(false);
 
 	m_CommandList->DrawIndexedInstanced(indexCount, 1, startIndexLocation, baseVertexLocation, 0);
+}
+
+void DX12GraphicContext::DrawInstanced(uint32_t vertexCountPerInstance, uint32_t instanceCount, uint32_t startVertexLocation, uint32_t startInstanceLocation)
+{
+	ApplyDynamicDescriptors(false);
+
+	m_CommandList->DrawInstanced(vertexCountPerInstance, instanceCount, startVertexLocation, startInstanceLocation);
 }
 
 void DX12GraphicContext::CopyTextureRegion(const D3D12_TEXTURE_COPY_LOCATION * pDst, uint32_t dstX, uint32_t dstY, uint32_t dstZ, const D3D12_TEXTURE_COPY_LOCATION * pSrc, const D3D12_BOX * pSrcBox)

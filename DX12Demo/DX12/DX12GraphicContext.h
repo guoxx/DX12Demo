@@ -4,6 +4,7 @@
 
 
 class DX12GpuResource;
+class DX12VertexBuffer;
 class DX12IndexBuffer;
 class DX12ConstantsBuffer;
 class DX12StructuredBuffer;
@@ -41,6 +42,8 @@ public:
 
 	void SetGraphicsRootDynamicConstantBufferView(uint32_t rootParameterIndex, void* pData, uint32_t sizeInBytes);
 
+	void SetGraphicsDynamicVertexBuffer(uint32_t slot, void* pData, uint32_t sizeInBytes, uint32_t strideInBytes);
+
 	void SetGraphicsRootStructuredBuffer(uint32_t rootParameterIndex, const DX12StructuredBuffer* pStructuredBuffer);
 
 	void SetGraphicsRootDescriptorTable(uint32_t rootParameterIndex, DX12DescriptorHandle baseDescriptorHandle);
@@ -68,6 +71,8 @@ public:
 	void Dispatch2D(uint32_t threadCountX, uint32_t threadCountY, uint32_t groupSizeX, uint32_t groupSizeY);
 
 	void DrawIndexed(uint32_t indexCount, uint32_t startIndexLocation, int32_t baseVertexLocation = 0);
+
+	void DrawInstanced(uint32_t vertexCountPerInstance, uint32_t instanceCount, uint32_t startVertexLocation = 0, uint32_t startInstanceLocation = 0);
 
 	void CopyTextureRegion(const D3D12_TEXTURE_COPY_LOCATION *pDst, uint32_t dstX, uint32_t dstY, uint32_t dstZ, const D3D12_TEXTURE_COPY_LOCATION *pSrc, const D3D12_BOX *pSrcBox);
 

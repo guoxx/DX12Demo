@@ -43,6 +43,7 @@
 #include "Utils/Noncopyable.h"
 #include "Utils/Nonmovable.h"
 #include "Utils/Helpers.h"
+#include "Utils/Color.h"
 
 #include "Shaders/Inc/HLSLShared.h"
 
@@ -58,6 +59,14 @@ using GFX_HWND = HWND;
 #endif
 
 using Microsoft::WRL::ComPtr;
+
+#ifndef ASSERT
+	#ifdef _DEBUG
+		#define ASSERT(cond, msg) assert(cond)
+	#else
+		#define ASSERT(cond, msg) 
+	#endif
+#endif
 
 namespace DX
 {

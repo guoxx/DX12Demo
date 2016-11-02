@@ -233,6 +233,15 @@
     <ClInclude Include="3DEngine\Filters\ToneMapFilter2D.h">
       <Filter>3DEngine\Filters</Filter>
     </ClInclude>
+    <ClInclude Include="3DEngine\TextRenderer.h">
+      <Filter>3DEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="3DEngine\EngineTuning.h">
+      <Filter>3DEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\Color.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -364,6 +373,12 @@
     <ClCompile Include="3DEngine\Filters\ToneMapFilter2D.cpp">
       <Filter>3DEngine\Filters</Filter>
     </ClCompile>
+    <ClCompile Include="3DEngine\TextRenderer.cpp">
+      <Filter>3DEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="3DEngine\EngineTuning.cpp">
+      <Filter>3DEngine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="XboxOne\Resources\Logo.png">
@@ -421,6 +436,9 @@
       <Filter>Shaders</Filter>
     </CustomBuild>
     <CustomBuild Include="Shaders\ToneMapFilter2D.hlsl">
+      <Filter>Shaders</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Shaders\TextRender.hlsl">
       <Filter>Shaders</Filter>
     </CustomBuild>
   </ItemGroup>

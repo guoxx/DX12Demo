@@ -510,4 +510,153 @@ namespace CD3DX12
 			return (D3D12_UAV_DIMENSION)srvDimension;
 		}
 	}
+
+	static inline D3D12_RASTERIZER_DESC RasterizerDefault()
+	{
+		D3D12_RASTERIZER_DESC desc;
+		desc.FillMode = D3D12_FILL_MODE_SOLID;
+		desc.CullMode = D3D12_CULL_MODE_BACK;
+		desc.FrontCounterClockwise = TRUE;
+		desc.DepthBias = D3D12_DEFAULT_DEPTH_BIAS;
+		desc.DepthBiasClamp = D3D12_DEFAULT_DEPTH_BIAS_CLAMP;
+		desc.SlopeScaledDepthBias = D3D12_DEFAULT_SLOPE_SCALED_DEPTH_BIAS;
+		desc.DepthClipEnable = TRUE;
+		desc.MultisampleEnable = FALSE;
+		desc.AntialiasedLineEnable = FALSE;
+		desc.ForcedSampleCount = 0;
+		desc.ConservativeRaster = D3D12_CONSERVATIVE_RASTERIZATION_MODE_OFF;
+		return desc;
+	}
+
+	static inline D3D12_RASTERIZER_DESC RasterizerDefaultCW()
+	{
+		auto desc = RasterizerDefault();
+		desc.FrontCounterClockwise = FALSE;
+		return desc;
+	}
+
+	static inline D3D12_RASTERIZER_DESC RasterizerTwoSided()
+	{
+		auto desc = RasterizerDefault();
+		desc.CullMode = D3D12_CULL_MODE_NONE;
+		return desc;
+	}
+
+	static inline D3D12_RASTERIZER_DESC RasterizerShadow()
+	{
+		auto desc = RasterizerDefault();
+		desc.SlopeScaledDepthBias = -1.5f;
+		desc.DepthBias = -100;
+		return desc;
+	}
+
+	static inline D3D12_RASTERIZER_DESC RasterizerShadowCW()
+	{
+		auto desc = RasterizerShadow();
+		desc.FrontCounterClockwise = FALSE;
+		return desc;
+	}
+
+	// XXX
+	static inline D3D12_BLEND_DESC BlendNoColorWrite()
+	{
+		D3D12_BLEND_DESC alphaBlend = {};
+		alphaBlend.IndependentBlendEnable = FALSE;
+		alphaBlend.RenderTarget[0].BlendEnable = FALSE;
+		alphaBlend.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
+		alphaBlend.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
+		alphaBlend.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
+		alphaBlend.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
+		alphaBlend.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_INV_SRC_ALPHA;
+		alphaBlend.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
+		alphaBlend.RenderTarget[0].RenderTargetWriteMask = 0;
+		return alphaBlend;
+	}
+
+	// 1, 0
+	static inline D3D12_BLEND_DESC BlendDisable()
+	{
+		auto desc = BlendNoColorWrite();
+		desc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
+		return desc;
+	}
+
+	// SrcA, 1-SrcA
+	static inline D3D12_BLEND_DESC BlendTraditional()
+	{
+		auto desc = BlendDisable();
+		desc.RenderTarget[0].BlendEnable = TRUE;
+		return desc;
+	}
+
+	// 1, 1-SrcA
+	static inline D3D12_BLEND_DESC BlendPreMultiplied()
+	{
+		auto desc = BlendTraditional();
+		desc.RenderTarget[0].SrcBlend = D3D12_BLEND_ONE;
+		return desc;
+	}
+
+	// 1, 1
+	static inline D3D12_BLEND_DESC BlendAdditive()
+	{
+		auto desc = BlendPreMultiplied();
+		desc.RenderTarget[0].DestBlend = D3D12_BLEND_ONE;
+		return desc;
+	}
+
+	// SrcA, 1
+	static inline D3D12_BLEND_DESC BlendTraditionalAdditive()
+	{
+		auto desc = BlendAdditive();
+		desc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
+		return desc;
+	}
+
+	static inline D3D12_DEPTH_STENCIL_DESC DepthStateDisabled()
+	{
+		D3D12_DEPTH_STENCIL_DESC desc = {};
+		desc.DepthEnable = FALSE;
+		desc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
+		desc.DepthFunc = D3D12_COMPARISON_FUNC_ALWAYS;
+		desc.StencilEnable = FALSE;
+		desc.StencilReadMask = D3D12_DEFAULT_STENCIL_READ_MASK;
+		desc.StencilWriteMask = D3D12_DEFAULT_STENCIL_WRITE_MASK;
+		desc.FrontFace.StencilFunc = D3D12_COMPARISON_FUNC_ALWAYS;
+		desc.FrontFace.StencilPassOp = D3D12_STENCIL_OP_KEEP;
+		desc.FrontFace.StencilFailOp = D3D12_STENCIL_OP_KEEP;
+		desc.FrontFace.StencilDepthFailOp = D3D12_STENCIL_OP_KEEP;
+		desc.BackFace = desc.FrontFace;
+		return desc;
+	}
+
+	static inline D3D12_DEPTH_STENCIL_DESC DepthStateReadWrite()
+	{
+		auto desc = DepthStateDisabled();
+		desc.DepthEnable = TRUE;
+		desc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
+		desc.DepthFunc = D3D12_COMPARISON_FUNC_GREATER_EQUAL;
+		return desc;
+	}
+
+	static inline D3D12_DEPTH_STENCIL_DESC DepthStateReadOnly()
+	{
+		auto desc = DepthStateReadWrite();
+		desc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
+		return desc;
+	}
+
+	static inline D3D12_DEPTH_STENCIL_DESC DepthStateReadOnlyReversed()
+	{
+		auto desc = DepthStateReadOnly();
+		desc.DepthFunc = D3D12_COMPARISON_FUNC_LESS;
+		return desc;
+	}
+
+	static inline D3D12_DEPTH_STENCIL_DESC DepthStateTestEqual()
+	{
+		auto desc = DepthStateReadOnly();
+		desc.DepthFunc = D3D12_COMPARISON_FUNC_EQUAL;
+		return desc;
+	}
 }
