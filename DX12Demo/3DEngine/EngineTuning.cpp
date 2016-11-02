@@ -16,6 +16,8 @@
 #include "EngineTuning.h"
 #include "TextRenderer.h"
 #include "GameInput.h"
+
+#include "../DX12/DX12.h"
 //#include "GraphicsCore.h"
 //#include "CommandContext.h"
 //#include "GraphRenderer.h"
@@ -510,6 +512,10 @@ void EngineTuning::Initialize( void )
 	}
 	s_UnregisteredCount = -1;
 
+}
+
+void EngineTuning::Finalize(void)
+{
 }
 
 void HandleDigitalButtonPress( GameInput::DigitalInput button, float timeDelta, std::function<void ()> action )

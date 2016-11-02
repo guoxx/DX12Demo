@@ -15,6 +15,8 @@
 #include "3DEngine/MaterialManager.h"
 #include "3DEngine/RenderableSurfaceManager.h"
 #include "3DEngine/GameInput.h"
+#include "3DEngine/TextRenderer.h"
+#include "3DEngine/EngineTuning.h"
 
 #ifdef _XBOX_ONE
 using namespace Windows::Xbox::Input;
@@ -47,24 +49,10 @@ void DX12SponzaDemo::OnUpdate(DX::StepTimer const& timer)
 {
     PIXBeginEvent(EVT_COLOR_UPDATE, L"Update");
 
-#ifdef _XBOX_ONE
-    // Allow the game to exit by pressing the view button on a controller.
-    // This is just a helper for development.
-    IVectorView<IGamepad^>^ gamepads = Gamepad::Gamepads;
-
-    for (unsigned i = 0; i < gamepads->Size; i++)
-    {
-        IGamepadReading^ reading = gamepads->GetAt(i)->GetCurrentReading();
-        if (reading->IsViewPressed)
-        {
-            Windows::ApplicationModel::Core::CoreApplication::Exit();
-        }
-    }
-#endif
-
     float elapsedTime = float(timer.GetElapsedSeconds());
 
 	GameInput::Update(elapsedTime);
+	EngineTuning::Update(elapsedTime);
 
 	float speedScale = 150;
 	float forward = (GameInput::GetTimeCorrectedAnalogInput(GameInput::kAnalogLeftStickY)) +
@@ -126,6 +114,8 @@ void DX12SponzaDemo::OnDestroy()
 	MaterialManager::Finalize();
 	RenderableSurfaceManager::Finalize();
 	GameInput::Shutdown();
+	TextRenderer::Shutdown();
+	EngineTuning::Finalize();
 }
 
 void DX12SponzaDemo::DrawScene()
@@ -155,6 +145,8 @@ void DX12SponzaDemo::CreateDevice()
 	MaterialManager::Initialize();
 	RenderableSurfaceManager::Initialize();
 	GameInput::Initialize(m_Hwnd);
+	TextRenderer::Initialize();
+	EngineTuning::Initialize();
 
 	m_GraphicManager = DX12GraphicManager::GetInstance();
 

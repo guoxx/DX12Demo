@@ -171,6 +171,7 @@ class DX12GraphicContext;
 namespace EngineTuning
 {
 	void Initialize( void );
+	void Finalize( void );
 	void Update( float frameTime );
 	void Display( DX12GraphicContext& Context, float x, float y, float w, float h );
 	bool IsFocused( void );

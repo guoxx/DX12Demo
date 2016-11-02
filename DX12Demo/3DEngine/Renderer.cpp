@@ -16,6 +16,11 @@
 #include "Pass/LightCullingPass.h"
 #include "Pass/TiledShadingPass.h"
 
+#include "EngineTuning.h"
+
+BoolVar g_TiledShading("Graphics/Tiled Shading", true);
+BoolVar g_ToneMapping("Graphics/HDR/Tiled Shading", true);
+NumVar g_ToneMapExposure("Graphics/HDR/Exposure", 0.0f, -10.0f, 10.0f);
 
 Renderer::Renderer(GFX_HWND hwnd, int32_t width, int32_t height)
 	: m_Width{ width}
@@ -52,11 +57,6 @@ Renderer::Renderer(GFX_HWND hwnd, int32_t width, int32_t height)
 
 	m_LightCullingPass = std::make_shared<LightCullingPass>(pDevice);
 	m_TiledShadingPass = std::make_shared<TiledShadingPass>(pDevice);
-
-	m_TiledShading = true;
-	m_ToneMapEnabled = true;
-	// disabled by default
-	m_ToneMapExposure = 0.0f;
 }
 
 Renderer::~Renderer()
@@ -72,6 +72,7 @@ void Renderer::Render(const Camera* pCamera, Scene* pScene)
 	RenderGBuffer(pCamera, pScene);
 	DeferredLighting(pCamera, pScene);
 	ResolveToSwapChain();
+	RenderDebugMenu();
 }
 
 void Renderer::Flip()
@@ -155,7 +156,7 @@ void Renderer::DeferredLighting(const Camera* pCamera, Scene* pScene)
 	DX12GraphicContext* pGfxContext = executor.GetGraphicContext();
 
 
-	if (m_TiledShading)
+	if (g_TiledShading)
 	{
 		{
 			pGfxContext->PIXBeginEvent(L"LightCulling");
@@ -223,7 +224,7 @@ void Renderer::DeferredLighting(const Camera* pCamera, Scene* pScene)
 		}
 
 		{
-			pGfxContext->PIXBeginEvent(L"TiledShading");
+			pGfxContext->PIXBeginEvent(L"g_TiledShading");
 
 			pGfxContext->ResourceTransitionBarrier(RenderableSurfaceManager::GetInstance()->GetColorSurface(m_SceneGBuffer0), D3D12_RESOURCE_STATE_GENERIC_READ);
 			pGfxContext->ResourceTransitionBarrier(RenderableSurfaceManager::GetInstance()->GetColorSurface(m_SceneGBuffer1), D3D12_RESOURCE_STATE_GENERIC_READ);
@@ -433,10 +434,11 @@ void Renderer::ResolveToSwapChain()
 	pGfxContext->SetViewport(0, 0, m_Width, m_Height);
 
 	pGfxContext->ResourceTransitionBarrier(RenderableSurfaceManager::GetInstance()->GetColorSurface(m_LightingSurface), D3D12_RESOURCE_STATE_GENERIC_READ);
-	if (m_ToneMapEnabled)
+	if (g_ToneMapping)
 	{
 		m_ToneMapFilter2D->Apply(pGfxContext);
-		pGfxContext->SetGraphicsRoot32BitConstants(0, 1, &m_ToneMapExposure, 0);
+		float exposure = g_ToneMapExposure;
+		pGfxContext->SetGraphicsRoot32BitConstants(0, 1, &exposure, 0);
 		pGfxContext->SetGraphicsRootDescriptorTable(1, RenderableSurfaceManager::GetInstance()->GetColorSurface(m_LightingSurface)->GetSRV());
 		m_ToneMapFilter2D->Draw(pGfxContext);
 	}
@@ -447,5 +449,20 @@ void Renderer::ResolveToSwapChain()
 		m_IdentityFilter2D->Draw(pGfxContext);
 	}
 	pGfxContext->ResourceTransitionBarrier(RenderableSurfaceManager::GetInstance()->GetColorSurface(m_LightingSurface), D3D12_RESOURCE_STATE_RENDER_TARGET);
+}
+
+void Renderer::RenderDebugMenu()
+{
+	DX12SwapChainContextAutoExecutor executor;
+	DX12GraphicContext* pGfxContext = executor.GetGraphicContext();
+
+    // Clear the views.
+	DX12ColorSurface* pColorSurface = m_SwapChain->GetBackBuffer();
+	DX12ColorSurface* pColorSurfaces[] = { pColorSurface };
+    pGfxContext->SetRenderTargets(_countof(pColorSurfaces), pColorSurfaces, nullptr);
+
+	pGfxContext->SetViewport(0, 0, m_Width, m_Height);
+
+	EngineTuning::Display(*pGfxContext, 10.0f, 40.0f, 1900.0f, 1040.0f);
 }
 

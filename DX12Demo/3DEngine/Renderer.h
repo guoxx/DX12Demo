@@ -34,12 +34,10 @@ private:
 
 	void ResolveToSwapChain();
 
+	void RenderDebugMenu();
+
 	int32_t m_Width;
 	int32_t m_Height;
-
-	bool m_TiledShading;
-	bool m_ToneMapEnabled;
-	float m_ToneMapExposure;
 
 	RenderContext m_RenderContext;	
 

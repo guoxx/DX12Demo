@@ -229,8 +229,8 @@ void TextRenderer::Initialize( void )
 	SamplerLinearClampDesc.ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 	sigCompiler.InitStaticSampler(SamplerLinearClampDesc);
 
-	sigCompiler[0].InitAsConstantBufferView(0, D3D12_SHADER_VISIBILITY_VERTEX);
-	sigCompiler[1].InitAsConstantBufferView(0, D3D12_SHADER_VISIBILITY_PIXEL);
+	sigCompiler[0].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_VERTEX);
+	sigCompiler[1].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_PIXEL);
 
 	D3D12_DESCRIPTOR_RANGE range[] = {
 		D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0, 0, D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND
@@ -433,8 +433,6 @@ void TextContext::End( void )
 
 void TextContext::SetRenderState( void )
 {
-	ASSERT(nullptr == m_CurrentFont, "Attempted to draw text without a font");
-
 	if (m_VSConstantBufferIsStale)
 	{
 		m_Context.SetGraphicsRootDynamicConstantBufferView(0, &m_VSParams, sizeof(m_VSParams));

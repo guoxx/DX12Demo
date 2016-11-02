@@ -180,10 +180,21 @@ void DX12GraphicContext::SetGraphicsRootDynamicConstantBufferView(uint32_t rootP
 	m_CommandList->SetGraphicsRootConstantBufferView(rootParameterIndex, GpuVirtualAddress);
 }
 
-void DX12GraphicContext::SetGraphicsDynamicVertexBuffer(uint32_t slot, void * pData, uint32_t sizeInBytes, uint32_t strideInBytes)
+void DX12GraphicContext::SetGraphicsDynamicVertexBuffer(uint32_t slot, void* pData, uint32_t sizeInBytes, uint32_t strideInBytes)
 {
-	// TODO
-	assert(false);
+	std::shared_ptr<DX12GpuResource> tempGpuResource = DX12GraphicManager::GetInstance()->AllocateTempGpuResourceInUploadHeap(sizeInBytes);
+
+	void* pDstData = nullptr;
+	tempGpuResource->MapResource(0, &pDstData);
+	std::memcpy(pDstData, pData, sizeInBytes);
+	tempGpuResource->UnmapResource(0);
+
+	D3D12_VERTEX_BUFFER_VIEW vbv;
+	vbv.BufferLocation = tempGpuResource->GetGpuResource()->GetGPUVirtualAddress();
+	vbv.SizeInBytes = sizeInBytes;
+	vbv.StrideInBytes = strideInBytes;
+
+	m_CommandList->IASetVertexBuffers(slot, 1, &vbv);
 }
 
 void DX12GraphicContext::SetGraphicsRootStructuredBuffer(uint32_t rootParameterIndex, const DX12StructuredBuffer * pStructuredBuffer)
