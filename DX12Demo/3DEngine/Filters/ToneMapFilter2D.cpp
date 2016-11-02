@@ -29,6 +29,7 @@ ToneMapFilter2D::ToneMapFilter2D(DX12Device* device)
 	CD3DX12_STATIC_SAMPLER_DESC staticSampDesc = CD3DX12_STATIC_SAMPLER_DESC(0, D3D12_FILTER_MIN_MAG_MIP_POINT);
 	staticSampDesc.ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 	sigCompiler.InitStaticSampler(staticSampDesc);
+	sigCompiler.End();
 	m_RootSig = sigCompiler.Compile(DX12GraphicManager::GetInstance()->GetDevice());
 
 	DX12GraphicPsoCompiler psoCompiler;

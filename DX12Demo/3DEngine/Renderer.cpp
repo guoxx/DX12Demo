@@ -431,22 +431,20 @@ void Renderer::ResolveToSwapChain()
 
 	pGfxContext->SetViewport(0, 0, m_Width, m_Height);
 
+	pGfxContext->ResourceTransitionBarrier(RenderableSurfaceManager::GetInstance()->GetColorSurface(m_LightingSurface), D3D12_RESOURCE_STATE_GENERIC_READ);
 	if (m_ToneMapEnabled)
 	{
 		m_ToneMapFilter2D->Apply(pGfxContext);
 		pGfxContext->SetGraphicsRoot32BitConstants(0, 1, &m_ToneMapExposure, 0);
-		pGfxContext->ResourceTransitionBarrier(RenderableSurfaceManager::GetInstance()->GetColorSurface(m_LightingSurface), D3D12_RESOURCE_STATE_GENERIC_READ);
-		pGfxContext->SetGraphicsRootDescriptorTable(0, RenderableSurfaceManager::GetInstance()->GetColorSurface(m_LightingSurface)->GetSRV());
+		pGfxContext->SetGraphicsRootDescriptorTable(1, RenderableSurfaceManager::GetInstance()->GetColorSurface(m_LightingSurface)->GetSRV());
 		m_ToneMapFilter2D->Draw(pGfxContext);
-		pGfxContext->ResourceTransitionBarrier(RenderableSurfaceManager::GetInstance()->GetColorSurface(m_LightingSurface), D3D12_RESOURCE_STATE_RENDER_TARGET);
 	}
 	else
 	{
 		m_IdentityFilter2D->Apply(pGfxContext);
-		pGfxContext->ResourceTransitionBarrier(RenderableSurfaceManager::GetInstance()->GetColorSurface(m_LightingSurface), D3D12_RESOURCE_STATE_GENERIC_READ);
 		pGfxContext->SetGraphicsRootDescriptorTable(0, RenderableSurfaceManager::GetInstance()->GetColorSurface(m_LightingSurface)->GetSRV());
 		m_IdentityFilter2D->Draw(pGfxContext);
-		pGfxContext->ResourceTransitionBarrier(RenderableSurfaceManager::GetInstance()->GetColorSurface(m_LightingSurface), D3D12_RESOURCE_STATE_RENDER_TARGET);
 	}
+	pGfxContext->ResourceTransitionBarrier(RenderableSurfaceManager::GetInstance()->GetColorSurface(m_LightingSurface), D3D12_RESOURCE_STATE_RENDER_TARGET);
 }
 
