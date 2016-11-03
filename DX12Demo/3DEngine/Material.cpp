@@ -128,13 +128,13 @@ void Material::Apply(RenderContext* pRenderContext, DX12GraphicContext* pGfxCont
 
 	if (shadingCfg == ShadingConfiguration_GBuffer)
 	{
-		ConstantBuffer(View)
+		struct View
 		{
 			float4x4 mModelViewProj;
 			float4x4 mInverseTransposeModel;
 		};
 
-		ConstantBuffer(BaseMaterial)
+		struct BaseMaterial
 		{
 			float4 Ambient;
 			float4 Diffuse;
@@ -177,7 +177,7 @@ void Material::Apply(RenderContext* pRenderContext, DX12GraphicContext* pGfxCont
 	}
 	else if (shadingCfg == ShadingConfiguration_DepthOnly)
 	{
-		ConstantBuffer(View)
+		struct View
 		{
 			float4x4 mModelViewProj;
 		};

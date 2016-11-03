@@ -24,13 +24,13 @@ struct VSOutput
 	float2 Texcoord : TEXCOORD;
 };
 
-struct View
+HLSL_CB_DECL(BaseMaterial, View, 0,
 {
 	float4x4 mModelViewProj;
 	float4x4 mInverseTransposeModel;
-};
+});
 
-struct BaseMaterial
+HLSL_CB_DECL(BaseMaterial, BaseMaterial, 1,
 {
 	float4 Ambient;
 	float4 Diffuse;
@@ -40,10 +40,8 @@ struct BaseMaterial
 	float4 Shininess;
 	float4 Ior;
 	float4 Dissolve;
-};
+});
 
-ConstantBuffer<View> g_View : register(b0);
-ConstantBuffer<BaseMaterial> g_Material : register(b1);
 StructuredBuffer<VSInput> g_VertexArray : register(t0);
 Texture2D<float4> g_DiffuseTexture : register(t1);
 SamplerState s_PointSampler : register(s0);
@@ -55,8 +53,8 @@ VSOutput VSMain(uint vertid : SV_VertexID)
 	VSInput In  = g_VertexArray[vertid];
 
 	VSOutput Out;
-	Out.Position = mul(float4(In.Position, 1), g_View.mModelViewProj);
-	Out.Normal = mul(float4(In.Normal, 0), g_View.mInverseTransposeModel).xyz;
+	Out.Position = mul(float4(In.Position, 1), HLSL_CB_GET(0, mModelViewProj));
+	Out.Normal = mul(float4(In.Normal, 0), HLSL_CB_GET(0, mInverseTransposeModel)).xyz;
 	Out.Texcoord = In.Texcoord;
 
 	return Out;
@@ -68,9 +66,9 @@ GBufferOutput PSMain(VSOutput In)
 	GBuffer gbuffer;
 
 	gbuffer.Diffuse = g_DiffuseTexture.Sample(s_PointSampler, In.Texcoord).xyz;
-	gbuffer.Specular = IorToF0_Dielectric(g_Material.Ior.x).xxx;
+	gbuffer.Specular = IorToF0_Dielectric(HLSL_CB_GET(1, Ior.x)).xxx;
 	gbuffer.Normal = In.Normal;
-	gbuffer.Roughness = saturate((100.0f - g_Material.Shininess) / 100.0f);
+	gbuffer.Roughness = saturate((100.0f - HLSL_CB_GET(1, Shininess.x)) / 100.0f);
 
 	return GBufferEncode(gbuffer);
 }

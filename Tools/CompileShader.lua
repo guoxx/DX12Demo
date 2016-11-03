@@ -96,10 +96,10 @@ if debug_shader then
 	optimization_flags = " /Od /Zi"
 end
 
--- TODO: fix it
-if is_durango then
-	optimization_flags = string.gsub(optimization_flags, "/Zi", "")
-end
+-- -- TODO: fix it
+-- if is_durango then
+-- 	optimization_flags = string.gsub(optimization_flags, "/Zi", "")
+-- end
 
 local shader_pathcomponents = str_split(shader_file, "/")
 local shader_filename = shader_pathcomponents[#shader_pathcomponents]

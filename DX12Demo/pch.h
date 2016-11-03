@@ -47,9 +47,6 @@
 
 #include "Shaders/Inc/HLSLShared.h"
 
-#define ConstantBuffer(typename) \
-struct __declspec(align(16)) typename
-
 
 #ifdef _XBOX_ONE
 using D3D12_COMMAND_QUEUE_FLAGS = D3D12_COMMAND_QUEUE_FLAG;

@@ -25,6 +25,35 @@
 #define NUM_THREADS_PER_LIGHT_CULLING_TILE (LIGHT_CULLING_NUM_THREADS_XY * LIGHT_CULLING_NUM_THREADS_XY)
 #define LIGHT_NODE_INVALID 0x7FFFFFFF
 
+// internal use only
+#define __HLSL_CB_TYPE_NAME__(namespace_, typename_) namespace_##typename_
+#define __HLSL_CB_VAR_NAME__(reg_) g_CB##reg_
+#define __HLSL_CB_REG_NAME__(reg_) register(b##reg_)
+
+#ifdef __cplusplus
+	#define HLSL_CB_DECL(namespace_, typename_, reg_, decl_) \
+	struct __declspec(align(16)) __HLSL_CB_TYPE_NAME__(namespace_, typename_) \
+	decl_;
+#else
+	#if 0
+		// TOOD: more elegent solution but not workig on X1, not well supported by FXC
+		#define HLSL_CB_DECL(namespace_, typename_, reg_, decl_) \
+		struct __HLSL_CB_TYPE_NAME__(namespace_, typename_) \
+		decl_; \
+		ConstantBuffer<__HLSL_CB_TYPE_NAME__(namespace_, typename_)> __HLSL_CB_VAR_NAME__(reg_) : __HLSL_CB_REG_NAME__(reg_);	
+
+		#define HLSL_CB_GET(reg_, member_) \
+		__HLSL_CB_VAR_NAME__(reg_).member_
+	#else
+		#define HLSL_CB_DECL(namespace_, typename_, reg_, decl_) \
+		cbuffer __HLSL_CB_VAR_NAME__(reg_) : __HLSL_CB_REG_NAME__(reg_) \
+		decl_;
+
+		#define HLSL_CB_GET(reg_, member_) \
+		member_
+	#endif
+#endif
+
 #ifdef __cplusplus
 namespace HLSL {
 #endif
@@ -60,7 +89,8 @@ struct LightNode
 	int			m_LightIndex;
 };
 
-struct TiledShadingConstants
+#ifdef __cplusplus
+HLSL_CB_DECL(TiledShading, Constants, 0,
 {
 	uint m_NumTileX;
 	uint m_NumTileY;
@@ -73,7 +103,8 @@ struct TiledShadingConstants
 	float4 m_CameraPosition;
 	float4x4 m_mInvView;
 	float4x4 m_mInvProj;
-};
+});
+#endif
 
 #ifdef __cplusplus
 }
