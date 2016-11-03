@@ -405,14 +405,14 @@ void DX12GraphicContext::StageDynamicDescriptor(uint32_t rootParameterIndex, uin
 
 	cache.m_CachedHandles[offsetInTable] = descriptorHandle;
 
-	m_DynamicCbvSrvUavDescriptorsTableDirty |= (0x01 << rootParameterIndex);
+	m_DynamicCbvSrvUavDescriptorsTableDirty |= ((uint64_t)0x01 << rootParameterIndex);
 }
 
 void DX12GraphicContext::ApplyDynamicDescriptors(bool bComputeCommand)
 {
 	for (int32_t i = 0; i < DX12MaxSlotsPerShader; ++i)
 	{
-		if (m_DynamicCbvSrvUavDescriptorsTableDirty & (0x01 << i))
+		if (m_DynamicCbvSrvUavDescriptorsTableDirty & ((uint64_t)0x01 << i))
 		{
 			CpuDescriptorHandlesCache& cache = m_DescriptorHandlesCache[i];
 
