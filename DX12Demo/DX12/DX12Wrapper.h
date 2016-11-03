@@ -531,8 +531,13 @@ namespace CD3DX12
 	static inline D3D12_RASTERIZER_DESC RasterizerShadow()
 	{
 		auto desc = RasterizerDefault();
+#ifdef _XBOX_ONE
+		desc.SlopeScaledDepthBias = 3.0f;
+		desc.DepthBias = 200;
+#else
 		desc.SlopeScaledDepthBias = 2.0f;
 		desc.DepthBias = 20000;
+#endif
 		return desc;
 	}
 
