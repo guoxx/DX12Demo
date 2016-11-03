@@ -6,6 +6,7 @@
 
 
 class Camera;
+class ILight;
 class PointLight;
 class DirectionalLight;
 
@@ -28,6 +29,10 @@ public:
 	const Camera* GetCamera() const { return m_Camera; }
 
 	void SetCamera(const Camera* pCamera) { m_Camera = pCamera; }
+
+	const ILight* GetCurrentLightForRSM() const { return m_CurrentLightForRSM; }	
+
+	void SetCurrentLightForRSM(const ILight* pLight) { m_CurrentLightForRSM = pLight; }
 
 	DirectX::XMMATRIX GetModelMatrix() const { return m_mModel; };
 
@@ -100,5 +105,7 @@ private:
 	std::map<DirectionalLight*, RenderableSurfaceHandle> m_RSMNormalSurfaceForDirLights;
 	std::map<PointLight*, std::array<RenderableSurfaceHandle, 6>> m_RSMRadiantIntensitySurfaceForPointLights;
 	std::map<PointLight*, std::array<RenderableSurfaceHandle, 6>> m_RSMNormalSurfaceForPointLights;
+
+	const ILight* m_CurrentLightForRSM;
 };
 

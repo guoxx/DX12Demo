@@ -102,6 +102,8 @@ void Renderer::RenderShadowMaps(const Camera* pCamera, Scene * pScene)
 
 		if (g_RSM)
 		{
+			m_RenderContext.SetCurrentLightForRSM(directionalLight.get());
+
 			DX12ColorSurface* pIntensitySurface = m_RenderContext.AcquireRSMRadiantIntensitySurfaceForDirectionalLight(directionalLight.get());
 			DX12ColorSurface* pNormalSurface = m_RenderContext.AcquireRSMNormalSurfaceForDirectionalLight(directionalLight.get());
 			DX12DepthSurface* pDepthSurface = m_RenderContext.AcquireDepthSurfaceForDirectionalLight(directionalLight.get());
@@ -150,6 +152,8 @@ void Renderer::RenderShadowMaps(const Camera* pCamera, Scene * pScene)
 
 			if (g_RSM)
 			{
+				m_RenderContext.SetCurrentLightForRSM(pointLight.get());
+
 				auto pIntensitySurfaces = m_RenderContext.AcquireRSMRadiantIntensitySurfaceForPointLight(pointLight.get());
 				auto pNormalSurfaces = m_RenderContext.AcquireRSMNormalSurfaceForPointLight(pointLight.get());
 				auto pDepthSurfaces = m_RenderContext.AcquireDepthSurfaceForPointLight(pointLight.get());
@@ -263,7 +267,7 @@ void Renderer::DeferredLighting(const Camera* pCamera, Scene* pScene)
 		}
 
 		{
-			pGfxContext->PIXBeginEvent(L"g_TiledShading");
+			pGfxContext->PIXBeginEvent(L"TiledShading");
 
 			pGfxContext->ResourceTransitionBarrier(RenderableSurfaceManager::GetInstance()->GetColorSurface(m_SceneGBuffer0), D3D12_RESOURCE_STATE_GENERIC_READ);
 			pGfxContext->ResourceTransitionBarrier(RenderableSurfaceManager::GetInstance()->GetColorSurface(m_SceneGBuffer1), D3D12_RESOURCE_STATE_GENERIC_READ);

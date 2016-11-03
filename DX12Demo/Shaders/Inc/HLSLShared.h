@@ -104,6 +104,22 @@ HLSL_CB_DECL(TiledShading, Constants, 0,
 	float4x4 m_mInvView;
 	float4x4 m_mInvProj;
 });
+
+HLSL_CB_DECL(BaseMaterial_RSM, Constants, 0,
+{
+	float4x4 mModelViewProj;
+	float4x4 mInverseTransposeModel;
+
+	int LightType;
+	int Padding0;
+	int Padding1;
+	int Padding2;
+
+	float4 DirectionalLightIrradiance;
+	float4 DirectionalLightDirection;
+	float4 PointLightIntensity;
+	float4 PointLightPosition;
+});
 #endif
 
 #ifdef __cplusplus

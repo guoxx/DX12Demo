@@ -27,6 +27,16 @@ HLSL_CB_DECL(BaseMaterial_RSM, Constants, 0,
 {
 	float4x4 mModelViewProj;
 	float4x4 mInverseTransposeModel;
+
+	int LightType;
+	int Padding0;
+	int Padding1;
+	int Padding2;
+
+	float4 DirectionalLightIrradiance;
+	float4 DirectionalLightDirection;
+	float4 PointLightIntensity;
+	float4 PointLightPosition;
 });
 
 StructuredBuffer<VSInput> g_VertexArray : register(t0);
@@ -52,7 +62,30 @@ RSMOutput PSMain(VSOutput In)
 {
 	RSMBuffer rsmbuffer;
 
-	rsmbuffer.Intensity = g_DiffuseTexture.Sample(s_PointSampler, In.Texcoord).xyz;
+	float3 diffuse = g_DiffuseTexture.Sample(s_PointSampler, In.Texcoord).xyz;
+	float3 reflectedDiffuse = Diffuse_Lambert(diffuse);
+	float3 I = 0;
+	if (HLSL_CB_GET(0, LightType) == 0)
+	{
+		// directional light
+		float3 L = -HLSL_CB_GET(0, DirectionalLightDirection).xyz;
+		float3 N = normalize(In.Normal);
+		float NdotL = saturate(dot(L, N));
+		float3 E = HLSL_CB_GET(0, DirectionalLightIrradiance).xyz;
+		// store irradiance as intensity, because you are not be able to evalute the intensity for a directional light
+		// I = E * (d^2), d^2 will be factored out in further calculation
+		I = E * NdotL * reflectedDiffuse;
+	}
+	else
+	{
+		// point light
+		float3 L = normalize(HLSL_CB_GET(0, PointLightPosition).xyz - In.Position.xyz);
+		float3 N = normalize(In.Normal);
+		float NdotL = saturate(dot(L, N));
+		I = HLSL_CB_GET(0, PointLightIntensity).xyz * NdotL * reflectedDiffuse;
+	}
+
+	rsmbuffer.Intensity = I;
 	rsmbuffer.Normal = In.Normal;
 
 	return RSMBufferEncode(rsmbuffer);

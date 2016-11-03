@@ -4,6 +4,9 @@
 #include "../DX12/DX12.h"
 #include "RenderContext.h"
 
+#include "Lights/PointLight.h"
+#include "Lights/DirectionalLight.h"
+
 #include "../Shaders/CompiledShaders/BaseMaterial_VS.h"
 #include "../Shaders/CompiledShaders/BaseMaterial_PS.h"
 #include "../Shaders/CompiledShaders/BaseMaterial_DepthOnly_VS.h"
@@ -220,20 +223,33 @@ void Material::Apply(RenderContext* pRenderContext, DX12GraphicContext* pGfxCont
 	}
 	else if (shadingCfg == ShadingConfiguration_RSM)
 	{
-		struct View
-		{
-			float4x4 mModelViewProj;
-			float4x4 mInverseTransposeModel;
-		};
+		HLSL::BaseMaterial_RSMConstants constants;
 
 		DirectX::XMMATRIX mModel = pRenderContext->GetModelMatrix();
 		DirectX::XMMATRIX mInverseModel = DirectX::XMMatrixInverse(nullptr, mModel);
 		DirectX::XMMATRIX mInverseTransposeModel = DirectX::XMMatrixTranspose(mInverseModel);
-		View view;
-		DirectX::XMStoreFloat4x4(&view.mModelViewProj, DirectX::XMMatrixTranspose(pRenderContext->GetModelViewProjMatrix()));
-		DirectX::XMStoreFloat4x4(&view.mInverseTransposeModel, mInverseTransposeModel);
+		DirectX::XMStoreFloat4x4(&constants.mModelViewProj, DirectX::XMMatrixTranspose(pRenderContext->GetModelViewProjMatrix()));
+		DirectX::XMStoreFloat4x4(&constants.mInverseTransposeModel, mInverseTransposeModel);
 
-		pGfxContext->SetGraphicsRootDynamicConstantBufferView(1, &view, sizeof(view));
+		const ILight* pLightForRSM = pRenderContext->GetCurrentLightForRSM();
+		const DirectionalLight* pDirLight = dynamic_cast<const DirectionalLight*>(pLightForRSM);
+		if (pDirLight != nullptr)
+		{
+			constants.LightType = 0;
+			constants.DirectionalLightDirection = pDirLight->GetDirection();
+			constants.DirectionalLightIrradiance = pDirLight->GetIrradiance();
+		}
+		else
+		{
+			const PointLight* pPointLight = dynamic_cast<const PointLight*>(pLightForRSM);
+			assert(pPointLight != nullptr);
+
+			constants.LightType = 1;
+			DirectX::XMStoreFloat4(&constants.PointLightPosition, pPointLight->GetTranslation());
+			constants.PointLightIntensity = pPointLight->GetIntensity();
+		}
+
+		pGfxContext->SetGraphicsRootDynamicConstantBufferView(1, &constants, sizeof(constants));
 
 		if (m_DiffuseTexture.get() == nullptr)
 		{

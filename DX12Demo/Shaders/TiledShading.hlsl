@@ -37,7 +37,7 @@ Texture2D<float4> g_GBuffer1 : register(t4);
 Texture2D<float4> g_GBuffer2 : register(t5);
 Texture2D<float> g_DepthTexture : register(t6);
 
-Texture2D<float> g_ShadowMaps[] : register(t16);
+Texture2D<float> g_ShadowMaps[32] : register(t16);
 
 SamplerState g_PointSampler : register(s0);
 
