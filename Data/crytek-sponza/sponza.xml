@@ -37,7 +37,7 @@
 
 	<shape type="sphere">
 		<point name="center" x="-400" y="180" z="-100"/>
-		<float name="radius" value="200"/>
+		<float name="radius" value="10"/>
 		<emitter type="area">
 			<rgb name="radiance" value="13.25, 14.0, 14.0"/>
 		</emitter>
@@ -45,7 +45,7 @@
 
 	<shape type="sphere">
 		<point name="center" x="-1200" y="180" z="-250"/>
-		<float name="radius" value="200"/>
+		<float name="radius" value="10"/>
 		<emitter type="area">
 			<rgb name="radiance" value="13.25, 14.0, 14.0"/>
 		</emitter>

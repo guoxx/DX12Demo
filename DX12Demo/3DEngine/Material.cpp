@@ -7,6 +7,8 @@
 #include "../Shaders/CompiledShaders/BaseMaterial_VS.h"
 #include "../Shaders/CompiledShaders/BaseMaterial_PS.h"
 #include "../Shaders/CompiledShaders/BaseMaterial_DepthOnly_VS.h"
+#include "../Shaders/CompiledShaders/BaseMaterial_RSM_VS.h"
+#include "../Shaders/CompiledShaders/BaseMaterial_RSM_PS.h"
 
 
 Material::Material()
@@ -67,6 +69,35 @@ void Material::Load(DX12GraphicContext* pGfxContext)
 		DX12GraphicPsoCompiler psoCompiler;
 		psoCompiler.SetShaderFromBin(DX12ShaderTypeVertex, g_BaseMaterial_DepthOnly_VS, sizeof(g_BaseMaterial_DepthOnly_VS));
 		psoCompiler.SetRoogSignature(m_RootSig[shadingCfg].get());
+		psoCompiler.SetDespthStencilFormat(DXGI_FORMAT_D32_FLOAT);
+		psoCompiler.SetRasterizerState(CD3DX12::RasterizerShadow());
+
+		m_PSO[shadingCfg] = psoCompiler.Compile(DX12GraphicManager::GetInstance()->GetDevice());
+	}
+
+	{
+		ShadingConfiguration shadingCfg = ShadingConfiguration_RSM;
+
+		D3D12_DESCRIPTOR_RANGE descriptorRanges[] = {
+			{ D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 1, 0, D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND },
+		};
+
+		DX12RootSignatureCompiler sigCompiler;
+		sigCompiler.Begin(3, 1);
+		sigCompiler.End();
+		sigCompiler[0].InitAsShaderResourceView(0, 0, D3D12_SHADER_VISIBILITY_VERTEX);
+		sigCompiler[1].InitAsConstantBufferView(0);
+		sigCompiler[2].InitAsDescriptorTable(_countof(descriptorRanges), descriptorRanges, D3D12_SHADER_VISIBILITY_PIXEL);
+		CD3DX12_STATIC_SAMPLER_DESC staticSampDesc = CD3DX12_STATIC_SAMPLER_DESC(0, D3D12_FILTER_ANISOTROPIC);
+		staticSampDesc.ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+		sigCompiler.InitStaticSampler(staticSampDesc);
+		m_RootSig[shadingCfg] = sigCompiler.Compile(DX12GraphicManager::GetInstance()->GetDevice());
+
+		DX12GraphicPsoCompiler psoCompiler;
+		psoCompiler.SetShaderFromBin(DX12ShaderTypeVertex, g_BaseMaterial_RSM_VS, sizeof(g_BaseMaterial_RSM_VS));
+		psoCompiler.SetShaderFromBin(DX12ShaderTypePixel, g_BaseMaterial_RSM_PS, sizeof(g_BaseMaterial_RSM_PS));
+		psoCompiler.SetRoogSignature(m_RootSig[shadingCfg].get());
+		psoCompiler.SetRenderTargetFormat(DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM);
 		psoCompiler.SetDespthStencilFormat(DXGI_FORMAT_D32_FLOAT);
 		psoCompiler.SetRasterizerState(CD3DX12::RasterizerShadow());
 
@@ -186,5 +217,35 @@ void Material::Apply(RenderContext* pRenderContext, DX12GraphicContext* pGfxCont
 		DirectX::XMStoreFloat4x4(&view.mModelViewProj, DirectX::XMMatrixTranspose(pRenderContext->GetModelViewProjMatrix()));
 
 		pGfxContext->SetGraphicsRootDynamicConstantBufferView(1, &view, sizeof(view));
+	}
+	else if (shadingCfg == ShadingConfiguration_RSM)
+	{
+		struct View
+		{
+			float4x4 mModelViewProj;
+			float4x4 mInverseTransposeModel;
+		};
+
+		DirectX::XMMATRIX mModel = pRenderContext->GetModelMatrix();
+		DirectX::XMMATRIX mInverseModel = DirectX::XMMatrixInverse(nullptr, mModel);
+		DirectX::XMMATRIX mInverseTransposeModel = DirectX::XMMatrixTranspose(mInverseModel);
+		View view;
+		DirectX::XMStoreFloat4x4(&view.mModelViewProj, DirectX::XMMatrixTranspose(pRenderContext->GetModelViewProjMatrix()));
+		DirectX::XMStoreFloat4x4(&view.mInverseTransposeModel, mInverseTransposeModel);
+
+		pGfxContext->SetGraphicsRootDynamicConstantBufferView(1, &view, sizeof(view));
+
+		if (m_DiffuseTexture.get() == nullptr)
+		{
+			pGfxContext->SetGraphicsRootDescriptorTable(2, m_NullDescriptorHandle);
+		}
+		else
+		{
+			pGfxContext->SetGraphicsRootDescriptorTable(2, m_DiffuseTexture->GetSRV());
+		}
+	}
+	else
+	{
+		assert(false);
 	}
 }

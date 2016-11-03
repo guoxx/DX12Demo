@@ -65,7 +65,15 @@ public:
 	ShadingConfiguration GetShadingCfg() const { return m_ShadingCfg; }
 	void SetShadingCfg(ShadingConfiguration shadingCfg) { m_ShadingCfg = shadingCfg; }
 
+	DX12ColorSurface* AcquireRSMRadiantIntensitySurfaceForDirectionalLight(DirectionalLight* pDirLight);
+
+	DX12ColorSurface* AcquireRSMNormalSurfaceForDirectionalLight(DirectionalLight* pDirLight);
+
 	DX12DepthSurface* AcquireDepthSurfaceForDirectionalLight(DirectionalLight* pDirLight);
+
+	std::array<DX12ColorSurface*, 6> AcquireRSMRadiantIntensitySurfaceForPointLight(PointLight* pPointLight);
+
+	std::array<DX12ColorSurface*, 6> AcquireRSMNormalSurfaceForPointLight(PointLight* pPointLight);
 
 	std::array<DX12DepthSurface*, 6> AcquireDepthSurfaceForPointLight(PointLight* pPointLight);
 
@@ -87,5 +95,10 @@ private:
 
 	std::map<DirectionalLight*, RenderableSurfaceHandle> m_ShadowMapForDirLights;
 	std::map<PointLight*, std::array<RenderableSurfaceHandle, 6>> m_ShadowMapForPointLights;
+
+	std::map<DirectionalLight*, RenderableSurfaceHandle> m_RSMRadiantIntensitySurfaceForDirLights;
+	std::map<DirectionalLight*, RenderableSurfaceHandle> m_RSMNormalSurfaceForDirLights;
+	std::map<PointLight*, std::array<RenderableSurfaceHandle, 6>> m_RSMRadiantIntensitySurfaceForPointLights;
+	std::map<PointLight*, std::array<RenderableSurfaceHandle, 6>> m_RSMNormalSurfaceForPointLights;
 };
 

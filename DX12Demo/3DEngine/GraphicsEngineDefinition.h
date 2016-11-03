@@ -4,5 +4,6 @@ enum ShadingConfiguration
 {
 	ShadingConfiguration_GBuffer = 0,
 	ShadingConfiguration_DepthOnly,
+	ShadingConfiguration_RSM,
 	ShadingConfiguration_Max,
 };

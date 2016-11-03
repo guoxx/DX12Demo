@@ -20,6 +20,7 @@
 
 BoolVar g_TiledShading("Graphics/Tiled Shading", true);
 BoolVar g_ToneMapping("Graphics/HDR/Tone Mapping", true);
+BoolVar g_RSM("Graphics/RSM", false);
 NumVar g_ToneMapExposure("Graphics/HDR/Exposure", 0.0f, -10.0f, 10.0f);
 
 Renderer::Renderer(GFX_HWND hwnd, int32_t width, int32_t height)
@@ -86,16 +87,39 @@ void Renderer::RenderShadowMaps(const Camera* pCamera, Scene * pScene)
 	DX12GraphicContextAutoExecutor executor;
 	DX12GraphicContext* pGfxContext = executor.GetGraphicContext();
 
-	for (auto directionalLight : pScene->GetDirectionalLights())
+	if (g_RSM)
+	{
+		m_RenderContext.SetShadingCfg(ShadingConfiguration_RSM);
+	}
+	else
 	{
 		m_RenderContext.SetShadingCfg(ShadingConfiguration_DepthOnly);
+	}
 
+	for (auto directionalLight : pScene->GetDirectionalLights())
+	{
 		pGfxContext->PIXBeginEvent(L"ShadowMap - DirectionalLight");
 
-		DX12DepthSurface* pDepthSurface = m_RenderContext.AcquireDepthSurfaceForDirectionalLight(directionalLight.get());
+		if (g_RSM)
+		{
+			DX12ColorSurface* pIntensitySurface = m_RenderContext.AcquireRSMRadiantIntensitySurfaceForDirectionalLight(directionalLight.get());
+			DX12ColorSurface* pNormalSurface = m_RenderContext.AcquireRSMNormalSurfaceForDirectionalLight(directionalLight.get());
+			DX12DepthSurface* pDepthSurface = m_RenderContext.AcquireDepthSurfaceForDirectionalLight(directionalLight.get());
 
-		pGfxContext->ClearDepthTarget(pDepthSurface, 1.0f);
-		pGfxContext->SetRenderTargets(0, nullptr, pDepthSurface);
+			pGfxContext->ClearRenderTarget(pIntensitySurface, 0, 0, 0, 0);
+			pGfxContext->ClearRenderTarget(pNormalSurface, 1, 0, 0, 0);
+			pGfxContext->ClearDepthTarget(pDepthSurface, 1.0f);
+
+			DX12ColorSurface* pSurfaces[] = { pIntensitySurface, pNormalSurface };
+			pGfxContext->SetRenderTargets(_countof(pSurfaces), pSurfaces, pDepthSurface);
+		}
+		else
+		{
+			DX12DepthSurface* pDepthSurface = m_RenderContext.AcquireDepthSurfaceForDirectionalLight(directionalLight.get());
+			pGfxContext->ClearDepthTarget(pDepthSurface, 1.0f);
+			pGfxContext->SetRenderTargets(0, nullptr, pDepthSurface);
+		}
+
 		pGfxContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		pGfxContext->SetViewport(0, 0, DX12DirectionalLightShadowMapSize, DX12DirectionalLightShadowMapSize);
 
@@ -116,19 +140,34 @@ void Renderer::RenderShadowMaps(const Camera* pCamera, Scene * pScene)
 
 	for (auto pointLight : pScene->GetPointLights())
 	{
-		m_RenderContext.SetShadingCfg(ShadingConfiguration_DepthOnly);
-
 		pGfxContext->PIXBeginEvent(L"ShadowMap - PointLight");
 
-		auto pDepthSurfaces = m_RenderContext.AcquireDepthSurfaceForPointLight(pointLight.get());
 
 		for (int i = 0; i < 6; ++i)
 		{
 			wchar_t* axisNames[] = { L"POSITIVE_X", L"NEGATIVE_X", L"POSITIVE_Y", L"NEGATIVE_Y", L"POSITIVE_Z", L"NEGATIVE_Z" };
 			pGfxContext->PIXBeginEvent(axisNames[i]);
 
-			pGfxContext->ClearDepthTarget(pDepthSurfaces[i], 1.0f);
-			pGfxContext->SetRenderTargets(0, nullptr, pDepthSurfaces[i]);
+			if (g_RSM)
+			{
+				auto pIntensitySurfaces = m_RenderContext.AcquireRSMRadiantIntensitySurfaceForPointLight(pointLight.get());
+				auto pNormalSurfaces = m_RenderContext.AcquireRSMNormalSurfaceForPointLight(pointLight.get());
+				auto pDepthSurfaces = m_RenderContext.AcquireDepthSurfaceForPointLight(pointLight.get());
+
+				pGfxContext->ClearRenderTarget(pIntensitySurfaces[i], 0, 0, 0, 0);
+				pGfxContext->ClearRenderTarget(pNormalSurfaces[i], 1, 0, 0, 0);
+				pGfxContext->ClearDepthTarget(pDepthSurfaces[i], 1.0f);
+
+				DX12ColorSurface* pSurfaces[] = { pIntensitySurfaces[i], pNormalSurfaces[i] };
+				pGfxContext->SetRenderTargets(_countof(pSurfaces), pSurfaces, pDepthSurfaces[i]);
+			}
+			else
+			{
+				auto pDepthSurfaces = m_RenderContext.AcquireDepthSurfaceForPointLight(pointLight.get());
+				pGfxContext->ClearDepthTarget(pDepthSurfaces[i], 1.0f);
+				pGfxContext->SetRenderTargets(0, nullptr, pDepthSurfaces[i]);
+			}
+
 			pGfxContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 			pGfxContext->SetViewport(0, 0, DX12PointLightShadowMapSize, DX12PointLightShadowMapSize);
 

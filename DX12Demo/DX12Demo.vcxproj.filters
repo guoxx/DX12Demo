@@ -441,5 +441,8 @@
     <CustomBuild Include="Shaders\TextRender.hlsl">
       <Filter>Shaders</Filter>
     </CustomBuild>
+    <CustomBuild Include="Shaders\BaseMaterial_RSM.hlsl">
+      <Filter>Shaders</Filter>
+    </CustomBuild>
   </ItemGroup>
 </Project>
