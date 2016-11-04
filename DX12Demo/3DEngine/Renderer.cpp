@@ -210,14 +210,18 @@ void Renderer::DeferredLighting(const Camera* pCamera, Scene* pScene)
 			{
 				auto directionalLight = pScene->GetDirectionalLights()[i];
 
-				DirectX::XMFLOAT4 dir = directionalLight->GetDirection();
-				pDirLightData[i].m_Direction = DirectX::XMFLOAT3{ dir.x, dir.y, dir.z };
-				pDirLightData[i].m_Irradiance = directionalLight->GetIrradiance();
+				DirectX::XMFLOAT4 direction = directionalLight->GetDirection();
+				DirectX::XMFLOAT4 irradiance = directionalLight->GetIrradiance();
+				pDirLightData[i].m_Direction = DirectX::XMFLOAT3{ direction.x, direction.y, direction.z };
+				pDirLightData[i].m_Irradiance = DirectX::XMFLOAT3{ irradiance.x, irradiance.y, irradiance.z };
 
 				DirectX::XMMATRIX mLightView;
 				DirectX::XMMATRIX mLightProj;
 				directionalLight->GetViewAndProjMatrix(m_RenderContext.GetCamera(), &mLightView, &mLightProj);
-				DirectX::XMStoreFloat4x4(&pDirLightData[i].m_mViewProj, DirectX::XMMatrixTranspose(DirectX::XMMatrixMultiply(mLightView, mLightProj)));
+				DirectX::XMMATRIX mLightViewProj = DirectX::XMMatrixMultiply(mLightView, mLightProj);
+				DirectX::XMStoreFloat4x4(&pDirLightData[i].m_mViewProj, DirectX::XMMatrixTranspose(mLightViewProj));
+				DirectX::XMMATRIX mInvLightViewProj = DirectX::XMMatrixInverse(nullptr, mLightViewProj);
+				DirectX::XMStoreFloat4x4(&pDirLightData[i].m_mInvViewProj, DirectX::XMMatrixTranspose(mInvLightViewProj));
 
 				pDirLightData[i].m_ShadowMapTexId = firstTextureId;
 				firstTextureId += 1;

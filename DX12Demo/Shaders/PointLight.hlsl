@@ -8,7 +8,7 @@ RootSigBegin \
 ", StaticSampler(s0, filter=FILTER_MIN_MAG_MIP_POINT, visibility=SHADER_VISIBILITY_PIXEL)" \
 RootSigEnd
 
-HLSLConstantBuffer(Constants)
+struct Constants
 {
 	float4x4 mInvView;
 	float4x4 mInvProj;
@@ -19,7 +19,7 @@ HLSLConstantBuffer(Constants)
 	float4 LightRadius;
 	float4x4 mLightViewProj[6];
 };
-HLSL_CB_DECL(Constants, 0, g_Constants);
+HLSLConstantBuffer(Constants, 0, g_Constants);
 
 Texture2D<float4> g_GBuffer0 : register(t0);
 Texture2D<float4> g_GBuffer1 : register(t1);

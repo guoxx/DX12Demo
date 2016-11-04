@@ -19,12 +19,12 @@ struct VSOutput
 	float4 Position : SV_POSITION;
 };
 
-HLSLConstantBuffer(View)
+struct View
 {
 	float4x4 mModelViewProj;
 	float4x4 mInverseTransposeModel;
 };
-HLSL_CB_DECL(View, 0, g_View);
+HLSLConstantBuffer(View, 0, g_View);
 
 StructuredBuffer<VSInput> g_VertexArray : register(t0);
 

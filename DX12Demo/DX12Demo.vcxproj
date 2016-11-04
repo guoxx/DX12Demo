@@ -324,6 +324,7 @@
     <None Include="Shaders\Inc\Common.hlsli" />
     <None Include="Shaders\Inc\LightCulling.hlsli" />
     <None Include="Shaders\Inc\PointLight.hlsli" />
+    <None Include="Shaders\Inc\RSM.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="Shaders\BaseMaterial.hlsl">

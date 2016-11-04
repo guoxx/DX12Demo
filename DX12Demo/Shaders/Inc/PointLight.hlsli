@@ -1,3 +1,5 @@
+#ifndef __POINT_LIGHT_HLSLI__
+#define __POINT_LIGHT_HLSLI__
 
 float PointLightDistanceFalloff(float distance, float radiusStart, float radiusEnd)
 {
@@ -51,3 +53,5 @@ int GetFaceOfPointLightShadowMap(float3 lightPosition, float3 position)
 	}
 	return CubeFaceIndex;
 }
+
+#endif

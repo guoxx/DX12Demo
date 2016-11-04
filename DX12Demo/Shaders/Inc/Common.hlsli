@@ -1,3 +1,6 @@
+#ifndef __COMMON_HLSLI__
+#define __COMMON_HLSLI__
+
 #include "HLSLShared.h"
 #include "BRDF.hlsli"
 
@@ -104,8 +107,7 @@ RSMOutput RSMBufferEncode(RSMBuffer rsmbuffer)
 	return Out;
 }
 
-RSMBuffer RSMBufferDecode(Texture2D<float4> RT0, Texture2D<float4> RT1, Texture2D<float> DepthBuffer, SamplerState samp, float2 UV,
-	float4x4 mInvView, float4x4 mInvProj)
+RSMBuffer RSMBufferDecode(Texture2D<float4> RT0, Texture2D<float4> RT1, Texture2D<float> DepthBuffer, SamplerState samp, float2 UV, float4x4 mInvViewProj, bool perspectiveDivide)
 {
 	RSMBuffer rsmbuffer;
 
@@ -118,10 +120,12 @@ RSMBuffer RSMBufferDecode(Texture2D<float4> RT0, Texture2D<float4> RT1, Texture2
 
 	// Assume DX style texture coordinate
 	float3 ndcPos = float3(UV.x * 2.0f - 1.0f, (1.0f - UV.y) * 2.0f - 1.0f, rsmbuffer.Depth);
-	float4 csPos = mul(float4(ndcPos, 1), mInvProj);
-	csPos /= csPos.w;
-	// world space position
-	rsmbuffer.Position = mul(csPos, mInvView).xyz;
+	float4 wsPos = mul(float4(ndcPos, 1), mInvViewProj);
+	if (perspectiveDivide)
+	{
+		wsPos /= wsPos.w;
+	}
+	rsmbuffer.Position = wsPos.xyz;
 
 	return rsmbuffer;
 }
@@ -132,8 +136,8 @@ float IorToF0_Dielectric(float ior)
 	return pow(ior - 1, 2) / pow(ior + 1, 2);
 }
 
-const static uint RSMSamplesCount = 64;
-const static float2 RSMSamplingPattern[64] = {
+const static uint g_RSMSamplesCount = 64;
+const static float2 g_RSMSamplingPattern[64] = {
 float2(-0.3579344f, -0.3517149f),
 float2(-0.3890468f, -0.7202561f),
 float2(-0.2567423f, -0.0009548062f),
@@ -199,3 +203,5 @@ float2(-0.05625709f, 0.9482339f),
 float2(-0.3657628f, 0.6047338f),
 float2(-0.3679701f, -0.9156333f),
 };
+
+#endif

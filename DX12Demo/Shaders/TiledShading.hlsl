@@ -13,7 +13,7 @@ RootSigBegin \
 ", StaticSampler(s0, filter=FILTER_MIN_MAG_MIP_POINT)" \
 RootSigEnd
 
-HLSL_CB_DECL(TiledShadingConstants, 0, g_Constants);
+HLSLConstantBuffer(TiledShadingConstants, 0, g_Constants);
 
 StructuredBuffer<DirectionalLight> g_DirectionalLights : register(t0);
 StructuredBuffer<PointLight> g_PointLights : register(t1);

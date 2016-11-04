@@ -1,3 +1,6 @@
+#ifndef __BRDF_HLSLI__
+#define __BRDF_HLSLI__
+
 // Microfacet specular = D*G*F / (4*NoL*NoV) = D*Vis*F
 // Vis = G / (4*NoL*NoV)
 
@@ -84,3 +87,5 @@ float3 MicrofacetSpecular(float3 F0, float Roughness, float3 V, float3 N, float3
 	float3 F = F_Schlick( F0, VdotH );
 	return D * Vis * F;
 }
+
+#endif

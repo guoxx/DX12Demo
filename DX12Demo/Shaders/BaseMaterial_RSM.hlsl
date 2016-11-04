@@ -23,7 +23,7 @@ struct VSOutput
 	float2 Texcoord : TEXCOORD;
 };
 
-HLSL_CB_DECL(BaseMaterialRSMConstants, 0, g_Constants)
+HLSLConstantBuffer(BaseMaterialRSMConstants, 0, g_Constants)
 
 StructuredBuffer<VSInput> g_VertexArray : register(t0);
 Texture2D<float4> g_DiffuseTexture : register(t1);
@@ -60,7 +60,7 @@ RSMOutput PSMain(VSOutput In)
 		float3 E = g_Constants.DirectionalLightIrradiance.xyz;
 		// store irradiance as intensity, because you are not be able to evalute the intensity for a directional light
 		// I = E * (d^2), d^2 will be factored out in further calculation
-		I = E * NdotL * reflectedDiffuse;
+		I = E * PI * NdotL * reflectedDiffuse;
 	}
 	else
 	{
@@ -68,7 +68,7 @@ RSMOutput PSMain(VSOutput In)
 		float3 L = normalize(g_Constants.PointLightPosition.xyz - In.Position.xyz);
 		float3 N = normalize(In.Normal);
 		float NdotL = saturate(dot(L, N));
-		I = g_Constants.PointLightIntensity.xyz * NdotL * reflectedDiffuse;
+		I = g_Constants.PointLightIntensity.xyz * PI * NdotL * reflectedDiffuse;
 	}
 
 	rsmbuffer.Intensity = I;

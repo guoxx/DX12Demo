@@ -1,3 +1,6 @@
+#ifndef __LIGHT_CULLING_HLSLI__
+#define __LIGHT_CULLING_HLSLI__
+
 float4 PlaneEquation(float3 p0, float3 p1, float3 p2)
 {
 	float3 v0 = p1 - p0;
@@ -29,3 +32,5 @@ uint LinearizeThreadId(uint2 threadId)
 {
 	return threadId.x + threadId.y * LIGHT_CULLING_NUM_THREADS_XY;
 }
+
+#endif

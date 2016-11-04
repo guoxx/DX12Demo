@@ -64,26 +64,34 @@ void DirectionalLightFilter2D::Apply(DX12GraphicContext * pGfxContext, const Ren
 	DirectX::XMMATRIX mInvProj = DirectX::XMMatrixInverse(nullptr, pRenderContext->GetProjMatrix());
 	DirectX::XMStoreFloat4x4(&constants.mInvView, DirectX::XMMatrixTranspose(mInvView));
 	DirectX::XMStoreFloat4x4(&constants.mInvProj, DirectX::XMMatrixTranspose(mInvProj));
-	constants.LightDirection = pLight->GetDirection();
-	constants.LightIrradiance = pLight->GetIrradiance();
 	DirectX::XMStoreFloat4(&constants.CameraPosition, pRenderContext->GetCamera()->GetTranslation());
+
+	DirectX::XMFLOAT4 direction = pLight->GetDirection();
+	DirectX::XMFLOAT4 irradiance = pLight->GetIrradiance();
+	constants.m_DirLight.m_Direction = DirectX::XMFLOAT3{ direction.x, direction.y, direction.z };
+	constants.m_DirLight.m_Irradiance = DirectX::XMFLOAT3{ irradiance.x, irradiance.y, irradiance.z };
+
 	DirectX::XMMATRIX mLightView;
 	DirectX::XMMATRIX mLightProj;
 	pLight->GetViewAndProjMatrix(pRenderContext->GetCamera(), &mLightView, &mLightProj);
 	DirectX::XMMATRIX mLightViewProj = DirectX::XMMatrixMultiply(mLightView, mLightProj);
-	DirectX::XMStoreFloat4x4(&constants.mLightViewProj, DirectX::XMMatrixTranspose(mLightViewProj));
-	DirectX::XMStoreFloat4x4(&constants.mLightInvViewProj, DirectX::XMMatrixTranspose(DirectX::XMMatrixInverse(nullptr, mLightViewProj)));
+	DirectX::XMStoreFloat4x4(&constants.m_DirLight.m_mViewProj, DirectX::XMMatrixTranspose(mLightViewProj));
+
+	DirectX::XMMATRIX mInvLightViewProj = DirectX::XMMatrixInverse(nullptr, mLightViewProj);
+	DirectX::XMStoreFloat4x4(&constants.m_DirLight.m_mInvViewProj, DirectX::XMMatrixTranspose(mInvLightViewProj));
+
+	constants.m_DirLight.m_ShadowMapTexId = -1;
 
 	if (g_RSMEnabled)
 	{
-		constants.RSMEnabled = 1;
-		constants.RSMSampleRadius = g_RSMSampleRadius;
-		constants.RSMSampleWeight = g_RSMWeight;
-		constants.RSMRadiusThreshold = g_RSMRadiusThreshold;
+		constants.m_RSM.m_Enabled = 1;
+		constants.m_RSM.m_SampleRadius = g_RSMSampleRadius;
+		constants.m_RSM.m_RSMFactor = g_RSMFactor;
+		constants.m_RSM.m_RadiusEnd = g_RSMRadiusEnd;
 	}
 	else
 	{
-		constants.RSMEnabled = 0;
+		constants.m_RSM.m_Enabled = 0;
 	}
 
 	pGfxContext->SetGraphicsRootDynamicConstantBufferView(0, &constants, sizeof(constants));

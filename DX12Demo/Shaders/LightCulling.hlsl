@@ -8,7 +8,7 @@ RootSigBegin \
 ", UAV(u0)" \
 RootSigEnd
 
-HLSL_CB_DECL(LightCullingConstants, 0, g_Constants)
+HLSLConstantBuffer(LightCullingConstants, 0, g_Constants)
 
 StructuredBuffer<PointLight> g_PointLights : register(t0);
 RWStructuredBuffer<LightNode> g_LightNodes: register(u0);

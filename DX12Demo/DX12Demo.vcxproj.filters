@@ -415,6 +415,9 @@
     <None Include="Shaders\Inc\LightCulling.hlsli">
       <Filter>Shaders\Inc</Filter>
     </None>
+    <None Include="Shaders\Inc\RSM.hlsli">
+      <Filter>Shaders\Inc</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="Shaders\PointLight.hlsl">

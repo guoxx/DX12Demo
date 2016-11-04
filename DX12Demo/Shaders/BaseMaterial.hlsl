@@ -24,13 +24,13 @@ struct VSOutput
 	float2 Texcoord : TEXCOORD;
 };
 
-HLSLConstantBuffer(View)
+struct View
 {
 	float4x4 mModelViewProj;
 	float4x4 mInverseTransposeModel;
 };
 
-HLSLConstantBuffer(BaseMaterial)
+struct BaseMaterial
 {
 	float4 Ambient;
 	float4 Diffuse;
@@ -42,8 +42,8 @@ HLSLConstantBuffer(BaseMaterial)
 	float4 Dissolve;
 };
 
-HLSL_CB_DECL(View, 0, g_View);
-HLSL_CB_DECL(BaseMaterial, 1, g_Material);
+HLSLConstantBuffer(View, 0, g_View);
+HLSLConstantBuffer(BaseMaterial, 1, g_Material);
 
 StructuredBuffer<VSInput> g_VertexArray : register(t0);
 Texture2D<float4> g_DiffuseTexture : register(t1);

@@ -25,19 +25,13 @@
 #define NUM_THREADS_PER_LIGHT_CULLING_TILE (LIGHT_CULLING_NUM_THREADS_XY * LIGHT_CULLING_NUM_THREADS_XY)
 #define LIGHT_NODE_INVALID 0x7FFFFFFF
 
-#ifdef __cplusplus
-	#define HLSLConstantBuffer(typename_) \
-	struct __declspec(align(16)) typename_
-#else
-	#define HLSLConstantBuffer(typename_) \
-	struct typename_
-
+#ifndef __cplusplus
 	#if 0
 		// TOOD: more elegent solution but not workig on X1, not well supported by FXC
-		#define HLSL_CB_DECL(typename_, reg_, var_) \
+		#define HLSLConstantBuffer(typename_, reg_, var_) \
 		ConstantBuffer<typename_> var_ : register(b##reg_);	
 	#else
-		#define HLSL_CB_DECL(typename_, reg_, var_) \
+		#define HLSLConstantBuffer(typename_, reg_, var_) \
 		cbuffer g_CB##reg_ : register(b##reg_) \
 		{ typename_ var_; };
 	#endif
@@ -49,6 +43,14 @@ namespace HLSL {
 
 const static float PI           = 3.141592654f;
 const static float DIVPI		= 0.318309886f;
+
+struct RSMParam
+{
+	int		m_Enabled;
+	float	m_SampleRadius;
+	float	m_RSMFactor;
+	float	m_RadiusEnd;
+};
 
 struct PointLight
 {
@@ -69,8 +71,19 @@ struct DirectionalLight
 	float3		m_Direction;
 	// -1 means invalid
 	int			m_ShadowMapTexId;
-	float4		m_Irradiance;
+	float3		m_Irradiance;
+	float		m_Padding0;
 	float4x4	m_mViewProj;
+	float4x4	m_mInvViewProj;
+};
+
+struct Camera
+{
+	float3		m_Position;
+	float		m_Padding0;
+	float4x4	m_mViewProj;
+	float4x4	m_mInvProj;
+	float4x4	m_mInvViewProj;
 };
 
 struct LightNode
@@ -78,7 +91,7 @@ struct LightNode
 	int			m_LightIndex;
 };
 
-HLSLConstantBuffer(LightCullingConstants)
+struct LightCullingConstants
 {
 	uint m_NumPointLights;
 	uint m_NumTileX;
@@ -89,7 +102,7 @@ HLSLConstantBuffer(LightCullingConstants)
 	float4 m_InvScreenSize;
 };
 
-HLSLConstantBuffer(TiledShadingConstants)
+struct TiledShadingConstants
 {
 	uint m_NumTileX;
 	uint m_NumTileY;
@@ -104,7 +117,7 @@ HLSLConstantBuffer(TiledShadingConstants)
 	float4x4 m_mInvProj;
 };
 
-HLSLConstantBuffer(BaseMaterialRSMConstants)
+struct BaseMaterialRSMConstants
 {
 	float4x4 mModelViewProj;
 	float4x4 mInverseTransposeModel;
@@ -120,20 +133,14 @@ HLSLConstantBuffer(BaseMaterialRSMConstants)
 	float4 PointLightPosition;
 };
 
-HLSLConstantBuffer(DirectionalLightConstants)
+struct DirectionalLightConstants
 {
 	float4x4 mInvView;
 	float4x4 mInvProj;
-	float4 LightDirection;
-	float4 LightIrradiance;
 	float4 CameraPosition;
-	float4x4 mLightViewProj;
-	float4x4 mLightInvViewProj;
 
-	int RSMEnabled;
-	float RSMSampleRadius;
-	float RSMSampleWeight;
-	float RSMRadiusThreshold;
+	DirectionalLight	m_DirLight;
+	RSMParam			m_RSM;
 };
 
 #ifdef __cplusplus
