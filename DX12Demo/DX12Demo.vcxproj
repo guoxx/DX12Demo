@@ -267,6 +267,7 @@
     <ClCompile Include="3DEngine\Filters\PointLightFilter2D.cpp" />
     <ClCompile Include="3DEngine\Filters\ToneMapFilter2D.cpp" />
     <ClCompile Include="3DEngine\GameInput.cpp" />
+    <ClCompile Include="3DEngine\GraphicsEngineDefinition.cpp" />
     <ClCompile Include="3DEngine\Lights\DirectionalLight.cpp" />
     <ClCompile Include="3DEngine\Lights\ILight.cpp" />
     <ClCompile Include="3DEngine\Lights\PointLight.cpp" />

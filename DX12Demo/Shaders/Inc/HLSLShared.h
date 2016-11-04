@@ -120,6 +120,22 @@ HLSL_CB_DECL(BaseMaterial_RSM, Constants, 0,
 	float4 PointLightIntensity;
 	float4 PointLightPosition;
 });
+
+HLSL_CB_DECL(DirectionalLight, Constants, 0,
+{
+	float4x4 mInvView;
+	float4x4 mInvProj;
+	float4 LightDirection;
+	float4 LightIrradiance;
+	float4 CameraPosition;
+	float4x4 mLightViewProj;
+	float4x4 mLightInvViewProj;
+
+	int RSMEnabled;
+	float RSMSampleRadius;
+	float RSMSampleWeight;
+	float RSMRadiusThreshold;
+});
 #endif
 
 #ifdef __cplusplus

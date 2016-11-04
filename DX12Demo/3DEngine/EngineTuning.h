@@ -33,7 +33,7 @@ public:
 	virtual void Decrement( void ) {}	// DPad Left
 	virtual void Bang( void ) {}		// A Button
 
-	virtual void DisplayValue( TextContext& Text ) const {}
+	virtual void DisplayValue( TextContext& Text ) const { (void)Text; }
 	virtual std::string ToString( void ) const { return ""; }
 	virtual void SetValue( FILE* file, const std::string& setting) = 0; //set value read from file
 

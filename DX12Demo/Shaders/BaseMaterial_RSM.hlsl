@@ -70,7 +70,7 @@ RSMOutput PSMain(VSOutput In)
 		// directional light
 		float3 L = -HLSL_CB_GET(0, DirectionalLightDirection).xyz;
 		float3 N = normalize(In.Normal);
-		float NdotL = saturate(dot(L, N));
+		float NdotL = saturate(dot(N, L));
 		float3 E = HLSL_CB_GET(0, DirectionalLightIrradiance).xyz;
 		// store irradiance as intensity, because you are not be able to evalute the intensity for a directional light
 		// I = E * (d^2), d^2 will be factored out in further calculation

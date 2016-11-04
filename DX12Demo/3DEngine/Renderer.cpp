@@ -16,12 +16,6 @@
 #include "Pass/LightCullingPass.h"
 #include "Pass/TiledShadingPass.h"
 
-#include "EngineTuning.h"
-
-BoolVar g_TiledShading("Graphics/Tiled Shading", true);
-BoolVar g_ToneMapping("Graphics/HDR/Tone Mapping", true);
-BoolVar g_RSM("Graphics/RSM", false);
-NumVar g_ToneMapExposure("Graphics/HDR/Exposure", 0.0f, -10.0f, 10.0f);
 
 Renderer::Renderer(GFX_HWND hwnd, int32_t width, int32_t height)
 	: m_Width{ width}
@@ -87,7 +81,7 @@ void Renderer::RenderShadowMaps(const Camera* pCamera, Scene * pScene)
 	DX12GraphicContextAutoExecutor executor;
 	DX12GraphicContext* pGfxContext = executor.GetGraphicContext();
 
-	if (g_RSM)
+	if (g_RSMEnabled)
 	{
 		m_RenderContext.SetShadingCfg(ShadingConfiguration_RSM);
 	}
@@ -100,7 +94,7 @@ void Renderer::RenderShadowMaps(const Camera* pCamera, Scene * pScene)
 	{
 		pGfxContext->PIXBeginEvent(L"ShadowMap - DirectionalLight");
 
-		if (g_RSM)
+		if (g_RSMEnabled)
 		{
 			m_RenderContext.SetCurrentLightForRSM(directionalLight.get());
 
@@ -150,7 +144,7 @@ void Renderer::RenderShadowMaps(const Camera* pCamera, Scene * pScene)
 			wchar_t* axisNames[] = { L"POSITIVE_X", L"NEGATIVE_X", L"POSITIVE_Y", L"NEGATIVE_Y", L"POSITIVE_Z", L"NEGATIVE_Z" };
 			pGfxContext->PIXBeginEvent(axisNames[i]);
 
-			if (g_RSM)
+			if (g_RSMEnabled)
 			{
 				m_RenderContext.SetCurrentLightForRSM(pointLight.get());
 
@@ -371,7 +365,11 @@ void Renderer::DeferredLighting(const Camera* pCamera, Scene* pScene)
 		for (auto directionalLight : pScene->GetDirectionalLights())
 		{
 			DX12DepthSurface* pShadowMapForDirLight = m_RenderContext.AcquireDepthSurfaceForDirectionalLight(directionalLight.get());
+			DX12ColorSurface* pRSMIntensitySurface = m_RenderContext.AcquireRSMRadiantIntensitySurfaceForDirectionalLight(directionalLight.get());
+			DX12ColorSurface* pRSMNormalSurface = m_RenderContext.AcquireRSMNormalSurfaceForDirectionalLight(directionalLight.get());
 			pGfxContext->ResourceTransitionBarrier(pShadowMapForDirLight, D3D12_RESOURCE_STATE_GENERIC_READ);
+			pGfxContext->ResourceTransitionBarrier(pRSMIntensitySurface, D3D12_RESOURCE_STATE_GENERIC_READ);
+			pGfxContext->ResourceTransitionBarrier(pRSMNormalSurface, D3D12_RESOURCE_STATE_GENERIC_READ);
 
 			m_DirLightFilter2D->Apply(pGfxContext, &m_RenderContext, directionalLight.get());
 
@@ -380,10 +378,14 @@ void Renderer::DeferredLighting(const Camera* pCamera, Scene* pScene)
 			pGfxContext->SetGraphicsDynamicCbvSrvUav(1, 2, m_SceneGBuffer2->GetStagingSRV().GetCpuHandle());
 			pGfxContext->SetGraphicsDynamicCbvSrvUav(1, 3, m_SceneDepthSurface->GetStagingSRV().GetCpuHandle());
 			pGfxContext->SetGraphicsDynamicCbvSrvUav(1, 4, pShadowMapForDirLight->GetStagingSRV().GetCpuHandle());
+			pGfxContext->SetGraphicsDynamicCbvSrvUav(1, 5, pRSMIntensitySurface->GetStagingSRV().GetCpuHandle());
+			pGfxContext->SetGraphicsDynamicCbvSrvUav(1, 6, pRSMNormalSurface->GetStagingSRV().GetCpuHandle());
 
 			m_DirLightFilter2D->Draw(pGfxContext);
 
 			pGfxContext->ResourceTransitionBarrier(pShadowMapForDirLight, D3D12_RESOURCE_STATE_DEPTH_WRITE);
+			pGfxContext->ResourceTransitionBarrier(pRSMIntensitySurface, D3D12_RESOURCE_STATE_RENDER_TARGET);
+			pGfxContext->ResourceTransitionBarrier(pRSMNormalSurface, D3D12_RESOURCE_STATE_RENDER_TARGET);
 		}
 
 		for (auto pointLight : pScene->GetPointLights())

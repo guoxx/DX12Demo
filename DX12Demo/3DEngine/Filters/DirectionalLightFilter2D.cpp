@@ -58,16 +58,7 @@ void DirectionalLightFilter2D::Apply(DX12GraphicContext * pGfxContext, const Ren
 	pGfxContext->IASetIndexBuffer(m_IndexBuffer.get());
 	pGfxContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	struct Constants
-	{
-		float4x4 mInvView;
-		float4x4 mInvProj;
-		float4 LightDirection;
-		float4 LightIrradiance;
-		float4 CameraPosition;
-		float4x4 mLightViewProj;
-	};
-	Constants constants;
+	HLSL::DirectionalLightConstants constants;
 
 	DirectX::XMMATRIX mInvView = DirectX::XMMatrixInverse(nullptr, pRenderContext->GetViewMatrix());
 	DirectX::XMMATRIX mInvProj = DirectX::XMMatrixInverse(nullptr, pRenderContext->GetProjMatrix());
@@ -79,7 +70,21 @@ void DirectionalLightFilter2D::Apply(DX12GraphicContext * pGfxContext, const Ren
 	DirectX::XMMATRIX mLightView;
 	DirectX::XMMATRIX mLightProj;
 	pLight->GetViewAndProjMatrix(pRenderContext->GetCamera(), &mLightView, &mLightProj);
-	DirectX::XMStoreFloat4x4(&constants.mLightViewProj, DirectX::XMMatrixTranspose(DirectX::XMMatrixMultiply(mLightView, mLightProj)));
+	DirectX::XMMATRIX mLightViewProj = DirectX::XMMatrixMultiply(mLightView, mLightProj);
+	DirectX::XMStoreFloat4x4(&constants.mLightViewProj, DirectX::XMMatrixTranspose(mLightViewProj));
+	DirectX::XMStoreFloat4x4(&constants.mLightInvViewProj, DirectX::XMMatrixTranspose(DirectX::XMMatrixInverse(nullptr, mLightViewProj)));
+
+	if (g_RSMEnabled)
+	{
+		constants.RSMEnabled = 1;
+		constants.RSMSampleRadius = g_RSMSampleRadius;
+		constants.RSMSampleWeight = g_RSMWeight;
+		constants.RSMRadiusThreshold = g_RSMRadiusThreshold;
+	}
+	else
+	{
+		constants.RSMEnabled = 0;
+	}
 
 	pGfxContext->SetGraphicsRootDynamicConstantBufferView(0, &constants, sizeof(constants));
 }

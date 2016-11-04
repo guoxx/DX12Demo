@@ -379,6 +379,9 @@
     <ClCompile Include="3DEngine\EngineTuning.cpp">
       <Filter>3DEngine</Filter>
     </ClCompile>
+    <ClCompile Include="3DEngine\GraphicsEngineDefinition.cpp">
+      <Filter>3DEngine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="XboxOne\Resources\Logo.png">

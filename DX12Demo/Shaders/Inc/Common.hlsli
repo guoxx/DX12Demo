@@ -133,7 +133,7 @@ float IorToF0_Dielectric(float ior)
 }
 
 const static uint RSMSamplesCount = 64;
-float2 RSMSamplingPattern[64] = {
+const static float2 RSMSamplingPattern[64] = {
 float2(-0.3579344f, -0.3517149f),
 float2(-0.3890468f, -0.7202561f),
 float2(-0.2567423f, -0.0009548062f),
