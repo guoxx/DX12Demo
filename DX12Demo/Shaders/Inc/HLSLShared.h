@@ -25,32 +25,21 @@
 #define NUM_THREADS_PER_LIGHT_CULLING_TILE (LIGHT_CULLING_NUM_THREADS_XY * LIGHT_CULLING_NUM_THREADS_XY)
 #define LIGHT_NODE_INVALID 0x7FFFFFFF
 
-// internal use only
-#define __HLSL_CB_TYPE_NAME__(namespace_, typename_) namespace_##typename_
-#define __HLSL_CB_VAR_NAME__(reg_) g_CB##reg_
-#define __HLSL_CB_REG_NAME__(reg_) register(b##reg_)
-
 #ifdef __cplusplus
-	#define HLSL_CB_DECL(namespace_, typename_, reg_, decl_) \
-	struct __declspec(align(16)) __HLSL_CB_TYPE_NAME__(namespace_, typename_) \
-	decl_;
+	#define HLSLConstantBuffer(typename_) \
+	struct __declspec(align(16)) typename_
 #else
+	#define HLSLConstantBuffer(typename_) \
+	struct typename_
+
 	#if 0
 		// TOOD: more elegent solution but not workig on X1, not well supported by FXC
-		#define HLSL_CB_DECL(namespace_, typename_, reg_, decl_) \
-		struct __HLSL_CB_TYPE_NAME__(namespace_, typename_) \
-		decl_; \
-		ConstantBuffer<__HLSL_CB_TYPE_NAME__(namespace_, typename_)> __HLSL_CB_VAR_NAME__(reg_) : __HLSL_CB_REG_NAME__(reg_);	
-
-		#define HLSL_CB_GET(reg_, member_) \
-		__HLSL_CB_VAR_NAME__(reg_).member_
+		#define HLSL_CB_DECL(typename_, reg_, var_) \
+		ConstantBuffer<typename_> var_ : register(b##reg_);	
 	#else
-		#define HLSL_CB_DECL(namespace_, typename_, reg_, decl_) \
-		cbuffer __HLSL_CB_VAR_NAME__(reg_) : __HLSL_CB_REG_NAME__(reg_) \
-		decl_;
-
-		#define HLSL_CB_GET(reg_, member_) \
-		member_
+		#define HLSL_CB_DECL(typename_, reg_, var_) \
+		cbuffer g_CB##reg_ : register(b##reg_) \
+		{ typename_ var_; };
 	#endif
 #endif
 
@@ -89,8 +78,18 @@ struct LightNode
 	int			m_LightIndex;
 };
 
-#ifdef __cplusplus
-HLSL_CB_DECL(TiledShading, Constants, 0,
+HLSLConstantBuffer(LightCullingConstants)
+{
+	uint m_NumPointLights;
+	uint m_NumTileX;
+	uint m_NumTileY;
+	uint m_Padding0;
+	float4x4 m_mView;
+	float4x4 m_mInvProj;
+	float4 m_InvScreenSize;
+};
+
+HLSLConstantBuffer(TiledShadingConstants)
 {
 	uint m_NumTileX;
 	uint m_NumTileY;
@@ -103,9 +102,9 @@ HLSL_CB_DECL(TiledShading, Constants, 0,
 	float4 m_CameraPosition;
 	float4x4 m_mInvView;
 	float4x4 m_mInvProj;
-});
+};
 
-HLSL_CB_DECL(BaseMaterial_RSM, Constants, 0,
+HLSLConstantBuffer(BaseMaterialRSMConstants)
 {
 	float4x4 mModelViewProj;
 	float4x4 mInverseTransposeModel;
@@ -119,9 +118,9 @@ HLSL_CB_DECL(BaseMaterial_RSM, Constants, 0,
 	float4 DirectionalLightDirection;
 	float4 PointLightIntensity;
 	float4 PointLightPosition;
-});
+};
 
-HLSL_CB_DECL(DirectionalLight, Constants, 0,
+HLSLConstantBuffer(DirectionalLightConstants)
 {
 	float4x4 mInvView;
 	float4x4 mInvProj;
@@ -135,8 +134,7 @@ HLSL_CB_DECL(DirectionalLight, Constants, 0,
 	float RSMSampleRadius;
 	float RSMSampleWeight;
 	float RSMRadiusThreshold;
-});
-#endif
+};
 
 #ifdef __cplusplus
 }

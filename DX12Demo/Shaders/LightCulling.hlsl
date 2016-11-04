@@ -8,16 +8,7 @@ RootSigBegin \
 ", UAV(u0)" \
 RootSigEnd
 
-HLSL_CB_DECL(LightCulling, Constants, 0,
-{
-	uint m_NumPointLights;
-	uint m_NumTileX;
-	uint m_NumTileY;
-	uint m_Padding0;
-	float4x4 m_mView;
-	float4x4 m_mInvProj;
-	float4 m_InvScreenSize;
-});
+HLSL_CB_DECL(LightCullingConstants, 0, g_Constants)
 
 StructuredBuffer<PointLight> g_PointLights : register(t0);
 RWStructuredBuffer<LightNode> g_LightNodes: register(u0);
@@ -37,7 +28,7 @@ RootSigDeclaration
 void CSMain(uint3 Gid : SV_GroupID, uint3 GTid : SV_GroupThreadID, uint3 DTid : SV_DispatchThreadID)
 {
 	uint2 tileId = Gid.xy;
-	uint linearTileId = LinearizeTileId(tileId, HLSL_CB_GET(0, m_NumTileX), HLSL_CB_GET(0, m_NumTileY));
+	uint linearTileId = LinearizeTileId(tileId, g_Constants.m_NumTileX, g_Constants.m_NumTileY);
 	uint linearThreadId = LinearizeThreadId(GTid.xy);
 
 	if (linearThreadId == 0)
@@ -48,10 +39,10 @@ void CSMain(uint3 Gid : SV_GroupID, uint3 GTid : SV_GroupThreadID, uint3 DTid : 
 
 	float nearZ = 0.001f;
 	float farZ = 1.0f;
-	float leftX = (float)tileId.x * LIGHT_CULLING_NUM_THREADS_XY * HLSL_CB_GET(0, m_InvScreenSize).x;
-	float topY = 1.0f - (float)tileId.y * LIGHT_CULLING_NUM_THREADS_XY * HLSL_CB_GET(0, m_InvScreenSize).y;
-	float rightX = saturate(leftX + LIGHT_CULLING_NUM_THREADS_XY * HLSL_CB_GET(0, m_InvScreenSize).x);
-	float bottomY = saturate(topY - LIGHT_CULLING_NUM_THREADS_XY * HLSL_CB_GET(0, m_InvScreenSize).y);
+	float leftX = (float)tileId.x * LIGHT_CULLING_NUM_THREADS_XY * g_Constants.m_InvScreenSize.x;
+	float topY = 1.0f - (float)tileId.y * LIGHT_CULLING_NUM_THREADS_XY * g_Constants.m_InvScreenSize.y;
+	float rightX = saturate(leftX + LIGHT_CULLING_NUM_THREADS_XY * g_Constants.m_InvScreenSize.x);
+	float bottomY = saturate(topY - LIGHT_CULLING_NUM_THREADS_XY * g_Constants.m_InvScreenSize.y);
 	leftX   = leftX   * 2 - 1;
 	rightX  = rightX  * 2 - 1;
 	topY    = topY    * 2 - 1;
@@ -72,7 +63,7 @@ void CSMain(uint3 Gid : SV_GroupID, uint3 GTid : SV_GroupThreadID, uint3 DTid : 
 	[loop]
 	for (int frustumPtIdx = 0; frustumPtIdx < 8; ++frustumPtIdx)
 	{
-		float4 p = mul(float4(frustumPoints[frustumPtIdx], 1.0f), HLSL_CB_GET(0, m_mInvProj));
+		float4 p = mul(float4(frustumPoints[frustumPtIdx], 1.0f), g_Constants.m_mInvProj);
 		frustomPointsCS[frustumPtIdx] = p.xyz / p.w;
 	}
 
@@ -84,12 +75,12 @@ void CSMain(uint3 Gid : SV_GroupID, uint3 GTid : SV_GroupThreadID, uint3 DTid : 
 	frustumPlanes[4] = PlaneEquation(frustomPointsCS[2], frustomPointsCS[6], frustomPointsCS[3]); // top
 	frustumPlanes[5] = PlaneEquation(frustomPointsCS[5], frustomPointsCS[1], frustomPointsCS[4]); // bottom
 
-	uint maxNumLights = min(HLSL_CB_GET(0, m_NumPointLights), MAX_LIGHT_NODES_PER_TILE);
+	uint maxNumLights = min(g_Constants.m_NumPointLights, MAX_LIGHT_NODES_PER_TILE);
 	[loop]
 	for (uint lightIdx = linearThreadId; lightIdx < maxNumLights; lightIdx += NUM_THREADS_PER_LIGHT_CULLING_TILE)
 	{
 		float3 lightPositionWS = g_PointLights[lightIdx].m_Position.xyz;
-		float3 lightPositionCS = mul(float4(lightPositionWS, 1.0f), HLSL_CB_GET(0, m_mView)).xyz;
+		float3 lightPositionCS = mul(float4(lightPositionWS, 1.0f), g_Constants.m_mView).xyz;
 		float lightRadius = g_PointLights[lightIdx].m_RadiusParam.y;
 
 		if (!SphereCulling(frustumPlanes, lightPositionCS, lightRadius))

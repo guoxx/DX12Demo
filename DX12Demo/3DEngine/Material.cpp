@@ -223,7 +223,7 @@ void Material::Apply(RenderContext* pRenderContext, DX12GraphicContext* pGfxCont
 	}
 	else if (shadingCfg == ShadingConfiguration_RSM)
 	{
-		HLSL::BaseMaterial_RSMConstants constants;
+		HLSL::BaseMaterialRSMConstants constants;
 
 		DirectX::XMMATRIX mModel = pRenderContext->GetModelMatrix();
 		DirectX::XMMATRIX mInverseModel = DirectX::XMMatrixInverse(nullptr, mModel);

@@ -13,20 +13,7 @@ RootSigBegin \
 ", StaticSampler(s0, filter=FILTER_MIN_MAG_MIP_POINT)" \
 RootSigEnd
 
-HLSL_CB_DECL(TiledShading, Constants, 0,
-{
-	uint m_NumTileX;
-	uint m_NumTileY;
-	uint m_ScreenWidth;
-	uint m_ScreenHeight;
-	uint m_NumDirectionalLights;
-	uint m_Padding0;
-	uint m_Padding1;
-	uint m_Padding2;
-	float4 m_CameraPosition;
-	float4x4 m_mInvView;
-	float4x4 m_mInvProj;
-});
+HLSL_CB_DECL(TiledShadingConstants, 0, g_Constants);
 
 StructuredBuffer<DirectionalLight> g_DirectionalLights : register(t0);
 StructuredBuffer<PointLight> g_PointLights : register(t1);
@@ -58,7 +45,7 @@ float3 ShadeDirectionalLight(GBuffer gbuffer, DirectionalLight directionalLight)
 	}
 
 	float3 L = -directionalLight.m_Direction.xyz;
-	float3 V = normalize(HLSL_CB_GET(0, m_CameraPosition).xyz - gbuffer.Position);
+	float3 V = normalize(g_Constants.m_CameraPosition.xyz - gbuffer.Position);
 	float3 N = gbuffer.Normal;
 	float NdotL = saturate(dot(N, L));
 	float3 E = directionalLight.m_Irradiance.xyz * NdotL * PI;
@@ -81,7 +68,7 @@ float3 ShadePointLight(GBuffer gbuffer, PointLight pointLight)
 	}
 
 	float3 L = normalize(pointLight.m_Position.xyz - gbuffer.Position);
-	float3 V = normalize(HLSL_CB_GET(0, m_CameraPosition).xyz - gbuffer.Position);
+	float3 V = normalize(g_Constants.m_CameraPosition.xyz - gbuffer.Position);
 	float3 N = gbuffer.Normal;
 	float NdotL = saturate(dot(N, L));
 
@@ -99,7 +86,7 @@ RootSigDeclaration
 void CSMain(uint3 Gid : SV_GroupID, uint3 GTid : SV_GroupThreadID, uint3 DTid : SV_DispatchThreadID)
 {
 	uint2 tileId = Gid.xy;
-	uint linearTileId = LinearizeTileId(tileId, HLSL_CB_GET(0, m_NumTileX), HLSL_CB_GET(0, m_NumTileY));
+	uint linearTileId = LinearizeTileId(tileId, g_Constants.m_NumTileX, g_Constants.m_NumTileY);
 	uint linearThreadId = LinearizeThreadId(GTid.xy);
 
 	if (linearThreadId == 0)
@@ -129,12 +116,12 @@ void CSMain(uint3 Gid : SV_GroupID, uint3 GTid : SV_GroupThreadID, uint3 DTid : 
 	GroupMemoryBarrierWithGroupSync();
 
 	float2 texcoord = float2(DTid.x + 0.5f, DTid.y + 0.5f);
-	float2 uv = float2(texcoord.x / HLSL_CB_GET(0, m_ScreenWidth), texcoord.y / HLSL_CB_GET(0, m_ScreenHeight));
-	GBuffer gbuffer = GBufferDecode(g_GBuffer0, g_GBuffer1, g_GBuffer2, g_DepthTexture, g_PointSampler, uv, HLSL_CB_GET(0, m_mInvView), HLSL_CB_GET(0, m_mInvProj));
+	float2 uv = float2(texcoord.x / g_Constants.m_ScreenWidth, texcoord.y / g_Constants.m_ScreenHeight);
+	GBuffer gbuffer = GBufferDecode(g_GBuffer0, g_GBuffer1, g_GBuffer2, g_DepthTexture, g_PointSampler, uv, g_Constants.m_mInvView, g_Constants.m_mInvProj);
 
 	float3 outRadiance = 0.0f;
 
-	for (uint visDirectionalLightIdx = 0; visDirectionalLightIdx < HLSL_CB_GET(0, m_NumDirectionalLights); ++visDirectionalLightIdx)
+	for (uint visDirectionalLightIdx = 0; visDirectionalLightIdx < g_Constants.m_NumDirectionalLights; ++visDirectionalLightIdx)
 	{
 		outRadiance += ShadeDirectionalLight(gbuffer, g_DirectionalLights[visDirectionalLightIdx]);
 	}

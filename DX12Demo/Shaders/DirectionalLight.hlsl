@@ -8,21 +8,7 @@ RootSigBegin \
 ", StaticSampler(s0, filter=FILTER_MIN_MAG_MIP_POINT, visibility=SHADER_VISIBILITY_PIXEL)" \
 RootSigEnd
 
-HLSL_CB_DECL(DirectionalLight, Constants, 0,
-{
-	float4x4 mInvView;
-	float4x4 mInvProj;
-	float4 LightDirection;
-	float4 LightIrradiance;
-	float4 CameraPosition;
-	float4x4 mLightViewProj;
-	float4x4 mLightInvViewProj;
-
-	int RSMEnabled;
-	float RSMSampleRadius;
-	float RSMSampleWeight;
-	float RSMRadiusThreshold;
-});
+HLSL_CB_DECL(DirectionalLightConstants, 0, g_Constants);
 
 Texture2D<float4> g_GBuffer0 : register(t0);
 Texture2D<float4> g_GBuffer1 : register(t1);
@@ -61,15 +47,15 @@ VSOutput VSMain(uint vertid : SV_VertexID)
 float3 ShadeDirectionalLightRSM(GBuffer gbuffer)
 {
 	float3 outRadiance = 0.0f;
-	if (HLSL_CB_GET(0, RSMEnabled) != 0)
+	if (g_Constants.RSMEnabled != 0)
 	{
-		float3 shadowPos = mul(float4(gbuffer.Position, 1), HLSL_CB_GET(0, mLightViewProj)).xyz;
+		float3 shadowPos = mul(float4(gbuffer.Position, 1), g_Constants.mLightViewProj).xyz;
 		float2 shadowUV = float2((shadowPos.x + 1.0f) * 0.5f, (-shadowPos.y + 1.0f) * 0.5f);
 
 		for (uint i = 0; i < RSMSamplesCount; ++i)
 		{
 			float2 UVOffset = RSMSamplingPattern[i];
-			UVOffset *= HLSL_CB_GET(0, RSMSampleRadius);
+			UVOffset *= g_Constants.RSMSampleRadius;
 
 			float2 uv = shadowUV + UVOffset;
 
@@ -81,7 +67,7 @@ float3 ShadeDirectionalLightRSM(GBuffer gbuffer)
 
 			float VPLDepthInLightSpace = g_ShadowMap.SampleLevel(g_Sampler, uv, 0);
 			float3 ndcPosition = float3(uv.x * 2 - 1, -uv.y * 2 + 1, VPLDepthInLightSpace);
-			float3 VPLPosition = mul(float4(ndcPosition, 1), HLSL_CB_GET(0, mLightInvViewProj)).xyz;
+			float3 VPLPosition = mul(float4(ndcPosition, 1), g_Constants.mLightInvViewProj).xyz;
 
 			// 1/PI already been applied in Diffuse_Lambert, and no distance falloff factor for directional light
 			float3 VPLRadiance = VPLIrradiance;
@@ -89,7 +75,7 @@ float3 ShadeDirectionalLightRSM(GBuffer gbuffer)
 
 			float3 L = normalize(VPLPosition - gbuffer.Position);
 			float distance = length(VPLPosition - gbuffer.Position);
-			float distanceEnd = RSMRadiusThreshold;
+			float distanceEnd = g_Constants.RSMRadiusThreshold;
 			float distanceFalloff = 0.0f;
 			if (distance >= distanceEnd)
 			{
@@ -103,7 +89,7 @@ float3 ShadeDirectionalLightRSM(GBuffer gbuffer)
 			outRadiance += E * gbuffer.Diffuse / PI;
 		}
 		outRadiance /= RSMSamplesCount;
-		outRadiance *= RSMSampleWeight;
+		outRadiance *= g_Constants.RSMSampleWeight;
 	}
 	return outRadiance;
 }
@@ -111,20 +97,20 @@ float3 ShadeDirectionalLightRSM(GBuffer gbuffer)
 RootSigDeclaration
 float4 PSMain(VSOutput In) : SV_TARGET
 {
-	GBuffer gbuffer = GBufferDecode(g_GBuffer0, g_GBuffer1, g_GBuffer2, g_DepthTexture, g_Sampler, In.Texcoord, HLSL_CB_GET(0, mInvView), HLSL_CB_GET(0, mInvProj));
+	GBuffer gbuffer = GBufferDecode(g_GBuffer0, g_GBuffer1, g_GBuffer2, g_DepthTexture, g_Sampler, In.Texcoord, g_Constants.mInvView, g_Constants.mInvProj);
 
 	float3 outRadiance = 0.0f;
 
-	float3 shadowPos = mul(float4(gbuffer.Position, 1), HLSL_CB_GET(0, mLightViewProj)).xyz;
+	float3 shadowPos = mul(float4(gbuffer.Position, 1), g_Constants.mLightViewProj).xyz;
 	float2 shadowUV = float2((shadowPos.x + 1.0f) * 0.5f, (-shadowPos.y + 1.0f) * 0.5f);
 	float occluderDepth = g_ShadowMap.Sample(g_Sampler, shadowUV);
 	float shadowMask = occluderDepth < shadowPos.z ? 0.0f : 1.0f;
 
-	float3 L = -HLSL_CB_GET(0, LightDirection).xyz;
-	float3 V = normalize(HLSL_CB_GET(0, CameraPosition).xyz - gbuffer.Position);
+	float3 L = -g_Constants.LightDirection.xyz;
+	float3 V = normalize(g_Constants.CameraPosition.xyz - gbuffer.Position);
 	float3 N = gbuffer.Normal;
 	float NdotL = saturate(dot(N, L));
-	float3 E = HLSL_CB_GET(0, LightIrradiance).xyz * NdotL * PI;
+	float3 E = g_Constants.LightIrradiance.xyz * NdotL * PI;
 
 	float3 diffuse = Diffuse_Lambert(gbuffer.Diffuse) * E;
 	float3 specular = MicrofacetSpecular(gbuffer.Specular, gbuffer.Roughness, V, N, L) * E;

@@ -19,11 +19,12 @@ struct VSOutput
 	float4 Position : SV_POSITION;
 };
 
-HLSL_CB_DECL(BaseMaterial, View, 0,
+HLSLConstantBuffer(View)
 {
 	float4x4 mModelViewProj;
 	float4x4 mInverseTransposeModel;
-});
+};
+HLSL_CB_DECL(View, 0, g_View);
 
 StructuredBuffer<VSInput> g_VertexArray : register(t0);
 
@@ -34,7 +35,7 @@ VSOutput VSMain(uint vertid : SV_VertexID)
 	VSInput In  = g_VertexArray[vertid];
 
 	VSOutput Out;
-	Out.Position = mul(float4(In.Position, 1), HLSL_CB_GET(0, mModelViewProj));
+	Out.Position = mul(float4(In.Position, 1), g_View.mModelViewProj);
 
 	return Out;
 }

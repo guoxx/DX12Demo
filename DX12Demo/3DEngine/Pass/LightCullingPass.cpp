@@ -36,17 +36,7 @@ void LightCullingPass::Apply(DX12GraphicContext * pGfxContext, const RenderConte
 	pGfxContext->SetComputeRootSignature(m_RootSig);
 	pGfxContext->SetPipelineState(m_PSO.get());
 
-	struct Constants
-	{
-		uint32_t m_NumPointLights;
-		uint32_t m_NumTileX;
-		uint32_t m_NumTileY;
-		uint32_t m_Padding;
-		float4x4 m_mView;
-		float4x4 m_mInvProj;
-		float4 m_InvScreenSize;
-	};
-	Constants constants;
+	HLSL::LightCullingConstants constants;
 
 	constants.m_NumPointLights = static_cast<uint32_t>(pScene->GetPointLights().size());
 	constants.m_NumTileX = m_NumTileX;
