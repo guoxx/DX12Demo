@@ -35,27 +35,18 @@ RenderableSurfaceManager::~RenderableSurfaceManager()
 {
 }
 
-RenderableSurfaceHandle RenderableSurfaceManager::AcquireColorSurface(const RenderableSurfaceDesc & desc)
+RenderableSurfaceHandle<DX12ColorSurface> RenderableSurfaceManager::AcquireColorSurface(const RenderableSurfaceDesc & desc)
 {
 	return AcquireRenderableSurface<DX12ColorSurface>(desc);
 }
 
-RenderableSurfaceHandle RenderableSurfaceManager::AcquireDepthSurface(const RenderableSurfaceDesc & desc)
+RenderableSurfaceHandle<DX12DepthSurface> RenderableSurfaceManager::AcquireDepthSurface(const RenderableSurfaceDesc & desc)
 {
 	return AcquireRenderableSurface<DX12DepthSurface>(desc);
 }
 
-DX12ColorSurface * RenderableSurfaceManager::GetColorSurface(const RenderableSurfaceHandle & handle)
-{
-	return GetRenderableSurface<DX12ColorSurface>(handle);
-}
-
-DX12DepthSurface * RenderableSurfaceManager::GetDepthSurface(const RenderableSurfaceHandle & handle)
-{
-	return GetRenderableSurface<DX12DepthSurface>(handle);
-}
-
-void RenderableSurfaceManager::ReleaseRenderableSurface(const RenderableSurfaceHandle& handle)
+template<typename T>
+void RenderableSurfaceManager::ReleaseRenderableSurface(const RenderableSurfaceHandle<T>& handle)
 {
 	assert(handle.isValid());
 	assert(handle.m_Handle < m_Surfaces.size());
@@ -66,7 +57,7 @@ void RenderableSurfaceManager::ReleaseRenderableSurface(const RenderableSurfaceH
 }
 
 template<typename T>
-T* RenderableSurfaceManager::GetRenderableSurface(const RenderableSurfaceHandle& handle)
+T* RenderableSurfaceManager::GetRenderableSurface(const RenderableSurfaceHandle<T>& handle)
 {
 	assert(handle.isValid());
 	assert(handle.m_Handle < m_Surfaces.size());
@@ -80,9 +71,9 @@ T* RenderableSurfaceManager::GetRenderableSurface(const RenderableSurfaceHandle&
 }
 
 template<typename T>
-RenderableSurfaceHandle RenderableSurfaceManager::AcquireRenderableSurface(const RenderableSurfaceDesc & desc)
+RenderableSurfaceHandle<T> RenderableSurfaceManager::AcquireRenderableSurface(const RenderableSurfaceDesc & desc)
 {
-	RenderableSurfaceHandle handle;
+	RenderableSurfaceHandle<T> handle;
 	handle.m_Hash = 0;
 	handle.m_Handle = (uint64_t)-1;
 
@@ -121,8 +112,11 @@ RenderableSurfaceHandle RenderableSurfaceManager::AcquireRenderableSurface(const
 	return handle;
 }
 
-template DX12ColorSurface* RenderableSurfaceManager::GetRenderableSurface<DX12ColorSurface>(const RenderableSurfaceHandle& handle);
-template DX12DepthSurface* RenderableSurfaceManager::GetRenderableSurface<DX12DepthSurface>(const RenderableSurfaceHandle& handle);
+template DX12ColorSurface* RenderableSurfaceManager::GetRenderableSurface<DX12ColorSurface>(const RenderableSurfaceHandle<DX12ColorSurface>& handle);
+template DX12DepthSurface* RenderableSurfaceManager::GetRenderableSurface<DX12DepthSurface>(const RenderableSurfaceHandle<DX12DepthSurface>& handle);
 
-template RenderableSurfaceHandle RenderableSurfaceManager::AcquireRenderableSurface<DX12ColorSurface>(const RenderableSurfaceDesc & desc);
-template RenderableSurfaceHandle RenderableSurfaceManager::AcquireRenderableSurface<DX12DepthSurface>(const RenderableSurfaceDesc & desc);
+template RenderableSurfaceHandle<DX12ColorSurface> RenderableSurfaceManager::AcquireRenderableSurface<DX12ColorSurface>(const RenderableSurfaceDesc & desc);
+template RenderableSurfaceHandle<DX12DepthSurface> RenderableSurfaceManager::AcquireRenderableSurface<DX12DepthSurface>(const RenderableSurfaceDesc & desc);
+
+template void RenderableSurfaceManager::ReleaseRenderableSurface<DX12ColorSurface>(const RenderableSurfaceHandle<DX12ColorSurface>& handle);
+template void RenderableSurfaceManager::ReleaseRenderableSurface<DX12DepthSurface>(const RenderableSurfaceHandle<DX12DepthSurface>& handle);

@@ -2,6 +2,7 @@
 
 #include "../DX12/DX12.h"
 
+class RenderableSurfaceManager;
 
 struct RenderableSurfaceDesc
 {
@@ -20,6 +21,7 @@ struct RenderableSurfaceDesc
 };
 
 
+template <typename T>
 struct RenderableSurfaceHandle
 {
 	friend class RenderableSurfaceManager;
@@ -31,6 +33,21 @@ public:
 	bool isValid() const
 	{
 		return m_Hash != 0 && m_Handle != -1;
+	}
+
+	T* Get() const
+	{
+		return RenderableSurfaceManager::GetInstance()->GetRenderableSurface<T>(*this);
+	}
+
+	T& operator *() const
+	{
+		return *Get();
+	}
+
+	T* operator ->() const
+	{
+		return Get();
 	}
 
 private:
@@ -51,20 +68,19 @@ public:
 
 	static RenderableSurfaceManager* GetInstance();
 
-	RenderableSurfaceHandle AcquireColorSurface(const RenderableSurfaceDesc& desc);
-	RenderableSurfaceHandle AcquireDepthSurface(const RenderableSurfaceDesc& desc);
+	RenderableSurfaceHandle<DX12ColorSurface> AcquireColorSurface(const RenderableSurfaceDesc& desc);
+	RenderableSurfaceHandle<DX12DepthSurface> AcquireDepthSurface(const RenderableSurfaceDesc& desc);
 
-	DX12ColorSurface* GetColorSurface(const RenderableSurfaceHandle& handle);
-	DX12DepthSurface* GetDepthSurface(const RenderableSurfaceHandle& handle);
+	template<typename T>
+	T* GetRenderableSurface(const RenderableSurfaceHandle<T>& handle);
 
-	void ReleaseRenderableSurface(const RenderableSurfaceHandle& handle);
+	template<typename T>
+	void ReleaseRenderableSurface(const RenderableSurfaceHandle<T>& handle);
 
 private:
-	template<typename T>
-	T* GetRenderableSurface(const RenderableSurfaceHandle& handle);
 
 	template<typename T>
-	RenderableSurfaceHandle AcquireRenderableSurface(const RenderableSurfaceDesc& desc);	
+	RenderableSurfaceHandle<T> AcquireRenderableSurface(const RenderableSurfaceDesc& desc);	
 
 	enum
 	{

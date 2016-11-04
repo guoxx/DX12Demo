@@ -98,13 +98,13 @@ private:
 	DirectX::XMMATRIX m_mViewProj;
 	DirectX::XMMATRIX m_mModelViewProj;
 
-	std::map<DirectionalLight*, RenderableSurfaceHandle> m_ShadowMapForDirLights;
-	std::map<PointLight*, std::array<RenderableSurfaceHandle, 6>> m_ShadowMapForPointLights;
+	std::map<DirectionalLight*, RenderableSurfaceHandle<DX12DepthSurface>> m_ShadowMapForDirLights;
+	std::map<PointLight*, std::array<RenderableSurfaceHandle<DX12DepthSurface>, 6>> m_ShadowMapForPointLights;
 
-	std::map<DirectionalLight*, RenderableSurfaceHandle> m_RSMRadiantIntensitySurfaceForDirLights;
-	std::map<DirectionalLight*, RenderableSurfaceHandle> m_RSMNormalSurfaceForDirLights;
-	std::map<PointLight*, std::array<RenderableSurfaceHandle, 6>> m_RSMRadiantIntensitySurfaceForPointLights;
-	std::map<PointLight*, std::array<RenderableSurfaceHandle, 6>> m_RSMNormalSurfaceForPointLights;
+	std::map<DirectionalLight*, RenderableSurfaceHandle<DX12ColorSurface>> m_RSMRadiantIntensitySurfaceForDirLights;
+	std::map<DirectionalLight*, RenderableSurfaceHandle<DX12ColorSurface>> m_RSMNormalSurfaceForDirLights;
+	std::map<PointLight*, std::array<RenderableSurfaceHandle<DX12ColorSurface>, 6>> m_RSMRadiantIntensitySurfaceForPointLights;
+	std::map<PointLight*, std::array<RenderableSurfaceHandle<DX12ColorSurface>, 6>> m_RSMNormalSurfaceForPointLights;
 
 	const ILight* m_CurrentLightForRSM;
 };

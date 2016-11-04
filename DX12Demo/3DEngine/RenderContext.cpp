@@ -13,7 +13,7 @@ RenderContext::~RenderContext()
 
 DX12ColorSurface * RenderContext::AcquireRSMRadiantIntensitySurfaceForDirectionalLight(DirectionalLight * pDirLight)
 {
-	RenderableSurfaceHandle handle;
+	RenderableSurfaceHandle<DX12ColorSurface> handle;
 
 	auto result = m_RSMRadiantIntensitySurfaceForDirLights.find(pDirLight);
 	if (result != m_RSMRadiantIntensitySurfaceForDirLights.end())
@@ -27,12 +27,12 @@ DX12ColorSurface * RenderContext::AcquireRSMRadiantIntensitySurfaceForDirectiona
 		m_RSMRadiantIntensitySurfaceForDirLights.insert(std::make_pair(pDirLight, handle));
 	}
 
-	return RenderableSurfaceManager::GetInstance()->GetColorSurface(handle);
+	return handle.Get();
 }
 
 DX12ColorSurface * RenderContext::AcquireRSMNormalSurfaceForDirectionalLight(DirectionalLight * pDirLight)
 {
-	RenderableSurfaceHandle handle;
+	RenderableSurfaceHandle<DX12ColorSurface> handle;
 
 	auto result = m_RSMNormalSurfaceForDirLights.find(pDirLight);
 	if (result != m_RSMNormalSurfaceForDirLights.end())
@@ -46,12 +46,12 @@ DX12ColorSurface * RenderContext::AcquireRSMNormalSurfaceForDirectionalLight(Dir
 		m_RSMNormalSurfaceForDirLights.insert(std::make_pair(pDirLight, handle));
 	}
 
-	return RenderableSurfaceManager::GetInstance()->GetColorSurface(handle);
+	return handle.Get();
 }
 
 DX12DepthSurface*  RenderContext::AcquireDepthSurfaceForDirectionalLight(DirectionalLight* pDirLight)
 {
-	RenderableSurfaceHandle handle;
+	RenderableSurfaceHandle<DX12DepthSurface> handle;
 
 	auto result = m_ShadowMapForDirLights.find(pDirLight);
 	if (result != m_ShadowMapForDirLights.end())
@@ -65,12 +65,12 @@ DX12DepthSurface*  RenderContext::AcquireDepthSurfaceForDirectionalLight(Directi
 		m_ShadowMapForDirLights.insert(std::make_pair(pDirLight, handle));
 	}
 
-	return RenderableSurfaceManager::GetInstance()->GetDepthSurface(handle);
+	return handle.Get();
 }
 
 std::array<DX12ColorSurface*, 6> RenderContext::AcquireRSMRadiantIntensitySurfaceForPointLight(PointLight * pPointLight)
 {
-	std::array<RenderableSurfaceHandle, 6> handles;
+	std::array<RenderableSurfaceHandle<DX12ColorSurface>, 6> handles;
 
 	auto result = m_RSMRadiantIntensitySurfaceForPointLights.find(pPointLight);
 	if (result != m_RSMRadiantIntensitySurfaceForPointLights.end())
@@ -92,18 +92,18 @@ std::array<DX12ColorSurface*, 6> RenderContext::AcquireRSMRadiantIntensitySurfac
 	}
 
 	return std::array<DX12ColorSurface*, 6>{
-			RenderableSurfaceManager::GetInstance()->GetColorSurface(handles[0]),
-			RenderableSurfaceManager::GetInstance()->GetColorSurface(handles[1]),
-			RenderableSurfaceManager::GetInstance()->GetColorSurface(handles[2]),
-			RenderableSurfaceManager::GetInstance()->GetColorSurface(handles[3]),
-			RenderableSurfaceManager::GetInstance()->GetColorSurface(handles[4]),
-			RenderableSurfaceManager::GetInstance()->GetColorSurface(handles[5])
+			handles[0].Get(),
+			handles[1].Get(),
+			handles[2].Get(),
+			handles[3].Get(),
+			handles[4].Get(),
+			handles[5].Get(),
 	};
 }
 
 std::array<DX12ColorSurface*, 6> RenderContext::AcquireRSMNormalSurfaceForPointLight(PointLight * pPointLight)
 {
-	std::array<RenderableSurfaceHandle, 6> handles;
+	std::array<RenderableSurfaceHandle<DX12ColorSurface>, 6> handles;
 
 	auto result = m_RSMNormalSurfaceForPointLights.find(pPointLight);
 	if (result != m_RSMNormalSurfaceForPointLights.end())
@@ -125,18 +125,18 @@ std::array<DX12ColorSurface*, 6> RenderContext::AcquireRSMNormalSurfaceForPointL
 	}
 
 	return std::array<DX12ColorSurface*, 6>{
-			RenderableSurfaceManager::GetInstance()->GetColorSurface(handles[0]),
-			RenderableSurfaceManager::GetInstance()->GetColorSurface(handles[1]),
-			RenderableSurfaceManager::GetInstance()->GetColorSurface(handles[2]),
-			RenderableSurfaceManager::GetInstance()->GetColorSurface(handles[3]),
-			RenderableSurfaceManager::GetInstance()->GetColorSurface(handles[4]),
-			RenderableSurfaceManager::GetInstance()->GetColorSurface(handles[5])
+			handles[0].Get(),
+			handles[1].Get(),
+			handles[2].Get(),
+			handles[3].Get(),
+			handles[4].Get(),
+			handles[5].Get(),
 	};
 }
 
 std::array<DX12DepthSurface*, 6> RenderContext::AcquireDepthSurfaceForPointLight(PointLight* pPointLight)
 {
-	std::array<RenderableSurfaceHandle, 6> handles;
+	std::array<RenderableSurfaceHandle<DX12DepthSurface>, 6> handles;
 
 	auto result = m_ShadowMapForPointLights.find(pPointLight);
 	if (result != m_ShadowMapForPointLights.end())
@@ -158,12 +158,12 @@ std::array<DX12DepthSurface*, 6> RenderContext::AcquireDepthSurfaceForPointLight
 	}
 
 	return std::array<DX12DepthSurface*, 6>{
-			RenderableSurfaceManager::GetInstance()->GetDepthSurface(handles[0]),
-			RenderableSurfaceManager::GetInstance()->GetDepthSurface(handles[1]),
-			RenderableSurfaceManager::GetInstance()->GetDepthSurface(handles[2]),
-			RenderableSurfaceManager::GetInstance()->GetDepthSurface(handles[3]),
-			RenderableSurfaceManager::GetInstance()->GetDepthSurface(handles[4]),
-			RenderableSurfaceManager::GetInstance()->GetDepthSurface(handles[5])
+			handles[0].Get(),
+			handles[1].Get(),
+			handles[2].Get(),
+			handles[3].Get(),
+			handles[4].Get(),
+			handles[5].Get(),
 	};
 }
 
