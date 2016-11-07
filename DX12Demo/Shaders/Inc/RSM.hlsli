@@ -2,6 +2,9 @@
 #define __RSM_HLSLI__
 
 #include "Common.hlsli"
+#include "GBuffer.hlsli"
+#include "Utils.hlsli"
+#include "BRDF.hlsli"
 
 struct RSMOutput
 {

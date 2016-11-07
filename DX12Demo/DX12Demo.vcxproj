@@ -378,9 +378,11 @@
   <ItemGroup>
     <None Include="Shaders\Inc\BRDF.hlsli" />
     <None Include="Shaders\Inc\Common.hlsli" />
+    <None Include="Shaders\Inc\GBuffer.hlsli" />
     <None Include="Shaders\Inc\LightCulling.hlsli" />
     <None Include="Shaders\Inc\PointLight.hlsli" />
     <None Include="Shaders\Inc\RSM.hlsli" />
+    <None Include="Shaders\Inc\Utils.hlsli" />
     <None Include="Shaders\Inc\VSM.hlsli" />
   </ItemGroup>
   <ItemGroup>

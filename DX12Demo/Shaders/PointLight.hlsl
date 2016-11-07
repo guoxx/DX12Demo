@@ -1,5 +1,7 @@
 #include "Inc/Common.hlsli"
 #include "Inc/PointLight.hlsli"
+#include "Inc/GBuffer.hlsli"
+#include "Inc/BRDF.hlsli"
 
 #define RootSigDeclaration \
 RootSigBegin \

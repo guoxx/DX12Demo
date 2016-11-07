@@ -427,6 +427,12 @@
     <None Include="Shaders\Inc\VSM.hlsli">
       <Filter>Shaders\Inc</Filter>
     </None>
+    <None Include="Shaders\Inc\GBuffer.hlsli">
+      <Filter>Shaders\Inc</Filter>
+    </None>
+    <None Include="Shaders\Inc\Utils.hlsli">
+      <Filter>Shaders\Inc</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="Shaders\PointLight.hlsl">

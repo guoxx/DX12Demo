@@ -1,4 +1,6 @@
 #include "Inc/Common.hlsli"
+#include "Inc/GBuffer.hlsli"
+#include "Inc/Utils.hlsli"
 
 #define RootSigDeclaration \
 RootSigBegin \
