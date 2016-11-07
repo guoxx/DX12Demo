@@ -57,7 +57,8 @@ void PointLight::GetViewAndProjMatrix(const Camera* pCamera, AXIS axis, uint32_t
 	float fov = 2.0f * atanf(halfSize/(halfSize-0.5f));
 
 	float zNear = 0.01f;
-	float zFar = m_RadiusEnd;
+	// HACK: add border so that we can handle depth bias properly
+	float zFar = m_RadiusEnd * 1.4;
 	float aspect = 1.0f;
 	assert(zFar > zNear);
 
