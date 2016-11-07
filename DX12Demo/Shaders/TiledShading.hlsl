@@ -1,6 +1,7 @@
 #include "Inc/Common.hlsli"
 #include "Inc/LightCulling.hlsli"
 #include "Inc/PointLight.hlsli"
+#include "Inc/RSM.hlsli"
 
 #define RootSigDeclaration \
 RootSigBegin \
@@ -24,7 +25,7 @@ Texture2D<float4> g_GBuffer1 : register(t4);
 Texture2D<float4> g_GBuffer2 : register(t5);
 Texture2D<float> g_DepthTexture : register(t6);
 
-Texture2D<float> g_ShadowMaps[32] : register(t16);
+Texture2D g_ShadowMaps[32] : register(t16);
 
 SamplerState g_PointSampler : register(s0);
 
@@ -35,6 +36,8 @@ groupshared uint gs_LightIdxPerTile[MAX_LIGHT_NODES_PER_TILE];
 
 float3 ShadeDirectionalLight(GBuffer gbuffer, DirectionalLight directionalLight)
 {
+	float3 outRadiance = 0.0f;
+
 	float shadowMask = 1.0f;
 	if (directionalLight.m_ShadowMapTexId != -1)
 	{
@@ -52,7 +55,20 @@ float3 ShadeDirectionalLight(GBuffer gbuffer, DirectionalLight directionalLight)
 
 	float3 diffuse = Diffuse_Lambert(gbuffer.Diffuse) * E;
 	float3 specular = MicrofacetSpecular(gbuffer.Specular, gbuffer.Roughness, V, N, L) * E;
-	return (diffuse + specular) * shadowMask;
+	outRadiance = (diffuse + specular) * shadowMask;
+
+	if (g_Constants.m_RSM.m_Enabled)
+	{
+		outRadiance += ShadeDirectionalLightRSM(gbuffer,
+			g_Constants.m_RSM,
+			directionalLight,
+			g_ShadowMaps[directionalLight.m_RSMIntensityTexId],
+			g_ShadowMaps[directionalLight.m_RSMNormalTexId],
+			g_ShadowMaps[directionalLight.m_ShadowMapTexId],
+			g_PointSampler);
+	}
+
+	return outRadiance;
 }
 
 float3 ShadePointLight(GBuffer gbuffer, PointLight pointLight)

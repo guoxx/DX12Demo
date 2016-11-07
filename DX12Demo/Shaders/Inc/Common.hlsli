@@ -45,23 +45,6 @@ struct GBuffer
 	float3 Position;
 };
 
-struct RSMOutput
-{
-	float4 Intensity	: SV_TARGET0;
-	float4 Normal		: SV_TARGET1;
-};
-
-struct RSMBuffer
-{
-	float3 Intensity;
-	float3 Normal;
-
-	// --
-	float Depth;
-	float3 Position;
-};
-
-
 GBufferOutput GBufferEncode(GBuffer gbuffer)
 {
 	GBufferOutput Out;
@@ -97,37 +80,6 @@ GBuffer GBufferDecode(Texture2D<float4> RT0, Texture2D<float4> RT1, Texture2D<fl
 	gbuffer.Position = mul(csPos, mInvView).xyz;
 
 	return gbuffer;
-}
-
-RSMOutput RSMBufferEncode(RSMBuffer rsmbuffer)
-{
-	RSMOutput Out;
-	Out.Intensity = float4(rsmbuffer.Intensity, 1.0f);
-	Out.Normal = float4((rsmbuffer.Normal + 1.0f) * 0.5f, 1.0f);
-	return Out;
-}
-
-RSMBuffer RSMBufferDecode(Texture2D<float4> RT0, Texture2D<float4> RT1, Texture2D<float> DepthBuffer, SamplerState samp, float2 UV, float4x4 mInvViewProj, bool perspectiveDivide)
-{
-	RSMBuffer rsmbuffer;
-
-	float4 Intensity = RT0.SampleLevel(samp, UV, 0);
-	float4 Normal= RT1.SampleLevel(samp, UV, 0);
-	rsmbuffer.Intensity = Intensity.xyz;
-	rsmbuffer.Normal = Normal.xyz * 2.0f - 1.0f;
-
-	rsmbuffer.Depth = DepthBuffer.SampleLevel(samp, UV, 0);
-
-	// Assume DX style texture coordinate
-	float3 ndcPos = float3(UV.x * 2.0f - 1.0f, (1.0f - UV.y) * 2.0f - 1.0f, rsmbuffer.Depth);
-	float4 wsPos = mul(float4(ndcPos, 1), mInvViewProj);
-	if (perspectiveDivide)
-	{
-		wsPos /= wsPos.w;
-	}
-	rsmbuffer.Position = wsPos.xyz;
-
-	return rsmbuffer;
 }
 
 // index of refraction to F0

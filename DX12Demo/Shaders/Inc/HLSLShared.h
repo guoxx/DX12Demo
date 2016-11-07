@@ -69,12 +69,16 @@ struct PointLight
 struct DirectionalLight
 {
 	float3		m_Direction;
-	// -1 means invalid
-	int			m_ShadowMapTexId;
-	float3		m_Irradiance;
 	float		m_Padding0;
+	float3		m_Irradiance;
+	float		m_Padding1;
 	float4x4	m_mViewProj;
 	float4x4	m_mInvViewProj;
+	// -1 means invalid
+	int			m_ShadowMapTexId;
+	int			m_RSMIntensityTexId;
+	int			m_RSMNormalTexId;
+	int			m_Padding2;
 };
 
 struct Camera
@@ -115,6 +119,8 @@ struct TiledShadingConstants
 	float4 m_CameraPosition;
 	float4x4 m_mInvView;
 	float4x4 m_mInvProj;
+
+	RSMParam	m_RSM;
 };
 
 struct BaseMaterialRSMConstants

@@ -1,4 +1,5 @@
 #include "Inc/Common.hlsli"
+#include "Inc/RSM.hlsli"
 
 #define RootSigDeclaration \
 RootSigBegin \

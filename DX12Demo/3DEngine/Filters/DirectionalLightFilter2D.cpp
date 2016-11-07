@@ -81,6 +81,8 @@ void DirectionalLightFilter2D::Apply(DX12GraphicContext * pGfxContext, const Ren
 	DirectX::XMStoreFloat4x4(&constants.m_DirLight.m_mInvViewProj, DirectX::XMMatrixTranspose(mInvLightViewProj));
 
 	constants.m_DirLight.m_ShadowMapTexId = -1;
+	constants.m_DirLight.m_RSMIntensityTexId = -1;
+	constants.m_DirLight.m_RSMNormalTexId = -1;
 
 	if (g_RSMEnabled)
 	{

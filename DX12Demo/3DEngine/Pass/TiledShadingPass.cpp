@@ -61,6 +61,18 @@ void TiledShadingPass::Apply(DX12GraphicContext * pGfxContext, const RenderConte
 	DirectX::XMStoreFloat4x4(&constants.m_mInvView, DirectX::XMMatrixTranspose(mInvView));
 	DirectX::XMStoreFloat4x4(&constants.m_mInvProj, DirectX::XMMatrixTranspose(mInvProj));
 
+	if (g_RSMEnabled)
+	{
+		constants.m_RSM.m_Enabled = 1;
+		constants.m_RSM.m_SampleRadius = g_RSMSampleRadius;
+		constants.m_RSM.m_RSMFactor = g_RSMFactor;
+		constants.m_RSM.m_RadiusEnd = g_RSMRadiusEnd;
+	}
+	else
+	{
+		constants.m_RSM.m_Enabled = 0;
+	}
+
 	pGfxContext->SetComputeRootDynamicConstantBufferView(0, &constants, sizeof(constants));
 }
 
