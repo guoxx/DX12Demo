@@ -242,6 +242,9 @@
     <ClInclude Include="3DEngine\GraphicsEngineDefinition.h">
       <Filter>3DEngine</Filter>
     </ClInclude>
+    <ClInclude Include="3DEngine\Filters\ConvertEVSMFilter2D.h">
+      <Filter>3DEngine\Filters</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -382,6 +385,9 @@
     <ClCompile Include="3DEngine\GraphicsEngineDefinition.cpp">
       <Filter>3DEngine</Filter>
     </ClCompile>
+    <ClCompile Include="3DEngine\Filters\ConvertEVSMFilter2D.cpp">
+      <Filter>3DEngine\Filters</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="XboxOne\Resources\Logo.png">
@@ -418,6 +424,9 @@
     <None Include="Shaders\Inc\RSM.hlsli">
       <Filter>Shaders\Inc</Filter>
     </None>
+    <None Include="Shaders\Inc\VSM.hlsli">
+      <Filter>Shaders\Inc</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="Shaders\PointLight.hlsl">
@@ -448,6 +457,9 @@
       <Filter>Shaders</Filter>
     </CustomBuild>
     <CustomBuild Include="Shaders\BaseMaterial_RSM.hlsl">
+      <Filter>Shaders</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Shaders\EVSM.hlsl">
       <Filter>Shaders</Filter>
     </CustomBuild>
   </ItemGroup>

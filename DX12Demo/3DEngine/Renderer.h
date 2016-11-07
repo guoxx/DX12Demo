@@ -12,6 +12,7 @@ class Filter2D;
 class ToneMapFilter2D;
 class PointLightFilter2D;
 class DirectionalLightFilter2D;
+class ConvertEVSMFilter2D;
 class LightCullingPass;
 class TiledShadingPass;
 
@@ -54,6 +55,7 @@ private:
 	std::shared_ptr<ToneMapFilter2D> m_ToneMapFilter2D;
 	std::shared_ptr<PointLightFilter2D> m_PointLightFilter2D;
 	std::shared_ptr<DirectionalLightFilter2D> m_DirLightFilter2D;
+	std::shared_ptr<ConvertEVSMFilter2D> m_ConvertEVSMFilter2D;
 
 	std::shared_ptr<LightCullingPass> m_LightCullingPass;
 	std::shared_ptr<TiledShadingPass> m_TiledShadingPass;

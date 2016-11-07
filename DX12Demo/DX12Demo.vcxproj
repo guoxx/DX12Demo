@@ -248,6 +248,7 @@
     <ClInclude Include="3DEngine\Actor.h" />
     <ClInclude Include="3DEngine\Camera.h" />
     <ClInclude Include="3DEngine\EngineTuning.h" />
+    <ClInclude Include="3DEngine\Filters\ConvertEVSMFilter2D.h" />
     <ClInclude Include="3DEngine\Filters\DirectionalLightFilter2D.h" />
     <ClInclude Include="3DEngine\Filters\Filter2D.h" />
     <ClInclude Include="3DEngine\Filters\PointLightFilter2D.h" />
@@ -315,6 +316,7 @@
     <ClCompile Include="3DEngine\Actor.cpp" />
     <ClCompile Include="3DEngine\Camera.cpp" />
     <ClCompile Include="3DEngine\EngineTuning.cpp" />
+    <ClCompile Include="3DEngine\Filters\ConvertEVSMFilter2D.cpp" />
     <ClCompile Include="3DEngine\Filters\DirectionalLightFilter2D.cpp" />
     <ClCompile Include="3DEngine\Filters\Filter2D.cpp" />
     <ClCompile Include="3DEngine\Filters\PointLightFilter2D.cpp" />
@@ -379,6 +381,7 @@
     <None Include="Shaders\Inc\LightCulling.hlsli" />
     <None Include="Shaders\Inc\PointLight.hlsli" />
     <None Include="Shaders\Inc\RSM.hlsli" />
+    <None Include="Shaders\Inc\VSM.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="Shaders\BaseMaterial.hlsl">
@@ -419,6 +422,11 @@
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="Shaders\BaseMaterial_RSM.hlsl">
+      <FileType>Document</FileType>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="Shaders\EVSM.hlsl">
       <FileType>Document</FileType>
     </CustomBuild>
   </ItemGroup>

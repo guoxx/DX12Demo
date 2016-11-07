@@ -52,6 +52,18 @@ struct RSMParam
 	float	m_RadiusEnd;
 };
 
+struct EVSMParam
+{
+	int		m_Enabled;
+	float	m_PositiveExponent;
+	float	m_NegativeExponent;
+	float	m_LightBleedingReduction;
+	float	m_VSMBias;
+	float	m_Padding0;
+	float	m_Padding1;
+	float	m_Padding2;
+};
+
 struct PointLight
 {
 	float4		m_Position;
@@ -147,6 +159,12 @@ struct DirectionalLightConstants
 
 	DirectionalLight	m_DirLight;
 	RSMParam			m_RSM;
+	EVSMParam			m_EVSM;
+};
+
+struct EVSMConstants
+{
+	EVSMParam			m_EVSM;
 };
 
 #ifdef __cplusplus

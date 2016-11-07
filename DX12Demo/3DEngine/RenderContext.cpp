@@ -49,6 +49,25 @@ DX12ColorSurface * RenderContext::AcquireRSMNormalSurfaceForDirectionalLight(Dir
 	return handle.Get();
 }
 
+DX12ColorSurface * RenderContext::AcquireEVSMSurfaceForDirectionalLight(DirectionalLight * pDirLight)
+{
+	RenderableSurfaceHandle<DX12ColorSurface> handle;
+
+	auto result = m_EVSMSurfaceForDirLights.find(pDirLight);
+	if (result != m_EVSMSurfaceForDirLights.end())
+	{
+		handle = result->second;
+	}
+	else
+	{
+		RenderableSurfaceDesc desc{ GFX_FORMAT_R32G32B32A32_FLOAT, DX12DirectionalLightShadowMapSize, DX12DirectionalLightShadowMapSize };
+		handle = RenderableSurfaceManager::GetInstance()->AcquireColorSurface(desc);
+		m_EVSMSurfaceForDirLights.insert(std::make_pair(pDirLight, handle));
+	}
+
+	return handle.Get();
+}
+
 DX12DepthSurface*  RenderContext::AcquireDepthSurfaceForDirectionalLight(DirectionalLight* pDirLight)
 {
 	RenderableSurfaceHandle<DX12DepthSurface> handle;
@@ -66,6 +85,39 @@ DX12DepthSurface*  RenderContext::AcquireDepthSurfaceForDirectionalLight(Directi
 	}
 
 	return handle.Get();
+}
+
+std::array<DX12ColorSurface*, 6> RenderContext::AcquireEVSMSurfaceForPointLight(PointLight * pPointLight)
+{
+	std::array<RenderableSurfaceHandle<DX12ColorSurface>, 6> handles;
+
+	auto result = m_EVSMSurfaceForPointLights.find(pPointLight);
+	if (result != m_EVSMSurfaceForPointLights.end())
+	{
+		handles = result->second;
+	}
+	else
+	{
+		RenderableSurfaceDesc desc{ GFX_FORMAT_R32G32B32A32_FLOAT, DX12PointLightShadowMapSize, DX12PointLightShadowMapSize };
+		handles = { 
+			RenderableSurfaceManager::GetInstance()->AcquireColorSurface(desc),
+			RenderableSurfaceManager::GetInstance()->AcquireColorSurface(desc),
+			RenderableSurfaceManager::GetInstance()->AcquireColorSurface(desc),
+			RenderableSurfaceManager::GetInstance()->AcquireColorSurface(desc),
+			RenderableSurfaceManager::GetInstance()->AcquireColorSurface(desc),
+			RenderableSurfaceManager::GetInstance()->AcquireColorSurface(desc),
+		};
+		m_EVSMSurfaceForPointLights.insert(std::make_pair(pPointLight, handles));
+	}
+
+	return std::array<DX12ColorSurface*, 6>{
+			handles[0].Get(),
+			handles[1].Get(),
+			handles[2].Get(),
+			handles[3].Get(),
+			handles[4].Get(),
+			handles[5].Get(),
+	};
 }
 
 std::array<DX12ColorSurface*, 6> RenderContext::AcquireRSMRadiantIntensitySurfaceForPointLight(PointLight * pPointLight)

@@ -1,5 +1,6 @@
 #include "Inc/Common.hlsli"
 #include "Inc/RSM.hlsli"
+#include "Inc/VSM.hlsli"
 
 #define RootSigDeclaration \
 RootSigBegin \
@@ -17,6 +18,7 @@ Texture2D<float> g_DepthTexture : register(t3);
 Texture2D<float> g_ShadowMap : register(t4);
 Texture2D<float4> g_RSMIntensityTexture : register(t5);
 Texture2D<float4> g_RSMNormalTexture : register(t6);
+Texture2D<float4> g_EVSMTexture : register(t7);
 
 SamplerState g_Sampler : register(s0);
 
@@ -44,6 +46,34 @@ VSOutput VSMain(uint vertid : SV_VertexID)
 	return Out;
 }
 
+float ShadowMask(GBuffer gbuffer)
+{
+	float3 shadowPos = mul(float4(gbuffer.Position, 1), g_Constants.m_DirLight.m_mViewProj).xyz;
+	float2 shadowUV = float2((shadowPos.x + 1.0f) * 0.5f, (-shadowPos.y + 1.0f) * 0.5f);
+	float shadowMask = 1.0f;
+	if (g_Constants.m_EVSM.m_Enabled)
+	{
+		float2 exponents = GetEVSMExponents(g_Constants.m_EVSM.m_PositiveExponent, g_Constants.m_EVSM.m_NegativeExponent, SMFormat32Bit);
+		float2 warpedDepth = WarpDepth(shadowPos.z, exponents);
+
+		float4 occluder = g_EVSMTexture.Sample(g_Sampler, shadowUV);
+
+		// Derivative of warping at depth
+		float2 depthScale = g_Constants.m_EVSM.m_VSMBias * 0.01f * exponents * warpedDepth;
+		float2 minVariance = depthScale * depthScale;
+
+		float posContrib = ChebyshevUpperBound(occluder.xz, warpedDepth.x, minVariance.x, g_Constants.m_EVSM.m_LightBleedingReduction);
+		float negContrib = ChebyshevUpperBound(occluder.yw, warpedDepth.y, minVariance.y, g_Constants.m_EVSM.m_LightBleedingReduction);
+		shadowMask = min(posContrib, negContrib);
+	}
+	else
+	{
+		float occluderDepth = g_ShadowMap.Sample(g_Sampler, shadowUV);
+		shadowMask = occluderDepth < shadowPos.z ? 0.0f : 1.0f;
+	}
+	return shadowMask;
+}
+
 RootSigDeclaration
 float4 PSMain(VSOutput In) : SV_TARGET
 {
@@ -51,10 +81,7 @@ float4 PSMain(VSOutput In) : SV_TARGET
 
 	float3 outRadiance = 0.0f;
 
-	float3 shadowPos = mul(float4(gbuffer.Position, 1), g_Constants.m_DirLight.m_mViewProj).xyz;
-	float2 shadowUV = float2((shadowPos.x + 1.0f) * 0.5f, (-shadowPos.y + 1.0f) * 0.5f);
-	float occluderDepth = g_ShadowMap.Sample(g_Sampler, shadowUV);
-	float shadowMask = occluderDepth < shadowPos.z ? 0.0f : 1.0f;
+	float shadowMask = ShadowMask(gbuffer);
 
 	float3 L = -g_Constants.m_DirLight.m_Direction;
 	float3 V = normalize(g_Constants.CameraPosition.xyz - gbuffer.Position);
