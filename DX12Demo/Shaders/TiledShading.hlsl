@@ -2,6 +2,7 @@
 #include "Inc/LightCulling.hlsli"
 #include "Inc/PointLight.hlsli"
 #include "Inc/RSM.hlsli"
+#include "Inc/VSM.hlsli"
 
 #define RootSigDeclaration \
 RootSigBegin \
@@ -38,11 +39,26 @@ float3 ShadeDirectionalLight(GBuffer gbuffer, DirectionalLight directionalLight)
 {
 	float3 outRadiance = 0.0f;
 
+	float3 shadowPos = mul(float4(gbuffer.Position, 1), directionalLight.m_mViewProj).xyz;
+	float2 shadowUV = float2((shadowPos.x + 1.0f) * 0.5f, (-shadowPos.y + 1.0f) * 0.5f);
 	float shadowMask = 1.0f;
-	if (directionalLight.m_ShadowMapTexId != -1)
+	if (g_Constants.m_EVSM.m_Enabled)
 	{
-		float3 shadowPos = mul(float4(gbuffer.Position, 1), directionalLight.m_mViewProj).xyz;
-		float2 shadowUV = float2((shadowPos.x + 1.0f) * 0.5f, (-shadowPos.y + 1.0f) * 0.5f);
+		float2 exponents = GetEVSMExponents(g_Constants.m_EVSM.m_PositiveExponent, g_Constants.m_EVSM.m_NegativeExponent, SMFormat32Bit);
+		float2 warpedDepth = WarpDepth(shadowPos.z, exponents);
+
+		float4 occluder = g_ShadowMaps[directionalLight.m_EVSMTexId].SampleLevel(g_PointSampler, shadowUV, 0);
+
+		// Derivative of warping at depth
+		float2 depthScale = g_Constants.m_EVSM.m_VSMBias * 0.01f * exponents * warpedDepth;
+		float2 minVariance = depthScale * depthScale;
+
+		float posContrib = ChebyshevUpperBound(occluder.xz, warpedDepth.x, minVariance.x, g_Constants.m_EVSM.m_LightBleedingReduction);
+		float negContrib = ChebyshevUpperBound(occluder.yw, warpedDepth.y, minVariance.y, g_Constants.m_EVSM.m_LightBleedingReduction);
+		shadowMask = min(posContrib, negContrib);
+	}
+	else
+	{
 		float occluderDepth = g_ShadowMaps[directionalLight.m_ShadowMapTexId].SampleLevel(g_PointSampler, shadowUV, 0);
 		shadowMask = occluderDepth < shadowPos.z ? 0.0f : 1.0f;
 	}

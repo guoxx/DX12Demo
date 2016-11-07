@@ -250,7 +250,8 @@ void Renderer::DeferredLighting(const Camera* pCamera, Scene* pScene)
 				pDirLightData[i].m_ShadowMapTexId = firstTextureId;
 				pDirLightData[i].m_RSMIntensityTexId = firstTextureId + 1;
 				pDirLightData[i].m_RSMNormalTexId = firstTextureId + 2;
-				firstTextureId += 3;
+				pDirLightData[i].m_EVSMTexId = firstTextureId + 3;
+				firstTextureId += 4;
 			}
 			m_AllDirectionalLights->UnmapResource(0);
 
@@ -306,9 +307,11 @@ void Renderer::DeferredLighting(const Camera* pCamera, Scene* pScene)
 				DX12DepthSurface* pShadowMapForDirLight = m_RenderContext.AcquireDepthSurfaceForDirectionalLight(directionalLight.get());
 				DX12ColorSurface* pRSMIntensitySurface = m_RenderContext.AcquireRSMRadiantIntensitySurfaceForDirectionalLight(directionalLight.get());
 				DX12ColorSurface* pRSMNormalSurface = m_RenderContext.AcquireRSMNormalSurfaceForDirectionalLight(directionalLight.get());
+				DX12ColorSurface* pEVSMSurface = m_RenderContext.AcquireEVSMSurfaceForDirectionalLight(directionalLight.get());
 				pGfxContext->ResourceTransitionBarrier(pShadowMapForDirLight, D3D12_RESOURCE_STATE_GENERIC_READ);
 				pGfxContext->ResourceTransitionBarrier(pRSMIntensitySurface, D3D12_RESOURCE_STATE_GENERIC_READ);
 				pGfxContext->ResourceTransitionBarrier(pRSMNormalSurface, D3D12_RESOURCE_STATE_GENERIC_READ);
+				pGfxContext->ResourceTransitionBarrier(pEVSMSurface, D3D12_RESOURCE_STATE_GENERIC_READ);
 			}
 			for (int i = 0; i < pScene->GetPointLights().size(); ++i)
 			{
@@ -337,11 +340,13 @@ void Renderer::DeferredLighting(const Camera* pCamera, Scene* pScene)
 				DX12DepthSurface* pShadowMapForDirLight = m_RenderContext.AcquireDepthSurfaceForDirectionalLight(directionalLight.get());
 				DX12ColorSurface* pRSMIntensitySurface = m_RenderContext.AcquireRSMRadiantIntensitySurfaceForDirectionalLight(directionalLight.get());
 				DX12ColorSurface* pRSMNormalSurface = m_RenderContext.AcquireRSMNormalSurfaceForDirectionalLight(directionalLight.get());
+				DX12ColorSurface* pEVSMSurface = m_RenderContext.AcquireEVSMSurfaceForDirectionalLight(directionalLight.get());
 				pGfxContext->SetComputeDynamicCbvSrvUav(5, firstTextureId, pShadowMapForDirLight->GetStagingSRV().GetCpuHandle());
 				pGfxContext->SetComputeDynamicCbvSrvUav(5, firstTextureId + 1, pRSMIntensitySurface->GetStagingSRV().GetCpuHandle());
 				pGfxContext->SetComputeDynamicCbvSrvUav(5, firstTextureId + 2, pRSMNormalSurface->GetStagingSRV().GetCpuHandle());
+				pGfxContext->SetComputeDynamicCbvSrvUav(5, firstTextureId + 3, pEVSMSurface->GetStagingSRV().GetCpuHandle());
 
-				firstTextureId += 3;
+				firstTextureId += 4;
 			}
 			for (int i = 0; i < pScene->GetPointLights().size(); ++i)
 			{
@@ -368,9 +373,11 @@ void Renderer::DeferredLighting(const Camera* pCamera, Scene* pScene)
 				DX12DepthSurface* pShadowMapForDirLight = m_RenderContext.AcquireDepthSurfaceForDirectionalLight(directionalLight.get());
 				DX12ColorSurface* pRSMIntensitySurface = m_RenderContext.AcquireRSMRadiantIntensitySurfaceForDirectionalLight(directionalLight.get());
 				DX12ColorSurface* pRSMNormalSurface = m_RenderContext.AcquireRSMNormalSurfaceForDirectionalLight(directionalLight.get());
+				DX12ColorSurface* pEVSMSurface = m_RenderContext.AcquireEVSMSurfaceForDirectionalLight(directionalLight.get());
 				pGfxContext->ResourceTransitionBarrier(pShadowMapForDirLight, D3D12_RESOURCE_STATE_DEPTH_WRITE);
 				pGfxContext->ResourceTransitionBarrier(pRSMIntensitySurface, D3D12_RESOURCE_STATE_RENDER_TARGET);
 				pGfxContext->ResourceTransitionBarrier(pRSMNormalSurface, D3D12_RESOURCE_STATE_RENDER_TARGET);
+				pGfxContext->ResourceTransitionBarrier(pEVSMSurface, D3D12_RESOURCE_STATE_RENDER_TARGET);
 			}
 			for (int i = 0; i < pScene->GetPointLights().size(); ++i)
 			{

@@ -90,7 +90,7 @@ struct DirectionalLight
 	int			m_ShadowMapTexId;
 	int			m_RSMIntensityTexId;
 	int			m_RSMNormalTexId;
-	int			m_Padding2;
+	int			m_EVSMTexId;
 };
 
 struct Camera
@@ -133,6 +133,7 @@ struct TiledShadingConstants
 	float4x4 m_mInvProj;
 
 	RSMParam	m_RSM;
+	EVSMParam	m_EVSM;
 };
 
 struct BaseMaterialRSMConstants

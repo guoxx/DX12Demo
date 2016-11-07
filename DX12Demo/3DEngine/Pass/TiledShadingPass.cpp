@@ -73,6 +73,12 @@ void TiledShadingPass::Apply(DX12GraphicContext * pGfxContext, const RenderConte
 		constants.m_RSM.m_Enabled = 0;
 	}
 
+	constants.m_EVSM.m_Enabled = g_EVSMEnabled ? 1 : 0;
+	constants.m_EVSM.m_PositiveExponent = g_EVSMPositiveExponent;
+	constants.m_EVSM.m_NegativeExponent = g_EVSMNegativeExponent;
+	constants.m_EVSM.m_LightBleedingReduction = g_LightBleedingReduction;
+	constants.m_EVSM.m_VSMBias = g_VSMBias;
+
 	pGfxContext->SetComputeRootDynamicConstantBufferView(0, &constants, sizeof(constants));
 }
 
