@@ -30,17 +30,14 @@ void Material::Load(DX12GraphicContext* pGfxContext)
 	{
 		ShadingConfiguration shadingCfg = ShadingConfiguration_GBuffer;
 
-		D3D12_DESCRIPTOR_RANGE descriptorRanges[] = {
-			{ D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 1, 0, D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND },
-		};
-
 		DX12RootSignatureCompiler sigCompiler;
 		sigCompiler.Begin(4);
 		sigCompiler.End();
 		sigCompiler[0].InitAsShaderResourceView(0, 0, D3D12_SHADER_VISIBILITY_VERTEX);
 		sigCompiler[1].InitAsConstantBufferView(0);
 		sigCompiler[2].InitAsConstantBufferView(1);
-		sigCompiler[3].InitAsDescriptorTable(_countof(descriptorRanges), descriptorRanges, D3D12_SHADER_VISIBILITY_PIXEL);
+		sigCompiler.InitDescriptorTable(3, 1, D3D12_SHADER_VISIBILITY_PIXEL);
+		sigCompiler.SetupDescriptorRange(3, 0, CD3DX12_DESCRIPTOR_RANGE{D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 1});
 		m_RootSig[shadingCfg] = sigCompiler.Compile(DX12GraphicManager::GetInstance()->GetDevice());
 
 		DX12GraphicPsoCompiler psoCompiler;
@@ -76,16 +73,13 @@ void Material::Load(DX12GraphicContext* pGfxContext)
 	{
 		ShadingConfiguration shadingCfg = ShadingConfiguration_RSM;
 
-		D3D12_DESCRIPTOR_RANGE descriptorRanges[] = {
-			{ D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 1, 0, D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND },
-		};
-
 		DX12RootSignatureCompiler sigCompiler;
 		sigCompiler.Begin(3);
 		sigCompiler.End();
 		sigCompiler[0].InitAsShaderResourceView(0, 0, D3D12_SHADER_VISIBILITY_VERTEX);
 		sigCompiler[1].InitAsConstantBufferView(0);
-		sigCompiler[2].InitAsDescriptorTable(_countof(descriptorRanges), descriptorRanges, D3D12_SHADER_VISIBILITY_PIXEL);
+		sigCompiler.InitDescriptorTable(2, 1, D3D12_SHADER_VISIBILITY_PIXEL);
+		sigCompiler.SetupDescriptorRange(2, 0, CD3DX12_DESCRIPTOR_RANGE{D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 1});
 		m_RootSig[shadingCfg] = sigCompiler.Compile(DX12GraphicManager::GetInstance()->GetDevice());
 
 		DX12GraphicPsoCompiler psoCompiler;

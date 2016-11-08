@@ -21,15 +21,12 @@ PointLightFilter2D::PointLightFilter2D(DX12Device* device)
 	pGfxContext->UploadBuffer(m_IndexBuffer.get(), indices, sizeof(indices));
 	pGfxContext->ResourceTransitionBarrier(m_IndexBuffer.get(), D3D12_RESOURCE_STATE_GENERIC_READ);
 
-	D3D12_DESCRIPTOR_RANGE descriptorRanges1[] = {
-		{ D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 16, 0, 0, D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND },
-	};
-
 	DX12RootSignatureCompiler sigCompiler;
 	sigCompiler.Begin(2);
 	sigCompiler.End();
 	sigCompiler[0].InitAsConstantBufferView(0);
-	sigCompiler[1].InitAsDescriptorTable(_countof(descriptorRanges1), descriptorRanges1, D3D12_SHADER_VISIBILITY_PIXEL);
+	sigCompiler.InitDescriptorTable(1, 1, D3D12_SHADER_VISIBILITY_PIXEL);
+	sigCompiler.SetupDescriptorRange(1, 0, CD3DX12_DESCRIPTOR_RANGE{D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 16, 0});
 	m_RootSig = sigCompiler.Compile(device);
 
 	DX12GraphicPsoCompiler psoCompiler;

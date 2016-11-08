@@ -17,14 +17,11 @@ Filter2D::Filter2D(DX12Device* device)
 	pGfxContext->UploadBuffer(m_IndexBuffer.get(), indices, sizeof(indices));
 	pGfxContext->ResourceTransitionBarrier(m_IndexBuffer.get(), D3D12_RESOURCE_STATE_GENERIC_READ);
 
-	D3D12_DESCRIPTOR_RANGE descriptorRanges0[] = {
-		{ D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0, 0, D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND },
-	};
-
 	DX12RootSignatureCompiler sigCompiler;
 	sigCompiler.Begin(1);
 	sigCompiler.End();
-	sigCompiler[0].InitAsDescriptorTable(_countof(descriptorRanges0), descriptorRanges0, D3D12_SHADER_VISIBILITY_PIXEL);
+	sigCompiler.InitDescriptorTable(0, 1, D3D12_SHADER_VISIBILITY_PIXEL);
+	sigCompiler.SetupDescriptorRange(0, 0, CD3DX12_DESCRIPTOR_RANGE{D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0});
 	m_RootSig = sigCompiler.Compile(DX12GraphicManager::GetInstance()->GetDevice());
 
 	DX12GraphicPsoCompiler psoCompiler;

@@ -59,6 +59,11 @@ void DX12RootSignatureCompiler::Begin(uint32_t numParams, uint32_t numStaticSamp
 	if (numParams > 0)
 	{
 		m_RootParams.reset(new CD3DX12_ROOT_PARAMETER[numParams]);
+
+		for (uint32_t i = 0; i < numParams; ++i)
+		{
+			m_CachedDescriptorTables.push_back(DescriptorTableDesc{ 0, D3D12_SHADER_VISIBILITY_ALL, nullptr });
+		}
 	}
 	else
 	{
@@ -135,6 +140,19 @@ void DX12RootSignatureCompiler::InitStaticSampler(uint32_t shaderRegister, const
 	}
 }
 
+void DX12RootSignatureCompiler::InitDescriptorTable(uint32_t slot, uint32_t numDescriptorRanges, D3D12_SHADER_VISIBILITY visibility)
+{
+	m_CachedDescriptorTables[slot].m_Num = numDescriptorRanges;
+	m_CachedDescriptorTables[slot].m_Vis = visibility;
+	m_CachedDescriptorTables[slot].m_Ptr = std::shared_ptr<D3D12_DESCRIPTOR_RANGE>(new D3D12_DESCRIPTOR_RANGE[numDescriptorRanges], std::default_delete<D3D12_DESCRIPTOR_RANGE[]>());
+}
+
+void DX12RootSignatureCompiler::SetupDescriptorRange(uint32_t slot, uint32_t offsetInTable, const D3D12_DESCRIPTOR_RANGE& descriptorRange)
+{
+	assert(offsetInTable < m_CachedDescriptorTables[slot].m_Num);
+	m_CachedDescriptorTables[slot].m_Ptr.get()[offsetInTable] = descriptorRange;
+}
+
 void DX12RootSignatureCompiler::End()
 {
 	assert(m_State == StateBegin);
@@ -145,6 +163,16 @@ std::shared_ptr<DX12RootSignature> DX12RootSignatureCompiler::Compile(DX12Device
 {
 	assert(m_State == StateEnd);
 	m_State = StateCompiled;
+
+	for (uint i = 0; i < m_NumRootParams; ++i)
+	{
+		CD3DX12_ROOT_PARAMETER* rootParam = &m_RootParams.get()[i];
+		if (m_CachedDescriptorTables[i].m_Num > 0)
+		{
+			const DescriptorTableDesc& descTable = m_CachedDescriptorTables[i];
+			rootParam->InitAsDescriptorTable(descTable.m_Num, descTable.m_Ptr.get(), descTable.m_Vis);
+		}
+	}
 
 	D3D12_ROOT_SIGNATURE_DESC rootSignatureDesc;	
 	rootSignatureDesc.NumParameters = m_NumRootParams;

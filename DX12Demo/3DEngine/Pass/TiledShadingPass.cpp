@@ -10,14 +10,6 @@
 
 TiledShadingPass::TiledShadingPass(DX12Device* device)
 {
-	D3D12_DESCRIPTOR_RANGE descriptorRanges[] = {
-		{ D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 4, 3, 0, D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND },
-		{ D3D12_DESCRIPTOR_RANGE_TYPE_UAV, 1, 0, 0, D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND },
-	};
-	D3D12_DESCRIPTOR_RANGE descriptorRanges1[] = {
-		{ D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 32, 16, 0, D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND },
-	};
-
 	DX12RootSignatureCompiler sigCompiler;
 	sigCompiler.Begin(6);
 	sigCompiler.End();
@@ -25,8 +17,11 @@ TiledShadingPass::TiledShadingPass(DX12Device* device)
 	sigCompiler[1].InitAsShaderResourceView(0);
 	sigCompiler[2].InitAsShaderResourceView(1);
 	sigCompiler[3].InitAsShaderResourceView(2);
-	sigCompiler[4].InitAsDescriptorTable(_countof(descriptorRanges), descriptorRanges);
-	sigCompiler[5].InitAsDescriptorTable(_countof(descriptorRanges1), descriptorRanges1);
+	sigCompiler.InitDescriptorTable(4, 2);
+	sigCompiler.SetupDescriptorRange(4, 0, CD3DX12_DESCRIPTOR_RANGE{D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 4, 3});
+	sigCompiler.SetupDescriptorRange(4, 1, CD3DX12_DESCRIPTOR_RANGE{D3D12_DESCRIPTOR_RANGE_TYPE_UAV, 1, 0});
+	sigCompiler.InitDescriptorTable(5, 1);
+	sigCompiler.SetupDescriptorRange(5, 0, CD3DX12_DESCRIPTOR_RANGE{D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 32, 16});
 	m_RootSig = sigCompiler.Compile(device);
 
 	DX12ComputePsoCompiler psoCompiler;

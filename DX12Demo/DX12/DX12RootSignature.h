@@ -40,6 +40,9 @@ public:
 	void InitStaticSampler(const CD3DX12_STATIC_SAMPLER_DESC& desc);
 	void InitStaticSampler(uint32_t shaderRegister, const D3D12_SAMPLER_DESC& staticSamplerDesc, D3D12_SHADER_VISIBILITY visibility = D3D12_SHADER_VISIBILITY_ALL);
 
+	void InitDescriptorTable(uint32_t slot, uint32_t numDescriptorRanges, D3D12_SHADER_VISIBILITY visibility = D3D12_SHADER_VISIBILITY_ALL);
+	void SetupDescriptorRange(uint32_t slot, uint32_t offsetInTable, const D3D12_DESCRIPTOR_RANGE& descriptorRange);
+
 	CD3DX12_ROOT_PARAMETER& operator[](uint32_t idx)
 	{
 		assert(idx < m_NumRootParams);
@@ -51,6 +54,13 @@ public:
 	std::shared_ptr<DX12RootSignature> Compile(DX12Device* device);
 
 private:
+	struct DescriptorTableDesc
+	{
+		uint32_t										m_Num;
+		D3D12_SHADER_VISIBILITY							m_Vis;
+		std::shared_ptr<D3D12_DESCRIPTOR_RANGE>			m_Ptr;
+	};
+
 	enum CompilerState
 	{
 		StateUnknow,
@@ -68,4 +78,5 @@ private:
 	uint32_t m_NumStaticSamplers;
 	std::unique_ptr<CD3DX12_ROOT_PARAMETER[]> m_RootParams;
 	std::unique_ptr<CD3DX12_STATIC_SAMPLER_DESC[]> m_StaticSamplers;
+	std::vector<DescriptorTableDesc> m_CachedDescriptorTables;
 };

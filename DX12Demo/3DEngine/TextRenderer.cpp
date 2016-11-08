@@ -230,11 +230,8 @@ void TextRenderer::Initialize( void )
 
 	sigCompiler[0].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_VERTEX);
 	sigCompiler[1].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_PIXEL);
-
-	D3D12_DESCRIPTOR_RANGE range[] = {
-		D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0, 0, D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND
-	};
-	sigCompiler[2].InitAsDescriptorTable(_countof(range), range, D3D12_SHADER_VISIBILITY_PIXEL);
+	sigCompiler.InitDescriptorTable(2, 1, D3D12_SHADER_VISIBILITY_PIXEL);
+	sigCompiler.SetupDescriptorRange(2, 0, CD3DX12_DESCRIPTOR_RANGE{D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0});
 	sigCompiler.End();
 	s_RootSignature = sigCompiler.Compile(device);
 
