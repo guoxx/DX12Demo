@@ -5,8 +5,7 @@
 #include "../RenderContext.h"
 #include "../Lights/PointLight.h"
 
-#include "../../Shaders/CompiledShaders/PointLight_VS.h"
-#include "../../Shaders/CompiledShaders/PointLight_PS.h"
+#include "../../Shaders/CompiledShaders/PointLight.h"
 
 
 PointLightFilter2D::PointLightFilter2D(DX12Device* device)

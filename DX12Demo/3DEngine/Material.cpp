@@ -7,11 +7,9 @@
 #include "Lights/PointLight.h"
 #include "Lights/DirectionalLight.h"
 
-#include "../Shaders/CompiledShaders/BaseMaterial_VS.h"
-#include "../Shaders/CompiledShaders/BaseMaterial_PS.h"
-#include "../Shaders/CompiledShaders/BaseMaterial_DepthOnly_VS.h"
-#include "../Shaders/CompiledShaders/BaseMaterial_RSM_VS.h"
-#include "../Shaders/CompiledShaders/BaseMaterial_RSM_PS.h"
+#include "../Shaders/CompiledShaders/BaseMaterial.h"
+#include "../Shaders/CompiledShaders/BaseMaterial_DepthOnly.h"
+#include "../Shaders/CompiledShaders/BaseMaterial_RSM.h"
 
 
 Material::Material()

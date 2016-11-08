@@ -3,8 +3,7 @@
 
 #include "../GraphicsEngineDefinition.h"
 
-#include "../../Shaders/CompiledShaders/EVSM_VS.h"
-#include "../../Shaders/CompiledShaders/EVSM_PS.h"
+#include "../../Shaders/CompiledShaders/EVSM.h"
 
 
 ConvertEVSMFilter2D::ConvertEVSMFilter2D(DX12Device* device)

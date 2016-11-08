@@ -5,8 +5,7 @@
 #include "../RenderContext.h"
 #include "../Lights/DirectionalLight.h"
 
-#include "../../Shaders/CompiledShaders/DirectionalLight_VS.h"
-#include "../../Shaders/CompiledShaders/DirectionalLight_PS.h"
+#include "../../Shaders/CompiledShaders/DirectionalLight.h"
 
 
 DirectionalLightFilter2D::DirectionalLightFilter2D(DX12Device* device)

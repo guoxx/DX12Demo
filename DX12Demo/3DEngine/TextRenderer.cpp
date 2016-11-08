@@ -27,8 +27,7 @@
 #include "../Fonts/consola24.h"
 
 #include "../DX12/DX12.h"
-#include "../Shaders/CompiledShaders/TextRender_VS.h"
-#include "../Shaders/CompiledShaders/TextRender_PS.h"
+#include "../Shaders/CompiledShaders/TextRender.h"
 
 #include <map>
 #include <string>

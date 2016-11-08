@@ -5,7 +5,7 @@
 #include "../Camera.h"
 #include "../RenderContext.h"
 
-#include "../../Shaders/CompiledShaders/TiledShading_CS.h"
+#include "../../Shaders/CompiledShaders/TiledShading.h"
 
 
 TiledShadingPass::TiledShadingPass(DX12Device* device)

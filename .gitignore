@@ -5,10 +5,8 @@ ipch/
 *.vcxproj.user
 Output/
 
-DX12Demo/Shaders/CompiledShaders/*_VS.h
-DX12Demo/Shaders/CompiledShaders/*_GS.h
-DX12Demo/Shaders/CompiledShaders/*_PS.h
-DX12Demo/Shaders/CompiledShaders/*_CS.h
+DX12Demo/Shaders/CompiledShaders/*.h
+DX12Demo/Shaders/CompiledShaders/Temp/
 
 sponza.exr
 sponza*.mip

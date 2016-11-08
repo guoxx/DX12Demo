@@ -5,7 +5,7 @@
 #include "../Camera.h"
 #include "../RenderContext.h"
 
-#include "../../Shaders/CompiledShaders/LightCulling_CS.h"
+#include "../../Shaders/CompiledShaders/LightCulling.h"
 
 
 LightCullingPass::LightCullingPass(DX12Device* device)

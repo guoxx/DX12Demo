@@ -1,8 +1,7 @@
 #include "pch.h"
 #include "Filter2D.h"
 
-#include "../../Shaders/CompiledShaders/IdentityFilter2D_VS.h"
-#include "../../Shaders/CompiledShaders/IdentityFilter2D_PS.h"
+#include "../../Shaders/CompiledShaders/IdentityFilter2D.h"
 
 
 Filter2D::Filter2D(DX12Device* device)

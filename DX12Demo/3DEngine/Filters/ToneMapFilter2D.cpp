@@ -1,8 +1,7 @@
 #include "pch.h"
 #include "ToneMapFilter2D.h"
 
-#include "../../Shaders/CompiledShaders/ToneMapFilter2D_VS.h"
-#include "../../Shaders/CompiledShaders/ToneMapFilter2D_PS.h"
+#include "../../Shaders/CompiledShaders/ToneMapFilter2D.h"
 
 
 ToneMapFilter2D::ToneMapFilter2D(DX12Device* device)
