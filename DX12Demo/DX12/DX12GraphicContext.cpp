@@ -379,20 +379,14 @@ void DX12GraphicContext::RootSignatureChanged(std::shared_ptr<DX12RootSignature>
 
 	for (int32_t i = 0; i < DX12MaxSlotsPerShader; ++i)
 	{
-		CpuDescriptorHandlesCache& cache = m_DescriptorHandlesCache[i];
+		CpuDescriptorHandlesCache* pCache = &m_DescriptorHandlesCache[i];
 
-		int32_t tableSize = m_CurrentRootSig->GetDescriptorTableSize(i);
-		if (tableSize > 0)
-		{
-			cache.m_RootParamIndex = i;
-			cache.m_TableSize = tableSize;	
-			memset(cache.m_CachedHandles, 0x00, sizeof(cache.m_CachedHandles));
-		}
-		else
-		{
-			cache.m_RootParamIndex = -1;
-			cache.m_TableSize = -1;
-		}
+		pCache->Clear();
+		pCache->m_RootParamIndex = i;
+		pCache->m_TableSize = m_CurrentRootSig->GetDescriptorTableSize(i);
+		pCache->m_TableStart = 0;
+		pCache->m_TableEnd = 0;
+		memset(pCache->m_CachedHandles, 0x00, sizeof(pCache->m_CachedHandles));
 	}
 }
 
@@ -400,12 +394,39 @@ void DX12GraphicContext::StageDynamicDescriptor(uint32_t rootParameterIndex, uin
 {
 	assert(rootParameterIndex < DX12MaxSlotsPerShader);
 
-	CpuDescriptorHandlesCache& cache = m_DescriptorHandlesCache[rootParameterIndex];
-	assert(offsetInTable < cache.m_TableSize);
-
-	cache.m_CachedHandles[offsetInTable] = descriptorHandle;
-
+	// mark descriptor ad dirty
 	m_DynamicCbvSrvUavDescriptorsTableDirty |= ((uint64_t)0x01 << rootParameterIndex);
+
+	// get descriptor table cache entry
+	CpuDescriptorHandlesCache* pCache = &m_DescriptorHandlesCache[rootParameterIndex];
+	assert(offsetInTable < pCache->m_TableSize);
+
+	uint32_t indexOfCacheTable = offsetInTable / NumCachedHandlesPerNode;
+	uint32_t offsetInCacheTable = offsetInTable - indexOfCacheTable * NumCachedHandlesPerNode;
+
+	for (uint i = 1; i <= indexOfCacheTable; ++i)
+	{
+		if (pCache->m_Next.get() == nullptr)
+		{
+			// insert a new node if not exist
+			pCache->m_Next = std::make_shared<CpuDescriptorHandlesCache>();
+
+			pCache->m_Next->m_RootParamIndex = pCache->m_RootParamIndex;
+			pCache->m_Next->m_TableSize = pCache->m_TableSize;
+
+			pCache->m_Next->m_TableStart = i * NumCachedHandlesPerNode;
+			pCache->m_Next->m_TableEnd = i * NumCachedHandlesPerNode;
+
+			memset(pCache->m_Next->m_CachedHandles, 0x00, sizeof(pCache->m_Next->m_CachedHandles));
+			pCache->m_Next->m_Next = nullptr;
+		}
+
+		pCache = pCache->m_Next.get();
+	}
+
+	pCache->m_TableEnd = std::max(pCache->m_TableEnd, offsetInTable + 1);
+	pCache->m_CachedHandles[offsetInCacheTable] = descriptorHandle;
+	assert(pCache->m_TableEnd - pCache->m_TableStart <= NumCachedHandlesPerNode);
 }
 
 void DX12GraphicContext::ApplyDynamicDescriptors(bool bComputeCommand)
@@ -414,28 +435,44 @@ void DX12GraphicContext::ApplyDynamicDescriptors(bool bComputeCommand)
 	{
 		if (m_DynamicCbvSrvUavDescriptorsTableDirty & ((uint64_t)0x01 << i))
 		{
-			CpuDescriptorHandlesCache& cache = m_DescriptorHandlesCache[i];
+			CpuDescriptorHandlesCache* pCache = &m_DescriptorHandlesCache[i];
+
+			uint32_t cacheTableEnd = pCache->GetTableEnd();
+			assert(pCache->m_TableSize == DX12DescriptorRangeUnbounded || pCache->m_TableSize == cacheTableEnd);
 
 			uint32_t heapHandleIncrementSize = DX12GraphicManager::GetInstance()->GetDescriptorManager()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-			DX12DescriptorHandle baseDescriptorHandle = DX12GraphicManager::GetInstance()->GetDescriptorManager()->AllocateInDynamicHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, cache.m_TableSize);
+			DX12DescriptorHandle baseDescriptorHandle = DX12GraphicManager::GetInstance()->GetDescriptorManager()->AllocateInDynamicHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, cacheTableEnd);
 
-			for (int32_t j = 0; j < cache.m_TableSize; ++j)
+			while (true)
 			{
-				if (cache.m_CachedHandles[j].ptr != 0)
+				for (uint32_t j = pCache->m_TableStart; j < pCache->m_TableEnd; ++j)
 				{
-					D3D12_CPU_DESCRIPTOR_HANDLE destCpuHandle = baseDescriptorHandle.GetCpuHandle();
-					destCpuHandle.ptr += j * heapHandleIncrementSize;
-					DX12GraphicManager::GetInstance()->GetDevice()->CopyDescriptorsSimple(1, destCpuHandle, cache.m_CachedHandles[j], D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+					uint32_t offsetInCacheTable = j - pCache->m_TableStart;
+					if (pCache->m_CachedHandles[offsetInCacheTable].ptr != 0)
+					{
+						D3D12_CPU_DESCRIPTOR_HANDLE destCpuHandle = baseDescriptorHandle.GetCpuHandle();
+						destCpuHandle.ptr += j * heapHandleIncrementSize;
+						DX12GraphicManager::GetInstance()->GetDevice()->CopyDescriptorsSimple(1, destCpuHandle, pCache->m_CachedHandles[offsetInCacheTable], D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+					}
+				}
+
+				if (pCache->m_Next.get() != nullptr)
+				{
+					pCache = pCache->m_Next.get();
+				}
+				else
+				{
+					break;
 				}
 			}
 
 			if (bComputeCommand)
 			{
-				SetComputeRootDescriptorTable(cache.m_RootParamIndex, baseDescriptorHandle);
+				SetComputeRootDescriptorTable(pCache->m_RootParamIndex, baseDescriptorHandle);
 			}
 			else
 			{
-				SetGraphicsRootDescriptorTable(cache.m_RootParamIndex, baseDescriptorHandle);
+				SetGraphicsRootDescriptorTable(pCache->m_RootParamIndex, baseDescriptorHandle);
 			}
 		}
 	}

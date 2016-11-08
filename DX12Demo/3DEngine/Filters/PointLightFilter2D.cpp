@@ -26,7 +26,7 @@ PointLightFilter2D::PointLightFilter2D(DX12Device* device)
 	sigCompiler.End();
 	sigCompiler[0].InitAsConstantBufferView(0);
 	sigCompiler.InitDescriptorTable(1, 1, D3D12_SHADER_VISIBILITY_PIXEL);
-	sigCompiler.SetupDescriptorRange(1, 0, CD3DX12_DESCRIPTOR_RANGE{D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 16, 0});
+	sigCompiler.SetupDescriptorRange(1, 0, CD3DX12_DESCRIPTOR_RANGE{D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 10, 0});
 	m_RootSig = sigCompiler.Compile(device);
 
 	DX12GraphicPsoCompiler psoCompiler;

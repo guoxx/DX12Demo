@@ -194,13 +194,29 @@ std::shared_ptr<DX12RootSignature> DX12RootSignatureCompiler::Compile(DX12Device
 		CD3DX12_ROOT_PARAMETER* pParam = &m_RootParams.get()[i];
 		if (pParam->ParameterType == D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE)
 		{
-			int32_t numDescriptors = 0;
+			uint32_t numDescriptors = 0;
 			for (uint32_t j = 0; j < pParam->DescriptorTable.NumDescriptorRanges; ++j)
 			{
 				const D3D12_DESCRIPTOR_RANGE *pDescriptorRange = &pParam->DescriptorTable.pDescriptorRanges[j];
 				// TODO: aliasing is not supported
 				assert(pDescriptorRange->OffsetInDescriptorsFromTableStart == D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND);
-				numDescriptors += pDescriptorRange->NumDescriptors;
+
+				if (pDescriptorRange->NumDescriptors == DX12DescriptorRangeUnbounded)
+				{
+					numDescriptors = DX12DescriptorRangeUnbounded;
+
+					// unbounded descriptor range must be put at the end of descriptor table
+					assert(j == (pParam->DescriptorTable.NumDescriptorRanges - 1));
+				}
+				else
+				{
+					uint32_t oldVal = numDescriptors;
+
+					numDescriptors += pDescriptorRange->NumDescriptors;
+
+					// in case of interger overflow
+					assert(numDescriptors > oldVal);
+				}
 			}
 			d3dRootSig->m_DescriptorTableSize[i] = numDescriptors;
 		}

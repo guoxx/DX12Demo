@@ -21,7 +21,7 @@ TiledShadingPass::TiledShadingPass(DX12Device* device)
 	sigCompiler.SetupDescriptorRange(4, 0, CD3DX12_DESCRIPTOR_RANGE{D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 4, 3});
 	sigCompiler.SetupDescriptorRange(4, 1, CD3DX12_DESCRIPTOR_RANGE{D3D12_DESCRIPTOR_RANGE_TYPE_UAV, 1, 0});
 	sigCompiler.InitDescriptorTable(5, 1);
-	sigCompiler.SetupDescriptorRange(5, 0, CD3DX12_DESCRIPTOR_RANGE{D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 32, 16});
+	sigCompiler.SetupDescriptorRange(5, 0, CD3DX12_DESCRIPTOR_RANGE{D3D12_DESCRIPTOR_RANGE_TYPE_SRV, DX12DescriptorRangeUnbounded, 16});
 	m_RootSig = sigCompiler.Compile(device);
 
 	DX12ComputePsoCompiler psoCompiler;

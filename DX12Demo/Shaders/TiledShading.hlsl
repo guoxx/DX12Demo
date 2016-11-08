@@ -11,7 +11,7 @@ RootSigBegin \
 ", SRV(t1) " \
 ", SRV(t2) " \
 ", DescriptorTable(SRV(t3, numDescriptors=4), UAV(u0))" \
-", DescriptorTable(SRV(t16, numDescriptors=32))" \
+", DescriptorTable(SRV(t16, numDescriptors=unbounded))" \
 RootSigEnd
 
 HLSLConstantBuffer(TiledShadingConstants, 0, g_Constants);
@@ -25,7 +25,7 @@ Texture2D<float4> g_GBuffer1 : register(t4);
 Texture2D<float4> g_GBuffer2 : register(t5);
 Texture2D<float> g_DepthTexture : register(t6);
 
-Texture2D g_ShadowMaps[32] : register(t16);
+Texture2D g_ShadowMaps[] : register(t16);
 
 RWTexture2D<float4> g_LightingSurface : register(u0);
 

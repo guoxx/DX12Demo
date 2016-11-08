@@ -14,14 +14,14 @@ public:
 
 	ID3D12RootSignature* GetSignature() const { return m_RootSig.Get(); }
 
-	int32_t GetDescriptorTableSize(int32_t rootParameterIndex) const
+	uint32_t GetDescriptorTableSize(int32_t rootParameterIndex) const
 	{
 		assert(rootParameterIndex < DX12MaxSlotsPerShader);
 		return m_DescriptorTableSize[rootParameterIndex];
 	}
 
 private:
-	int32_t m_DescriptorTableSize[DX12MaxSlotsPerShader];
+	uint32_t m_DescriptorTableSize[DX12MaxSlotsPerShader];
 	ComPtr<ID3D12RootSignature> m_RootSig;
 };
 

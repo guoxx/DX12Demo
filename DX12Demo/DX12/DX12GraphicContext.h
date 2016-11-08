@@ -112,11 +112,42 @@ private:
 
 	std::shared_ptr<DX12RootSignature> m_CurrentRootSig;
 
+	enum
+	{
+		NumCachedHandlesPerNode = 32,
+	};
+
 	struct CpuDescriptorHandlesCache
 	{
-		int32_t m_RootParamIndex;
-		int32_t m_TableSize;
-		D3D12_CPU_DESCRIPTOR_HANDLE m_CachedHandles[DX12MaxElemsPerDescriptorTable];
+		int32_t											m_RootParamIndex{ -1 };
+		uint32_t										m_TableSize{ 0 };
+
+		uint32_t										m_TableStart;
+		uint32_t										m_TableEnd;
+		D3D12_CPU_DESCRIPTOR_HANDLE						m_CachedHandles[NumCachedHandlesPerNode];
+
+		std::shared_ptr<CpuDescriptorHandlesCache>		m_Next;
+
+		uint32_t GetTableEnd()
+		{
+			if (m_Next.get() != nullptr)
+			{
+				return m_Next->GetTableEnd();
+			}
+			else
+			{
+				return m_TableEnd;
+			}
+		}
+
+		void Clear()
+		{
+			if (m_Next)
+			{
+				m_Next->Clear();
+			}
+			m_Next = nullptr;
+		}
 	};
 
 	CpuDescriptorHandlesCache m_DescriptorHandlesCache[DX12MaxSlotsPerShader];
