@@ -7,7 +7,6 @@
 RootSigBegin \
 ", CBV(b0, visibility = SHADER_VISIBILITY_ALL)" \
 ", DescriptorTable(SRV(t0, numDescriptors=16), visibility=SHADER_VISIBILITY_PIXEL)" \
-", StaticSampler(s0, filter=FILTER_MIN_MAG_MIP_POINT, visibility=SHADER_VISIBILITY_PIXEL)" \
 RootSigEnd
 
 struct Constants
@@ -29,7 +28,6 @@ Texture2D<float4> g_GBuffer2 : register(t2);
 Texture2D<float> g_DepthTexture : register(t3);
 Texture2D<float> g_PointLightShadowMap[6] : register(t4);
 
-SamplerState g_Sampler : register(s0);
 
 struct VSOutput
 {
@@ -58,14 +56,14 @@ VSOutput VSMain(uint vertid : SV_VertexID)
 RootSigDeclaration
 float4 PSMain(VSOutput In) : SV_TARGET
 {
-	GBuffer gbuffer = GBufferDecode(g_GBuffer0, g_GBuffer1, g_GBuffer2, g_DepthTexture, g_Sampler, In.Texcoord, g_Constants.mInvView, g_Constants.mInvProj);
+	GBuffer gbuffer = GBufferDecode(g_GBuffer0, g_GBuffer1, g_GBuffer2, g_DepthTexture, g_StaticPointClampSampler, In.Texcoord, g_Constants.mInvView, g_Constants.mInvProj);
 
 	float3 outRadiance = 0.0f;
 
 	int face = GetFaceOfPointLightShadowMap(g_Constants.LightPosition.xyz, gbuffer.Position);
 	float4 shadowPos = mul(float4(gbuffer.Position, 1), g_Constants.mLightViewProj[face]);
 	shadowPos /= shadowPos.w;
-	float occluderDepth = g_PointLightShadowMap[face].Sample(g_Sampler, shadowPos.xy * float2(1, -1) * 0.5 + 0.5);
+	float occluderDepth = g_PointLightShadowMap[face].Sample(g_StaticPointClampSampler, shadowPos.xy * float2(1, -1) * 0.5 + 0.5);
 	float shadowMask = occluderDepth < shadowPos.z ? 0.0f : 1.0f;
 
 	float3 L = normalize(g_Constants.LightPosition.xyz - gbuffer.Position);

@@ -385,6 +385,46 @@ struct CD3DX12_DEPTH_STENCIL_VIEW_DESC : public D3D12_DEPTH_STENCIL_VIEW_DESC
 	}
 };
 
+struct CD3DX12_SAMPLER_DESC : public D3D12_SAMPLER_DESC
+{
+	CD3DX12_SAMPLER_DESC() = default;
+	~CD3DX12_SAMPLER_DESC() = default;
+
+    operator const CD3DX12_SAMPLER_DESC&() const { return *this; }
+
+	explicit CD3DX12_SAMPLER_DESC(const D3D12_SAMPLER_DESC& o) :
+		D3D12_SAMPLER_DESC(o)
+	{}
+
+	CD3DX12_SAMPLER_DESC(
+         D3D12_FILTER filter = D3D12_FILTER_ANISOTROPIC,
+         D3D12_TEXTURE_ADDRESS_MODE addressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP,
+         D3D12_TEXTURE_ADDRESS_MODE addressV = D3D12_TEXTURE_ADDRESS_MODE_WRAP,
+         D3D12_TEXTURE_ADDRESS_MODE addressW = D3D12_TEXTURE_ADDRESS_MODE_WRAP,
+         FLOAT mipLODBias = 0,
+         UINT maxAnisotropy = 16,
+         D3D12_COMPARISON_FUNC comparisonFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL,
+         FLOAT minLOD = 0.f,
+         FLOAT maxLOD = D3D12_FLOAT32_MAX
+	)
+	{
+		Filter = filter;
+		AddressU = addressU;
+		AddressV = addressV;
+		AddressW = addressW;
+		MipLODBias = mipLODBias;
+		MaxAnisotropy = maxAnisotropy;
+		ComparisonFunc = comparisonFunc;
+		BorderColor[0] = 1.0f;
+		BorderColor[1] = 1.0f;
+		BorderColor[2] = 1.0f;
+		BorderColor[3] = 1.0f;
+		MinLOD = minLOD;
+		MaxLOD = maxLOD;
+	}
+};
+
+
 namespace CD3DX12
 {
 	inline D3D12_SRV_DIMENSION GetSRVDimension(D3D12_RESOURCE_DESC& desc, bool isCube = false)

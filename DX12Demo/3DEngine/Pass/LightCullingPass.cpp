@@ -11,7 +11,7 @@
 LightCullingPass::LightCullingPass(DX12Device* device)
 {
 	DX12RootSignatureCompiler sigCompiler;
-	sigCompiler.Begin(3, 0);
+	sigCompiler.Begin(3);
 	sigCompiler.End();
 	sigCompiler[0].InitAsConstantBufferView(0);
 	sigCompiler[1].InitAsShaderResourceView(0);

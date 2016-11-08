@@ -22,12 +22,9 @@ ToneMapFilter2D::ToneMapFilter2D(DX12Device* device)
 	};
 
 	DX12RootSignatureCompiler sigCompiler;
-	sigCompiler.Begin(2, 1);
+	sigCompiler.Begin(2);
 	sigCompiler[0].InitAsConstants(1, 0);
 	sigCompiler[1].InitAsDescriptorTable(_countof(descriptorRanges0), descriptorRanges0, D3D12_SHADER_VISIBILITY_PIXEL);
-	CD3DX12_STATIC_SAMPLER_DESC staticSampDesc = CD3DX12_STATIC_SAMPLER_DESC(0, D3D12_FILTER_MIN_MAG_MIP_POINT);
-	staticSampDesc.ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
-	sigCompiler.InitStaticSampler(staticSampDesc);
 	sigCompiler.End();
 	m_RootSig = sigCompiler.Compile(DX12GraphicManager::GetInstance()->GetDevice());
 

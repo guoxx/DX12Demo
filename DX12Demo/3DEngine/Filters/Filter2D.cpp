@@ -22,12 +22,9 @@ Filter2D::Filter2D(DX12Device* device)
 	};
 
 	DX12RootSignatureCompiler sigCompiler;
-	sigCompiler.Begin(1, 1);
+	sigCompiler.Begin(1);
 	sigCompiler.End();
 	sigCompiler[0].InitAsDescriptorTable(_countof(descriptorRanges0), descriptorRanges0, D3D12_SHADER_VISIBILITY_PIXEL);
-	CD3DX12_STATIC_SAMPLER_DESC staticSampDesc = CD3DX12_STATIC_SAMPLER_DESC(0, D3D12_FILTER_MIN_MAG_MIP_POINT);
-	staticSampDesc.ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
-	sigCompiler.InitStaticSampler(staticSampDesc);
 	m_RootSig = sigCompiler.Compile(DX12GraphicManager::GetInstance()->GetDevice());
 
 	DX12GraphicPsoCompiler psoCompiler;

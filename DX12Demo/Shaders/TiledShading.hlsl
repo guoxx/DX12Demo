@@ -12,7 +12,6 @@ RootSigBegin \
 ", SRV(t2) " \
 ", DescriptorTable(SRV(t3, numDescriptors=4), UAV(u0))" \
 ", DescriptorTable(SRV(t16, numDescriptors=32))" \
-", StaticSampler(s0, filter=FILTER_MIN_MAG_MIP_POINT)" \
 RootSigEnd
 
 HLSLConstantBuffer(TiledShadingConstants, 0, g_Constants);
@@ -27,8 +26,6 @@ Texture2D<float4> g_GBuffer2 : register(t5);
 Texture2D<float> g_DepthTexture : register(t6);
 
 Texture2D g_ShadowMaps[32] : register(t16);
-
-SamplerState g_PointSampler : register(s0);
 
 RWTexture2D<float4> g_LightingSurface : register(u0);
 
@@ -47,7 +44,7 @@ float3 ShadeDirectionalLight(GBuffer gbuffer, DirectionalLight directionalLight)
 		float2 exponents = GetEVSMExponents(g_Constants.m_EVSM.m_PositiveExponent, g_Constants.m_EVSM.m_NegativeExponent, SMFormat32Bit);
 		float2 warpedDepth = WarpDepth(shadowPos.z, exponents);
 
-		float4 occluder = g_ShadowMaps[directionalLight.m_EVSMTexId].SampleLevel(g_PointSampler, shadowUV, 0);
+		float4 occluder = g_ShadowMaps[directionalLight.m_EVSMTexId].SampleLevel(g_StaticAnisoClampSampler, shadowUV, 0);
 
 		// Derivative of warping at depth
 		float2 depthScale = g_Constants.m_EVSM.m_VSMBias * 0.01f * exponents * warpedDepth;
@@ -59,7 +56,7 @@ float3 ShadeDirectionalLight(GBuffer gbuffer, DirectionalLight directionalLight)
 	}
 	else
 	{
-		float occluderDepth = g_ShadowMaps[directionalLight.m_ShadowMapTexId].SampleLevel(g_PointSampler, shadowUV, 0);
+		float occluderDepth = g_ShadowMaps[directionalLight.m_ShadowMapTexId].SampleLevel(g_StaticPointClampSampler, shadowUV, 0);
 		shadowMask = occluderDepth < shadowPos.z ? 0.0f : 1.0f;
 	}
 
@@ -81,7 +78,7 @@ float3 ShadeDirectionalLight(GBuffer gbuffer, DirectionalLight directionalLight)
 			g_ShadowMaps[directionalLight.m_RSMIntensityTexId],
 			g_ShadowMaps[directionalLight.m_RSMNormalTexId],
 			g_ShadowMaps[directionalLight.m_ShadowMapTexId],
-			g_PointSampler);
+			g_StaticPointClampSampler);
 	}
 
 	return outRadiance;
@@ -95,7 +92,7 @@ float3 ShadePointLight(GBuffer gbuffer, PointLight pointLight)
 		int face = GetFaceOfPointLightShadowMap(pointLight.m_Position.xyz, gbuffer.Position);
 		float4 shadowPos = mul(float4(gbuffer.Position, 1), pointLight.m_mViewProj[face]);
 		shadowPos /= shadowPos.w;
-		float occluderDepth = g_ShadowMaps[pointLight.m_FirstShadowMapTexId + face].SampleLevel(g_PointSampler, shadowPos.xy * float2(1, -1) * 0.5 + 0.5, 0);
+		float occluderDepth = g_ShadowMaps[pointLight.m_FirstShadowMapTexId + face].SampleLevel(g_StaticPointClampSampler, shadowPos.xy * float2(1, -1) * 0.5 + 0.5, 0);
 		shadowMask = occluderDepth < shadowPos.z ? 0.0f : 1.0f;
 	}
 
@@ -149,7 +146,7 @@ void CSMain(uint3 Gid : SV_GroupID, uint3 GTid : SV_GroupThreadID, uint3 DTid : 
 
 	float2 texcoord = float2(DTid.x + 0.5f, DTid.y + 0.5f);
 	float2 uv = float2(texcoord.x / g_Constants.m_ScreenWidth, texcoord.y / g_Constants.m_ScreenHeight);
-	GBuffer gbuffer = GBufferDecode(g_GBuffer0, g_GBuffer1, g_GBuffer2, g_DepthTexture, g_PointSampler, uv, g_Constants.m_mInvView, g_Constants.m_mInvProj);
+	GBuffer gbuffer = GBufferDecode(g_GBuffer0, g_GBuffer1, g_GBuffer2, g_DepthTexture, g_StaticPointClampSampler, uv, g_Constants.m_mInvView, g_Constants.m_mInvProj);
 
 	float3 outRadiance = 0.0f;
 

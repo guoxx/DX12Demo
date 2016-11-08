@@ -24,7 +24,7 @@ ConvertEVSMFilter2D::ConvertEVSMFilter2D(DX12Device* device)
 	};
 
 	DX12RootSignatureCompiler sigCompiler;
-	sigCompiler.Begin(2, 0);
+	sigCompiler.Begin(2);
 	sigCompiler.End();
 	sigCompiler[0].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_PIXEL);
 	sigCompiler[1].InitAsDescriptorTable(_countof(descriptorRanges0), descriptorRanges0, D3D12_SHADER_VISIBILITY_PIXEL);

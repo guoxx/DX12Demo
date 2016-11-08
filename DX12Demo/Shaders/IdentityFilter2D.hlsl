@@ -3,11 +3,9 @@
 #define RootSigDeclaration \
 RootSigBegin \
 ", DescriptorTable(SRV(t0, numDescriptors=1), visibility=SHADER_VISIBILITY_PIXEL)" \
-", StaticSampler(s0, filter=FILTER_MIN_MAG_MIP_POINT, visibility=SHADER_VISIBILITY_PIXEL)" \
 RootSigEnd
 
 Texture2D<float4> g_Texture : register(t0);
-SamplerState g_Sampler : register(s0);
 
 struct VSOutput
 {
@@ -36,6 +34,6 @@ VSOutput VSMain(uint vertid : SV_VertexID)
 RootSigDeclaration
 float4 PSMain(VSOutput In) : SV_TARGET
 {
-	float4 OutColor = g_Texture.Sample(g_Sampler, In.Texcoord);
+	float4 OutColor = g_Texture.Sample(g_StaticPointClampSampler, In.Texcoord);
 	return OutColor;
 }

@@ -31,6 +31,7 @@ public:
 	DX12RootSignatureCompiler();
 	~DX12RootSignatureCompiler();
 
+	void Begin(uint32_t numParams);
 	void Begin(uint32_t numParams, uint32_t numStaticSamplers);
 
 	void SetFlag(D3D12_ROOT_SIGNATURE_FLAGS flags);

@@ -35,15 +35,12 @@ void Material::Load(DX12GraphicContext* pGfxContext)
 		};
 
 		DX12RootSignatureCompiler sigCompiler;
-		sigCompiler.Begin(4, 1);
+		sigCompiler.Begin(4);
 		sigCompiler.End();
 		sigCompiler[0].InitAsShaderResourceView(0, 0, D3D12_SHADER_VISIBILITY_VERTEX);
 		sigCompiler[1].InitAsConstantBufferView(0);
 		sigCompiler[2].InitAsConstantBufferView(1);
 		sigCompiler[3].InitAsDescriptorTable(_countof(descriptorRanges), descriptorRanges, D3D12_SHADER_VISIBILITY_PIXEL);
-		CD3DX12_STATIC_SAMPLER_DESC staticSampDesc = CD3DX12_STATIC_SAMPLER_DESC(0, D3D12_FILTER_ANISOTROPIC);
-		staticSampDesc.ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
-		sigCompiler.InitStaticSampler(staticSampDesc);
 		m_RootSig[shadingCfg] = sigCompiler.Compile(DX12GraphicManager::GetInstance()->GetDevice());
 
 		DX12GraphicPsoCompiler psoCompiler;
@@ -61,7 +58,7 @@ void Material::Load(DX12GraphicContext* pGfxContext)
 		ShadingConfiguration shadingCfg = ShadingConfiguration_DepthOnly;
 
 		DX12RootSignatureCompiler sigCompiler;
-		sigCompiler.Begin(2, 0);
+		sigCompiler.Begin(2);
 		sigCompiler.End();
 		sigCompiler[0].InitAsShaderResourceView(0, 0, D3D12_SHADER_VISIBILITY_VERTEX);
 		sigCompiler[1].InitAsConstantBufferView(0);
@@ -84,14 +81,11 @@ void Material::Load(DX12GraphicContext* pGfxContext)
 		};
 
 		DX12RootSignatureCompiler sigCompiler;
-		sigCompiler.Begin(3, 1);
+		sigCompiler.Begin(3);
 		sigCompiler.End();
 		sigCompiler[0].InitAsShaderResourceView(0, 0, D3D12_SHADER_VISIBILITY_VERTEX);
 		sigCompiler[1].InitAsConstantBufferView(0);
 		sigCompiler[2].InitAsDescriptorTable(_countof(descriptorRanges), descriptorRanges, D3D12_SHADER_VISIBILITY_PIXEL);
-		CD3DX12_STATIC_SAMPLER_DESC staticSampDesc = CD3DX12_STATIC_SAMPLER_DESC(0, D3D12_FILTER_ANISOTROPIC);
-		staticSampDesc.ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
-		sigCompiler.InitStaticSampler(staticSampDesc);
 		m_RootSig[shadingCfg] = sigCompiler.Compile(DX12GraphicManager::GetInstance()->GetDevice());
 
 		DX12GraphicPsoCompiler psoCompiler;

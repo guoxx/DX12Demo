@@ -26,13 +26,10 @@ DirectionalLightFilter2D::DirectionalLightFilter2D(DX12Device* device)
 	};
 
 	DX12RootSignatureCompiler sigCompiler;
-	sigCompiler.Begin(2, 1);
+	sigCompiler.Begin(2);
 	sigCompiler.End();
 	sigCompiler[0].InitAsConstantBufferView(0);
 	sigCompiler[1].InitAsDescriptorTable(_countof(descriptorRanges1), descriptorRanges1, D3D12_SHADER_VISIBILITY_PIXEL);
-	CD3DX12_STATIC_SAMPLER_DESC staticSampDesc = CD3DX12_STATIC_SAMPLER_DESC(0, D3D12_FILTER_MIN_MAG_MIP_POINT);
-	staticSampDesc.ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
-	sigCompiler.InitStaticSampler(staticSampDesc);
 	m_RootSig = sigCompiler.Compile(device);
 
 	DX12GraphicPsoCompiler psoCompiler;

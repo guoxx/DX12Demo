@@ -6,7 +6,6 @@
 RootSigBegin \
 ", CBV(b0, visibility = SHADER_VISIBILITY_ALL)" \
 ", DescriptorTable(SRV(t0, numDescriptors=16), visibility=SHADER_VISIBILITY_PIXEL)" \
-", StaticSampler(s0, filter=FILTER_MIN_MAG_MIP_POINT, visibility=SHADER_VISIBILITY_PIXEL)" \
 RootSigEnd
 
 HLSLConstantBuffer(DirectionalLightConstants, 0, g_Constants);
@@ -20,7 +19,6 @@ Texture2D<float4> g_RSMIntensityTexture : register(t5);
 Texture2D<float4> g_RSMNormalTexture : register(t6);
 Texture2D<float4> g_EVSMTexture : register(t7);
 
-SamplerState g_Sampler : register(s0);
 
 struct VSOutput
 {
@@ -56,7 +54,7 @@ float ShadowMask(GBuffer gbuffer)
 		float2 exponents = GetEVSMExponents(g_Constants.m_EVSM.m_PositiveExponent, g_Constants.m_EVSM.m_NegativeExponent, SMFormat32Bit);
 		float2 warpedDepth = WarpDepth(shadowPos.z, exponents);
 
-		float4 occluder = g_EVSMTexture.Sample(g_Sampler, shadowUV);
+		float4 occluder = g_EVSMTexture.Sample(g_StaticAnisoClampSampler, shadowUV);
 
 		// Derivative of warping at depth
 		float2 depthScale = g_Constants.m_EVSM.m_VSMBias * 0.01f * exponents * warpedDepth;
@@ -68,7 +66,7 @@ float ShadowMask(GBuffer gbuffer)
 	}
 	else
 	{
-		float occluderDepth = g_ShadowMap.Sample(g_Sampler, shadowUV);
+		float occluderDepth = g_ShadowMap.Sample(g_StaticPointClampSampler, shadowUV);
 		shadowMask = occluderDepth < shadowPos.z ? 0.0f : 1.0f;
 	}
 	return shadowMask;
@@ -77,7 +75,7 @@ float ShadowMask(GBuffer gbuffer)
 RootSigDeclaration
 float4 PSMain(VSOutput In) : SV_TARGET
 {
-	GBuffer gbuffer = GBufferDecode(g_GBuffer0, g_GBuffer1, g_GBuffer2, g_DepthTexture, g_Sampler, In.Texcoord, g_Constants.mInvView, g_Constants.mInvProj);
+	GBuffer gbuffer = GBufferDecode(g_GBuffer0, g_GBuffer1, g_GBuffer2, g_DepthTexture, g_StaticPointClampSampler, In.Texcoord, g_Constants.mInvView, g_Constants.mInvProj);
 
 	float3 outRadiance = 0.0f;
 
@@ -96,7 +94,7 @@ float4 PSMain(VSOutput In) : SV_TARGET
 	if (g_Constants.m_RSM.m_Enabled)
 	{
 		outRadiance += ShadeDirectionalLightRSM(gbuffer, g_Constants.m_RSM, g_Constants.m_DirLight,
-			g_RSMIntensityTexture, g_RSMNormalTexture, g_ShadowMap, g_Sampler);
+			g_RSMIntensityTexture, g_RSMNormalTexture, g_ShadowMap, g_StaticPointClampSampler);
 	}
 
 	return float4(outRadiance, 1);

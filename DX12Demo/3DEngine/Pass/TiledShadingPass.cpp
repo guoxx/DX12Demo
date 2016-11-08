@@ -19,7 +19,7 @@ TiledShadingPass::TiledShadingPass(DX12Device* device)
 	};
 
 	DX12RootSignatureCompiler sigCompiler;
-	sigCompiler.Begin(6, 1);
+	sigCompiler.Begin(6);
 	sigCompiler.End();
 	sigCompiler[0].InitAsConstantBufferView(0);
 	sigCompiler[1].InitAsShaderResourceView(0);
@@ -27,7 +27,6 @@ TiledShadingPass::TiledShadingPass(DX12Device* device)
 	sigCompiler[3].InitAsShaderResourceView(2);
 	sigCompiler[4].InitAsDescriptorTable(_countof(descriptorRanges), descriptorRanges);
 	sigCompiler[5].InitAsDescriptorTable(_countof(descriptorRanges1), descriptorRanges1);
-	sigCompiler.InitStaticSampler(CD3DX12_STATIC_SAMPLER_DESC(0, D3D12_FILTER_MIN_MAG_MIP_POINT));
 	m_RootSig = sigCompiler.Compile(device);
 
 	DX12ComputePsoCompiler psoCompiler;

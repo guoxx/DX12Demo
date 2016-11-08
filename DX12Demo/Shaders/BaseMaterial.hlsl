@@ -8,7 +8,6 @@ RootSigBegin \
 ", CBV(b0, visibility = SHADER_VISIBILITY_ALL)" \
 ", CBV(b1, visibility = SHADER_VISIBILITY_ALL)" \
 ", DescriptorTable(SRV(t1, numDescriptors=1), visibility=SHADER_VISIBILITY_PIXEL)" \
-", StaticSampler(s0, filter=FILTER_ANISOTROPIC, visibility=SHADER_VISIBILITY_PIXEL)" \
 RootSigEnd
 
 
@@ -49,7 +48,6 @@ HLSLConstantBuffer(BaseMaterial, 1, g_Material);
 
 StructuredBuffer<VSInput> g_VertexArray : register(t0);
 Texture2D<float4> g_DiffuseTexture : register(t1);
-SamplerState s_PointSampler : register(s0);
 
 
 RootSigDeclaration
@@ -70,7 +68,7 @@ GBufferOutput PSMain(VSOutput In)
 {
 	GBuffer gbuffer;
 
-	gbuffer.Diffuse = g_DiffuseTexture.Sample(s_PointSampler, In.Texcoord).xyz;
+	gbuffer.Diffuse = g_DiffuseTexture.Sample(g_StaticAnisoWrapSampler, In.Texcoord).xyz;
 	gbuffer.Specular = IorToF0_Dielectric(g_Material.Ior.x).xxx;
 	gbuffer.Normal = In.Normal;
 	gbuffer.Roughness = saturate((100.0f - g_Material.Shininess.x) / 100.0f);

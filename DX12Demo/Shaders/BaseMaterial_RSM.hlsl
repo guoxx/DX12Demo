@@ -6,7 +6,6 @@ RootSigBegin \
 ", SRV(t0, visibility = SHADER_VISIBILITY_VERTEX)" \
 ", CBV(b0, visibility = SHADER_VISIBILITY_ALL)" \
 ", DescriptorTable(SRV(t1, numDescriptors=1), visibility=SHADER_VISIBILITY_PIXEL)" \
-", StaticSampler(s0, filter=FILTER_ANISOTROPIC, visibility=SHADER_VISIBILITY_PIXEL)" \
 RootSigEnd
 
 
@@ -28,7 +27,6 @@ HLSLConstantBuffer(BaseMaterialRSMConstants, 0, g_Constants)
 
 StructuredBuffer<VSInput> g_VertexArray : register(t0);
 Texture2D<float4> g_DiffuseTexture : register(t1);
-SamplerState s_PointSampler : register(s0);
 
 
 RootSigDeclaration
@@ -49,7 +47,7 @@ RSMOutput PSMain(VSOutput In)
 {
 	RSMBuffer rsmbuffer;
 
-	float3 diffuse = g_DiffuseTexture.Sample(s_PointSampler, In.Texcoord).xyz;
+	float3 diffuse = g_DiffuseTexture.Sample(g_StaticAnisoWrapSampler, In.Texcoord).xyz;
 	float3 reflectedDiffuse = Diffuse_Lambert(diffuse);
 	float3 I = 0;
 	if (g_Constants.LightType == 0)

@@ -4,11 +4,10 @@
 RootSigBegin \
 ", RootConstants(num32BitConstants=1, b0)" \
 ", DescriptorTable(SRV(t0, numDescriptors=1), visibility=SHADER_VISIBILITY_PIXEL)" \
-", StaticSampler(s0, filter=FILTER_MIN_MAG_MIP_POINT, visibility=SHADER_VISIBILITY_PIXEL)" \
 RootSigEnd
 
 Texture2D<float4> g_Texture : register(t0);
-SamplerState g_Sampler : register(s0);
+
 
 cbuffer cb0 : register(b0)
 {
@@ -47,7 +46,7 @@ float3 ToneMap( float3 hdr, float E = 4.0 )
 RootSigDeclaration
 float4 PSMain(VSOutput In) : SV_TARGET
 {
-	float4 HdrColor = g_Texture.Sample(g_Sampler, In.Texcoord);
+	float4 HdrColor = g_Texture.Sample(g_StaticPointClampSampler, In.Texcoord);
 
 	float3 SdrColor = ToneMap( HdrColor.xyz, Exposure );
 
