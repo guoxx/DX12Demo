@@ -220,6 +220,7 @@
     <ClInclude Include="DX12\DX12RootSignature.h" />
     <ClInclude Include="DX12\DX12SwapChain.h" />
     <ClInclude Include="DX12\DX12Texture.h" />
+    <ClInclude Include="DX12\DX12Wrapper.h" />
     <ClInclude Include="DX12\Hash.h" />
     <ClInclude Include="DX12\Texture\dds.h" />
     <ClInclude Include="DX12\Texture\DDSTextureLoader.h" />

@@ -386,6 +386,9 @@
     <ClInclude Include="3DEngine\Filters\ConvertEVSMFilter2D.h">
       <Filter>3DEngine\Filters</Filter>
     </ClInclude>
+    <ClInclude Include="DX12\DX12Wrapper.h">
+      <Filter>DX12\Public</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\Inc\BRDF.hlsli">
