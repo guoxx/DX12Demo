@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ProtoLabNG_Win10", "ProtoLab\ProtoCore_Win10.vcxproj", "{5018F6A3-6533-4744-B1FD-727D199FD2E9}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ProtoCore_Win10", "ProtoLab\ProtoCore_Win10.vcxproj", "{5018F6A3-6533-4744-B1FD-727D199FD2E9}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "embree", "ThirdParty\embree\embree.vcxproj", "{01ABBC96-B193-4467-8E1E-6FD4DF051AC7}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ThirdParty", "ThirdParty", "{8A30B556-2886-4414-B725-424836EC19BF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,8 +19,15 @@ Global
 		{5018F6A3-6533-4744-B1FD-727D199FD2E9}.Debug|x64.Build.0 = Debug|x64
 		{5018F6A3-6533-4744-B1FD-727D199FD2E9}.Release|x64.ActiveCfg = Release|x64
 		{5018F6A3-6533-4744-B1FD-727D199FD2E9}.Release|x64.Build.0 = Release|x64
+		{01ABBC96-B193-4467-8E1E-6FD4DF051AC7}.Debug|x64.ActiveCfg = Debug|x64
+		{01ABBC96-B193-4467-8E1E-6FD4DF051AC7}.Debug|x64.Build.0 = Debug|x64
+		{01ABBC96-B193-4467-8E1E-6FD4DF051AC7}.Release|x64.ActiveCfg = Release|x64
+		{01ABBC96-B193-4467-8E1E-6FD4DF051AC7}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{01ABBC96-B193-4467-8E1E-6FD4DF051AC7} = {8A30B556-2886-4414-B725-424836EC19BF}
 	EndGlobalSection
 EndGlobal

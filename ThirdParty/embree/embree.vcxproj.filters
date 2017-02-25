@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="embree2">
+      <UniqueIdentifier>{3447d728-68ae-4af9-bdbb-11c31bf84018}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\embree2\rtcore.h">
+      <Filter>embree2</Filter>
+    </ClInclude>
+    <ClInclude Include="include\embree2\rtcore_geometry.h">
+      <Filter>embree2</Filter>
+    </ClInclude>
+    <ClInclude Include="include\embree2\rtcore_geometry_user.h">
+      <Filter>embree2</Filter>
+    </ClInclude>
+    <ClInclude Include="include\embree2\rtcore_ray.h">
+      <Filter>embree2</Filter>
+    </ClInclude>
+    <ClInclude Include="include\embree2\rtcore_scene.h">
+      <Filter>embree2</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
