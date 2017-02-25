@@ -19,7 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <RootNamespace>DX12Demo</RootNamespace>
+    <RootNamespace>ProtoCore</RootNamespace>
     <ProjectGuid>{5f7b3d1a-7592-4d8e-af3e-b1f4ec7c59ab}</ProjectGuid>
     <DefaultLanguage>en-US</DefaultLanguage>
     <Keyword>Win32Proj</Keyword>
