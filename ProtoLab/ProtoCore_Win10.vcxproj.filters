@@ -40,6 +40,9 @@
     <Filter Include="3DEngine\Pass">
       <UniqueIdentifier>{a69b1388-d787-4f9c-98fa-e11e7a644ff9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="RayTracing">
+      <UniqueIdentifier>{bf5f4190-fa97-4bb6-ace5-970486e8ea3d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DX12\DX12Buffer.cpp">
@@ -185,6 +188,9 @@
     </ClCompile>
     <ClCompile Include="DX12\DX12GraphicsContext.cpp">
       <Filter>DX12\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="RayTracing\PathTracer.cpp">
+      <Filter>RayTracing</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -388,6 +394,9 @@
     </ClInclude>
     <ClInclude Include="DX12\DX12GraphicsContextAutoExecutor.h">
       <Filter>DX12\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="RayTracing\PathTracer.h">
+      <Filter>RayTracing</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
