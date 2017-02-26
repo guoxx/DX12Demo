@@ -2,7 +2,7 @@
 #include "DX12DescriptorManager.h"
 
 #include "DX12Device.h"
-#include "DX12GraphicContext.h"
+#include "DX12GraphicsContext.h"
 
 #ifdef _XBOX_ONE
 int32_t DefaultStaticDescriptorHeapSize[D3D12_DESCRIPTOR_HEAP_TYPE_NUM_TYPES] = { 2048 * 4, 1024, 1024, 1024, 1024 };
@@ -107,7 +107,7 @@ DX12DescriptorHandle DX12DescriptorManager::AllocateInStagingHeap(D3D12_DESCRIPT
 	return handle;
 }
 
-void DX12DescriptorManager::SetupHeapsForCommandList(DX12GraphicContext* pGfxContext)
+void DX12DescriptorManager::SetupHeapsForCommandList(DX12GraphicsContext* pGfxContext)
 {
 	ID3D12DescriptorHeap* heaps[] = { m_DescriptorHeaps[D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV].Get(), m_DescriptorHeaps[D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER].Get() };
 	pGfxContext->SetDescriptorHeaps(_countof(heaps), heaps);

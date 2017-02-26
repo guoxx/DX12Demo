@@ -10,8 +10,8 @@ Filter2D::Filter2D(DX12Device* device)
 
 	m_IndexBuffer = std::make_shared<DX12IndexBuffer>(device, sizeof(indices), 0, DXGI_FORMAT_R32_UINT);
 
-	DX12GraphicContextAutoExecutor executor;
-	DX12GraphicContext* pGfxContext = executor.GetGraphicContext();
+	DX12GraphicsContextAutoExecutor executor;
+	DX12GraphicsContext* pGfxContext = executor.GetGraphicsContext();
 
 	pGfxContext->ResourceTransitionBarrier(m_IndexBuffer.get(), D3D12_RESOURCE_STATE_COPY_DEST);
 	pGfxContext->UploadBuffer(m_IndexBuffer.get(), indices, sizeof(indices));
@@ -22,7 +22,7 @@ Filter2D::Filter2D(DX12Device* device)
 	sigCompiler.End();
 	sigCompiler.InitDescriptorTable(0, 1, D3D12_SHADER_VISIBILITY_PIXEL);
 	sigCompiler.SetupDescriptorRange(0, 0, CD3DX12_DESCRIPTOR_RANGE{D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0});
-	m_RootSig = sigCompiler.Compile(DX12GraphicManager::GetInstance()->GetDevice());
+	m_RootSig = sigCompiler.Compile(DX12GraphicsManager::GetInstance()->GetDevice());
 
 	DX12GraphicPsoCompiler psoCompiler;
 	psoCompiler.SetShaderFromBin(DX12ShaderTypeVertex, g_IdentityFilter2D_VS, sizeof(g_IdentityFilter2D_VS));
@@ -31,14 +31,14 @@ Filter2D::Filter2D(DX12Device* device)
 	psoCompiler.SetRenderTargetFormat(DXGI_FORMAT_R8G8B8A8_UNORM_SRGB);
 	psoCompiler.SetDespthStencilFormat(DXGI_FORMAT_UNKNOWN);
 	psoCompiler.SetDepthStencilState(CD3DX12::DepthStateDisabled());
-	m_PSO = psoCompiler.Compile(DX12GraphicManager::GetInstance()->GetDevice());
+	m_PSO = psoCompiler.Compile(DX12GraphicsManager::GetInstance()->GetDevice());
 }
 
 Filter2D::~Filter2D()
 {
 }
 
-void Filter2D::Apply(DX12GraphicContext * pGfxContext)
+void Filter2D::Apply(DX12GraphicsContext * pGfxContext)
 {
 	pGfxContext->SetGraphicsRootSignature(m_RootSig);
 	pGfxContext->SetPipelineState(m_PSO.get());
@@ -46,7 +46,7 @@ void Filter2D::Apply(DX12GraphicContext * pGfxContext)
 	pGfxContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 
-void Filter2D::Draw(DX12GraphicContext* pGfxContext)
+void Filter2D::Draw(DX12GraphicsContext* pGfxContext)
 {
 	pGfxContext->DrawIndexed(6, 0);
 }

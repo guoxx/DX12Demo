@@ -3,7 +3,7 @@
 
 #include "DX12Wrapper.h"
 #include "DX12Device.h"
-#include "DX12GraphicManager.h"
+#include "DX12GraphicsManager.h"
 
 
 DX12DepthSurface::DX12DepthSurface()
@@ -44,12 +44,12 @@ void DX12DepthSurface::Create2DView(DX12Device * device, GFX_FORMAT_SET fmt)
 	CD3DX12_SHADER_RESOURCE_VIEW_DESC srvDesc = CD3DX12_SHADER_RESOURCE_VIEW_DESC::Tex2DView(CD3DX12::GetSRVDimension(resourceDesc), fmt.SRVFormat);
 	CD3DX12_DEPTH_STENCIL_VIEW_DESC dsvDesc = CD3DX12_DEPTH_STENCIL_VIEW_DESC::Tex2DView(CD3DX12::GetDSVDimension(resourceDesc), fmt.DSVFormat);
 
-	m_SRV = DX12GraphicManager::GetInstance()->RegisterResourceInDescriptorHeap(GetGpuResource(), D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	m_SRV = DX12GraphicsManager::GetInstance()->RegisterResourceInDescriptorHeap(GetGpuResource(), D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 	device->CreateShaderResourceView(GetGpuResource(), &srvDesc, m_SRV.GetCpuHandle());
 
-	m_DSV = DX12GraphicManager::GetInstance()->RegisterResourceInDescriptorHeap(GetGpuResource(), D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
+	m_DSV = DX12GraphicsManager::GetInstance()->RegisterResourceInDescriptorHeap(GetGpuResource(), D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
 	device->CreateDepthStencilView(GetGpuResource(), &dsvDesc, m_DSV.GetCpuHandle());
 
-	m_StagingSRV = DX12GraphicManager::GetInstance()->RegisterResourceInStagingDescriptorHeap(GetGpuResource(), D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	m_StagingSRV = DX12GraphicsManager::GetInstance()->RegisterResourceInStagingDescriptorHeap(GetGpuResource(), D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 	device->CreateShaderResourceView(GetGpuResource(), &srvDesc, m_StagingSRV.GetCpuHandle());
 }

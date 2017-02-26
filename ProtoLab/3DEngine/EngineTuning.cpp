@@ -602,7 +602,7 @@ std::function<void(void*)> StartLoadFunc = StartLoad;
 static CallbackTrigger Load("Load Settings", StartLoadFunc, nullptr); 
 
 
-void EngineTuning::Display( DX12GraphicContext& Context, float x, float y, float w, float h )
+void EngineTuning::Display( DX12GraphicsContext& Context, float x, float y, float w, float h )
 {
 	TextContext Text(Context);
 	Text.Begin();

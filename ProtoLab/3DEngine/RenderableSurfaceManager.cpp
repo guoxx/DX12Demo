@@ -98,7 +98,7 @@ RenderableSurfaceHandle<T> RenderableSurfaceManager::AcquireRenderableSurface(co
 		{
 			// add a new surface and mark as used
 			std::shared_ptr<T> surf = std::make_shared<T>();
-			surf->InitAs2dSurface(DX12GraphicManager::GetInstance()->GetDevice(), desc.m_Format, desc.m_Width, desc.m_Height);
+			surf->InitAs2dSurface(DX12GraphicsManager::GetInstance()->GetDevice(), desc.m_Format, desc.m_Width, desc.m_Height);
 			m_Surfaces[i].m_Hash = hashVal;
 			m_Surfaces[i].m_State = RS_Used;
 			m_Surfaces[i].m_Surface = surf;

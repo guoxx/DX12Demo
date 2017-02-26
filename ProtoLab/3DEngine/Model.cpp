@@ -14,7 +14,7 @@ Model::~Model()
 {
 }
 
-void Model::DrawPrimitives(RenderContext* pRenderContext, DX12GraphicContext* pGfxContext)
+void Model::DrawPrimitives(RenderContext* pRenderContext, DX12GraphicsContext* pGfxContext)
 {
 	//pGfxContext->PIXBeginEvent(m_wName.c_str());
 

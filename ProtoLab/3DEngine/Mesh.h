@@ -15,7 +15,7 @@ public:
 	Mesh();
 	~Mesh();
 
-	void DrawPrimitives(RenderContext* pRenderContext, DX12GraphicContext* pGfxContext);	
+	void DrawPrimitives(RenderContext* pRenderContext, DX12GraphicsContext* pGfxContext);	
 
 private:
 	std::shared_ptr<DX12StructuredBuffer> m_VertexBuffer;

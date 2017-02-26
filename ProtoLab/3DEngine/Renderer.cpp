@@ -22,7 +22,7 @@ Renderer::Renderer(GFX_HWND hwnd, int32_t width, int32_t height)
 	: m_Width{ width}
 	, m_Height{ height }
 {
-	DX12Device* pDevice = DX12GraphicManager::GetInstance()->GetDevice();
+	DX12Device* pDevice = DX12GraphicsManager::GetInstance()->GetDevice();
 
 	m_SwapChain = std::make_shared<DX12SwapChain>(pDevice, hwnd, width, height, GFX_FORMAT_SWAPCHAIN);
 
@@ -76,13 +76,13 @@ void Renderer::Render(const Camera* pCamera, Scene* pScene)
 void Renderer::Flip()
 {
 	m_SwapChain->Flip();
-	DX12GraphicManager::GetInstance()->Flip();
+	DX12GraphicsManager::GetInstance()->Flip();
 }
 
 void Renderer::RenderShadowMaps(const Camera* pCamera, Scene * pScene)
 {
-	DX12GraphicContextAutoExecutor executor;
-	DX12GraphicContext* pGfxContext = executor.GetGraphicContext();
+	DX12GraphicsContextAutoExecutor executor;
+	DX12GraphicsContext* pGfxContext = executor.GetGraphicsContext();
 
 	if (g_RSMEnabled)
 	{
@@ -213,8 +213,8 @@ void Renderer::RenderShadowMaps(const Camera* pCamera, Scene * pScene)
 
 void Renderer::DeferredLighting(const Camera* pCamera, Scene* pScene)
 {
-	DX12GraphicContextAutoExecutor executor;
-	DX12GraphicContext* pGfxContext = executor.GetGraphicContext();
+	DX12GraphicsContextAutoExecutor executor;
+	DX12GraphicsContext* pGfxContext = executor.GetGraphicsContext();
 
 
 	if (g_TiledShading)
@@ -486,8 +486,8 @@ void Renderer::RenderGBuffer(const Camera* pCamera, Scene* pScene)
 {
 	m_RenderContext.SetShadingCfg(ShadingConfiguration_GBuffer);
 
-	DX12GraphicContextAutoExecutor executor;
-	DX12GraphicContext* pGfxContext = executor.GetGraphicContext();
+	DX12GraphicsContextAutoExecutor executor;
+	DX12GraphicsContext* pGfxContext = executor.GetGraphicsContext();
 
 	pGfxContext->PIXBeginEvent(L"G-Buffer");
 
@@ -526,7 +526,7 @@ void Renderer::ResolveToSwapChain()
 	m_SwapChain->Begin();
 
 	DX12SwapChainContextAutoExecutor executor;
-	DX12GraphicContext* pGfxContext = executor.GetGraphicContext();
+	DX12GraphicsContext* pGfxContext = executor.GetGraphicsContext();
 
     // Clear the views.
 	DX12ColorSurface* pColorSurface = m_SwapChain->GetBackBuffer();
@@ -556,7 +556,7 @@ void Renderer::ResolveToSwapChain()
 void Renderer::RenderDebugMenu()
 {
 	DX12SwapChainContextAutoExecutor executor;
-	DX12GraphicContext* pGfxContext = executor.GetGraphicContext();
+	DX12GraphicsContext* pGfxContext = executor.GetGraphicsContext();
 
 	pGfxContext->PIXBeginEvent(L"DebugMenu");
 

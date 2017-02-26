@@ -14,7 +14,7 @@ Mesh::~Mesh()
 {
 }
 
-void Mesh::DrawPrimitives(RenderContext* pRenderContext, DX12GraphicContext* pGfxContext)
+void Mesh::DrawPrimitives(RenderContext* pRenderContext, DX12GraphicsContext* pGfxContext)
 {
 	for (auto prim : m_Primitives)
 	{

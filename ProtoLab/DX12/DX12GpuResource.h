@@ -4,11 +4,11 @@
 
 
 class DX12Device;
-class DX12GraphicContext;
+class DX12GraphicsContext;
 
 class DX12GpuResource
 {
-	friend class DX12GraphicContext;
+	friend class DX12GraphicsContext;
 
 public:
 	DX12GpuResource();

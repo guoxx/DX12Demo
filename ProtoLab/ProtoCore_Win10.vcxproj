@@ -160,8 +160,8 @@
     <ClCompile Include="DX12\DX12Device.cpp" />
     <ClCompile Include="DX12\DX12FenceManager.cpp" />
     <ClCompile Include="DX12\DX12GpuResource.cpp" />
-    <ClCompile Include="DX12\DX12GraphicContext.cpp" />
-    <ClCompile Include="DX12\DX12GraphicManager.cpp" />
+    <ClCompile Include="DX12\DX12GraphicsContext.cpp" />
+    <ClCompile Include="DX12\DX12GraphicsManager.cpp" />
     <ClCompile Include="DX12\DX12PipelineState.cpp" />
     <ClCompile Include="DX12\DX12RenderableSurface.cpp" />
     <ClCompile Include="DX12\DX12RootSignature.cpp" />
@@ -220,9 +220,9 @@
     <ClInclude Include="DX12\DX12Fence.h" />
     <ClInclude Include="DX12\DX12FenceManager.h" />
     <ClInclude Include="DX12\DX12GpuResource.h" />
-    <ClInclude Include="DX12\DX12GraphicContext.h" />
-    <ClInclude Include="DX12\DX12GraphicContextAutoExecutor.h" />
-    <ClInclude Include="DX12\DX12GraphicManager.h" />
+    <ClInclude Include="DX12\DX12GraphicsContext.h" />
+    <ClInclude Include="DX12\DX12GraphicsContextAutoExecutor.h" />
+    <ClInclude Include="DX12\DX12GraphicsManager.h" />
     <ClInclude Include="DX12\DX12PipelineState.h" />
     <ClInclude Include="DX12\DX12RenderableSurface.h" />
     <ClInclude Include="DX12\DX12RootSignature.h" />

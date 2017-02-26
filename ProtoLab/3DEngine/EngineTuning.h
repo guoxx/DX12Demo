@@ -166,14 +166,14 @@ private:
 	mutable uint32_t m_BangDisplay;
 };
 
-class DX12GraphicContext;
+class DX12GraphicsContext;
 
 namespace EngineTuning
 {
 	void Initialize( void );
 	void Finalize( void );
 	void Update( float frameTime );
-	void Display( DX12GraphicContext& Context, float x, float y, float w, float h );
+	void Display( DX12GraphicsContext& Context, float x, float y, float w, float h );
 	bool IsFocused( void );
 
 } // namespace EngineTuning

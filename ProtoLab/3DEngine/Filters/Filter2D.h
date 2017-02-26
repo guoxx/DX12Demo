@@ -8,8 +8,8 @@ public:
 	Filter2D(DX12Device* device);
 	~Filter2D();
 
-	void Apply(DX12GraphicContext* pGfxContext);
-	void Draw(DX12GraphicContext* pGfxContext);
+	void Apply(DX12GraphicsContext* pGfxContext);
+	void Draw(DX12GraphicsContext* pGfxContext);
 
 private:
 	std::shared_ptr<DX12RootSignature> m_RootSig;

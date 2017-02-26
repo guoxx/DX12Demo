@@ -28,7 +28,7 @@ LightCullingPass::~LightCullingPass()
 {
 }
 
-void LightCullingPass::Apply(DX12GraphicContext * pGfxContext, const RenderContext* pRenderContext, const Scene* pScene)
+void LightCullingPass::Apply(DX12GraphicsContext * pGfxContext, const RenderContext* pRenderContext, const Scene* pScene)
 {
 	m_NumTileX = (pRenderContext->GetScreenWidth() + LIGHT_CULLING_NUM_THREADS_XY - 1) / LIGHT_CULLING_NUM_THREADS_XY;
 	m_NumTileY = (pRenderContext->GetScreenHeight() + LIGHT_CULLING_NUM_THREADS_XY - 1) / LIGHT_CULLING_NUM_THREADS_XY;
@@ -53,7 +53,7 @@ void LightCullingPass::Apply(DX12GraphicContext * pGfxContext, const RenderConte
 	pGfxContext->SetComputeRootDynamicConstantBufferView(0, &constants, sizeof(constants));
 }
 
-void LightCullingPass::Exec(DX12GraphicContext* pGfxContext)
+void LightCullingPass::Exec(DX12GraphicsContext* pGfxContext)
 {
 	pGfxContext->Dispatch(m_NumTileX, m_NumTileY, 1);
 }

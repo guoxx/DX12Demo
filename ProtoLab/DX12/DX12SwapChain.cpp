@@ -3,7 +3,7 @@
 
 #include "DX12Device.h"
 #include "DX12ColorSurface.h"
-#include "DX12GraphicContextAutoExecutor.h"
+#include "DX12GraphicsContextAutoExecutor.h"
 
 DX12SwapChain::DX12SwapChain(DX12Device* device, const GFX_HWND hwnd, uint32_t backBufferWidth, uint32_t backBufferHeight, GFX_FORMAT_SET backBufferFormat)
 {
@@ -27,7 +27,7 @@ DX12SwapChain::DX12SwapChain(DX12Device* device, const GFX_HWND hwnd, uint32_t b
 #ifdef _XBOX_ONE
 	m_SwapChain = device->CreateSwapChain(&swapChainDesc, hwnd);
 #else
-	m_SwapChain = device->CreateSwapChain(&swapChainDesc, hwnd, DX12GraphicManager::GetInstance()->GetSwapChainCommandQueue());
+	m_SwapChain = device->CreateSwapChain(&swapChainDesc, hwnd, DX12GraphicsManager::GetInstance()->GetSwapChainCommandQueue());
 #endif
 
 	m_BackBufferIdx = 0;
@@ -50,7 +50,7 @@ DX12SwapChain::~DX12SwapChain()
 void DX12SwapChain::Begin()
 {
 	DX12SwapChainContextAutoExecutor executor;
-	DX12GraphicContext* pGfxContext = executor.GetGraphicContext();
+	DX12GraphicsContext* pGfxContext = executor.GetGraphicsContext();
 
 	pGfxContext->ResourceTransitionBarrier(GetBackBuffer(), D3D12_RESOURCE_STATE_RENDER_TARGET);
 }
@@ -64,7 +64,7 @@ void DX12SwapChain::Flip()
 {
 	{
 		DX12SwapChainContextAutoExecutor executor;
-		DX12GraphicContext* pGfxContext = executor.GetGraphicContext();
+		DX12GraphicsContext* pGfxContext = executor.GetGraphicsContext();
 
 		pGfxContext->ResourceTransitionBarrier(GetBackBuffer(), D3D12_RESOURCE_STATE_PRESENT);
 	}

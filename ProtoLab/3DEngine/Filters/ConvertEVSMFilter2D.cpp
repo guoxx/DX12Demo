@@ -12,8 +12,8 @@ ConvertEVSMFilter2D::ConvertEVSMFilter2D(DX12Device* device)
 
 	m_IndexBuffer = std::make_shared<DX12IndexBuffer>(device, sizeof(indices), 0, DXGI_FORMAT_R32_UINT);
 
-	DX12GraphicContextAutoExecutor executor;
-	DX12GraphicContext* pGfxContext = executor.GetGraphicContext();
+	DX12GraphicsContextAutoExecutor executor;
+	DX12GraphicsContext* pGfxContext = executor.GetGraphicsContext();
 
 	pGfxContext->ResourceTransitionBarrier(m_IndexBuffer.get(), D3D12_RESOURCE_STATE_COPY_DEST);
 	pGfxContext->UploadBuffer(m_IndexBuffer.get(), indices, sizeof(indices));
@@ -25,7 +25,7 @@ ConvertEVSMFilter2D::ConvertEVSMFilter2D(DX12Device* device)
 	sigCompiler[0].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_PIXEL);
 	sigCompiler.InitDescriptorTable(1, 1, D3D12_SHADER_VISIBILITY_PIXEL);
 	sigCompiler.SetupDescriptorRange(1, 0, CD3DX12_DESCRIPTOR_RANGE{D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0});
-	m_RootSig = sigCompiler.Compile(DX12GraphicManager::GetInstance()->GetDevice());
+	m_RootSig = sigCompiler.Compile(DX12GraphicsManager::GetInstance()->GetDevice());
 
 	DX12GraphicPsoCompiler psoCompiler;
 	psoCompiler.SetShaderFromBin(DX12ShaderTypeVertex, g_EVSM_VS, sizeof(g_EVSM_VS));
@@ -34,14 +34,14 @@ ConvertEVSMFilter2D::ConvertEVSMFilter2D(DX12Device* device)
 	psoCompiler.SetRenderTargetFormat(GFX_FORMAT_R32G32B32A32_FLOAT.RTVFormat);
 	psoCompiler.SetDespthStencilFormat(DXGI_FORMAT_UNKNOWN);
 	psoCompiler.SetDepthStencilState(CD3DX12::DepthStateDisabled());
-	m_PSO = psoCompiler.Compile(DX12GraphicManager::GetInstance()->GetDevice());
+	m_PSO = psoCompiler.Compile(DX12GraphicsManager::GetInstance()->GetDevice());
 }
 
 ConvertEVSMFilter2D::~ConvertEVSMFilter2D()
 {
 }
 
-void ConvertEVSMFilter2D::Apply(DX12GraphicContext * pGfxContext)
+void ConvertEVSMFilter2D::Apply(DX12GraphicsContext * pGfxContext)
 {
 	pGfxContext->SetGraphicsRootSignature(m_RootSig);
 	pGfxContext->SetPipelineState(m_PSO.get());
@@ -57,7 +57,7 @@ void ConvertEVSMFilter2D::Apply(DX12GraphicContext * pGfxContext)
 	pGfxContext->SetGraphicsRootDynamicConstantBufferView(0, &constants, sizeof(constants));
 }
 
-void ConvertEVSMFilter2D::Draw(DX12GraphicContext* pGfxContext)
+void ConvertEVSMFilter2D::Draw(DX12GraphicsContext* pGfxContext)
 {
 	pGfxContext->DrawIndexed(6, 0);
 }

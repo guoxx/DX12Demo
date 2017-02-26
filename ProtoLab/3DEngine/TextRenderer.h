@@ -16,7 +16,7 @@
 #include <string>
 
 class Color;
-class DX12GraphicContext;
+class DX12GraphicsContext;
 
 namespace TextRenderer
 {
@@ -34,9 +34,9 @@ namespace TextRenderer
 class TextContext
 {
 public:
-	TextContext( DX12GraphicContext& CmdContext, float CanvasWidth = 1920.0f, float CanvasHeight = 1080.0f );
+	TextContext( DX12GraphicsContext& CmdContext, float CanvasWidth = 1920.0f, float CanvasHeight = 1080.0f );
 
-	DX12GraphicContext& GetCommandContext() const { return m_Context; }
+	DX12GraphicsContext& GetCommandContext() const { return m_Context; }
 
 	// Put settings back to the defaults.
 	void ResetSettings( void );
@@ -46,7 +46,7 @@ public:
 	//
 
 	// Choose a font from the Fonts folder.  Previously loaded fonts are cached in memory.
-	void SetFont( DX12GraphicContext* pGfxContext, const std::wstring& fontName, float TextSize = 0.0f );
+	void SetFont( DX12GraphicsContext* pGfxContext, const std::wstring& fontName, float TextSize = 0.0f );
 
 	// Resize the view space.  This determines the coordinate space of the cursor position and font size.  You can always
 	// set the view size to the same dimensions regardless of actual display resolution.  It is assumed, however, that the
@@ -124,7 +124,7 @@ private:
 
 	UINT FillVertexBuffer( TextVert volatile* verts, const char* str, size_t stride, size_t slen );
 
-	DX12GraphicContext& m_Context;
+	DX12GraphicsContext& m_Context;
 	const TextRenderer::Font* m_CurrentFont;
 	VertexShaderParams m_VSParams;
 	PixelShaderParams m_PSParams;

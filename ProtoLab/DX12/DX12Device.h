@@ -1,6 +1,6 @@
 #pragma once
 
-class DX12GraphicManager;
+class DX12GraphicsManager;
 
 class DX12Device
 {

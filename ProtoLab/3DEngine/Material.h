@@ -14,12 +14,12 @@ public:
 	Material();
 	~Material();
 
-	void Load(DX12GraphicContext* pGfxContext);
+	void Load(DX12GraphicsContext* pGfxContext);
 
-	void Apply(RenderContext* pRenderContext, DX12GraphicContext* pGfxContext);
+	void Apply(RenderContext* pRenderContext, DX12GraphicsContext* pGfxContext);
 
 private:
-	std::shared_ptr<DX12Texture> LoadTexture(DX12GraphicContext* pGfxContext, std::string texname, bool sRGB);
+	std::shared_ptr<DX12Texture> LoadTexture(DX12GraphicsContext* pGfxContext, std::string texname, bool sRGB);
 
 	std::string m_Name;
 

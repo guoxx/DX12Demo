@@ -32,7 +32,7 @@ private:
 	void CreateResources();
 	void LoadAssets();
 
-	DX12GraphicManager*									m_GraphicManager;
+	DX12GraphicsManager*								m_GraphicsManager;
 
 	std::shared_ptr<Renderer>							m_Renderer;
 	std::shared_ptr<Scene>								m_Scene;

@@ -3,7 +3,7 @@
 #include "DX12DescriptorHandle.h"
 
 class DX12Device;
-class DX12GraphicContext;
+class DX12GraphicsContext;
 
 class DX12DescriptorManager
 {
@@ -19,7 +19,7 @@ public:
 
 	DX12DescriptorHandle AllocateInStagingHeap(D3D12_DESCRIPTOR_HEAP_TYPE heapType);
 
-	void SetupHeapsForCommandList(DX12GraphicContext* pGfxContext);
+	void SetupHeapsForCommandList(DX12GraphicsContext* pGfxContext);
 
 private:
 	enum

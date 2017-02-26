@@ -2,8 +2,8 @@
 #include "DX12Texture.h"
 
 #include "DX12Device.h"
-#include "DX12GraphicContext.h"
-#include "DX12GraphicManager.h"
+#include "DX12GraphicsContext.h"
+#include "DX12GraphicsManager.h"
 
 #include "Texture/LoaderHelpers.h"
 #include "Texture/TextureLoaderTga.h"
@@ -46,7 +46,7 @@ DX12Texture::~DX12Texture()
 {
 }
 
-DX12Texture* DX12Texture::LoadFromTGAFile(DX12Device* device, DX12GraphicContext* pGfxContext, const char * filename, bool sRGB)
+DX12Texture* DX12Texture::LoadFromTGAFile(DX12Device* device, DX12GraphicsContext* pGfxContext, const char * filename, bool sRGB)
 {
 	TextureLoaderTga texLoader{ };
 	texLoader.LoadTga(filename);
@@ -77,7 +77,7 @@ DX12Texture* DX12Texture::LoadFromTGAFile(DX12Device* device, DX12GraphicContext
 	return pTex;
 }
 
-DX12Texture* DX12Texture::LoadFromDDSFile(DX12Device* device, DX12GraphicContext* pGfxContext, const char* filename, bool sRGB)
+DX12Texture* DX12Texture::LoadFromDDSFile(DX12Device* device, DX12GraphicsContext* pGfxContext, const char* filename, bool sRGB)
 {
 	ComPtr<ID3D12Resource> res;
 	std::unique_ptr<uint8_t[]> ddsData;
@@ -102,7 +102,7 @@ DX12Texture* DX12Texture::LoadFromDDSFile(DX12Device* device, DX12GraphicContext
 	return pTex;
 }
 
-DX12Texture * DX12Texture::LoadFromBin(DX12Device * device, DX12GraphicContext * pGfxContext, const uint8_t * pBinData,
+DX12Texture * DX12Texture::LoadFromBin(DX12Device * device, DX12GraphicsContext * pGfxContext, const uint8_t * pBinData,
 	DXGI_FORMAT format, uint32_t width, uint32_t height)
 {
 	DX12Texture* pTex = new DX12Texture(device, format, width, height);
@@ -125,9 +125,9 @@ DX12Texture * DX12Texture::LoadFromBin(DX12Device * device, DX12GraphicContext *
 
 void DX12Texture::CreateView(DX12Device * device)
 {
-	m_SRV = DX12GraphicManager::GetInstance()->RegisterResourceInDescriptorHeap(GetGpuResource(), D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	m_SRV = DX12GraphicsManager::GetInstance()->RegisterResourceInDescriptorHeap(GetGpuResource(), D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 	device->CreateShaderResourceView(GetGpuResource(), nullptr, m_SRV.GetCpuHandle());
 
-	m_StagingSRV = DX12GraphicManager::GetInstance()->RegisterResourceInStagingDescriptorHeap(GetGpuResource(), D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	m_StagingSRV = DX12GraphicsManager::GetInstance()->RegisterResourceInStagingDescriptorHeap(GetGpuResource(), D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 	device->CreateShaderResourceView(GetGpuResource(), nullptr, m_StagingSRV.GetCpuHandle());
 }

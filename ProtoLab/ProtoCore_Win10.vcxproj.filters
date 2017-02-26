@@ -51,12 +51,6 @@
     <ClCompile Include="DX12\DX12Device.cpp">
       <Filter>DX12\Private</Filter>
     </ClCompile>
-    <ClCompile Include="DX12\DX12GraphicContext.cpp">
-      <Filter>DX12\Private</Filter>
-    </ClCompile>
-    <ClCompile Include="DX12\DX12GraphicManager.cpp">
-      <Filter>DX12\Private</Filter>
-    </ClCompile>
     <ClCompile Include="DX12\DX12PipelineState.cpp">
       <Filter>DX12\Private</Filter>
     </ClCompile>
@@ -186,14 +180,14 @@
     <ClCompile Include="3DEngine\Filters\ConvertEVSMFilter2D.cpp">
       <Filter>3DEngine\Filters</Filter>
     </ClCompile>
+    <ClCompile Include="DX12\DX12GraphicsManager.cpp">
+      <Filter>DX12\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="DX12\DX12GraphicsContext.cpp">
+      <Filter>DX12\Private</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DX12\DX12GraphicContext.h">
-      <Filter>DX12\Public</Filter>
-    </ClInclude>
-    <ClInclude Include="DX12\DX12GraphicManager.h">
-      <Filter>DX12\Public</Filter>
-    </ClInclude>
     <ClInclude Include="DX12\DX12PipelineState.h">
       <Filter>DX12\Public</Filter>
     </ClInclude>
@@ -246,9 +240,6 @@
       <Filter>DX12\Private</Filter>
     </ClInclude>
     <ClInclude Include="DX12\DX12SwapChain.h">
-      <Filter>DX12\Public</Filter>
-    </ClInclude>
-    <ClInclude Include="DX12\DX12GraphicContextAutoExecutor.h">
       <Filter>DX12\Public</Filter>
     </ClInclude>
     <ClInclude Include="DX12\DX12FenceManager.h">
@@ -387,6 +378,15 @@
       <Filter>3DEngine\Filters</Filter>
     </ClInclude>
     <ClInclude Include="DX12\DX12Wrapper.h">
+      <Filter>DX12\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="DX12\DX12GraphicsManager.h">
+      <Filter>DX12\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="DX12\DX12GraphicsContext.h">
+      <Filter>DX12\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="DX12\DX12GraphicsContextAutoExecutor.h">
       <Filter>DX12\Public</Filter>
     </ClInclude>
   </ItemGroup>

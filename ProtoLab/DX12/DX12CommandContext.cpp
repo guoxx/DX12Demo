@@ -2,7 +2,7 @@
 #include "DX12CommandContext.h"
 
 #include "DX12Device.h"
-#include "DX12GraphicManager.h"
+#include "DX12GraphicsManager.h"
 
 DX12CommandContext::DX12CommandContext(DX12Device* device)
 	: m_FenceHandle{ }
@@ -33,7 +33,7 @@ void DX12CommandContext::Reset()
 
 	ClearState();
 
-	m_FenceHandle = DX12GraphicManager::GetInstance()->GetFenceManager()->GetFenceHandle();
+	m_FenceHandle = DX12GraphicsManager::GetInstance()->GetFenceManager()->GetFenceHandle();
 }
 
 void DX12CommandContext::Close()
@@ -46,7 +46,7 @@ void DX12CommandContext::ExecuteInQueue(ID3D12CommandQueue* pCommandQueue)
 	ID3D12CommandList* lists[] = { m_CommandList.Get() };
 	pCommandQueue->ExecuteCommandLists(_countof(lists), lists);
 
-	DX12GraphicManager::GetInstance()->GetFenceManager()->SignalAndAdvance(pCommandQueue);
+	DX12GraphicsManager::GetInstance()->GetFenceManager()->SignalAndAdvance(pCommandQueue);
 }
 
 void DX12CommandContext::ClearState()

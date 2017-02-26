@@ -11,8 +11,8 @@ public:
 	PointLightFilter2D(DX12Device* device);
 	~PointLightFilter2D();
 
-	void Apply(DX12GraphicContext* pGfxContext, const RenderContext* pRenderContext, const PointLight* pPointLight);
-	void Draw(DX12GraphicContext* pGfxContext);
+	void Apply(DX12GraphicsContext* pGfxContext, const RenderContext* pRenderContext, const PointLight* pPointLight);
+	void Draw(DX12GraphicsContext* pGfxContext);
 
 private:
 	std::shared_ptr<DX12RootSignature> m_RootSig;

@@ -20,12 +20,12 @@ Material::~Material()
 {
 }
 
-void Material::Load(DX12GraphicContext* pGfxContext)
+void Material::Load(DX12GraphicsContext* pGfxContext)
 {
 	CD3DX12_SHADER_RESOURCE_VIEW_DESC nullSrvDesc = CD3DX12_SHADER_RESOURCE_VIEW_DESC::Tex2DView(D3D12_SRV_DIMENSION_TEXTURE2D, DXGI_FORMAT_R8G8B8A8_UNORM);
 
-	m_NullDescriptorHandle = DX12GraphicManager::GetInstance()->RegisterResourceInDescriptorHeap(nullptr, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-	DX12GraphicManager::GetInstance()->GetDevice()->CreateShaderResourceView(nullptr, &nullSrvDesc, m_NullDescriptorHandle.GetCpuHandle());
+	m_NullDescriptorHandle = DX12GraphicsManager::GetInstance()->RegisterResourceInDescriptorHeap(nullptr, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	DX12GraphicsManager::GetInstance()->GetDevice()->CreateShaderResourceView(nullptr, &nullSrvDesc, m_NullDescriptorHandle.GetCpuHandle());
 
 	{
 		ShadingConfiguration shadingCfg = ShadingConfiguration_GBuffer;
@@ -38,7 +38,7 @@ void Material::Load(DX12GraphicContext* pGfxContext)
 		sigCompiler[2].InitAsConstantBufferView(1);
 		sigCompiler.InitDescriptorTable(3, 1, D3D12_SHADER_VISIBILITY_PIXEL);
 		sigCompiler.SetupDescriptorRange(3, 0, CD3DX12_DESCRIPTOR_RANGE{D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 1});
-		m_RootSig[shadingCfg] = sigCompiler.Compile(DX12GraphicManager::GetInstance()->GetDevice());
+		m_RootSig[shadingCfg] = sigCompiler.Compile(DX12GraphicsManager::GetInstance()->GetDevice());
 
 		DX12GraphicPsoCompiler psoCompiler;
 		psoCompiler.SetShaderFromBin(DX12ShaderTypeVertex, g_BaseMaterial_VS, sizeof(g_BaseMaterial_VS));
@@ -48,7 +48,7 @@ void Material::Load(DX12GraphicContext* pGfxContext)
 		psoCompiler.SetDespthStencilFormat(DXGI_FORMAT_D32_FLOAT);
 		psoCompiler.SetRasterizerState(CD3DX12::RasterizerDefault());
 
-		m_PSO[shadingCfg] = psoCompiler.Compile(DX12GraphicManager::GetInstance()->GetDevice());
+		m_PSO[shadingCfg] = psoCompiler.Compile(DX12GraphicsManager::GetInstance()->GetDevice());
 	}
 
 	{
@@ -59,7 +59,7 @@ void Material::Load(DX12GraphicContext* pGfxContext)
 		sigCompiler.End();
 		sigCompiler[0].InitAsShaderResourceView(0, 0, D3D12_SHADER_VISIBILITY_VERTEX);
 		sigCompiler[1].InitAsConstantBufferView(0);
-		m_RootSig[shadingCfg] = sigCompiler.Compile(DX12GraphicManager::GetInstance()->GetDevice());
+		m_RootSig[shadingCfg] = sigCompiler.Compile(DX12GraphicsManager::GetInstance()->GetDevice());
 
 		DX12GraphicPsoCompiler psoCompiler;
 		psoCompiler.SetShaderFromBin(DX12ShaderTypeVertex, g_BaseMaterial_DepthOnly_VS, sizeof(g_BaseMaterial_DepthOnly_VS));
@@ -67,7 +67,7 @@ void Material::Load(DX12GraphicContext* pGfxContext)
 		psoCompiler.SetDespthStencilFormat(DXGI_FORMAT_D32_FLOAT);
 		psoCompiler.SetRasterizerState(CD3DX12::RasterizerShadow());
 
-		m_PSO[shadingCfg] = psoCompiler.Compile(DX12GraphicManager::GetInstance()->GetDevice());
+		m_PSO[shadingCfg] = psoCompiler.Compile(DX12GraphicsManager::GetInstance()->GetDevice());
 	}
 
 	{
@@ -80,7 +80,7 @@ void Material::Load(DX12GraphicContext* pGfxContext)
 		sigCompiler[1].InitAsConstantBufferView(0);
 		sigCompiler.InitDescriptorTable(2, 1, D3D12_SHADER_VISIBILITY_PIXEL);
 		sigCompiler.SetupDescriptorRange(2, 0, CD3DX12_DESCRIPTOR_RANGE{D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 1});
-		m_RootSig[shadingCfg] = sigCompiler.Compile(DX12GraphicManager::GetInstance()->GetDevice());
+		m_RootSig[shadingCfg] = sigCompiler.Compile(DX12GraphicsManager::GetInstance()->GetDevice());
 
 		DX12GraphicPsoCompiler psoCompiler;
 		psoCompiler.SetShaderFromBin(DX12ShaderTypeVertex, g_BaseMaterial_RSM_VS, sizeof(g_BaseMaterial_RSM_VS));
@@ -90,7 +90,7 @@ void Material::Load(DX12GraphicContext* pGfxContext)
 		psoCompiler.SetDespthStencilFormat(DXGI_FORMAT_D32_FLOAT);
 		psoCompiler.SetRasterizerState(CD3DX12::RasterizerShadow());
 
-		m_PSO[shadingCfg] = psoCompiler.Compile(DX12GraphicManager::GetInstance()->GetDevice());
+		m_PSO[shadingCfg] = psoCompiler.Compile(DX12GraphicsManager::GetInstance()->GetDevice());
 	}
 
 	if (!m_AmbientTexName.empty())
@@ -123,22 +123,22 @@ void Material::Load(DX12GraphicContext* pGfxContext)
 	}
 }
 
-std::shared_ptr<DX12Texture> Material::LoadTexture(DX12GraphicContext* pGfxContext, std::string texname, bool sRGB)
+std::shared_ptr<DX12Texture> Material::LoadTexture(DX12GraphicsContext* pGfxContext, std::string texname, bool sRGB)
 {
 	std::shared_ptr<DX12Texture> tex = std::shared_ptr<DX12Texture>();
 	std::string ext = texname.substr(texname.length() - 4, 4);
 	if (ext == ".tga")
 	{
-		tex.reset(DX12Texture::LoadFromTGAFile(DX12GraphicManager::GetInstance()->GetDevice(), pGfxContext, texname.c_str(), sRGB));
+		tex.reset(DX12Texture::LoadFromTGAFile(DX12GraphicsManager::GetInstance()->GetDevice(), pGfxContext, texname.c_str(), sRGB));
 	}
 	else
 	{
-		tex.reset(DX12Texture::LoadFromDDSFile(DX12GraphicManager::GetInstance()->GetDevice(), pGfxContext, texname.c_str(), sRGB));
+		tex.reset(DX12Texture::LoadFromDDSFile(DX12GraphicsManager::GetInstance()->GetDevice(), pGfxContext, texname.c_str(), sRGB));
 	}
 	return tex;	
 }
 
-void Material::Apply(RenderContext* pRenderContext, DX12GraphicContext* pGfxContext)
+void Material::Apply(RenderContext* pRenderContext, DX12GraphicsContext* pGfxContext)
 {
 	ShadingConfiguration shadingCfg = pRenderContext->GetShadingCfg();
 

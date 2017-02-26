@@ -14,7 +14,7 @@
 #include "tiny_obj_loader.h"
 #pragma warning(pop)
 
-void Model::_LoadMTLMaterial(void* materialData, Material* pMaterial, DX12GraphicContext* pGfxContext)
+void Model::_LoadMTLMaterial(void* materialData, Material* pMaterial, DX12GraphicsContext* pGfxContext)
 {
 	tinyobj::material_t* pMaterialData = (tinyobj::material_t*)materialData;
 
@@ -39,7 +39,7 @@ void Model::_LoadMTLMaterial(void* materialData, Material* pMaterial, DX12Graphi
 	pMaterial->Load(pGfxContext);
 }
 
-std::vector<std::shared_ptr<Model>> Model::LoadOBJ(DX12Device* device, DX12GraphicContext* pGfxContext, const char* objFilename, const char* mtlBasepath)
+std::vector<std::shared_ptr<Model>> Model::LoadOBJ(DX12Device* device, DX12GraphicsContext* pGfxContext, const char* objFilename, const char* mtlBasepath)
 {
 	std::vector<std::shared_ptr<Model>> models;
 

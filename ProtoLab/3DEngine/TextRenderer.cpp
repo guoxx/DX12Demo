@@ -63,7 +63,7 @@ namespace TextRenderer
 			m_Dictionary.clear();
 		}
 
-		void LoadFromBinary( DX12GraphicContext* pGfxContext, const wchar_t* fontName, const uint8_t* pBinary, const size_t binarySize )
+		void LoadFromBinary( DX12GraphicsContext* pGfxContext, const wchar_t* fontName, const uint8_t* pBinary, const size_t binarySize )
 		{
 			(fontName);
 
@@ -102,7 +102,7 @@ namespace TextRenderer
 			for (uint16_t i = 0; i < NumGlyphs; ++i)
 				m_Dictionary[wcharList[i]] = glyphData[i];
 
-			m_Texture.reset(DX12Texture::LoadFromBin(DX12GraphicManager::GetInstance()->GetDevice(), pGfxContext, (const uint8_t*)texelData,
+			m_Texture.reset(DX12Texture::LoadFromBin(DX12GraphicsManager::GetInstance()->GetDevice(), pGfxContext, (const uint8_t*)texelData,
 				DXGI_FORMAT_R8_SNORM, textureWidth, textureHeight));
 
 			DX::Print( "Loaded SDF font:  %ls (ver. %d.%d)", fontName, header->majorVersion, header->minorVersion);
@@ -128,7 +128,7 @@ namespace TextRenderer
 			return byteArray;
 		}
 
-		bool Load( DX12GraphicContext* pGfxContext, const wstring& fileName )
+		bool Load( DX12GraphicsContext* pGfxContext, const wstring& fileName )
 		{
 			ByteArray ba = ReadFileHelper( fileName );
 
@@ -192,7 +192,7 @@ namespace TextRenderer
 
 	map< wstring, unique_ptr<Font> > LoadedFonts;
 
-	const Font* GetOrLoadFont(DX12GraphicContext* pGfxContext, const wstring& filename)
+	const Font* GetOrLoadFont(DX12GraphicsContext* pGfxContext, const wstring& filename)
 	{
 		auto fontIter = LoadedFonts.find( filename );
 		if (fontIter != LoadedFonts.end())
@@ -215,7 +215,7 @@ namespace TextRenderer
 
 void TextRenderer::Initialize( void )
 {
-	DX12Device* device = DX12GraphicManager::GetInstance()->GetDevice();
+	DX12Device* device = DX12GraphicsManager::GetInstance()->GetDevice();
 
 	DX12RootSignatureCompiler sigCompiler;
 	sigCompiler.Begin(3, 1);
@@ -259,7 +259,7 @@ void TextRenderer::Shutdown( void )
 	LoadedFonts.clear();
 }
 
-TextContext::TextContext( DX12GraphicContext& CmdContext, float ViewWidth, float ViewHeight )
+TextContext::TextContext( DX12GraphicsContext& CmdContext, float ViewWidth, float ViewHeight )
 	: m_Context(CmdContext)
 {
 	m_HDR = FALSE;
@@ -352,7 +352,7 @@ void TextContext::Begin( bool EnableHDR )
 	m_Context.IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 }
 
-void TextContext::SetFont( DX12GraphicContext* pGfxContext, const wstring& fontName, float size )
+void TextContext::SetFont( DX12GraphicsContext* pGfxContext, const wstring& fontName, float size )
 {
 	// If that font is already set or doesn't exist, return.
 	const TextRenderer::Font* NextFont = TextRenderer::GetOrLoadFont( pGfxContext, fontName );

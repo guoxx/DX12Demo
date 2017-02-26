@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "DX12FenceManager.h"
 
-#include "DX12GraphicManager.h"
+#include "DX12GraphicsManager.h"
 
 DX12FenceHandle::DX12FenceHandle()
 	: m_FenceIdx((uint32_t)-1)
@@ -16,7 +16,7 @@ DX12FenceHandle::DX12FenceHandle(uint32_t idx)
 DX12Fence* DX12FenceHandle::GetFence() const
 {
 	assert(m_FenceIdx >= 0 && m_FenceIdx < DX12MaxFences);
-	return DX12GraphicManager::GetInstance()->GetFenceManager()->GetFence(m_FenceIdx);
+	return DX12GraphicsManager::GetInstance()->GetFenceManager()->GetFence(m_FenceIdx);
 }
 
 DX12FenceManager::DX12FenceManager(DX12Device* device)

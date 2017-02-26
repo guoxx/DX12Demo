@@ -14,8 +14,8 @@ DirectionalLightFilter2D::DirectionalLightFilter2D(DX12Device* device)
 
 	m_IndexBuffer = std::make_shared<DX12IndexBuffer>(device, sizeof(indices), 0, DXGI_FORMAT_R32_UINT);
 
-	DX12GraphicContextAutoExecutor executor;
-	DX12GraphicContext* pGfxContext = executor.GetGraphicContext();
+	DX12GraphicsContextAutoExecutor executor;
+	DX12GraphicsContext* pGfxContext = executor.GetGraphicsContext();
 
 	pGfxContext->ResourceTransitionBarrier(m_IndexBuffer.get(), D3D12_RESOURCE_STATE_COPY_DEST);
 	pGfxContext->UploadBuffer(m_IndexBuffer.get(), indices, sizeof(indices));
@@ -44,7 +44,7 @@ DirectionalLightFilter2D::~DirectionalLightFilter2D()
 {
 }
 
-void DirectionalLightFilter2D::Apply(DX12GraphicContext * pGfxContext, const RenderContext* pRenderContext, const DirectionalLight* pLight)
+void DirectionalLightFilter2D::Apply(DX12GraphicsContext * pGfxContext, const RenderContext* pRenderContext, const DirectionalLight* pLight)
 {
 	pGfxContext->SetGraphicsRootSignature(m_RootSig);
 	pGfxContext->SetPipelineState(m_PSO.get());
@@ -98,7 +98,7 @@ void DirectionalLightFilter2D::Apply(DX12GraphicContext * pGfxContext, const Ren
 	pGfxContext->SetGraphicsRootDynamicConstantBufferView(0, &constants, sizeof(constants));
 }
 
-void DirectionalLightFilter2D::Draw(DX12GraphicContext* pGfxContext)
+void DirectionalLightFilter2D::Draw(DX12GraphicsContext* pGfxContext)
 {
 	pGfxContext->DrawIndexed(6, 0);
 }
