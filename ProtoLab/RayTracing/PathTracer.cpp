@@ -41,3 +41,19 @@ void PathTracer::EndUpdateScene()
 {
 	rtcCommit(m_Scene);
 }
+
+void PathTracer::AddTriangleMesh(float* pVertexBufferCopy, int32_t* pIndexBufferCopy, int32_t numTriangles)
+{
+	uint32_t numVertices = numTriangles * 3;
+	uint32_t geoId = rtcNewTriangleMesh(m_Scene, RTC_GEOMETRY_STATIC, numTriangles, numVertices);
+
+	void* pVertexBuffer = rtcMapBuffer(m_Scene, geoId, RTC_VERTEX_BUFFER);
+	memcpy(pVertexBuffer, pVertexBufferCopy, sizeof(float) * 4 * numVertices);
+	rtcUnmapBuffer(m_Scene, geoId, RTC_VERTEX_BUFFER);
+
+	void* pIndexBuffer = rtcMapBuffer(m_Scene, geoId, RTC_INDEX_BUFFER);
+	memcpy(pIndexBuffer, pIndexBufferCopy, sizeof(int32_t) * numVertices);
+	rtcUnmapBuffer(m_Scene, geoId, RTC_INDEX_BUFFER);
+
+	m_Geometries.push_back(geoId);
+}

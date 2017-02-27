@@ -31,6 +31,7 @@ private:
 	void CreateDevice();
 	void CreateResources();
 	void LoadAssets();
+	void LoadCornellBox();
 
 	DX12GraphicsManager*								m_GraphicsManager;
 

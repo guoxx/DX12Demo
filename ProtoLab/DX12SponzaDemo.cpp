@@ -35,7 +35,8 @@ void DX12SponzaDemo::OnInit(GFX_HWND hwnd)
 
     CreateDevice();
     CreateResources();
-	LoadAssets();
+	//LoadAssets();
+	LoadCornellBox();
 
     // TODO: Change the timer settings if you want something other than the default variable timestep mode.
     // e.g. for 60 FPS fixed timestep update logic, call:
@@ -54,7 +55,7 @@ void DX12SponzaDemo::OnUpdate(DX::StepTimer const& timer)
 	GameInput::Update(elapsedTime);
 	EngineTuning::Update(elapsedTime);
 
-	float speedScale = 150;
+	float speedScale = 5;
 	float forward = (GameInput::GetTimeCorrectedAnalogInput(GameInput::kAnalogLeftStickY)) +
 		(GameInput::IsPressed(GameInput::kKey_w) ? elapsedTime : 0.0f) +
 		(GameInput::IsPressed(GameInput::kKey_s) ? -elapsedTime : 0.0f);
@@ -198,6 +199,31 @@ void DX12SponzaDemo::LoadAssets()
 		light->SetRadius(0.1f, 400.0f);
 		light->SetIntensity(1, 1, 1);
 		light->SetTranslation(DirectX::XMVECTOR{ -1200.0f, 180.0f, -250.0f, 0.0f });
+		m_Scene->AttachPointLight(light);
+	}
+}
+
+void DX12SponzaDemo::LoadCornellBox()
+{
+	m_Camera = std::make_shared<Camera>();
+	m_Camera->LookAt(DirectX::XMVECTOR{0, 1, 2}, DirectX::XMVECTOR{0, 0, 0}, DirectX::XMVECTOR{0, 1, 0});
+	m_Camera->SetViewParams(60, m_Width * 1.0f / m_Height, 0.1f, 1000.0f);
+
+	DX12GraphicsContextAutoExecutor executor;
+	DX12GraphicsContext* pGfxContext = executor.GetGraphicsContext();
+
+	m_Scene = std::make_shared<Scene>();
+	std::vector<std::shared_ptr<Model>> models = Model::LoadOBJ(m_GraphicsManager->GetDevice(), pGfxContext, "cornell-box/CornellBox-Glossy.obj", "cornell-box/");
+	for (auto m : models)
+	{
+		m_Scene->AttachModel(m);
+	}
+
+	{
+		std::shared_ptr<PointLight> light = std::make_shared<PointLight>();
+		light->SetRadius(0.1f, 20.0f);
+		light->SetIntensity(1, 1, 1);
+		light->SetTranslation(DirectX::XMVECTOR{ 0.0f, 1.2f, 0.0f, 0.0f });
 		m_Scene->AttachPointLight(light);
 	}
 }
