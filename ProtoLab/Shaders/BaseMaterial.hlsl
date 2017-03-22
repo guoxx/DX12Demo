@@ -2,12 +2,13 @@
 #include "Inc/GBuffer.hlsli"
 #include "Inc/Utils.hlsli"
 
+// HACK - bindless
 #define RootSigDeclaration \
 RootSigBegin \
 ", SRV(t0, visibility = SHADER_VISIBILITY_VERTEX)" \
 ", CBV(b0, visibility = SHADER_VISIBILITY_ALL)" \
 ", CBV(b1, visibility = SHADER_VISIBILITY_ALL)" \
-", DescriptorTable(SRV(t1, numDescriptors=1), visibility=SHADER_VISIBILITY_PIXEL)" \
+", DescriptorTable(SRV(t16, numDescriptors=unbounded))" \
 RootSigEnd
 
 
@@ -41,13 +42,15 @@ struct BaseMaterial
 	float4 Shininess;
 	float4 Ior;
 	float4 Dissolve;
+    // HACK - bindless
+    int4 DiffuseTexId;
 };
 
 HLSLConstantBuffer(View, 0, g_View);
 HLSLConstantBuffer(BaseMaterial, 1, g_Material);
 
 StructuredBuffer<VSInput> g_VertexArray : register(t0);
-Texture2D<float4> g_DiffuseTexture : register(t1);
+Texture2D<float4> g_AllTextures[] : register(t16);
 
 
 RootSigDeclaration
@@ -68,7 +71,9 @@ GBufferOutput PSMain(VSOutput In)
 {
 	GBuffer gbuffer;
 
-	gbuffer.Diffuse = g_DiffuseTexture.Sample(g_StaticAnisoWrapSampler, In.Texcoord).xyz;
+    // HACK - bindless
+	gbuffer.Diffuse = g_AllTextures[g_Material.DiffuseTexId.x].Sample(g_StaticAnisoWrapSampler, In.Texcoord).xyz;
+
 	gbuffer.Specular = IorToF0_Dielectric(g_Material.Ior.x).xxx;
 	gbuffer.Normal = In.Normal;
 	gbuffer.Roughness = saturate((100.0f - g_Material.Shininess.x) / 100.0f);

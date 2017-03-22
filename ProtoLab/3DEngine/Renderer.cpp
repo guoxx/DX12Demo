@@ -16,6 +16,7 @@
 
 #include "Pass/LightCullingPass.h"
 #include "Pass/TiledShadingPass.h"
+#include "Material.h"
 
 
 Renderer::Renderer(GFX_HWND hwnd, int32_t width, int32_t height)
@@ -133,6 +134,7 @@ void Renderer::RenderShadowMaps(const Camera* pCamera, Scene * pScene)
 		m_RenderContext.SetViewMatrix(mLightView);
 		m_RenderContext.SetProjMatrix(mLightProj);
 
+        pGfxContext->SetGraphicsRootSignature(Material::GetRootSignature(ShadingConfiguration_DepthOnly));
 		for (auto model : pScene->GetModels())
 		{
 			model->DrawPrimitives(&m_RenderContext, pGfxContext);
@@ -513,6 +515,9 @@ void Renderer::RenderGBuffer(const Camera* pCamera, Scene* pScene)
 	m_RenderContext.SetViewMatrix(pCamera->GetViewMatrix());
 	m_RenderContext.SetProjMatrix(pCamera->GetProjectionMatrix());
 
+    // HACK - bindless
+    pGfxContext->SetGraphicsRootSignature(Material::GetRootSignature(ShadingConfiguration_GBuffer));
+    pGfxContext->SetGraphicsRootDescriptorTable(3, Material::GetAllTextures());
 	for (auto model : pScene->GetModels())
 	{
 		model->DrawPrimitives(&m_RenderContext, pGfxContext);

@@ -2,6 +2,7 @@
 #include "Material.h"
 
 #include "../DX12/DX12.h"
+#include "../DX12/DX12DescriptorManager.h"
 #include "RenderContext.h"
 
 #include "Lights/PointLight.h"
@@ -12,8 +13,21 @@
 #include "../Shaders/CompiledShaders/BaseMaterial_RSM.h"
 
 
+bool Material::s_AllTextureHandlesAllocated = false;
+int32_t Material::s_AllTextureHandleIdx = 0;
+DX12DescriptorHandle Material::s_AllTextureHandles;
+
+bool Material::m_PsoInitialized = false;
+std::shared_ptr<DX12RootSignature> Material::m_RootSig[ShadingConfiguration_Max];
+std::shared_ptr<DX12PipelineState> Material::m_PSO[ShadingConfiguration_Max];
+
 Material::Material()
 {
+    if (!s_AllTextureHandlesAllocated)
+    {
+        s_AllTextureHandlesAllocated = true;
+        s_AllTextureHandles = DX12GraphicsManager::GetInstance()->GetDescriptorManager()->AllocateInDynamicHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, 2048);
+    }
 }
 
 Material::~Material()
@@ -27,6 +41,8 @@ void Material::Load(DX12GraphicsContext* pGfxContext)
 	m_NullDescriptorHandle = DX12GraphicsManager::GetInstance()->RegisterResourceInDescriptorHeap(nullptr, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 	DX12GraphicsManager::GetInstance()->GetDevice()->CreateShaderResourceView(nullptr, &nullSrvDesc, m_NullDescriptorHandle.GetCpuHandle());
 
+    if (!m_PsoInitialized)
+    {
 	{
 		ShadingConfiguration shadingCfg = ShadingConfiguration_GBuffer;
 
@@ -37,7 +53,7 @@ void Material::Load(DX12GraphicsContext* pGfxContext)
 		sigCompiler[1].InitAsConstantBufferView(0);
 		sigCompiler[2].InitAsConstantBufferView(1);
 		sigCompiler.InitDescriptorTable(3, 1, D3D12_SHADER_VISIBILITY_PIXEL);
-		sigCompiler.SetupDescriptorRange(3, 0, CD3DX12_DESCRIPTOR_RANGE{D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 1});
+		sigCompiler.SetupDescriptorRange(3, 0, CD3DX12_DESCRIPTOR_RANGE{D3D12_DESCRIPTOR_RANGE_TYPE_SRV, DX12DescriptorRangeUnbounded, 16});
 		m_RootSig[shadingCfg] = sigCompiler.Compile(DX12GraphicsManager::GetInstance()->GetDevice());
 
 		DX12GraphicPsoCompiler psoCompiler;
@@ -92,6 +108,7 @@ void Material::Load(DX12GraphicsContext* pGfxContext)
 
 		m_PSO[shadingCfg] = psoCompiler.Compile(DX12GraphicsManager::GetInstance()->GetDevice());
 	}
+    }
 
 	if (!m_AmbientTexName.empty())
 	{
@@ -100,6 +117,20 @@ void Material::Load(DX12GraphicsContext* pGfxContext)
 	if (!m_DiffuseTexName.empty())
 	{
 		m_DiffuseTexture = LoadTexture(pGfxContext, m_DiffuseTexName, true);
+
+        // HACK - bindless
+
+        // acquire a handle
+        m_DiffuseTexId = s_AllTextureHandleIdx;
+
+        // move to next handle
+        s_AllTextureHandleIdx += 1;
+
+        // copy to dest
+	    uint32_t heapHandleIncrementSize = DX12GraphicsManager::GetInstance()->GetDescriptorManager()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+		D3D12_CPU_DESCRIPTOR_HANDLE destCpuHandle = s_AllTextureHandles.GetCpuHandle();
+		destCpuHandle.ptr += m_DiffuseTexId * heapHandleIncrementSize;
+		DX12GraphicsManager::GetInstance()->GetDevice()->CopyDescriptorsSimple(1, destCpuHandle, m_DiffuseTexture->GetStagingSRV().GetCpuHandle(), D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 	}
 	if (!m_SpecularTexName.empty())
 	{
@@ -142,7 +173,7 @@ void Material::Apply(RenderContext* pRenderContext, DX12GraphicsContext* pGfxCon
 {
 	ShadingConfiguration shadingCfg = pRenderContext->GetShadingCfg();
 
-	pGfxContext->SetGraphicsRootSignature(m_RootSig[shadingCfg]);
+	//pGfxContext->SetGraphicsRootSignature(m_RootSig[shadingCfg]);
 
 	pGfxContext->SetPipelineState(m_PSO[shadingCfg].get());
 
@@ -164,6 +195,7 @@ void Material::Apply(RenderContext* pRenderContext, DX12GraphicsContext* pGfxCon
 			float4 Shininess;
 			float4 Ior;
 			float4 Dissolve;
+            int4 DiffuseTexId;
 		};
 
 		DirectX::XMMATRIX mModel = pRenderContext->GetModelMatrix();
@@ -183,17 +215,20 @@ void Material::Apply(RenderContext* pRenderContext, DX12GraphicsContext* pGfxCon
 		baseMaterial.Ior = DirectX::XMFLOAT4{ m_Ior, m_Ior, m_Ior, m_Ior };
 		baseMaterial.Dissolve = DirectX::XMFLOAT4{ m_Dissolve, m_Dissolve, m_Dissolve, m_Dissolve };
 
+        // HACK - bindless
+        baseMaterial.DiffuseTexId = int4{ m_DiffuseTexId, 0, 0, 0 };
+
 		pGfxContext->SetGraphicsRootDynamicConstantBufferView(1, &view, sizeof(view));
 		pGfxContext->SetGraphicsRootDynamicConstantBufferView(2, &baseMaterial, sizeof(baseMaterial));
 
-		if (m_DiffuseTexture.get() == nullptr)
-		{
-			pGfxContext->SetGraphicsRootDescriptorTable(3, m_NullDescriptorHandle);
-		}
-		else
-		{
-			pGfxContext->SetGraphicsRootDescriptorTable(3, m_DiffuseTexture->GetSRV());
-		}
+		//if (m_DiffuseTexture.get() == nullptr)
+		//{
+		//	pGfxContext->SetGraphicsRootDescriptorTable(3, m_NullDescriptorHandle);
+		//}
+		//else
+		//{
+		//	pGfxContext->SetGraphicsRootDescriptorTable(3, m_DiffuseTexture->GetSRV());
+		//}
 	}
 	else if (shadingCfg == ShadingConfiguration_DepthOnly)
 	{

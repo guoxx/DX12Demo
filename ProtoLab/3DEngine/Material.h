@@ -51,8 +51,26 @@ private:
 	std::shared_ptr<DX12Texture> m_DisplacementTexture;
 	std::shared_ptr<DX12Texture> m_AlphaTexture;
 
-	std::shared_ptr<DX12RootSignature> m_RootSig[ShadingConfiguration_Max];
-	std::shared_ptr<DX12PipelineState> m_PSO[ShadingConfiguration_Max];
+    static bool m_PsoInitialized;
+	static std::shared_ptr<DX12RootSignature> m_RootSig[ShadingConfiguration_Max];
+	static std::shared_ptr<DX12PipelineState> m_PSO[ShadingConfiguration_Max];
 
 	DX12DescriptorHandle m_NullDescriptorHandle;
+
+    int32_t m_DiffuseTexId;
+
+    static bool s_AllTextureHandlesAllocated;
+    static int32_t s_AllTextureHandleIdx;
+	static DX12DescriptorHandle s_AllTextureHandles;
+
+public:
+    static DX12DescriptorHandle GetAllTextures()
+    {
+        return s_AllTextureHandles;
+    }
+
+    static std::shared_ptr<DX12RootSignature> GetRootSignature(ShadingConfiguration conf)
+    {
+        return m_RootSig[conf];
+    }
 };
