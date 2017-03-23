@@ -1,6 +1,6 @@
 # ProtoLabNG
 
-A DX12renderer for prototype.
+A DirectX 12 based renderer for prototype.
 
 ## How to setup the projects
 
