@@ -170,7 +170,7 @@ void Material::Apply(RenderContext* pRenderContext, DX12GraphicsContext* pGfxCon
 		DirectX::XMMATRIX mInverseModel = DirectX::XMMatrixInverse(nullptr, mModel);
 		DirectX::XMMATRIX mInverseTransposeModel = DirectX::XMMatrixTranspose(mInverseModel);
 		View view;
-		DirectX::XMStoreFloat4x4(&view.mModelViewProj, DirectX::XMMatrixTranspose(pRenderContext->GetModelViewProjMatrix()));
+		DirectX::XMStoreFloat4x4(&view.mModelViewProj, DirectX::XMMatrixTranspose(pRenderContext->GetModelViewProjMatrixWithJitter()));
 		DirectX::XMStoreFloat4x4(&view.mInverseTransposeModel, mInverseTransposeModel);
 
 		BaseMaterial baseMaterial;

@@ -13,6 +13,7 @@
 #include "Filters/PointLightFilter2D.h"
 #include "Filters/DirectionalLightFilter2D.h"
 #include "Filters/ConvertEVSMFilter2D.h"
+#include "Filters/AntiAliasingFilter2D.h"
 
 #include "Pass/LightCullingPass.h"
 #include "Pass/TiledShadingPass.h"
@@ -21,6 +22,7 @@
 Renderer::Renderer(GFX_HWND hwnd, int32_t width, int32_t height)
 	: m_Width{ width}
 	, m_Height{ height }
+    , m_FrameIdx{ 0 }
 {
 	DX12Device* pDevice = DX12GraphicsManager::GetInstance()->GetDevice();
 
@@ -32,6 +34,8 @@ Renderer::Renderer(GFX_HWND hwnd, int32_t width, int32_t height)
 	m_SceneDepthSurface = RenderableSurfaceManager::GetInstance()->AcquireDepthSurface(RenderableSurfaceDesc(GFX_FORMAT_D32_FLOAT, width, height));
 
 	m_LightingSurface = RenderableSurfaceManager::GetInstance()->AcquireColorSurface(RenderableSurfaceDesc(GFX_FORMAT_HDR, width, height));
+	m_HistoryLightingSurface = RenderableSurfaceManager::GetInstance()->AcquireColorSurface(RenderableSurfaceDesc(GFX_FORMAT_HDR, width, height));
+	m_PostProcessSurface = RenderableSurfaceManager::GetInstance()->AcquireColorSurface(RenderableSurfaceDesc(GFX_FORMAT_HDR, width, height));
 
 	m_IdentityFilter2D = std::make_shared<Filter2D>(pDevice);
 	m_ToneMapFilter2D = std::make_shared<ToneMapFilter2D>(pDevice);
@@ -40,6 +44,8 @@ Renderer::Renderer(GFX_HWND hwnd, int32_t width, int32_t height)
 	m_DirLightFilter2D = std::make_shared<DirectionalLightFilter2D>(pDevice);
 
 	m_ConvertEVSMFilter2D = std::make_shared<ConvertEVSMFilter2D>(pDevice);
+
+    m_AntiAliasingFilter2D = std::make_shared<AntiAliasingFilter2D>(pDevice);
 
 	uint32_t numTileX = (m_Width + LIGHT_CULLING_NUM_THREADS_XY - 1) / LIGHT_CULLING_NUM_THREADS_XY;
 	uint32_t numTileY = (m_Height + LIGHT_CULLING_NUM_THREADS_XY - 1) / LIGHT_CULLING_NUM_THREADS_XY;
@@ -65,10 +71,19 @@ void Renderer::Render(const Camera* pCamera, Scene* pScene)
 {
 	m_RenderContext.SetCamera(pCamera);
 	m_RenderContext.SetScreenSize(m_Width, m_Height);
+    if (m_FrameIdx & 0x01)
+    {
+        m_RenderContext.SetJitter(-0.25, 0.25);
+    }
+    else
+    {
+        m_RenderContext.SetJitter(0.25, -0.25);
+    }
 
 	RenderShadowMaps(pCamera, pScene);
 	RenderGBuffer(pCamera, pScene);
 	DeferredLighting(pCamera, pScene);
+    PostProcess(pCamera, pScene);
 	ResolveToSwapChain();
 	RenderDebugMenu();
 }
@@ -77,6 +92,8 @@ void Renderer::Flip()
 {
 	m_SwapChain->Flip();
 	DX12GraphicsManager::GetInstance()->Flip();
+
+    ++m_FrameIdx;
 }
 
 void Renderer::RenderShadowMaps(const Camera* pCamera, Scene * pScene)
@@ -521,6 +538,43 @@ void Renderer::RenderGBuffer(const Camera* pCamera, Scene* pScene)
 	pGfxContext->PIXEndEvent();
 }
 
+void Renderer::PostProcess(const Camera* pCamera, Scene* pScene)
+{
+    DX12GraphicsContextAutoExecutor executor;
+    DX12GraphicsContext* pGfxContext = executor.GetGraphicsContext();
+
+    pGfxContext->PIXBeginEvent(L"AAFilter");
+
+    pGfxContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    pGfxContext->SetViewport(0, 0, m_Width, m_Height);
+
+    {
+        pGfxContext->ResourceTransitionBarrier(m_LightingSurface.Get(), D3D12_RESOURCE_STATE_GENERIC_READ);
+        pGfxContext->ResourceTransitionBarrier(m_HistoryLightingSurface.Get(), D3D12_RESOURCE_STATE_GENERIC_READ);
+        m_AntiAliasingFilter2D->Apply(pGfxContext);
+        pGfxContext->SetGraphicsDynamicCbvSrvUav(0, 0, m_LightingSurface->GetStagingSRV().GetCpuHandle());
+        pGfxContext->SetGraphicsDynamicCbvSrvUav(0, 1, m_HistoryLightingSurface->GetStagingSRV().GetCpuHandle());
+        DX12ColorSurface* pSurfaces[] = {m_PostProcessSurface.Get()};
+        pGfxContext->SetRenderTargets(_countof(pSurfaces), pSurfaces, nullptr);
+        m_AntiAliasingFilter2D->Draw(pGfxContext);
+        pGfxContext->ResourceTransitionBarrier(m_LightingSurface.Get(), D3D12_RESOURCE_STATE_RENDER_TARGET);
+        pGfxContext->ResourceTransitionBarrier(m_HistoryLightingSurface.Get(), D3D12_RESOURCE_STATE_RENDER_TARGET);
+    }
+
+    {
+        pGfxContext->ResourceTransitionBarrier(m_PostProcessSurface.Get(), D3D12_RESOURCE_STATE_GENERIC_READ);
+        m_IdentityFilter2D->Apply(pGfxContext);
+        pGfxContext->SetGraphicsDynamicCbvSrvUav(0, 0, m_PostProcessSurface->GetStagingSRV().GetCpuHandle());
+        DX12ColorSurface* pSurfaces[] = {m_HistoryLightingSurface.Get()};
+        pGfxContext->SetRenderTargets(_countof(pSurfaces), pSurfaces, nullptr);
+        m_IdentityFilter2D->Draw(pGfxContext);
+        pGfxContext->ResourceTransitionBarrier(m_PostProcessSurface.Get(), D3D12_RESOURCE_STATE_RENDER_TARGET);
+
+    }
+
+    pGfxContext->PIXEndEvent();
+}
+
 void Renderer::ResolveToSwapChain()
 {
 	m_SwapChain->Begin();
@@ -535,13 +589,13 @@ void Renderer::ResolveToSwapChain()
 
 	pGfxContext->SetViewport(0, 0, m_Width, m_Height);
 
-	pGfxContext->ResourceTransitionBarrier(m_LightingSurface.Get(), D3D12_RESOURCE_STATE_GENERIC_READ);
+	pGfxContext->ResourceTransitionBarrier(m_PostProcessSurface.Get(), D3D12_RESOURCE_STATE_GENERIC_READ);
 	if (g_ToneMapping)
 	{
 		m_ToneMapFilter2D->Apply(pGfxContext);
 		float exposure = g_ToneMapExposure;
 		pGfxContext->SetGraphicsRoot32BitConstants(0, 1, &exposure, 0);
-		pGfxContext->SetGraphicsRootDescriptorTable(1, m_LightingSurface->GetSRV());
+		pGfxContext->SetGraphicsRootDescriptorTable(1, m_PostProcessSurface->GetSRV());
 		m_ToneMapFilter2D->Draw(pGfxContext);
 	}
 	else
@@ -550,7 +604,7 @@ void Renderer::ResolveToSwapChain()
 		pGfxContext->SetGraphicsRootDescriptorTable(0, m_LightingSurface->GetSRV());
 		m_IdentityFilter2D->Draw(pGfxContext);
 	}
-	pGfxContext->ResourceTransitionBarrier(m_LightingSurface.Get(), D3D12_RESOURCE_STATE_RENDER_TARGET);
+	pGfxContext->ResourceTransitionBarrier(m_PostProcessSurface.Get(), D3D12_RESOURCE_STATE_RENDER_TARGET);
 }
 
 void Renderer::RenderDebugMenu()

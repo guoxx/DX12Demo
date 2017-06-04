@@ -13,6 +13,7 @@ class ToneMapFilter2D;
 class PointLightFilter2D;
 class DirectionalLightFilter2D;
 class ConvertEVSMFilter2D;
+class AntiAliasingFilter2D;
 class LightCullingPass;
 class TiledShadingPass;
 
@@ -33,12 +34,15 @@ private:
 
 	void RenderGBuffer(const Camera* pCamera, Scene* pScene);
 
+    void PostProcess(const Camera* pCamera, Scene* pScene);
+
 	void ResolveToSwapChain();
 
 	void RenderDebugMenu();
 
 	int32_t m_Width;
 	int32_t m_Height;
+    int32_t m_FrameIdx;
 
 	RenderContext m_RenderContext;	
 
@@ -48,6 +52,8 @@ private:
 	RenderableSurfaceHandle<DX12DepthSurface> m_SceneDepthSurface;
 
 	RenderableSurfaceHandle<DX12ColorSurface> m_LightingSurface;
+	RenderableSurfaceHandle<DX12ColorSurface> m_PostProcessSurface;
+	RenderableSurfaceHandle<DX12ColorSurface> m_HistoryLightingSurface;
 
 	std::shared_ptr<DX12SwapChain> m_SwapChain;
 
@@ -56,6 +62,7 @@ private:
 	std::shared_ptr<PointLightFilter2D> m_PointLightFilter2D;
 	std::shared_ptr<DirectionalLightFilter2D> m_DirLightFilter2D;
 	std::shared_ptr<ConvertEVSMFilter2D> m_ConvertEVSMFilter2D;
+	std::shared_ptr<AntiAliasingFilter2D> m_AntiAliasingFilter2D;
 
 	std::shared_ptr<LightCullingPass> m_LightCullingPass;
 	std::shared_ptr<TiledShadingPass> m_TiledShadingPass;

@@ -44,11 +44,14 @@ public:
 
 	DirectX::XMMATRIX GetModelViewProjMatrix() const { return m_mModelViewProj; }
 
+	DirectX::XMMATRIX GetModelViewProjMatrixWithJitter() const { return m_mModelViewProjWithJitter; }
+
 	void SetModelMatrix(DirectX::FXMMATRIX mModel)
 	{
 		m_mModel = mModel;
 
 		m_mModelViewProj = DirectX::XMMatrixMultiply(m_mModel, m_mViewProj);
+        m_mModelViewProjWithJitter = DirectX::XMMatrixMultiply(m_mModelViewProj, m_mJitter);
 	}
 
 	void SetViewMatrix(DirectX::FXMMATRIX mView)
@@ -57,6 +60,7 @@ public:
 
 		m_mViewProj = DirectX::XMMatrixMultiply(m_mView, m_mProj);
 		m_mModelViewProj = DirectX::XMMatrixMultiply(m_mModel, m_mViewProj);
+        m_mModelViewProjWithJitter = DirectX::XMMatrixMultiply(m_mModelViewProj, m_mJitter);
 	}
 	
 	void SetProjMatrix(DirectX::FXMMATRIX mProj)
@@ -65,6 +69,15 @@ public:
 
 		m_mViewProj = DirectX::XMMatrixMultiply(m_mView, m_mProj);
 		m_mModelViewProj = DirectX::XMMatrixMultiply(m_mModel, m_mViewProj);
+        m_mModelViewProjWithJitter = DirectX::XMMatrixMultiply(m_mModelViewProj, m_mJitter);
+	}
+
+	void SetJitter(float jitterX, float jitterY)
+	{
+        m_JitterOffset = DirectX::XMVectorSet(jitterX, jitterY, 0, 0);
+        m_mJitter = DirectX::XMMatrixTranslation(jitterX * 2.0f / m_ScreenWidth, jitterY * 2.0f / m_ScreenHeight, 0);
+
+        m_mModelViewProjWithJitter = DirectX::XMMatrixMultiply(m_mModelViewProj, m_mJitter);
 	}
 
 	ShadingConfiguration GetShadingCfg() const { return m_ShadingCfg; }
@@ -96,11 +109,15 @@ private:
 	uint32_t m_ScreenWidth;
 	uint32_t m_ScreenHeight;
 
+    DirectX::XMVECTOR m_JitterOffset;
+
 	DirectX::XMMATRIX m_mModel;
 	DirectX::XMMATRIX m_mView;
 	DirectX::XMMATRIX m_mProj;
+	DirectX::XMMATRIX m_mJitter;
 	DirectX::XMMATRIX m_mViewProj;
 	DirectX::XMMATRIX m_mModelViewProj;
+	DirectX::XMMATRIX m_mModelViewProjWithJitter;
 
 	std::map<DirectionalLight*, RenderableSurfaceHandle<DX12DepthSurface>> m_ShadowMapForDirLights;
 	std::map<PointLight*, std::array<RenderableSurfaceHandle<DX12DepthSurface>, 6>> m_ShadowMapForPointLights;

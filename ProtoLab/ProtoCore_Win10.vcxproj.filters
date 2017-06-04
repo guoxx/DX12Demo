@@ -192,6 +192,9 @@
     <ClCompile Include="RayTracing\PathTracer.cpp">
       <Filter>RayTracing</Filter>
     </ClCompile>
+    <ClCompile Include="3DEngine\Filters\AntiAliasingFilter2D.cpp">
+      <Filter>3DEngine\Filters</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DX12\DX12PipelineState.h">
@@ -398,6 +401,9 @@
     <ClInclude Include="RayTracing\PathTracer.h">
       <Filter>RayTracing</Filter>
     </ClInclude>
+    <ClInclude Include="3DEngine\Filters\AntiAliasingFilter2D.h">
+      <Filter>3DEngine\Filters</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\Inc\BRDF.hlsli">
@@ -458,6 +464,9 @@
       <Filter>Shaders</Filter>
     </CustomBuild>
     <CustomBuild Include="Shaders\EVSM.hlsl">
+      <Filter>Shaders</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Shaders\AntiAliasingFilter2D.hlsl">
       <Filter>Shaders</Filter>
     </CustomBuild>
   </ItemGroup>

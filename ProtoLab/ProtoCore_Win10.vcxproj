@@ -130,6 +130,7 @@
     <ClCompile Include="3DEngine\Actor.cpp" />
     <ClCompile Include="3DEngine\Camera.cpp" />
     <ClCompile Include="3DEngine\EngineTuning.cpp" />
+    <ClCompile Include="3DEngine\Filters\AntiAliasingFilter2D.cpp" />
     <ClCompile Include="3DEngine\Filters\ConvertEVSMFilter2D.cpp" />
     <ClCompile Include="3DEngine\Filters\DirectionalLightFilter2D.cpp" />
     <ClCompile Include="3DEngine\Filters\Filter2D.cpp" />
@@ -183,6 +184,7 @@
     <ClCompile Include="Win10\Win32Application.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="3DEngine\Filters\AntiAliasingFilter2D.h" />
     <ClInclude Include="3DEngine\Filters\ConvertEVSMFilter2D.h" />
     <ClInclude Include="3DEngine\GraphicsEngineDefinition.h" />
     <ClInclude Include="3DEngine\Actor.h" />
@@ -314,6 +316,11 @@
     <ProjectReference Include="..\ThirdParty\embree\embree.vcxproj">
       <Project>{01abbc96-b193-4467-8e1e-6fd4df051ac7}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="Shaders\AntiAliasingFilter2D.hlsl">
+      <FileType>Document</FileType>
+    </CustomBuild>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
