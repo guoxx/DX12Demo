@@ -7,6 +7,7 @@ class DX12Device;
 class DX12RootSignature
 {
 	friend class DX12RootSignatureCompiler;
+    friend class DX12RootSignatureDeserializer;
 
 public:
 	DX12RootSignature(ComPtr<ID3D12RootSignature> rootSig);
@@ -79,4 +80,17 @@ private:
 	std::unique_ptr<CD3DX12_ROOT_PARAMETER[]> m_RootParams;
 	std::unique_ptr<CD3DX12_STATIC_SAMPLER_DESC[]> m_StaticSamplers;
 	std::vector<DescriptorTableDesc> m_CachedDescriptorTables;
+};
+
+class DX12RootSignatureDeserializer
+{
+public:
+	DX12RootSignatureDeserializer(const void* pShaderBin, uint32_t dataSize);
+	DX12RootSignatureDeserializer(ComPtr<ID3DBlob> blob);
+	~DX12RootSignatureDeserializer() = default;
+
+	std::shared_ptr<DX12RootSignature> Deserialize(DX12Device* device);    
+
+private:
+    ComPtr<ID3DBlob> m_RootSigBlob;
 };

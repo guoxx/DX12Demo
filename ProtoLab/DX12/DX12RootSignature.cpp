@@ -229,3 +229,64 @@ std::shared_ptr<DX12RootSignature> DX12RootSignatureCompiler::Compile(DX12Device
 	return d3dRootSig;
 }
 
+DX12RootSignatureDeserializer::DX12RootSignatureDeserializer(const void* pShaderBin, uint32_t dataSize)
+{
+    HRESULT ret = D3DGetBlobPart(pShaderBin, dataSize, D3D_BLOB_ROOT_SIGNATURE, 0, m_RootSigBlob.GetAddressOf());
+    assert(ret == S_OK);
+}
+
+DX12RootSignatureDeserializer::DX12RootSignatureDeserializer(ComPtr<ID3DBlob> blob)
+    : m_RootSigBlob(blob)
+{
+}
+
+std::shared_ptr<DX12RootSignature> DX12RootSignatureDeserializer::Deserialize(DX12Device* device)
+{
+	ComPtr<ID3D12RootSignature> rootSig = device->CreateRootSignature(m_RootSigBlob->GetBufferPointer(), m_RootSigBlob->GetBufferSize());
+	std::shared_ptr<DX12RootSignature> d3dRootSig = std::make_shared<DX12RootSignature>(rootSig);
+
+    ComPtr<ID3D12RootSignatureDeserializer> deserializer;
+    D3D12CreateRootSignatureDeserializer(m_RootSigBlob->GetBufferPointer(), m_RootSigBlob->GetBufferSize(), IID_GRAPHICS_PPV_ARGS(deserializer.GetAddressOf()));
+
+    const D3D12_ROOT_SIGNATURE_DESC* desc = deserializer->GetRootSignatureDesc();
+
+	assert(desc->NumParameters <= DX12MaxSlotsPerShader);
+	for (uint32_t i = 0; i < desc->NumParameters; ++i)
+	{
+		const D3D12_ROOT_PARAMETER* pParam = &desc->pParameters[i];
+		if (pParam->ParameterType == D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE)
+		{
+			uint32_t numDescriptors = 0;
+			for (uint32_t j = 0; j < pParam->DescriptorTable.NumDescriptorRanges; ++j)
+			{
+				const D3D12_DESCRIPTOR_RANGE *pDescriptorRange = &pParam->DescriptorTable.pDescriptorRanges[j];
+				// TODO: aliasing is not supported
+				assert(pDescriptorRange->OffsetInDescriptorsFromTableStart == D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND);
+
+				if (pDescriptorRange->NumDescriptors == DX12DescriptorRangeUnbounded)
+				{
+					numDescriptors = DX12DescriptorRangeUnbounded;
+
+					// unbounded descriptor range must be put at the end of descriptor table
+					assert(j == (pParam->DescriptorTable.NumDescriptorRanges - 1));
+				}
+				else
+				{
+					uint32_t oldVal = numDescriptors;
+
+					numDescriptors += pDescriptorRange->NumDescriptors;
+
+					// in case of interger overflow
+					assert(numDescriptors > oldVal);
+				}
+			}
+			d3dRootSig->m_DescriptorTableSize[i] = numDescriptors;
+		}
+		else
+		{
+			d3dRootSig->m_DescriptorTableSize[i] = 0;
+		}
+	}
+
+    return d3dRootSig;
+}

@@ -10,13 +10,8 @@
 
 LightCullingPass::LightCullingPass(DX12Device* device)
 {
-	DX12RootSignatureCompiler sigCompiler;
-	sigCompiler.Begin(3);
-	sigCompiler.End();
-	sigCompiler[0].InitAsConstantBufferView(0);
-	sigCompiler[1].InitAsShaderResourceView(0);
-	sigCompiler[2].InitAsUnorderedAccessView(0);
-	m_RootSig = sigCompiler.Compile(device);
+    DX12RootSignatureDeserializer sigDeserialier{g_LightCulling_CS, sizeof(g_LightCulling_CS)};
+	m_RootSig = sigDeserialier.Deserialize(device);
 
 	DX12ComputePsoCompiler psoCompiler;
 	psoCompiler.SetShaderFromBin(g_LightCulling_CS, sizeof(g_LightCulling_CS));

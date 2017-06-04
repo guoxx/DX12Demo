@@ -17,13 +17,8 @@ ToneMapFilter2D::ToneMapFilter2D(DX12Device* device)
 	pGfxContext->UploadBuffer(m_IndexBuffer.get(), indices, sizeof(indices));
 	pGfxContext->ResourceTransitionBarrier(m_IndexBuffer.get(), D3D12_RESOURCE_STATE_GENERIC_READ);
 
-	DX12RootSignatureCompiler sigCompiler;
-	sigCompiler.Begin(2);
-	sigCompiler[0].InitAsConstants(1, 0);
-	sigCompiler.InitDescriptorTable(1, 1, D3D12_SHADER_VISIBILITY_PIXEL);
-	sigCompiler.SetupDescriptorRange(1, 0, CD3DX12_DESCRIPTOR_RANGE{D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0});
-	sigCompiler.End();
-	m_RootSig = sigCompiler.Compile(DX12GraphicsManager::GetInstance()->GetDevice());
+    DX12RootSignatureDeserializer sigDeserialier{g_ToneMapFilter2D_VS, sizeof(g_ToneMapFilter2D_VS)};
+	m_RootSig = sigDeserialier.Deserialize(device);
 
 	DX12GraphicPsoCompiler psoCompiler;
 	psoCompiler.SetShaderFromBin(DX12ShaderTypeVertex, g_ToneMapFilter2D_VS, sizeof(g_ToneMapFilter2D_VS));

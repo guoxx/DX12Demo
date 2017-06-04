@@ -19,13 +19,8 @@ ConvertEVSMFilter2D::ConvertEVSMFilter2D(DX12Device* device)
 	pGfxContext->UploadBuffer(m_IndexBuffer.get(), indices, sizeof(indices));
 	pGfxContext->ResourceTransitionBarrier(m_IndexBuffer.get(), D3D12_RESOURCE_STATE_GENERIC_READ);
 
-	DX12RootSignatureCompiler sigCompiler;
-	sigCompiler.Begin(2);
-	sigCompiler.End();
-	sigCompiler[0].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_PIXEL);
-	sigCompiler.InitDescriptorTable(1, 1, D3D12_SHADER_VISIBILITY_PIXEL);
-	sigCompiler.SetupDescriptorRange(1, 0, CD3DX12_DESCRIPTOR_RANGE{D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0});
-	m_RootSig = sigCompiler.Compile(DX12GraphicsManager::GetInstance()->GetDevice());
+    DX12RootSignatureDeserializer sigDeserialier{g_EVSM_VS, sizeof(g_EVSM_VS)};
+	m_RootSig = sigDeserialier.Deserialize(device);
 
 	DX12GraphicPsoCompiler psoCompiler;
 	psoCompiler.SetShaderFromBin(DX12ShaderTypeVertex, g_EVSM_VS, sizeof(g_EVSM_VS));
