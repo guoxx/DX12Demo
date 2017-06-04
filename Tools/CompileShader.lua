@@ -47,6 +47,7 @@ local function Compile(profile_name, shader_profile, entry)
 	local shader_varname = " /Vn g_" .. new_filename
 	local output_header_file = " /Fh " .. output_dir .. output_intermediate_dir .. new_filename .. ".h"
 	local output_pdb_file = " "
+	local specify_root_sig_ver = " /force_rootsig_ver rootsig_1_1"
 	-- if debug_shader then
 	-- 	output_pdb_file = " /Fd " .. output_dir .. new_filename .. ".pdb"
 	-- end
@@ -59,6 +60,7 @@ local function Compile(profile_name, shader_profile, entry)
 	 			.. output_header_file
 	 			.. output_pdb_file
 	 			.. shader_varname
+	 			.. specify_root_sig_ver
 
 	if verbose then
 		print(cmd)

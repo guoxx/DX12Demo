@@ -10,19 +10,8 @@
 
 TiledShadingPass::TiledShadingPass(DX12Device* device)
 {
-	DX12RootSignatureCompiler sigCompiler;
-	sigCompiler.Begin(6);
-	sigCompiler.End();
-	sigCompiler[0].InitAsConstantBufferView(0);
-	sigCompiler[1].InitAsShaderResourceView(0);
-	sigCompiler[2].InitAsShaderResourceView(1);
-	sigCompiler[3].InitAsShaderResourceView(2);
-	sigCompiler.InitDescriptorTable(4, 2);
-	sigCompiler.SetupDescriptorRange(4, 0, CD3DX12_DESCRIPTOR_RANGE{D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 4, 3});
-	sigCompiler.SetupDescriptorRange(4, 1, CD3DX12_DESCRIPTOR_RANGE{D3D12_DESCRIPTOR_RANGE_TYPE_UAV, 1, 0});
-	sigCompiler.InitDescriptorTable(5, 1);
-	sigCompiler.SetupDescriptorRange(5, 0, CD3DX12_DESCRIPTOR_RANGE{D3D12_DESCRIPTOR_RANGE_TYPE_SRV, DX12DescriptorRangeUnbounded, 16});
-	m_RootSig = sigCompiler.Compile(device);
+	DX12RootSignatureDeserializer sigDeserializer{g_TiledShading_CS, sizeof(g_TiledShading_CS)};
+	m_RootSig = sigDeserializer.Deserialize(device);
 
 	DX12ComputePsoCompiler psoCompiler;
 	psoCompiler.SetShaderFromBin(g_TiledShading_CS, sizeof(g_TiledShading_CS));

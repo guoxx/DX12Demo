@@ -242,13 +242,20 @@ DX12RootSignatureDeserializer::DX12RootSignatureDeserializer(ComPtr<ID3DBlob> bl
 
 std::shared_ptr<DX12RootSignature> DX12RootSignatureDeserializer::Deserialize(DX12Device* device)
 {
-	ComPtr<ID3D12RootSignature> rootSig = device->CreateRootSignature(m_RootSigBlob->GetBufferPointer(), m_RootSigBlob->GetBufferSize());
-	std::shared_ptr<DX12RootSignature> d3dRootSig = std::make_shared<DX12RootSignature>(rootSig);
+	//ComPtr<ID3D12RootSignature> rootSig = device->CreateRootSignature(m_RootSigBlob->GetBufferPointer(), m_RootSigBlob->GetBufferSize());
+	//std::shared_ptr<DX12RootSignature> d3dRootSig = std::make_shared<DX12RootSignature>(rootSig);
 
     ComPtr<ID3D12RootSignatureDeserializer> deserializer;
     D3D12CreateRootSignatureDeserializer(m_RootSigBlob->GetBufferPointer(), m_RootSigBlob->GetBufferSize(), IID_GRAPHICS_PPV_ARGS(deserializer.GetAddressOf()));
 
     const D3D12_ROOT_SIGNATURE_DESC* desc = deserializer->GetRootSignatureDesc();
+
+	ComPtr<ID3DBlob> rootSignatureBlob;
+	ComPtr<ID3DBlob> errBlob;
+	D3D12SerializeRootSignature(desc, D3D_ROOT_SIGNATURE_VERSION_1, &rootSignatureBlob, &errBlob);
+
+	ComPtr<ID3D12RootSignature> rootSig = device->CreateRootSignature(rootSignatureBlob->GetBufferPointer(), rootSignatureBlob->GetBufferSize());
+	std::shared_ptr<DX12RootSignature> d3dRootSig = std::make_shared<DX12RootSignature>(rootSig);
 
 	assert(desc->NumParameters <= DX12MaxSlotsPerShader);
 	for (uint32_t i = 0; i < desc->NumParameters; ++i)
