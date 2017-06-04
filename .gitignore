@@ -6,6 +6,7 @@ ipch/
 
 Build/
 Output/
+packages/
 
 ProtoLab/Shaders/CompiledShaders/*.h
 ProtoLab/Shaders/CompiledShaders/Temp/

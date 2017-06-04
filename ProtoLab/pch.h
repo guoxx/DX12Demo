@@ -37,7 +37,7 @@
 #include <array>
 #include <map>
 
-#include <pix.h>
+#include <pix3.h>
 
 #include "Utils/Heaponly.h"
 #include "Utils/Noncopyable.h"

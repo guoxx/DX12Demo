@@ -424,6 +424,7 @@
     <None Include="Shaders\Inc\GBuffer.hlsli">
       <Filter>Shaders\Inc</Filter>
     </None>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="Shaders\PointLight.hlsl">
