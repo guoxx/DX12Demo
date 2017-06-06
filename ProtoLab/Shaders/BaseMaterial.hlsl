@@ -23,12 +23,16 @@ struct VSOutput
 	float4 Position : SV_POSITION;
 	float3 Normal : NORMAL;
 	float2 Texcoord : TEXCOORD;
+	float4 PositionClipSpace : POSITION0;
+	float4 PositionClipSpaceLastFrame : POSITION1;
 };
 
 struct View
 {
 	float4x4 mModelViewProj;
+	float4x4 mModelViewProjLastFrame;
 	float4x4 mInverseTransposeModel;
+    float4 JitterOffset;
 };
 
 struct BaseMaterial
@@ -60,6 +64,9 @@ VSOutput VSMain(uint vertid : SV_VertexID)
 	Out.Normal = mul(float4(In.Normal, 0), g_View.mInverseTransposeModel).xyz;
 	Out.Texcoord = In.Texcoord;
 
+    Out.PositionClipSpace = Out.Position;
+    Out.PositionClipSpaceLastFrame = mul(float4(In.Position, 1), g_View.mModelViewProjLastFrame);
+
 	return Out;
 }
 
@@ -72,6 +79,16 @@ GBufferOutput PSMain(VSOutput In)
 	gbuffer.Specular = IorToF0_Dielectric(g_Material.Ior.x).xxx;
 	gbuffer.Normal = In.Normal;
 	gbuffer.Roughness = saturate((100.0f - g_Material.Shininess.x) / 100.0f);
+
+    float4 posNdc = In.PositionClipSpace;
+    posNdc /= posNdc.w;
+    float4 posNdcLastFrame = In.PositionClipSpaceLastFrame;
+    posNdcLastFrame /= posNdcLastFrame.w;
+
+    posNdc.xy -= g_View.JitterOffset.xy; 
+    posNdcLastFrame.xy -= g_View.JitterOffset.zw;
+    float2 velocity = (posNdcLastFrame.xy - posNdc.xy) * float2(0.5, -0.5);
+    gbuffer.Velocity = velocity;
 
 	return GBufferEncode(gbuffer);
 }

@@ -5,7 +5,7 @@
 #define RootSigDeclaration \
 RootSigBegin \
 ", CBV(b0, visibility = SHADER_VISIBILITY_ALL)" \
-", DescriptorTable(SRV(t0, numDescriptors=8), visibility=SHADER_VISIBILITY_PIXEL)" \
+", DescriptorTable(SRV(t0, numDescriptors=9), visibility=SHADER_VISIBILITY_PIXEL)" \
 RootSigEnd
 
 HLSLConstantBuffer(DirectionalLightConstants, 0, g_Constants);
@@ -13,11 +13,12 @@ HLSLConstantBuffer(DirectionalLightConstants, 0, g_Constants);
 Texture2D<float4> g_GBuffer0 : register(t0);
 Texture2D<float4> g_GBuffer1 : register(t1);
 Texture2D<float4> g_GBuffer2 : register(t2);
-Texture2D<float> g_DepthTexture : register(t3);
-Texture2D<float> g_ShadowMap : register(t4);
-Texture2D<float4> g_RSMIntensityTexture : register(t5);
-Texture2D<float4> g_RSMNormalTexture : register(t6);
-Texture2D<float4> g_EVSMTexture : register(t7);
+Texture2D<float4> g_GBuffer3 : register(t3);
+Texture2D<float> g_DepthTexture : register(t4);
+Texture2D<float> g_ShadowMap : register(t5);
+Texture2D<float4> g_RSMIntensityTexture : register(t6);
+Texture2D<float4> g_RSMNormalTexture : register(t7);
+Texture2D<float4> g_EVSMTexture : register(t8);
 
 
 struct VSOutput
@@ -75,7 +76,7 @@ float ShadowMask(GBuffer gbuffer)
 RootSigDeclaration
 float4 PSMain(VSOutput In) : SV_TARGET
 {
-	GBuffer gbuffer = GBufferDecode(g_GBuffer0, g_GBuffer1, g_GBuffer2, g_DepthTexture, g_StaticPointClampSampler, In.Texcoord, g_Constants.mInvView, g_Constants.mInvProj);
+	GBuffer gbuffer = GBufferDecode(g_GBuffer0, g_GBuffer1, g_GBuffer2, g_GBuffer3, g_DepthTexture, g_StaticPointClampSampler, In.Texcoord, g_Constants.mInvView, g_Constants.mInvProj);
 
 	float3 outRadiance = 0.0f;
 

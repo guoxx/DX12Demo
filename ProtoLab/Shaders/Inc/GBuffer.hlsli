@@ -11,6 +11,8 @@
 +----------------+----------------+----------------+----------------+
 | normal                                           + roughness      +
 +----------------+----------------+----------------+----------------+
+| velocity                        +                +                +
++----------------+----------------+----------------+----------------+
 
 */
 
@@ -19,6 +21,7 @@ struct GBufferOutput
 	float4 Diffuse          : SV_TARGET0;
 	float4 Specular         : SV_TARGET1;
 	float4 Normal_Roughness : SV_TARGET2;
+    float4 Velocity         : SV_TARGET3;
 };
 
 struct GBuffer
@@ -27,7 +30,7 @@ struct GBuffer
 	float3 Specular;
 	float3 Normal;
 	float Roughness;
-
+    float2 Velocity;
 
 	// --
 	float Depth;
@@ -42,11 +45,11 @@ GBufferOutput GBufferEncode(GBuffer gbuffer)
 	Out.Specular = float4(gbuffer.Specular, 1.0f);
 	Out.Normal_Roughness.xyz = (gbuffer.Normal + 1.0f) * 0.5f;
 	Out.Normal_Roughness.w = gbuffer.Roughness;
-
+    Out.Velocity = float4(gbuffer.Velocity, 0, 0);
 	return Out;
 }
 
-GBuffer GBufferDecode(Texture2D<float4> RT0, Texture2D<float4> RT1, Texture2D<float4> RT2, Texture2D<float> DepthBuffer, SamplerState samp, float2 UV,
+GBuffer GBufferDecode(Texture2D<float4> RT0, Texture2D<float4> RT1, Texture2D<float4> RT2, Texture2D<float4> RT3, Texture2D<float> DepthBuffer, SamplerState samp, float2 UV,
 	float4x4 mInvView, float4x4 mInvProj)
 {
 	GBuffer gbuffer;
@@ -54,10 +57,12 @@ GBuffer GBufferDecode(Texture2D<float4> RT0, Texture2D<float4> RT1, Texture2D<fl
 	float4 Diffuse = RT0.SampleLevel(samp, UV, 0);
 	float4 Specular = RT1.SampleLevel(samp, UV, 0);
 	float4 Normal_Roughness = RT2.SampleLevel(samp, UV, 0);
+    float4 Velocity = RT3.SampleLevel(samp, UV, 0); 
 	gbuffer.Diffuse = Diffuse.xyz;
 	gbuffer.Specular = Specular.xyz;
 	gbuffer.Normal = Normal_Roughness.xyz * 2.0f - 1.0f;
 	gbuffer.Roughness = Normal_Roughness.w;
+	gbuffer.Velocity = Velocity.xy;
 
 	gbuffer.Depth = DepthBuffer.SampleLevel(samp, UV, 0);
 

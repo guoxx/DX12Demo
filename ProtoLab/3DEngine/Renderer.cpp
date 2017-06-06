@@ -31,6 +31,7 @@ Renderer::Renderer(GFX_HWND hwnd, int32_t width, int32_t height)
 	m_SceneGBuffer0 = RenderableSurfaceManager::GetInstance()->AcquireColorSurface(RenderableSurfaceDesc(GFX_FORMAT_R8G8B8A8_UNORM, width, height));
 	m_SceneGBuffer1 = RenderableSurfaceManager::GetInstance()->AcquireColorSurface(RenderableSurfaceDesc(GFX_FORMAT_R8G8B8A8_UNORM, width, height));
 	m_SceneGBuffer2 = RenderableSurfaceManager::GetInstance()->AcquireColorSurface(RenderableSurfaceDesc(GFX_FORMAT_R8G8B8A8_UNORM, width, height));
+	m_SceneGBuffer3 = RenderableSurfaceManager::GetInstance()->AcquireColorSurface(RenderableSurfaceDesc(GFX_FORMAT_R16G16B16A16_FLOAT, width, height));
 	m_SceneDepthSurface = RenderableSurfaceManager::GetInstance()->AcquireDepthSurface(RenderableSurfaceDesc(GFX_FORMAT_D32_FLOAT, width, height));
 
 	m_LightingSurface = RenderableSurfaceManager::GetInstance()->AcquireColorSurface(RenderableSurfaceDesc(GFX_FORMAT_HDR, width, height));
@@ -314,6 +315,7 @@ void Renderer::DeferredLighting(const Camera* pCamera, Scene* pScene)
 			pGfxContext->ResourceTransitionBarrier(m_SceneGBuffer0.Get(), D3D12_RESOURCE_STATE_GENERIC_READ);
 			pGfxContext->ResourceTransitionBarrier(m_SceneGBuffer1.Get(), D3D12_RESOURCE_STATE_GENERIC_READ);
 			pGfxContext->ResourceTransitionBarrier(m_SceneGBuffer2.Get(), D3D12_RESOURCE_STATE_GENERIC_READ);
+			pGfxContext->ResourceTransitionBarrier(m_SceneGBuffer3.Get(), D3D12_RESOURCE_STATE_GENERIC_READ);
 			pGfxContext->ResourceTransitionBarrier(m_SceneDepthSurface.Get(), D3D12_RESOURCE_STATE_GENERIC_READ);
 			pGfxContext->ResourceTransitionBarrier(m_LightingSurface.Get(), D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
 
@@ -347,8 +349,9 @@ void Renderer::DeferredLighting(const Camera* pCamera, Scene* pScene)
 			pGfxContext->SetComputeDynamicCbvSrvUav(4, 0, m_SceneGBuffer0->GetStagingSRV().GetCpuHandle());
 			pGfxContext->SetComputeDynamicCbvSrvUav(4, 1, m_SceneGBuffer1->GetStagingSRV().GetCpuHandle());
 			pGfxContext->SetComputeDynamicCbvSrvUav(4, 2, m_SceneGBuffer2->GetStagingSRV().GetCpuHandle());
-			pGfxContext->SetComputeDynamicCbvSrvUav(4, 3, m_SceneDepthSurface->GetStagingSRV().GetCpuHandle());
-			pGfxContext->SetComputeDynamicCbvSrvUav(4, 4, m_LightingSurface->GetStagingUAV().GetCpuHandle());
+			pGfxContext->SetComputeDynamicCbvSrvUav(4, 3, m_SceneGBuffer3->GetStagingSRV().GetCpuHandle());
+			pGfxContext->SetComputeDynamicCbvSrvUav(4, 4, m_SceneDepthSurface->GetStagingSRV().GetCpuHandle());
+			pGfxContext->SetComputeDynamicCbvSrvUav(4, 5, m_LightingSurface->GetStagingUAV().GetCpuHandle());
 			int firstTextureId = 0;
 			for (int i = 0; i < pScene->GetDirectionalLights().size(); ++i)
 			{
@@ -380,6 +383,7 @@ void Renderer::DeferredLighting(const Camera* pCamera, Scene* pScene)
 			pGfxContext->ResourceTransitionBarrier(m_SceneGBuffer0.Get(), D3D12_RESOURCE_STATE_RENDER_TARGET);
 			pGfxContext->ResourceTransitionBarrier(m_SceneGBuffer1.Get(), D3D12_RESOURCE_STATE_RENDER_TARGET);
 			pGfxContext->ResourceTransitionBarrier(m_SceneGBuffer2.Get(), D3D12_RESOURCE_STATE_RENDER_TARGET);
+			pGfxContext->ResourceTransitionBarrier(m_SceneGBuffer3.Get(), D3D12_RESOURCE_STATE_RENDER_TARGET);
 			pGfxContext->ResourceTransitionBarrier(m_SceneDepthSurface.Get(), D3D12_RESOURCE_STATE_DEPTH_WRITE);
 			pGfxContext->ResourceTransitionBarrier(m_LightingSurface.Get(), D3D12_RESOURCE_STATE_RENDER_TARGET);
 
@@ -430,6 +434,7 @@ void Renderer::DeferredLighting(const Camera* pCamera, Scene* pScene)
 		pGfxContext->ResourceTransitionBarrier(m_SceneGBuffer0.Get(), D3D12_RESOURCE_STATE_GENERIC_READ);
 		pGfxContext->ResourceTransitionBarrier(m_SceneGBuffer1.Get(), D3D12_RESOURCE_STATE_GENERIC_READ);
 		pGfxContext->ResourceTransitionBarrier(m_SceneGBuffer2.Get(), D3D12_RESOURCE_STATE_GENERIC_READ);
+		pGfxContext->ResourceTransitionBarrier(m_SceneGBuffer3.Get(), D3D12_RESOURCE_STATE_GENERIC_READ);
 		pGfxContext->ResourceTransitionBarrier(m_SceneDepthSurface.Get(), D3D12_RESOURCE_STATE_GENERIC_READ);
 
 		for (auto directionalLight : pScene->GetDirectionalLights())
@@ -448,11 +453,12 @@ void Renderer::DeferredLighting(const Camera* pCamera, Scene* pScene)
 			pGfxContext->SetGraphicsDynamicCbvSrvUav(1, 0, m_SceneGBuffer0->GetStagingSRV().GetCpuHandle());
 			pGfxContext->SetGraphicsDynamicCbvSrvUav(1, 1, m_SceneGBuffer1->GetStagingSRV().GetCpuHandle());
 			pGfxContext->SetGraphicsDynamicCbvSrvUav(1, 2, m_SceneGBuffer2->GetStagingSRV().GetCpuHandle());
-			pGfxContext->SetGraphicsDynamicCbvSrvUav(1, 3, m_SceneDepthSurface->GetStagingSRV().GetCpuHandle());
-			pGfxContext->SetGraphicsDynamicCbvSrvUav(1, 4, pShadowMapForDirLight->GetStagingSRV().GetCpuHandle());
-			pGfxContext->SetGraphicsDynamicCbvSrvUav(1, 5, pRSMIntensitySurface->GetStagingSRV().GetCpuHandle());
-			pGfxContext->SetGraphicsDynamicCbvSrvUav(1, 6, pRSMNormalSurface->GetStagingSRV().GetCpuHandle());
-			pGfxContext->SetGraphicsDynamicCbvSrvUav(1, 7, pEVSMSurface->GetStagingSRV().GetCpuHandle());
+			pGfxContext->SetGraphicsDynamicCbvSrvUav(1, 3, m_SceneGBuffer3->GetStagingSRV().GetCpuHandle());
+			pGfxContext->SetGraphicsDynamicCbvSrvUav(1, 4, m_SceneDepthSurface->GetStagingSRV().GetCpuHandle());
+			pGfxContext->SetGraphicsDynamicCbvSrvUav(1, 5, pShadowMapForDirLight->GetStagingSRV().GetCpuHandle());
+			pGfxContext->SetGraphicsDynamicCbvSrvUav(1, 6, pRSMIntensitySurface->GetStagingSRV().GetCpuHandle());
+			pGfxContext->SetGraphicsDynamicCbvSrvUav(1, 7, pRSMNormalSurface->GetStagingSRV().GetCpuHandle());
+			pGfxContext->SetGraphicsDynamicCbvSrvUav(1, 8, pEVSMSurface->GetStagingSRV().GetCpuHandle());
 
 			m_DirLightFilter2D->Draw(pGfxContext);
 
@@ -476,10 +482,11 @@ void Renderer::DeferredLighting(const Camera* pCamera, Scene* pScene)
 			pGfxContext->SetGraphicsDynamicCbvSrvUav(1, 0, m_SceneGBuffer0->GetStagingSRV().GetCpuHandle());
 			pGfxContext->SetGraphicsDynamicCbvSrvUav(1, 1, m_SceneGBuffer1->GetStagingSRV().GetCpuHandle());
 			pGfxContext->SetGraphicsDynamicCbvSrvUav(1, 2, m_SceneGBuffer2->GetStagingSRV().GetCpuHandle());
-			pGfxContext->SetGraphicsDynamicCbvSrvUav(1, 3, m_SceneDepthSurface->GetStagingSRV().GetCpuHandle());
+			pGfxContext->SetGraphicsDynamicCbvSrvUav(1, 3, m_SceneGBuffer3->GetStagingSRV().GetCpuHandle());
+			pGfxContext->SetGraphicsDynamicCbvSrvUav(1, 4, m_SceneDepthSurface->GetStagingSRV().GetCpuHandle());
 			for (int i = 0; i < pShadowMapsForPointLight.size(); ++i)
 			{
-				pGfxContext->SetGraphicsDynamicCbvSrvUav(1, 4 + i, pShadowMapsForPointLight[i]->GetStagingSRV().GetCpuHandle());
+				pGfxContext->SetGraphicsDynamicCbvSrvUav(1, 5 + i, pShadowMapsForPointLight[i]->GetStagingSRV().GetCpuHandle());
 			}
 
 			m_DirLightFilter2D->Draw(pGfxContext);
@@ -493,6 +500,7 @@ void Renderer::DeferredLighting(const Camera* pCamera, Scene* pScene)
 		pGfxContext->ResourceTransitionBarrier(m_SceneGBuffer0.Get(), D3D12_RESOURCE_STATE_RENDER_TARGET);
 		pGfxContext->ResourceTransitionBarrier(m_SceneGBuffer1.Get(), D3D12_RESOURCE_STATE_RENDER_TARGET);
 		pGfxContext->ResourceTransitionBarrier(m_SceneGBuffer2.Get(), D3D12_RESOURCE_STATE_RENDER_TARGET);
+		pGfxContext->ResourceTransitionBarrier(m_SceneGBuffer3.Get(), D3D12_RESOURCE_STATE_RENDER_TARGET);
 		pGfxContext->ResourceTransitionBarrier(m_SceneDepthSurface.Get(), D3D12_RESOURCE_STATE_DEPTH_WRITE);
 
 		pGfxContext->PIXEndEvent();
@@ -512,13 +520,15 @@ void Renderer::RenderGBuffer(const Camera* pCamera, Scene* pScene)
     pGfxContext->ClearRenderTarget(m_SceneGBuffer0.Get(), 0, 0, 0, 0);
     pGfxContext->ClearRenderTarget(m_SceneGBuffer1.Get(), 0, 0, 0, 0);
     pGfxContext->ClearRenderTarget(m_SceneGBuffer2.Get(), 0, 0, 0, 0);
+    pGfxContext->ClearRenderTarget(m_SceneGBuffer3.Get(), 0, 0, 0, 0);
 	pGfxContext->ClearDepthTarget(m_SceneDepthSurface.Get(), 1.0f);
 
 	// setup color and depth buffers
 	DX12ColorSurface* pColorSurfaces[] = {
 		m_SceneGBuffer0.Get(),
 		m_SceneGBuffer1.Get(),
-		m_SceneGBuffer2.Get()
+		m_SceneGBuffer2.Get(),
+		m_SceneGBuffer3.Get()
 	};
     pGfxContext->SetRenderTargets(_countof(pColorSurfaces), pColorSurfaces, m_SceneDepthSurface.Get());
 
@@ -536,6 +546,8 @@ void Renderer::RenderGBuffer(const Camera* pCamera, Scene* pScene)
 	}
 
 	pGfxContext->PIXEndEvent();
+
+    m_RenderContext.SaveInfoForNextFrame();
 }
 
 void Renderer::PostProcess(const Camera* pCamera, Scene* pScene)
@@ -551,14 +563,17 @@ void Renderer::PostProcess(const Camera* pCamera, Scene* pScene)
     {
         pGfxContext->ResourceTransitionBarrier(m_LightingSurface.Get(), D3D12_RESOURCE_STATE_GENERIC_READ);
         pGfxContext->ResourceTransitionBarrier(m_HistoryLightingSurface.Get(), D3D12_RESOURCE_STATE_GENERIC_READ);
+        pGfxContext->ResourceTransitionBarrier(m_SceneGBuffer3.Get(), D3D12_RESOURCE_STATE_GENERIC_READ);
         m_AntiAliasingFilter2D->Apply(pGfxContext);
         pGfxContext->SetGraphicsDynamicCbvSrvUav(0, 0, m_LightingSurface->GetStagingSRV().GetCpuHandle());
         pGfxContext->SetGraphicsDynamicCbvSrvUav(0, 1, m_HistoryLightingSurface->GetStagingSRV().GetCpuHandle());
+        pGfxContext->SetGraphicsDynamicCbvSrvUav(0, 2, m_SceneGBuffer3->GetStagingSRV().GetCpuHandle());
         DX12ColorSurface* pSurfaces[] = {m_PostProcessSurface.Get()};
         pGfxContext->SetRenderTargets(_countof(pSurfaces), pSurfaces, nullptr);
         m_AntiAliasingFilter2D->Draw(pGfxContext);
         pGfxContext->ResourceTransitionBarrier(m_LightingSurface.Get(), D3D12_RESOURCE_STATE_RENDER_TARGET);
         pGfxContext->ResourceTransitionBarrier(m_HistoryLightingSurface.Get(), D3D12_RESOURCE_STATE_RENDER_TARGET);
+        pGfxContext->ResourceTransitionBarrier(m_SceneGBuffer3.Get(), D3D12_RESOURCE_STATE_RENDER_TARGET);
     }
 
     {

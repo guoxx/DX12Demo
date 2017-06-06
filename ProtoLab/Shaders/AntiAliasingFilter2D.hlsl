@@ -2,11 +2,12 @@
 
 #define RootSigDeclaration \
 RootSigBegin \
-", DescriptorTable(SRV(t0, numDescriptors=2), visibility=SHADER_VISIBILITY_PIXEL)" \
+", DescriptorTable(SRV(t0, numDescriptors=3), visibility=SHADER_VISIBILITY_PIXEL)" \
 RootSigEnd
 
 Texture2D<float4> g_CurrentBuffer : register(t0);
 Texture2D<float4> g_HistoryBuffer : register(t1);
+Texture2D<float4> g_VelocityBuffer : register(t2);
 
 
 struct VSOutput
@@ -36,8 +37,16 @@ VSOutput VSMain(uint vertid : SV_VertexID)
 RootSigDeclaration
 float4 PSMain(VSOutput In) : SV_TARGET
 {
+#if 0
 	float4 current = g_CurrentBuffer.SampleLevel(g_StaticPointClampSampler, In.Texcoord, 0);
 	float4 history = g_HistoryBuffer.SampleLevel(g_StaticPointClampSampler, In.Texcoord, 0);
 
 	return lerp(history, current, 0.05);
+#else
+	float2 velocity = g_VelocityBuffer.SampleLevel(g_StaticPointClampSampler, In.Texcoord, 0).xy;
+	float4 current = g_CurrentBuffer.SampleLevel(g_StaticPointClampSampler, In.Texcoord, 0);
+	float4 history = g_HistoryBuffer.SampleLevel(g_StaticPointClampSampler, In.Texcoord + velocity, 0);
+
+	return lerp(history, current, 0.05);
+#endif
 }

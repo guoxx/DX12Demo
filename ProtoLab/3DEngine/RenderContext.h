@@ -80,6 +80,20 @@ public:
         m_mModelViewProjWithJitter = DirectX::XMMatrixMultiply(m_mModelViewProj, m_mJitter);
 	}
 
+    XMVECTOR GetJitterOffset() const
+	{
+	    return m_JitterOffset;
+	}
+
+    void SaveInfoForNextFrame()
+	{
+	    m_JitterOffsetLastFrame = m_JitterOffset;
+	    m_mViewLastFrame = m_mView;
+	    m_mProjLastFrame = m_mProj;
+	    m_mJitterLastFrame = m_mJitter;
+	    m_mViewProjLastFrame = m_mViewProj;
+	}
+
 	ShadingConfiguration GetShadingCfg() const { return m_ShadingCfg; }
 	void SetShadingCfg(ShadingConfiguration shadingCfg) { m_ShadingCfg = shadingCfg; }
 
@@ -130,5 +144,12 @@ private:
 	std::map<PointLight*, std::array<RenderableSurfaceHandle<DX12ColorSurface>, 6>> m_RSMNormalSurfaceForPointLights;
 
 	const ILight* m_CurrentLightForRSM;
+
+public:
+    DirectX::XMVECTOR m_JitterOffsetLastFrame;
+	DirectX::XMMATRIX m_mViewLastFrame;
+	DirectX::XMMATRIX m_mProjLastFrame;
+	DirectX::XMMATRIX m_mJitterLastFrame;
+	DirectX::XMMATRIX m_mViewProjLastFrame;
 };
 

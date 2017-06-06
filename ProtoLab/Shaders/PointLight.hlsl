@@ -6,7 +6,7 @@
 #define RootSigDeclaration \
 RootSigBegin \
 ", CBV(b0, visibility = SHADER_VISIBILITY_ALL)" \
-", DescriptorTable(SRV(t0, numDescriptors=10), visibility=SHADER_VISIBILITY_PIXEL)" \
+", DescriptorTable(SRV(t0, numDescriptors=11), visibility=SHADER_VISIBILITY_PIXEL)" \
 RootSigEnd
 
 struct Constants
@@ -25,8 +25,9 @@ HLSLConstantBuffer(Constants, 0, g_Constants);
 Texture2D<float4> g_GBuffer0 : register(t0);
 Texture2D<float4> g_GBuffer1 : register(t1);
 Texture2D<float4> g_GBuffer2 : register(t2);
-Texture2D<float> g_DepthTexture : register(t3);
-Texture2D<float> g_PointLightShadowMap[6] : register(t4);
+Texture2D<float4> g_GBuffer3 : register(t3);
+Texture2D<float> g_DepthTexture : register(t4);
+Texture2D<float> g_PointLightShadowMap[6] : register(t5);
 
 
 struct VSOutput
@@ -56,7 +57,7 @@ VSOutput VSMain(uint vertid : SV_VertexID)
 RootSigDeclaration
 float4 PSMain(VSOutput In) : SV_TARGET
 {
-	GBuffer gbuffer = GBufferDecode(g_GBuffer0, g_GBuffer1, g_GBuffer2, g_DepthTexture, g_StaticPointClampSampler, In.Texcoord, g_Constants.mInvView, g_Constants.mInvProj);
+	GBuffer gbuffer = GBufferDecode(g_GBuffer0, g_GBuffer1, g_GBuffer2, g_GBuffer3, g_DepthTexture, g_StaticPointClampSampler, In.Texcoord, g_Constants.mInvView, g_Constants.mInvProj);
 
 	float3 outRadiance = 0.0f;
 

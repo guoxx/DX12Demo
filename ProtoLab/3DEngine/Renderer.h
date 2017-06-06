@@ -49,6 +49,7 @@ private:
 	RenderableSurfaceHandle<DX12ColorSurface> m_SceneGBuffer0;
 	RenderableSurfaceHandle<DX12ColorSurface> m_SceneGBuffer1;
 	RenderableSurfaceHandle<DX12ColorSurface> m_SceneGBuffer2;
+	RenderableSurfaceHandle<DX12ColorSurface> m_SceneGBuffer3;
 	RenderableSurfaceHandle<DX12DepthSurface> m_SceneDepthSurface;
 
 	RenderableSurfaceHandle<DX12ColorSurface> m_LightingSurface;

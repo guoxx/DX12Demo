@@ -150,8 +150,10 @@ void Material::Apply(RenderContext* pRenderContext, DX12GraphicsContext* pGfxCon
 	{
 		struct View
 		{
-			float4x4 mModelViewProj;
-			float4x4 mInverseTransposeModel;
+		    float4x4 mModelViewProj;
+		    float4x4 mModelViewProjLastFrame;
+		    float4x4 mInverseTransposeModel;
+		    float4 JitterOffset;
 		};
 
 		struct BaseMaterial
@@ -172,6 +174,17 @@ void Material::Apply(RenderContext* pRenderContext, DX12GraphicsContext* pGfxCon
 		View view;
 		DirectX::XMStoreFloat4x4(&view.mModelViewProj, DirectX::XMMatrixTranspose(pRenderContext->GetModelViewProjMatrixWithJitter()));
 		DirectX::XMStoreFloat4x4(&view.mInverseTransposeModel, mInverseTransposeModel);
+        // TODO: camera motion only for now
+        DirectX::XMMATRIX mModelViewProjLastFrame = DirectX::XMMatrixMultiply(mModel, pRenderContext->m_mViewProjLastFrame);
+		DirectX::XMStoreFloat4x4(&view.mModelViewProjLastFrame, XMMatrixTranspose(mModelViewProjLastFrame));
+        DirectX::XMVECTOR jitterOffset = pRenderContext->GetJitterOffset();
+        DirectX::XMVECTOR jitterOffsetLastFrame = pRenderContext->m_JitterOffsetLastFrame;
+	    view.JitterOffset = DirectX::XMFLOAT4{
+	        DirectX::XMVectorGetX(jitterOffset) * 2.0f / pRenderContext->GetScreenWidth(),
+	        DirectX::XMVectorGetY(jitterOffset) * 2.0f / pRenderContext->GetScreenHeight(),
+	        DirectX::XMVectorGetX(jitterOffsetLastFrame) * 2.0f / pRenderContext->GetScreenWidth(),
+	        DirectX::XMVectorGetY(jitterOffsetLastFrame) * 2.0f / pRenderContext->GetScreenHeight(),
+	    };
 
 		BaseMaterial baseMaterial;
 		baseMaterial.Ambient = DirectX::XMFLOAT4{ m_Ambient.x, m_Ambient.y, m_Ambient.z, 0.0f };

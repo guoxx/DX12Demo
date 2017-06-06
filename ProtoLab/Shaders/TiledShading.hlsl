@@ -10,7 +10,7 @@ RootSigBegin \
 ", SRV(t0) " \
 ", SRV(t1) " \
 ", SRV(t2) " \
-", DescriptorTable(SRV(t3, numDescriptors=4), UAV(u0))" \
+", DescriptorTable(SRV(t3, numDescriptors=5), UAV(u0))" \
 ", DescriptorTable(SRV(t16, numDescriptors=unbounded))" \
 RootSigEnd
 
@@ -23,7 +23,8 @@ StructuredBuffer<LightNode> g_LightNodes: register(t2);
 Texture2D<float4> g_GBuffer0 : register(t3);
 Texture2D<float4> g_GBuffer1 : register(t4);
 Texture2D<float4> g_GBuffer2 : register(t5);
-Texture2D<float> g_DepthTexture : register(t6);
+Texture2D<float4> g_GBuffer3 : register(t6);
+Texture2D<float> g_DepthTexture : register(t7);
 
 Texture2D g_ShadowMaps[] : register(t16);
 
@@ -146,7 +147,7 @@ void CSMain(uint3 Gid : SV_GroupID, uint3 GTid : SV_GroupThreadID, uint3 DTid : 
 
 	float2 texcoord = float2(DTid.x + 0.5f, DTid.y + 0.5f);
 	float2 uv = float2(texcoord.x / g_Constants.m_ScreenWidth, texcoord.y / g_Constants.m_ScreenHeight);
-	GBuffer gbuffer = GBufferDecode(g_GBuffer0, g_GBuffer1, g_GBuffer2, g_DepthTexture, g_StaticPointClampSampler, uv, g_Constants.m_mInvView, g_Constants.m_mInvProj);
+	GBuffer gbuffer = GBufferDecode(g_GBuffer0, g_GBuffer1, g_GBuffer2, g_GBuffer3, g_DepthTexture, g_StaticPointClampSampler, uv, g_Constants.m_mInvView, g_Constants.m_mInvProj);
 
 	float3 outRadiance = 0.0f;
 
