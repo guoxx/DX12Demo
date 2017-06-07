@@ -69,7 +69,7 @@ void DX12SwapChain::Flip()
 		pGfxContext->ResourceTransitionBarrier(GetBackBuffer(), D3D12_RESOURCE_STATE_PRESENT);
 	}
 
-	m_SwapChain->Present(0, 0);
+	m_SwapChain->Present(1, 0);
 
 	m_BackBufferIdx = (m_BackBufferIdx + 1) % DX12NumSwapChainBuffers;
 }
