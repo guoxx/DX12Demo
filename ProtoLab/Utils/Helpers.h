@@ -22,3 +22,8 @@ inline void EulerianToEulerAngle(const DirectX::FXMVECTOR q, double& pitch, doub
 	yaw = std::atan2(t1, t0);
 	roll = std::atan2(t3, t4);
 }
+
+template<class T> T lerp(const T& a, const T& b, float f)
+{
+    return a + f * (b - a);
+}

@@ -20,6 +20,8 @@ public:
 	PointLight();
 	virtual ~PointLight();
 
+    void PrepareForShadowPass(const Camera* pCamera, uint32_t shadowMapSize);
+
 	void SetIntensity(float r, float g, float b);
 	DirectX::XMFLOAT4 GetIntensity() const;
 
@@ -28,11 +30,14 @@ public:
 	float GetRadiusEnd() const;
 
 	void GetViewNearFar(float& zNear, float& zFar) const;
-	void GetViewAndProjMatrix(const Camera* pCamera, AXIS axis, uint32_t shadowMapSize, DirectX::XMMATRIX* mView, DirectX::XMMATRIX* mProj) const;
+	void GetViewAndProjMatrix(AXIS axis, DirectX::XMMATRIX* mView, DirectX::XMMATRIX* mProj) const;
 
 private:
 	DirectX::XMFLOAT4 m_Intensity;
 	float m_RadiusStart;
 	float m_RadiusEnd;
+
+    DirectX::XMFLOAT4X4 m_mView[AXIS_END];
+    DirectX::XMFLOAT4X4 m_mProj[AXIS_END];
 };
 

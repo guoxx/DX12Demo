@@ -61,7 +61,7 @@ void DirectionalLightFilter2D::Apply(DX12GraphicsContext * pGfxContext, const Re
 
 	DirectX::XMMATRIX mLightView;
 	DirectX::XMMATRIX mLightProj;
-	pLight->GetViewAndProjMatrix(pRenderContext->GetCamera(), &mLightView, &mLightProj);
+	pLight->GetViewAndProjMatrix(0, &mLightView, &mLightProj);
 	DirectX::XMMATRIX mLightViewProj = DirectX::XMMatrixMultiply(mLightView, mLightProj);
 	DirectX::XMStoreFloat4x4(&constants.m_DirLight.m_mViewProj, DirectX::XMMatrixTranspose(mLightViewProj));
 

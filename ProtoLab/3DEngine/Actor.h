@@ -10,7 +10,7 @@ public:
 	};
 
 	Actor();
-	~Actor();
+	virtual ~Actor();
 
 	void Update();
 

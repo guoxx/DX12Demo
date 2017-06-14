@@ -115,6 +115,8 @@ void Renderer::RenderShadowMaps(const Camera* pCamera, Scene * pScene)
 	{
 		pGfxContext->PIXBeginEvent(L"ShadowMap - DirectionalLight");
 
+        directionalLight->PrepareForShadowPass(pCamera);
+
 		if (g_RSMEnabled)
 		{
 			m_RenderContext.SetCurrentLightForRSM(directionalLight.get());
@@ -147,7 +149,7 @@ void Renderer::RenderShadowMaps(const Camera* pCamera, Scene * pScene)
 		m_RenderContext.SetModelMatrix(DirectX::XMMatrixIdentity());
 		DirectX::XMMATRIX mLightView;
 		DirectX::XMMATRIX mLightProj;
-		directionalLight->GetViewAndProjMatrix(pCamera, &mLightView, &mLightProj);
+		directionalLight->GetViewAndProjMatrix(0, &mLightView, &mLightProj);
 		m_RenderContext.SetViewMatrix(mLightView);
 		m_RenderContext.SetProjMatrix(mLightProj);
 
@@ -180,6 +182,7 @@ void Renderer::RenderShadowMaps(const Camera* pCamera, Scene * pScene)
 	{
 		pGfxContext->PIXBeginEvent(L"ShadowMap - PointLight");
 
+        pointLight->PrepareForShadowPass(pCamera, DX12PointLightShadowMapSize);
 
 		for (int i = 0; i < 6; ++i)
 		{
@@ -214,7 +217,7 @@ void Renderer::RenderShadowMaps(const Camera* pCamera, Scene * pScene)
 			m_RenderContext.SetModelMatrix(DirectX::XMMatrixIdentity());
 			DirectX::XMMATRIX mLightView;
 			DirectX::XMMATRIX mLightProj;
-			pointLight->GetViewAndProjMatrix(pCamera, (PointLight::AXIS)i, DX12PointLightShadowMapSize, &mLightView, &mLightProj);
+			pointLight->GetViewAndProjMatrix((PointLight::AXIS)i, &mLightView, &mLightProj);
 			m_RenderContext.SetViewMatrix(mLightView);
 			m_RenderContext.SetProjMatrix(mLightProj);
 
@@ -259,7 +262,7 @@ void Renderer::DeferredLighting(const Camera* pCamera, Scene* pScene)
 
 				DirectX::XMMATRIX mLightView;
 				DirectX::XMMATRIX mLightProj;
-				directionalLight->GetViewAndProjMatrix(m_RenderContext.GetCamera(), &mLightView, &mLightProj);
+				directionalLight->GetViewAndProjMatrix(0, &mLightView, &mLightProj);
 				DirectX::XMMATRIX mLightViewProj = DirectX::XMMatrixMultiply(mLightView, mLightProj);
 				DirectX::XMStoreFloat4x4(&pDirLightData[i].m_mViewProj, DirectX::XMMatrixTranspose(mLightViewProj));
 				DirectX::XMMATRIX mInvLightViewProj = DirectX::XMMatrixInverse(nullptr, mLightViewProj);
@@ -287,7 +290,7 @@ void Renderer::DeferredLighting(const Camera* pCamera, Scene* pScene)
 				{
 					DirectX::XMMATRIX mLightView;
 					DirectX::XMMATRIX mLightProj;
-					pointLight->GetViewAndProjMatrix(nullptr, (PointLight::AXIS)face, DX12PointLightShadowMapSize, &mLightView, &mLightProj);
+					pointLight->GetViewAndProjMatrix((PointLight::AXIS)face, &mLightView, &mLightProj);
 					DirectX::XMMATRIX mLightViewProj = DirectX::XMMatrixMultiply(mLightView, mLightProj);
 					DirectX::XMStoreFloat4x4(&pPointLightData[i].m_mViewProj[face], DirectX::XMMatrixTranspose(mLightViewProj));
 				}
