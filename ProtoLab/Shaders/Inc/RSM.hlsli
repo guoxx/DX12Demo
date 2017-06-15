@@ -30,7 +30,7 @@ RSMOutput RSMBufferEncode(RSMBuffer rsmbuffer)
 	return Out;
 }
 
-RSMBuffer RSMBufferDecode(Texture2D<float4> RT0, Texture2D<float4> RT1, Texture2D<float> DepthBuffer, SamplerState samp, float2 UV, float4x4 mInvViewProj, bool perspectiveDivide)
+RSMBuffer RSMBufferDecode(Texture2D<float4> RT0, Texture2D<float4> RT1, Texture2D<float> DepthBuffer, SamplerState samp, float2 UV, float2 normalizedUV, float4x4 mInvViewProj, bool perspectiveDivide)
 {
 	RSMBuffer rsmbuffer;
 
@@ -42,7 +42,7 @@ RSMBuffer RSMBufferDecode(Texture2D<float4> RT0, Texture2D<float4> RT1, Texture2
 	rsmbuffer.Depth = DepthBuffer.SampleLevel(samp, UV, 0);
 
 	// Assume DX style texture coordinate
-	float3 ndcPos = float3(UV.x * 2.0f - 1.0f, (1.0f - UV.y) * 2.0f - 1.0f, rsmbuffer.Depth);
+	float3 ndcPos = float3(normalizedUV.x * 2.0f - 1.0f, (1.0f - normalizedUV.y) * 2.0f - 1.0f, rsmbuffer.Depth);
 	float4 wsPos = mul(float4(ndcPos, 1), mInvViewProj);
 	if (perspectiveDivide)
 	{
@@ -53,7 +53,7 @@ RSMBuffer RSMBufferDecode(Texture2D<float4> RT0, Texture2D<float4> RT1, Texture2
 	return rsmbuffer;
 }
 
-RSMBuffer RSMBufferDecode(Texture2D<float4> RT0, Texture2D<float4> RT1, Texture2D<float4> DepthBuffer, SamplerState samp, float2 UV, float4x4 mInvViewProj, bool perspectiveDivide)
+RSMBuffer RSMBufferDecode(Texture2D<float4> RT0, Texture2D<float4> RT1, Texture2D<float4> DepthBuffer, SamplerState samp, float2 UV, float2 normalizedUV, float4x4 mInvViewProj, bool perspectiveDivide)
 {
 	RSMBuffer rsmbuffer;
 
@@ -65,7 +65,7 @@ RSMBuffer RSMBufferDecode(Texture2D<float4> RT0, Texture2D<float4> RT1, Texture2
 	rsmbuffer.Depth = DepthBuffer.SampleLevel(samp, UV, 0).x;
 
 	// Assume DX style texture coordinate
-	float3 ndcPos = float3(UV.x * 2.0f - 1.0f, (1.0f - UV.y) * 2.0f - 1.0f, rsmbuffer.Depth);
+	float3 ndcPos = float3(normalizedUV.x * 2.0f - 1.0f, (1.0f - normalizedUV.y) * 2.0f - 1.0f, rsmbuffer.Depth);
 	float4 wsPos = mul(float4(ndcPos, 1), mInvViewProj);
 	if (perspectiveDivide)
 	{
@@ -102,6 +102,7 @@ float3 ShadeDirectionalLightRSM(GBuffer gbuffer, RSMParam rsmparams, Directional
 
     	float3 shadowPos;
     	float2 shadowUV;
+        float2 normalizedUV;
 
         int cascadeIdx = 3;
         for (int i = 3; i >=0; --i)
@@ -119,6 +120,8 @@ float3 ShadeDirectionalLightRSM(GBuffer gbuffer, RSMParam rsmparams, Directional
 
                 shadowUV.x = x * 0.5 + uv.x * 0.5;
                 shadowUV.y = y * 0.5 + uv.y * 0.5;
+
+                normalizedUV = uv;
             }
         }
 
@@ -129,7 +132,7 @@ float3 ShadeDirectionalLightRSM(GBuffer gbuffer, RSMParam rsmparams, Directional
 
 			float2 uv = shadowUV + uvOffset;
 
-			RSMBuffer rsmbuffer = RSMBufferDecode(RSMRadiantIntensityTex, RSMNormalTex, shadowMap, samp, uv, dirLight.m_mInvViewProj[cascadeIdx], false);
+			RSMBuffer rsmbuffer = RSMBufferDecode(RSMRadiantIntensityTex, RSMNormalTex, shadowMap, samp, uv, normalizedUV, dirLight.m_mInvViewProj[cascadeIdx], false);
 
 			// for direcional light, irradiance is stored in radiant intensity texture
 			float3 VPLIrradiance = rsmbuffer.Intensity;
@@ -160,6 +163,7 @@ float3 ShadeDirectionalLightRSM(GBuffer gbuffer, RSMParam rsmparams, Directional
 
     	float3 shadowPos;
     	float2 shadowUV;
+        float2 normalizedUV;
 
         int cascadeIdx = 3;
         for (int i = 3; i >=0; --i)
@@ -177,6 +181,8 @@ float3 ShadeDirectionalLightRSM(GBuffer gbuffer, RSMParam rsmparams, Directional
 
                 shadowUV.x = x * 0.5 + uv.x * 0.5;
                 shadowUV.y = y * 0.5 + uv.y * 0.5;
+
+                normalizedUV = uv;
             }
         }
 
@@ -187,7 +193,7 @@ float3 ShadeDirectionalLightRSM(GBuffer gbuffer, RSMParam rsmparams, Directional
 
 			float2 uv = shadowUV + uvOffset;
 
-			RSMBuffer rsmbuffer = RSMBufferDecode(RSMRadiantIntensityTex, RSMNormalTex, shadowMap, samp, uv, dirLight.m_mInvViewProj[cascadeIdx], false);
+			RSMBuffer rsmbuffer = RSMBufferDecode(RSMRadiantIntensityTex, RSMNormalTex, shadowMap, samp, uv, normalizedUV, dirLight.m_mInvViewProj[cascadeIdx], false);
 
 			// for direcional light, irradiance is stored in radiant intensity texture
 			float3 VPLIrradiance = rsmbuffer.Intensity;
