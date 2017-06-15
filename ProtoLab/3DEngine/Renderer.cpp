@@ -143,20 +143,35 @@ void Renderer::RenderShadowMaps(const Camera* pCamera, Scene * pScene)
 			pGfxContext->SetRenderTargets(0, nullptr, pDepthSurface);
 		}
 
-		pGfxContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-		pGfxContext->SetViewport(0, 0, DX12DirectionalLightShadowMapSize, DX12DirectionalLightShadowMapSize);
+        for (int32_t cascadeIdx = 0; cascadeIdx < DirectionalLight::NUM_CASCADED_SHADOW_MAP; ++cascadeIdx)
+        {
+            static_assert(DirectionalLight::NUM_CASCADED_SHADOW_MAP == 4, "");
+            static const wchar_t* markers[4] = {L"Cascade - 0", L"Cascade - 1", L"Cascade - 2", L"Cascade - 3"};
+            pGfxContext->PIXBeginEvent(markers[cascadeIdx]);
 
-		m_RenderContext.SetModelMatrix(DirectX::XMMatrixIdentity());
-		DirectX::XMMATRIX mLightView;
-		DirectX::XMMATRIX mLightProj;
-		directionalLight->GetViewAndProjMatrix(0, &mLightView, &mLightProj);
-		m_RenderContext.SetViewMatrix(mLightView);
-		m_RenderContext.SetProjMatrix(mLightProj);
+            int32_t tileX = cascadeIdx & 0x01;
+            int32_t tileY = (cascadeIdx & 0x02) > 1;
 
-		for (auto model : pScene->GetModels())
-		{
-			model->DrawPrimitives(&m_RenderContext, pGfxContext);
-		}
+            pGfxContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+            pGfxContext->SetViewport(tileX * DX12DirectionalLightShadowMapSize / 2,
+                                     tileY * DX12DirectionalLightShadowMapSize / 2,
+                                     DX12DirectionalLightShadowMapSize / 2,
+                                     DX12DirectionalLightShadowMapSize / 2);
+
+            m_RenderContext.SetModelMatrix(DirectX::XMMatrixIdentity());
+            DirectX::XMMATRIX mLightView;
+            DirectX::XMMATRIX mLightProj;
+            directionalLight->GetViewAndProjMatrix(cascadeIdx, &mLightView, &mLightProj);
+            m_RenderContext.SetViewMatrix(mLightView);
+            m_RenderContext.SetProjMatrix(mLightProj);
+
+            for (auto model : pScene->GetModels())
+            {
+                model->DrawPrimitives(&m_RenderContext, pGfxContext);
+            }
+
+            pGfxContext->PIXEndEvent();
+        }
 
 		if (g_EVSMEnabled)
 		{
@@ -165,6 +180,8 @@ void Renderer::RenderShadowMaps(const Camera* pCamera, Scene * pScene)
 
 			DX12ColorSurface* pColorSurfaces[] = { pEVSMSurface };
 			pGfxContext->SetRenderTargets(_countof(pColorSurfaces), pColorSurfaces, nullptr);
+
+		    pGfxContext->SetViewport(0, 0, DX12DirectionalLightShadowMapSize, DX12DirectionalLightShadowMapSize);
 
 			pGfxContext->ResourceTransitionBarrier(pDepthSurface, D3D12_RESOURCE_STATE_GENERIC_READ);
 
@@ -260,13 +277,16 @@ void Renderer::DeferredLighting(const Camera* pCamera, Scene* pScene)
 				pDirLightData[i].m_Direction = DirectX::XMFLOAT3{ direction.x, direction.y, direction.z };
 				pDirLightData[i].m_Irradiance = DirectX::XMFLOAT3{ irradiance.x, irradiance.y, irradiance.z };
 
-				DirectX::XMMATRIX mLightView;
-				DirectX::XMMATRIX mLightProj;
-				directionalLight->GetViewAndProjMatrix(0, &mLightView, &mLightProj);
-				DirectX::XMMATRIX mLightViewProj = DirectX::XMMatrixMultiply(mLightView, mLightProj);
-				DirectX::XMStoreFloat4x4(&pDirLightData[i].m_mViewProj, DirectX::XMMatrixTranspose(mLightViewProj));
-				DirectX::XMMATRIX mInvLightViewProj = DirectX::XMMatrixInverse(nullptr, mLightViewProj);
-				DirectX::XMStoreFloat4x4(&pDirLightData[i].m_mInvViewProj, DirectX::XMMatrixTranspose(mInvLightViewProj));
+                for (int32_t cascadeIdx = 0; cascadeIdx < DirectionalLight::NUM_CASCADED_SHADOW_MAP; ++cascadeIdx)
+                {
+                    DirectX::XMMATRIX mLightView;
+                    DirectX::XMMATRIX mLightProj;
+                    directionalLight->GetViewAndProjMatrix(cascadeIdx, &mLightView, &mLightProj);
+                    DirectX::XMMATRIX mLightViewProj = DirectX::XMMatrixMultiply(mLightView, mLightProj);
+                    DirectX::XMStoreFloat4x4(&pDirLightData[i].m_mViewProj[cascadeIdx], DirectX::XMMatrixTranspose(mLightViewProj));
+                    DirectX::XMMATRIX mInvLightViewProj = DirectX::XMMatrixInverse(nullptr, mLightViewProj);
+                    DirectX::XMStoreFloat4x4(&pDirLightData[i].m_mInvViewProj[cascadeIdx], DirectX::XMMatrixTranspose(mInvLightViewProj));
+                }
 
 				pDirLightData[i].m_ShadowMapTexId = firstTextureId;
 				pDirLightData[i].m_RSMIntensityTexId = firstTextureId + 1;

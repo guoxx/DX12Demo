@@ -97,8 +97,30 @@ float3 ShadeDirectionalLightRSM(GBuffer gbuffer, RSMParam rsmparams, Directional
 	float3 outRadiance = 0.0f;
 	if (rsmparams.m_Enabled != 0)
 	{
-		float3 shadowPos = mul(float4(gbuffer.Position, 1), dirLight.m_mViewProj).xyz;
-		float2 shadowUV = float2((shadowPos.x + 1.0f) * 0.5f, (-shadowPos.y + 1.0f) * 0.5f);
+        // TODO: don't hardcore the size
+        float2 shadowMapsSize = float2(2048, 2048);
+
+    	float3 shadowPos;
+    	float2 shadowUV;
+
+        int cascadeIdx = 3;
+        for (int i = 3; i >=0; --i)
+        {
+    	    float3 pos = mul(float4(gbuffer.Position, 1), dirLight.m_mViewProj[i]).xyz;
+    	    float2 uv = float2((pos.x + 1.0f) * 0.5f, (-pos.y + 1.0f) * 0.5f);
+            float border = 4;
+            if (all(abs(pos.xy) < ((shadowMapsSize / 4 - border) / (shadowMapsSize / 4))))
+            {
+                cascadeIdx = i;
+                shadowPos = pos;
+
+                int x = cascadeIdx & 0x01;
+                int y = (cascadeIdx & 0x02) > 1;
+
+                shadowUV.x = x * 0.5 + uv.x * 0.5;
+                shadowUV.y = y * 0.5 + uv.y * 0.5;
+            }
+        }
 
 		for (uint i = 0; i < g_RSMSamplesCount; ++i)
 		{
@@ -107,7 +129,7 @@ float3 ShadeDirectionalLightRSM(GBuffer gbuffer, RSMParam rsmparams, Directional
 
 			float2 uv = shadowUV + uvOffset;
 
-			RSMBuffer rsmbuffer = RSMBufferDecode(RSMRadiantIntensityTex, RSMNormalTex, shadowMap, samp, uv, dirLight.m_mInvViewProj, false);
+			RSMBuffer rsmbuffer = RSMBufferDecode(RSMRadiantIntensityTex, RSMNormalTex, shadowMap, samp, uv, dirLight.m_mInvViewProj[cascadeIdx], false);
 
 			// for direcional light, irradiance is stored in radiant intensity texture
 			float3 VPLIrradiance = rsmbuffer.Intensity;
@@ -133,8 +155,30 @@ float3 ShadeDirectionalLightRSM(GBuffer gbuffer, RSMParam rsmparams, Directional
 	float3 outRadiance = 0.0f;
 	if (rsmparams.m_Enabled != 0)
 	{
-		float3 shadowPos = mul(float4(gbuffer.Position, 1), dirLight.m_mViewProj).xyz;
-		float2 shadowUV = float2((shadowPos.x + 1.0f) * 0.5f, (-shadowPos.y + 1.0f) * 0.5f);
+        // TODO: don't hardcore the size
+        float2 shadowMapsSize = float2(2048, 2048);
+
+    	float3 shadowPos;
+    	float2 shadowUV;
+
+        int cascadeIdx = 3;
+        for (int i = 3; i >=0; --i)
+        {
+    	    float3 pos = mul(float4(gbuffer.Position, 1), dirLight.m_mViewProj[i]).xyz;
+    	    float2 uv = float2((pos.x + 1.0f) * 0.5f, (-pos.y + 1.0f) * 0.5f);
+            float border = 4;
+            if (all(abs(pos.xy) < ((shadowMapsSize / 4 - border) / (shadowMapsSize / 4))))
+            {
+                cascadeIdx = i;
+                shadowPos = pos;
+
+                int x = cascadeIdx & 0x01;
+                int y = (cascadeIdx & 0x02) > 1;
+
+                shadowUV.x = x * 0.5 + uv.x * 0.5;
+                shadowUV.y = y * 0.5 + uv.y * 0.5;
+            }
+        }
 
 		for (uint i = 0; i < g_RSMSamplesCount; ++i)
 		{
@@ -143,7 +187,7 @@ float3 ShadeDirectionalLightRSM(GBuffer gbuffer, RSMParam rsmparams, Directional
 
 			float2 uv = shadowUV + uvOffset;
 
-			RSMBuffer rsmbuffer = RSMBufferDecode(RSMRadiantIntensityTex, RSMNormalTex, shadowMap, samp, uv, dirLight.m_mInvViewProj, false);
+			RSMBuffer rsmbuffer = RSMBufferDecode(RSMRadiantIntensityTex, RSMNormalTex, shadowMap, samp, uv, dirLight.m_mInvViewProj[cascadeIdx], false);
 
 			// for direcional light, irradiance is stored in radiant intensity texture
 			float3 VPLIrradiance = rsmbuffer.Intensity;

@@ -59,14 +59,17 @@ void DirectionalLightFilter2D::Apply(DX12GraphicsContext * pGfxContext, const Re
 	constants.m_DirLight.m_Direction = DirectX::XMFLOAT3{ direction.x, direction.y, direction.z };
 	constants.m_DirLight.m_Irradiance = DirectX::XMFLOAT3{ irradiance.x, irradiance.y, irradiance.z };
 
-	DirectX::XMMATRIX mLightView;
-	DirectX::XMMATRIX mLightProj;
-	pLight->GetViewAndProjMatrix(0, &mLightView, &mLightProj);
-	DirectX::XMMATRIX mLightViewProj = DirectX::XMMatrixMultiply(mLightView, mLightProj);
-	DirectX::XMStoreFloat4x4(&constants.m_DirLight.m_mViewProj, DirectX::XMMatrixTranspose(mLightViewProj));
+    for (int32_t cascadeIdx = 0; cascadeIdx < DirectionalLight::NUM_CASCADED_SHADOW_MAP; ++cascadeIdx)
+    {
+        DirectX::XMMATRIX mLightView;
+        DirectX::XMMATRIX mLightProj;
+        pLight->GetViewAndProjMatrix(cascadeIdx, &mLightView, &mLightProj);
+        DirectX::XMMATRIX mLightViewProj = DirectX::XMMatrixMultiply(mLightView, mLightProj);
+        DirectX::XMStoreFloat4x4(&constants.m_DirLight.m_mViewProj[cascadeIdx], DirectX::XMMatrixTranspose(mLightViewProj));
 
-	DirectX::XMMATRIX mInvLightViewProj = DirectX::XMMatrixInverse(nullptr, mLightViewProj);
-	DirectX::XMStoreFloat4x4(&constants.m_DirLight.m_mInvViewProj, DirectX::XMMatrixTranspose(mInvLightViewProj));
+        DirectX::XMMATRIX mInvLightViewProj = DirectX::XMMatrixInverse(nullptr, mLightViewProj);
+        DirectX::XMStoreFloat4x4(&constants.m_DirLight.m_mInvViewProj[cascadeIdx], DirectX::XMMatrixTranspose(mInvLightViewProj));
+    }
 
 	constants.m_DirLight.m_ShadowMapTexId = -1;
 	constants.m_DirLight.m_RSMIntensityTexId = -1;

@@ -84,8 +84,8 @@ struct DirectionalLight
 	float		m_Padding0;
 	float3		m_Irradiance;
 	float		m_Padding1;
-	float4x4	m_mViewProj;
-	float4x4	m_mInvViewProj;
+	float4x4	m_mViewProj[4];
+	float4x4	m_mInvViewProj[4];
 	// -1 means invalid
 	int			m_ShadowMapTexId;
 	int			m_RSMIntensityTexId;
