@@ -78,7 +78,7 @@ GBufferOutput PSMain(VSOutput In)
 	gbuffer.Diffuse = g_DiffuseTexture.Sample(g_StaticAnisoWrapSampler, In.Texcoord).xyz;
 	gbuffer.Specular = IorToF0_Dielectric(g_Material.Ior.x).xxx;
 	gbuffer.Normal = In.Normal;
-	gbuffer.Roughness = saturate((100.0f - g_Material.Shininess.x) / 100.0f);
+	gbuffer.Roughness = ShininessToRoughness(g_Material.Shininess.x);
 
     float4 posNdc = In.PositionClipSpace;
     posNdc /= posNdc.w;

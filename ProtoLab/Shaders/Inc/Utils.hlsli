@@ -7,6 +7,12 @@ float IorToF0_Dielectric(float ior)
 	return pow(ior - 1, 2) / pow(ior + 1, 2);
 }
 
+float ShininessToRoughness(float r)
+{
+    // equation proposed from http://graphicrants.blogspot.sg/2013/08/specular-brdf-reference.html
+    return sqrt(2.0 / (r + 2.0));
+}
+
 const static uint g_RSMSamplesCount = 64;
 const static float2 g_RSMSamplingPattern[64] = {
 float2(-0.3579344f, -0.3517149f),
