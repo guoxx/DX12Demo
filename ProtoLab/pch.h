@@ -37,6 +37,7 @@
 #include <array>
 #include <map>
 
+#define USE_PIX
 #include <pix3.h>
 
 #include "Utils/Heaponly.h"
