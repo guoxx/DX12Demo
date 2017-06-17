@@ -15,9 +15,8 @@ struct Constants
 	float4x4 mInvProj;
 	float4 CameraPosition;
 
-	float4 LightPosition;
-	float4 LightIntensity;
-	float4 LightRadius;
+	float4 LightPositionAndRadius;
+	float4 LightRadiantPower;
 	float4x4 mLightViewProj[6];
 };
 HLSLConstantBuffer(Constants, 0, g_Constants);
@@ -61,26 +60,26 @@ float4 PSMain(VSOutput In) : SV_TARGET
 
 	float3 outRadiance = 0.0f;
 
-	int face = GetFaceOfPointLightShadowMap(g_Constants.LightPosition.xyz, gbuffer.Position);
+	int face = GetFaceOfPointLightShadowMap(g_Constants.LightPositionAndRadius.xyz, gbuffer.Position);
 	float4 shadowPos = mul(float4(gbuffer.Position, 1), g_Constants.mLightViewProj[face]);
 	shadowPos /= shadowPos.w;
 	float occluderDepth = g_PointLightShadowMap[face].Sample(g_StaticPointClampSampler, shadowPos.xy * float2(1, -1) * 0.5 + 0.5);
 	float shadowMask = occluderDepth < shadowPos.z ? 0.0f : 1.0f;
 
-	float3 L = normalize(g_Constants.LightPosition.xyz - gbuffer.Position);
+	float3 L = normalize(g_Constants.LightPositionAndRadius.xyz - gbuffer.Position);
 	float3 V = normalize(g_Constants.CameraPosition.xyz - gbuffer.Position);
 	float3 N = gbuffer.Normal;
 	float NdotL = saturate(dot(N, L));
 
-	float dist = length(g_Constants.LightPosition.xyz - gbuffer.Position);
-	float radiusStart = g_Constants.LightRadius.x;
-	float radiusEnd = g_Constants.LightRadius.y;
-	float3 E = PointLightIrradiance(g_Constants.LightIntensity.xyz, dist, radiusStart, radiusEnd) * NdotL * PI;
+	float dist = length(g_Constants.LightPositionAndRadius.xyz - gbuffer.Position);
+	float radius = g_Constants.LightPositionAndRadius.w;
+	float3 E = PointLightIrradiance(g_Constants.LightRadiantPower.xyz, dist, radius);
 	//if (any(E))
 	{
-		float3 diffuse = Diffuse_Lambert(gbuffer.Diffuse) * E;
-		float3 specular = MicrofacetSpecular(gbuffer.Specular, gbuffer.Roughness, V, N, L) * E;
-		outRadiance += (diffuse + specular) * shadowMask;
+		float3 diffuse = Diffuse_Lambert(gbuffer.Diffuse);
+		float3 specular = MicrofacetSpecular(gbuffer.Specular, gbuffer.Roughness, V, N, L);
+        float3 bsdf = diffuse + specular;
+		outRadiance += bsdf * E * NdotL * shadowMask;
 	}
 
 	return float4(outRadiance, 1);

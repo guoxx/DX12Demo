@@ -79,9 +79,9 @@ void CSMain(uint3 Gid : SV_GroupID, uint3 GTid : SV_GroupThreadID, uint3 DTid : 
 	[loop]
 	for (uint lightIdx = linearThreadId; lightIdx < maxNumLights; lightIdx += NUM_THREADS_PER_LIGHT_CULLING_TILE)
 	{
-		float3 lightPositionWS = g_PointLights[lightIdx].m_Position.xyz;
+		float3 lightPositionWS = g_PointLights[lightIdx].m_PositionAndRadius.xyz;
 		float3 lightPositionCS = mul(float4(lightPositionWS, 1.0f), g_Constants.m_mView).xyz;
-		float lightRadius = g_PointLights[lightIdx].m_RadiusParam.y;
+		float lightRadius = g_PointLights[lightIdx].m_PositionAndRadius.w;
 
 		if (!SphereCulling(frustumPlanes, lightPositionCS, lightRadius))
 		{

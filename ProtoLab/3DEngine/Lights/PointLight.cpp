@@ -23,7 +23,7 @@ void PointLight::PrepareForShadowPass(const Camera* pCamera, uint32_t shadowMapS
 
 	float zNear = 0.01f;
 	// HACK: add border so that we can handle depth bias properly
-	float zFar = m_RadiusEnd * 1.4f;
+	float zFar = m_Radius * 1.4f;
 	float aspect = 1.0f;
 	assert(zFar > zNear);
 
@@ -56,39 +56,36 @@ void PointLight::PrepareForShadowPass(const Camera* pCamera, uint32_t shadowMapS
     }
 }
 
-void PointLight::SetIntensity(float r, float g, float b)
+void PointLight::SetColor(float r, float g, float b)
 {
-	//r = DX::Clamp(r, 0.0f, 1.0f);
-	//g = DX::Clamp(g, 0.0f, 1.0f);
-	//b = DX::Clamp(b, 0.0f, 1.0f);
-	m_Intensity= DirectX::XMFLOAT4{r, g, b, 0};
+	m_Color = DirectX::XMFLOAT4{r, g, b, 0};
 }
 
-DirectX::XMFLOAT4 PointLight::GetIntensity() const
+void PointLight::SetRadiantPower(float p)
 {
-	return m_Intensity;
+    m_RadiantPower = p;
 }
 
-void PointLight::SetRadius(float rStart, float rEnd)
+DirectX::XMVECTOR PointLight::GetRadiantPower() const
 {
-	m_RadiusStart = rStart;
-	m_RadiusEnd = rEnd;
+    DirectX::XMVECTOR p = DirectX::XMLoadFloat4(&m_Color);
+    return DirectX::XMVectorScale(p, m_RadiantPower);
 }
 
-float PointLight::GetRadiusStart() const
+void PointLight::SetRadius(float r)
 {
-	return m_RadiusStart;
+	m_Radius = r;
 }
 
-float PointLight::GetRadiusEnd() const
+float PointLight::GetRadius() const
 {
-	return m_RadiusEnd;
+	return m_Radius;
 }
 
 void PointLight::GetViewNearFar(float& zNear, float& zFar) const
 {
 	zNear = 0.01f;
-	zFar = m_RadiusEnd;
+	zFar = m_Radius;
 }
 
 void PointLight::GetViewAndProjMatrix(AXIS axis, DirectX::XMMATRIX* mView, DirectX::XMMATRIX* mProj) const

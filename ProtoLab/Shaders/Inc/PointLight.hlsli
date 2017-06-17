@@ -1,34 +1,20 @@
 #ifndef __POINT_LIGHT_HLSLI__
 #define __POINT_LIGHT_HLSLI__
 
-float PointLightDistanceFalloff(float distance, float radiusStart, float radiusEnd)
+#include "Common.hlsli"
+
+float PointLightDistanceFalloff(float distance, float radius)
 {
-#if 0
 	// Falloff function proposed by UE4, Real Shading in Unreal Engine 4
-	float falloff = pow(saturate(1 - pow((distance/radiusEnd), 4)), 2) / (distance + 1);
+    // http://blog.selfshadow.com/publications/s2013-shading-course/karis/s2013_pbs_epic_notes_v2.pdf p12
+	float falloff = pow(saturate(1 - pow((distance/radius), 4)), 2) / (distance * distance + 1);
 	return falloff;
-#else
-	float falloff = 0.0f;
-	if (distance <= radiusStart)
-	{
-		falloff = 1.0f;
-	}
-	else if (distance >= radiusEnd)
-	{
-		falloff = 0.0f;
-	}
-	else
-	{
-		falloff = (radiusEnd - distance) / (radiusEnd - radiusStart);
-	}
-	return falloff;
-#endif
 }
 
-float3 PointLightIrradiance(float3 lightIntensity, float distance, float radiusStart, float radiusEnd)
+float3 PointLightIrradiance(float3 radiantPower, float distance, float radius)
 {
-	float distanceFalloff = PointLightDistanceFalloff(distance, radiusStart, radiusEnd);
-	float3 irradiance = lightIntensity * distanceFalloff;
+	float3 intensity = radiantPower / (4.0f * PI);
+    float3 irradiance = intensity * PointLightDistanceFalloff(distance, radius);
 	return irradiance;	
 }
 

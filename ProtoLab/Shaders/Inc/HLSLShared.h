@@ -66,10 +66,8 @@ struct EVSMParam
 
 struct PointLight
 {
-	float4		m_Position;
-	 // x: radius start, y : radius end
-	float4		m_RadiusParam;
-	float4		m_Intensity;
+	float4		m_PositionAndRadius;
+	float4		m_RadiantPower;
 	float4x4	m_mViewProj[6];
 	//  x: first texture index of 6 shadow maps per point light, -1 means invalid
 	int			m_FirstShadowMapTexId;

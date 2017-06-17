@@ -22,20 +22,22 @@ public:
 
     void PrepareForShadowPass(const Camera* pCamera, uint32_t shadowMapSize);
 
-	void SetIntensity(float r, float g, float b);
-	DirectX::XMFLOAT4 GetIntensity() const;
+    void SetColor(float r, float g, float b);
 
-	void SetRadius(float rStart, float rEnd);
-	float GetRadiusStart() const;
-	float GetRadiusEnd() const;
+    void SetRadiantPower(float p);
+
+    DirectX::XMVECTOR GetRadiantPower() const;
+
+	void SetRadius(float r);
+	float GetRadius() const;
 
 	void GetViewNearFar(float& zNear, float& zFar) const;
 	void GetViewAndProjMatrix(AXIS axis, DirectX::XMMATRIX* mView, DirectX::XMMATRIX* mProj) const;
 
 private:
-	DirectX::XMFLOAT4 m_Intensity;
-	float m_RadiusStart;
-	float m_RadiusEnd;
+	DirectX::XMFLOAT4 m_Color;
+	float m_RadiantPower;
+	float m_Radius;
 
     DirectX::XMFLOAT4X4 m_mView[AXIS_END];
     DirectX::XMFLOAT4X4 m_mProj[AXIS_END];

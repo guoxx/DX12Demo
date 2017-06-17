@@ -52,8 +52,8 @@ void PointLightFilter2D::Apply(DX12GraphicsContext * pGfxContext, const RenderCo
 		float4x4 mInvProj;
 		float4 CameraPosition;
 
-		float4 LightPosition;
-		float4 LightIntensity;
+		float4 LightPositionAndRadius;
+		float4 LightRadiantPower;
 		float4 LightRadius;
 		float4x4 mLightViewProj[6];
 	};
@@ -65,9 +65,9 @@ void PointLightFilter2D::Apply(DX12GraphicsContext * pGfxContext, const RenderCo
 	DirectX::XMStoreFloat4x4(&constants.mInvProj, DirectX::XMMatrixTranspose(mInvProj));
 	DirectX::XMStoreFloat4(&constants.CameraPosition, pRenderContext->GetCamera()->GetTranslation());
 
-	DirectX::XMStoreFloat4(&constants.LightPosition, pPointLight->GetTranslation());
-	constants.LightIntensity = pPointLight->GetIntensity();
-	constants.LightRadius = DirectX::XMFLOAT4{ pPointLight->GetRadiusStart(), pPointLight->GetRadiusEnd(), 0, 0 };
+	DirectX::XMStoreFloat4(&constants.LightPositionAndRadius, pPointLight->GetTranslation());
+    constants.LightPositionAndRadius.w = pPointLight->GetRadius();
+	DirectX::XMStoreFloat4(&constants.LightRadiantPower, pPointLight->GetRadiantPower());
 	for (int i = 0; i < 6; ++i)
 	{
 		DirectX::XMMATRIX mLightView;

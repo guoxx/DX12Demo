@@ -303,9 +303,9 @@ void Renderer::DeferredLighting(const Camera* pCamera, Scene* pScene)
 			{
 				auto pointLight = pScene->GetPointLights()[i];
 
-				DirectX::XMStoreFloat4(&pPointLightData[i].m_Position, pointLight->GetTranslation());
-				pPointLightData[i].m_RadiusParam = DirectX::XMFLOAT4{ pointLight->GetRadiusStart(), pointLight->GetRadiusEnd(), 0, 0 };
-				pPointLightData[i].m_Intensity = pointLight->GetIntensity();
+				DirectX::XMStoreFloat4(&pPointLightData[i].m_PositionAndRadius, pointLight->GetTranslation());
+                pPointLightData[i].m_PositionAndRadius.w = pointLight->GetRadius();
+                DirectX::XMStoreFloat4(&pPointLightData[i].m_RadiantPower, pointLight->GetRadiantPower());
 				for (int face = 0; face < 6; ++face)
 				{
 					DirectX::XMMATRIX mLightView;

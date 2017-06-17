@@ -245,7 +245,7 @@ void Material::Apply(RenderContext* pRenderContext, DX12GraphicsContext* pGfxCon
 
 			constants.LightType = 1;
 			DirectX::XMStoreFloat4(&constants.PointLightPosition, pPointLight->GetTranslation());
-			constants.PointLightIntensity = pPointLight->GetIntensity();
+			DirectX::XMStoreFloat4(&constants.PointLightIntensity, pPointLight->GetRadiantPower());
 		}
 
 		pGfxContext->SetGraphicsRootDynamicConstantBufferView(1, &constants, sizeof(constants));

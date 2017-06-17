@@ -113,25 +113,25 @@ float3 ShadePointLight(GBuffer gbuffer, PointLight pointLight)
 	float shadowMask = 1.0f;
 	if (pointLight.m_FirstShadowMapTexId != -1)
 	{
-		int face = GetFaceOfPointLightShadowMap(pointLight.m_Position.xyz, gbuffer.Position);
+		int face = GetFaceOfPointLightShadowMap(pointLight.m_PositionAndRadius.xyz, gbuffer.Position);
 		float4 shadowPos = mul(float4(gbuffer.Position, 1), pointLight.m_mViewProj[face]);
 		shadowPos /= shadowPos.w;
 		float occluderDepth = g_ShadowMaps[pointLight.m_FirstShadowMapTexId + face].SampleLevel(g_StaticPointClampSampler, shadowPos.xy * float2(1, -1) * 0.5 + 0.5, 0);
 		shadowMask = occluderDepth < shadowPos.z ? 0.0f : 1.0f;
 	}
 
-	float3 L = normalize(pointLight.m_Position.xyz - gbuffer.Position);
+	float3 L = normalize(pointLight.m_PositionAndRadius.xyz - gbuffer.Position);
 	float3 V = normalize(g_Constants.m_CameraPosition.xyz - gbuffer.Position);
 	float3 N = gbuffer.Normal;
 	float NdotL = saturate(dot(N, L));
 
-	float dist = length(pointLight.m_Position.xyz - gbuffer.Position);
-	float radiusStart = pointLight.m_RadiusParam.x;
-	float radiusEnd = pointLight.m_RadiusParam.y;
-	float3 E = PointLightIrradiance(pointLight.m_Intensity.xyz, dist, radiusStart, radiusEnd) * NdotL * PI;
-	float3 diffuse = Diffuse_Lambert(gbuffer.Diffuse) * E;
-	float3 specular = MicrofacetSpecular(gbuffer.Specular, gbuffer.Roughness, V, N, L) * E;
-	return (diffuse + specular) * shadowMask;
+	float dist = length(pointLight.m_PositionAndRadius.xyz - gbuffer.Position);
+	float radius = pointLight.m_PositionAndRadius.w;
+	float3 E = PointLightIrradiance(pointLight.m_RadiantPower.xyz, dist, radius);
+	float3 diffuse = Diffuse_Lambert(gbuffer.Diffuse);
+	float3 specular = MicrofacetSpecular(gbuffer.Specular, gbuffer.Roughness, V, N, L);
+    float3 bsdf = diffuse + specular;
+    return bsdf * E * NdotL * shadowMask;
 }
 
 [numthreads(LIGHT_CULLING_NUM_THREADS_XY, LIGHT_CULLING_NUM_THREADS_XY, 1)]

@@ -187,16 +187,18 @@ void DX12SponzaDemo::LoadAssets()
 
 	{
 		std::shared_ptr<PointLight> light = std::make_shared<PointLight>();
-		light->SetRadius(0.1f, 400.0f);
-		light->SetIntensity(1, 1, 1);
+		light->SetRadius(320.0f);
+        light->SetColor(1, 1, 1);
+		light->SetRadiantPower(640000);
 		light->SetTranslation(DirectX::XMVECTOR{ -400.0f, 180.0f, -100.0f, 0.0f });
 		m_Scene->AttachPointLight(light);
 	}
 
 	{
 		std::shared_ptr<PointLight> light = std::make_shared<PointLight>();
-		light->SetRadius(0.1f, 400.0f);
-		light->SetIntensity(1, 1, 1);
+		light->SetRadius(320.0f);
+        light->SetColor(1, 1, 1);
+		light->SetRadiantPower(640000);
 		light->SetTranslation(DirectX::XMVECTOR{ -1200.0f, 180.0f, -250.0f, 0.0f });
 		m_Scene->AttachPointLight(light);
 	}
