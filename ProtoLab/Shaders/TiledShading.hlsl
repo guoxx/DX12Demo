@@ -184,5 +184,8 @@ void CSMain(uint3 Gid : SV_GroupID, uint3 GTid : SV_GroupThreadID, uint3 DTid : 
 		outRadiance += ShadePointLight(gbuffer, g_PointLights[gs_LightIdxPerTile[visPointLightIdx]]);
 	}
 
+    // TODO - ambient
+    outRadiance += gbuffer.Diffuse * 0.1;
+
 	g_LightingSurface[DTid.xy] = float4(outRadiance, 1);
 }

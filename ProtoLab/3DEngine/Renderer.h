@@ -14,8 +14,10 @@ class PointLightFilter2D;
 class DirectionalLightFilter2D;
 class ConvertEVSMFilter2D;
 class AntiAliasingFilter2D;
+class ResolveToSwapChainFilter2D;
 class LightCullingPass;
 class TiledShadingPass;
+class ComputeProcessing;
 
 class Renderer
 {
@@ -40,6 +42,12 @@ private:
 
 	void RenderDebugMenu();
 
+    void AAFilter();
+
+    void CalcAvgLuminance(DX12ColorSurface* surf);
+
+    void ToneMap();
+
 	int32_t m_Width;
 	int32_t m_Height;
     int32_t m_FrameIdx;
@@ -56,9 +64,14 @@ private:
 	RenderableSurfaceHandle<DX12ColorSurface> m_PostProcessSurface;
 	RenderableSurfaceHandle<DX12ColorSurface> m_HistoryLightingSurface;
 
+	std::vector<RenderableSurfaceHandle<DX12ColorSurface>> m_LuminanceSurfaces;
+
+	RenderableSurfaceHandle<DX12ColorSurface> m_LDRSurface;
+
 	std::shared_ptr<DX12SwapChain> m_SwapChain;
 
 	std::shared_ptr<Filter2D> m_IdentityFilter2D;
+	std::shared_ptr<ResolveToSwapChainFilter2D> m_ResolveToSwapChainFilter2D;
 	std::shared_ptr<ToneMapFilter2D> m_ToneMapFilter2D;
 	std::shared_ptr<PointLightFilter2D> m_PointLightFilter2D;
 	std::shared_ptr<DirectionalLightFilter2D> m_DirLightFilter2D;
@@ -70,5 +83,9 @@ private:
 	std::shared_ptr<DX12StructuredBuffer> m_AllPointLights;
 	std::shared_ptr<DX12StructuredBuffer> m_AllDirectionalLights;
 	std::shared_ptr<DX12StructuredBuffer> m_VisiblePointLights;
+
+    std::shared_ptr<ComputeProcessing> m_ReduceLuminanceInitial;
+    std::shared_ptr<ComputeProcessing> m_ReduceLuminance;
+    std::shared_ptr<ComputeProcessing> m_ReduceLuminanceFinal;
 };
 

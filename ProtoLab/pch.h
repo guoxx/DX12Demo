@@ -126,6 +126,11 @@ namespace DX
 		return (value + multiple - 1) & ~(multiple - 1);
 	}
 
+	template <typename T> __forceinline T DivideByMultiple( T value, size_t alignment )
+	{
+		return (T)((value + alignment - 1) / alignment);
+	}
+
 	inline std::wstring UTF8StrToUTF16(std::string s)
 	{
 		std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;

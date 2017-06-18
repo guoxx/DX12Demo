@@ -11,6 +11,9 @@ public:
 
 	virtual ~DX12RenderableSurface();
 
+    uint32_t GetWidth() const { assert(m_Width > 0); return m_Width; }
+    uint32_t GetHeight() const { assert(m_Height > 0); return m_Height; }
+
 protected:
 
 	void Init(DX12Device* device,
@@ -24,5 +27,9 @@ protected:
         D3D12_RESOURCE_FLAGS flags,
 		const D3D12_CLEAR_VALUE* pOptimizedClearValue,
 		D3D12_RESOURCE_STATES initialState);
+
+protected:
+    uint32_t m_Width;
+    uint32_t m_Height;
 };
 

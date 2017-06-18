@@ -5,6 +5,8 @@
 
 
 DX12RenderableSurface::DX12RenderableSurface()
+    : m_Width{0}
+    , m_Height{0}
 {
 }
 
@@ -24,6 +26,9 @@ void DX12RenderableSurface::Init(DX12Device* device,
 	const D3D12_CLEAR_VALUE * pOptimizedClearValue,
 	D3D12_RESOURCE_STATES initialState)
 {
+    m_Width = width;
+    m_Height = height;
+
 	ComPtr<ID3D12Resource> res = device->CreateCommittedTexture2DInDefaultHeap(fmt,
 		width,
 		height,

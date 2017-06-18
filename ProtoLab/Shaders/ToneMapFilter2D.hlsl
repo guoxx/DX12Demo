@@ -1,18 +1,16 @@
 #include "Inc/Common.hlsli"
+#include "Inc/Exposure.hlsli"
 
 #define RootSigDeclaration \
 RootSigBegin \
-", RootConstants(num32BitConstants=1, b0)" \
-", DescriptorTable(SRV(t0, numDescriptors=1), visibility=SHADER_VISIBILITY_PIXEL)" \
+", CBV(b0, visibility = SHADER_VISIBILITY_ALL)" \
+", DescriptorTable(SRV(t0, numDescriptors=2), visibility=SHADER_VISIBILITY_PIXEL)" \
 RootSigEnd
 
 Texture2D<float4> g_Texture : register(t0);
+Texture2D<float> g_AvgLuminanceTex : register(t1);
 
-
-cbuffer cb0 : register(b0)
-{
-	float Exposure;
-};
+HLSLConstantBuffer(CameraSettings, 0, g_CameraSettings);
 
 struct VSOutput
 {
@@ -38,17 +36,29 @@ VSOutput VSMain(uint vertid : SV_VertexID)
 	return Out;
 }
 
-float3 ToneMap( float3 hdr, float E = 4.0 )
+float GetAvgLuminance(Texture2D<float> lumTex)
 {
-	return hdr * pow(2, E);
+    return lumTex.Load(uint3(0, 0, 0)).x;
+}
+
+float3 ACESFilm( float3 x )
+{
+    float a = 2.51f;
+    float b = 0.03f;
+    float c = 2.43f;
+    float d = 0.59f;
+    float e = 0.14f;
+    return saturate((x*(a*x+b))/(x*(c*x+d)+e));
 }
 
 RootSigDeclaration
 float4 PSMain(VSOutput In) : SV_TARGET
 {
-	float4 HdrColor = g_Texture.Sample(g_StaticPointClampSampler, In.Texcoord);
+	float4 hdrColor = g_Texture.Sample(g_StaticPointClampSampler, In.Texcoord);
+    float avgLuminance = GetAvgLuminance(g_AvgLuminanceTex);
+    float exposure;
+    float3 exposuredColor = CalcExposedColor(g_CameraSettings, hdrColor.xyz, avgLuminance, 0, exposure);
+    float3 sdrColor = ACESFilm(exposuredColor);
 
-	float3 SdrColor = ToneMap( HdrColor.xyz, Exposure );
-
-	return float4(SdrColor, saturate(HdrColor.a));
+	return float4(sdrColor, saturate(hdrColor.a));
 }

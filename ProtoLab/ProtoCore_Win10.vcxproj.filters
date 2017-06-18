@@ -195,6 +195,12 @@
     <ClCompile Include="3DEngine\Filters\AntiAliasingFilter2D.cpp">
       <Filter>3DEngine\Filters</Filter>
     </ClCompile>
+    <ClCompile Include="3DEngine\Filters\ComputeProcessing.cpp">
+      <Filter>3DEngine\Filters</Filter>
+    </ClCompile>
+    <ClCompile Include="3DEngine\Filters\ResolveToSwapChainFilter2D.cpp">
+      <Filter>3DEngine\Filters</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DX12\DX12PipelineState.h">
@@ -404,6 +410,12 @@
     <ClInclude Include="3DEngine\Filters\AntiAliasingFilter2D.h">
       <Filter>3DEngine\Filters</Filter>
     </ClInclude>
+    <ClInclude Include="3DEngine\Filters\ComputeProcessing.h">
+      <Filter>3DEngine\Filters</Filter>
+    </ClInclude>
+    <ClInclude Include="3DEngine\Filters\ResolveToSwapChainFilter2D.h">
+      <Filter>3DEngine\Filters</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\Inc\BRDF.hlsli">
@@ -431,6 +443,9 @@
       <Filter>Shaders\Inc</Filter>
     </None>
     <None Include="packages.config" />
+    <None Include="Shaders\Inc\Exposure.hlsli">
+      <Filter>Shaders\Inc</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="Shaders\PointLight.hlsl">
@@ -469,5 +484,16 @@
     <CustomBuild Include="Shaders\AntiAliasingFilter2D.hlsl">
       <Filter>Shaders</Filter>
     </CustomBuild>
+    <CustomBuild Include="Shaders\LuminanceReductionFinal.hlsl">
+      <Filter>Shaders</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Shaders\LuminanceReduction.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Shaders\LuminanceReductionInitial.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

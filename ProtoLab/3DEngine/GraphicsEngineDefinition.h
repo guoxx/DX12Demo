@@ -13,7 +13,7 @@ enum ShadingConfiguration
 extern BoolVar g_TiledShading;
 
 extern BoolVar g_ToneMapping;
-extern NumVar g_ToneMapExposure;
+extern NumVar g_ToneMapTargetLuminance;
 
 extern BoolVar g_RSMEnabled;
 extern NumVar g_RSMSampleRadius;

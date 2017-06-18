@@ -25,6 +25,14 @@
 #define NUM_THREADS_PER_LIGHT_CULLING_TILE (LIGHT_CULLING_NUM_THREADS_XY * LIGHT_CULLING_NUM_THREADS_XY)
 #define LIGHT_NODE_INVALID 0x7FFFFFFF
 
+#define LUMINANCE_REDUCTION_THREAD_GROUP_SIZE 16
+#define LUMINANCE_REDUCTION_NUM_THREADS (LUMINANCE_REDUCTION_THREAD_GROUP_SIZE * LUMINANCE_REDUCTION_THREAD_GROUP_SIZE)
+
+static const int ExposureModes_ManualSimple = 0;
+static const int ExposureModes_Manual_SBS = 1;
+static const int ExposureModes_Manual_SOS = 2;
+static const int ExposureModes_Automatic = 3;
+
 #ifndef __cplusplus
 	#if 0
 		// TOOD: more elegent solution but not workig on X1, not well supported by FXC
@@ -164,6 +172,19 @@ struct DirectionalLightConstants
 struct EVSMConstants
 {
 	EVSMParam			m_EVSM;
+};
+
+struct CameraSettings
+{
+    int m_ExposureMode;
+    float m_Aperture;
+    float m_ShutterSpeed;
+    float m_ISO;
+
+    float m_KeyValue;
+    float m_ManualExposure;
+    float m_Dummy0;
+    float m_Dummy1;
 };
 
 #ifdef __cplusplus
