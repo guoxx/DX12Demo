@@ -51,6 +51,15 @@ float3 ACESFilm( float3 x )
     return saturate((x*(a*x+b))/(x*(c*x+d)+e));
 }
 
+float3 ToneMapFilmicALU(float3 color)
+{
+    color = max(0, color - 0.004f);
+    color = (color * (6.2f * color + 0.5f)) / (color * (6.2f * color + 1.7f)+ 0.06f);
+
+    // result has 1/2.2 baked in
+    return pow(color, 2.2f);
+}
+
 RootSigDeclaration
 float4 PSMain(VSOutput In) : SV_TARGET
 {
@@ -58,7 +67,7 @@ float4 PSMain(VSOutput In) : SV_TARGET
     float avgLuminance = GetAvgLuminance(g_AvgLuminanceTex);
     float exposure;
     float3 exposuredColor = CalcExposedColor(g_CameraSettings, hdrColor.xyz, avgLuminance, 0, exposure);
-    float3 sdrColor = ACESFilm(exposuredColor);
+    float3 sdrColor = ToneMapFilmicALU(exposuredColor);
 
 	return float4(sdrColor, saturate(hdrColor.a));
 }
