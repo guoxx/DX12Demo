@@ -109,11 +109,11 @@ float4 PSMain(VSOutput In) : SV_TARGET
 	float3 V = normalize(g_Constants.CameraPosition.xyz - gbuffer.Position);
 	float3 N = gbuffer.Normal;
 	float NdotL = saturate(dot(N, L));
-	float3 E = g_Constants.m_DirLight.m_Irradiance * NdotL * PI;
+	float3 E = g_Constants.m_DirLight.m_Irradiance;
 
-	float3 diffuse = Diffuse_Lambert(gbuffer.Diffuse) * E;
-	float3 specular = MicrofacetSpecular(gbuffer.Specular, gbuffer.Roughness, V, N, L) * E;
-	outRadiance += (diffuse + specular) * shadowMask;
+	float3 diffuse = Diffuse_Lambert(gbuffer.Diffuse);
+	float3 specular = MicrofacetSpecular(gbuffer.Specular, gbuffer.Roughness, V, N, L);
+	outRadiance += (diffuse + specular) * shadowMask * E * NdotL;
 
 	if (g_Constants.m_RSM.m_Enabled)
 	{

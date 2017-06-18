@@ -176,6 +176,7 @@ struct EVSMConstants
 
 struct CameraSettings
 {
+    int m_ToneMapEnabled;
     int m_ExposureMode;
     float m_Aperture;
     float m_ShutterSpeed;
@@ -183,7 +184,6 @@ struct CameraSettings
 
     float m_KeyValue;
     float m_ManualExposure;
-    float m_Dummy0;
     float m_Dummy1;
 };
 

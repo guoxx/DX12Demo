@@ -753,6 +753,7 @@ void Renderer::ToneMap()
     m_ToneMapFilter2D->Apply(pGfxContext);
 
     HLSL::CameraSettings constants;
+    constants.m_ToneMapEnabled = g_ToneMapping;
     constants.m_ExposureMode = ExposureModes_Automatic;
     constants.m_KeyValue = g_ToneMapTargetLuminance;
     pGfxContext->SetGraphicsRootDynamicConstantBufferView(0, &constants, sizeof(constants));

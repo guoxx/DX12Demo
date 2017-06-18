@@ -487,13 +487,11 @@
     <CustomBuild Include="Shaders\LuminanceReductionFinal.hlsl">
       <Filter>Shaders</Filter>
     </CustomBuild>
-  </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="Shaders\LuminanceReduction.hlsl">
+    <CustomBuild Include="Shaders\LuminanceReduction.hlsl">
       <Filter>Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="Shaders\LuminanceReductionInitial.hlsl">
+    </CustomBuild>
+    <CustomBuild Include="Shaders\LuminanceReductionInitial.hlsl">
       <Filter>Shaders</Filter>
-    </FxCompile>
+    </CustomBuild>
   </ItemGroup>
 </Project>
