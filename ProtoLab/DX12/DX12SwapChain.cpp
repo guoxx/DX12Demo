@@ -3,7 +3,7 @@
 
 #include "DX12Device.h"
 #include "DX12ColorSurface.h"
-#include "DX12GraphicsContextAutoExecutor.h"
+#include "DX12ScopedGraphicsContext.h"
 
 DX12SwapChain::DX12SwapChain(DX12Device* device, const GFX_HWND hwnd, uint32_t backBufferWidth, uint32_t backBufferHeight, GFX_FORMAT_SET backBufferFormat)
 {
@@ -49,8 +49,7 @@ DX12SwapChain::~DX12SwapChain()
 
 void DX12SwapChain::Begin()
 {
-	DX12SwapChainContextAutoExecutor executor;
-	DX12GraphicsContext* pGfxContext = executor.GetGraphicsContext();
+	DX12ScopedSwapChainContext pGfxContext;
 
 	pGfxContext->ResourceTransitionBarrier(GetBackBuffer(), D3D12_RESOURCE_STATE_RENDER_TARGET);
 }
@@ -63,8 +62,7 @@ DX12ColorSurface * DX12SwapChain::GetBackBuffer() const
 void DX12SwapChain::Flip()
 {
 	{
-		DX12SwapChainContextAutoExecutor executor;
-		DX12GraphicsContext* pGfxContext = executor.GetGraphicsContext();
+		DX12ScopedSwapChainContext pGfxContext;
 
 		pGfxContext->ResourceTransitionBarrier(GetBackBuffer(), D3D12_RESOURCE_STATE_PRESENT);
 	}

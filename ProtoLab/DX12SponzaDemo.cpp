@@ -167,11 +167,10 @@ void DX12SponzaDemo::LoadAssets()
 	m_Camera->LookAt(DirectX::XMVECTOR{100, 400, -40}, DirectX::XMVECTOR{0, 400, -40}, DirectX::XMVECTOR{0, 1, 0});
 	m_Camera->SetViewParams(45, m_Width * 1.0f / m_Height, 0.1f, 2000.0f);
 
-	DX12GraphicsContextAutoExecutor executor;
-	DX12GraphicsContext* pGfxContext = executor.GetGraphicsContext();
+	DX12ScopedGraphicsContext pGfxContext;
 
 	m_Scene = std::make_shared<Scene>();
-	std::vector<std::shared_ptr<Model>> models = Model::LoadOBJ(m_GraphicsManager->GetDevice(), pGfxContext, "crytek-sponza/sponza.obj", "crytek-sponza/");
+	std::vector<std::shared_ptr<Model>> models = Model::LoadOBJ(m_GraphicsManager->GetDevice(), pGfxContext.Get(), "crytek-sponza/sponza.obj", "crytek-sponza/");
 	//std::vector<std::shared_ptr<Model>> models = Model::LoadOBJ(m_GraphicsManager->GetDevice(), pGfxContext, "cornell-box/CornellBox-Glossy.obj", "cornell-box/");
 	for (auto m : models)
 	{

@@ -13,5 +13,5 @@
 #include "DX12RootSignature.h"
 #include "DX12FenceManager.h"
 #include "DX12GraphicsContext.h"
-#include "DX12GraphicsContextAutoExecutor.h"
+#include "DX12ScopedGraphicsContext.h"
 #include "DX12GraphicsManager.h"

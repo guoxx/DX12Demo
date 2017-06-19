@@ -10,8 +10,7 @@ AntiAliasingFilter2D::AntiAliasingFilter2D(DX12Device* device)
 
 	m_IndexBuffer = std::make_shared<DX12IndexBuffer>(device, sizeof(indices), 0, DXGI_FORMAT_R32_UINT);
 
-	DX12GraphicsContextAutoExecutor executor;
-	DX12GraphicsContext* pGfxContext = executor.GetGraphicsContext();
+	DX12ScopedGraphicsContext pGfxContext;
 
 	pGfxContext->ResourceTransitionBarrier(m_IndexBuffer.get(), D3D12_RESOURCE_STATE_COPY_DEST);
 	pGfxContext->UploadBuffer(m_IndexBuffer.get(), indices, sizeof(indices));

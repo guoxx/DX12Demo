@@ -288,7 +288,7 @@
     <ClInclude Include="DX12\DX12FenceManager.h" />
     <ClInclude Include="DX12\DX12GpuResource.h" />
     <ClInclude Include="DX12\DX12GraphicsContext.h" />
-    <ClInclude Include="DX12\DX12GraphicsContextAutoExecutor.h" />
+    <ClInclude Include="DX12\DX12ScopedGraphicsContext.h" />
     <ClInclude Include="DX12\DX12GraphicsManager.h" />
     <ClInclude Include="DX12\DX12PipelineState.h" />
     <ClInclude Include="DX12\DX12RenderableSurface.h" />
