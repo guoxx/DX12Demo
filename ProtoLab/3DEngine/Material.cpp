@@ -44,7 +44,7 @@ void Material::Load(DX12GraphicsContext* pGfxContext)
 		psoCompiler.SetShaderFromBin(DX12ShaderTypeVertex, g_BaseMaterial_VS, sizeof(g_BaseMaterial_VS));
 		psoCompiler.SetShaderFromBin(DX12ShaderTypePixel, g_BaseMaterial_PS, sizeof(g_BaseMaterial_PS));
 		psoCompiler.SetRoogSignature(m_RootSig[shadingCfg].get());
-		psoCompiler.SetRenderTargetFormat(DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM);
+		psoCompiler.SetRenderTargetFormat(DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R16G16B16A16_FLOAT);
 		psoCompiler.SetDespthStencilFormat(DXGI_FORMAT_D32_FLOAT);
 		psoCompiler.SetRasterizerState(CD3DX12::RasterizerDefault());
 

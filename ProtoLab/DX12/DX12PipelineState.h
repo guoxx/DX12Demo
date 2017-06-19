@@ -35,9 +35,20 @@ public:
 
 	bool SetDepthStencilState(const D3D12_DEPTH_STENCIL_DESC& depthStencilDesc);
 
-	bool SetRenderTargetFormat(DXGI_FORMAT fmt0);
-	bool SetRenderTargetFormat(DXGI_FORMAT fmt0, DXGI_FORMAT fmt1);
-	bool SetRenderTargetFormat(DXGI_FORMAT fmt0, DXGI_FORMAT fmt1, DXGI_FORMAT fmt2);
+	bool SetRenderTargetFormat(DXGI_FORMAT fmt)
+	{
+        SetRenderTargetFormatInternal(fmt);
+	    return true;
+	}
+
+    template<typename T, typename... Fmts>
+	bool SetRenderTargetFormat(T fmt0, Fmts... fmts)
+    {
+        SetRenderTargetFormatInternal(fmt0);
+        SetRenderTargetFormat(fmts...);
+        return true;
+    }
+
 	bool SetRenderTargetFormats(uint32_t numRenderTargets, DXGI_FORMAT* fmts);
 
 	bool SetDespthStencilFormat(DXGI_FORMAT fmt);
@@ -47,6 +58,8 @@ public:
 	std::shared_ptr<DX12PipelineState> Compile(DX12Device* device);
 
 private:
+	bool SetRenderTargetFormatInternal(DXGI_FORMAT fmt);
+
 	ComPtr<ID3DBlob> CompileShader(const wchar_t* file, const char* entry, const char* profile) const;
 
 	ComPtr<ID3D12RootSignature> m_RootSig;

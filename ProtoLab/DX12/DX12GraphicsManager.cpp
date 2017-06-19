@@ -26,7 +26,7 @@ DX12GraphicsManager::DX12GraphicsManager()
 	, m_ConstantsBufferAllocator{ 0, DX12ConstantsBufferHeapSizeInBytes }
 	, m_TempResourcePoolIdx{ 0 }
 {
-#if defined(_DEBUG)
+#ifndef NDEBUG
     // Enable the D3D12 debug layer.
     {
         ComPtr<ID3D12Debug> debugController;

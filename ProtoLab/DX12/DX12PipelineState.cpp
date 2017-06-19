@@ -25,9 +25,7 @@ DX12GraphicPsoCompiler::DX12GraphicPsoCompiler()
 	m_PsoDesc.InputLayout = D3D12_INPUT_LAYOUT_DESC{ nullptr, 0 };
 	m_PsoDesc.IBStripCutValue = D3D12_INDEX_BUFFER_STRIP_CUT_VALUE_DISABLED;
 	m_PsoDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
-	m_PsoDesc.NumRenderTargets = 1;
-	m_PsoDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
-	m_PsoDesc.DSVFormat = DXGI_FORMAT_D32_FLOAT;
+	m_PsoDesc.NumRenderTargets = 0;
 	m_PsoDesc.SampleDesc = { 1, 0 };
 	m_PsoDesc.NodeMask = 0;
 #ifdef _XBOX_ONE
@@ -108,30 +106,6 @@ bool DX12GraphicPsoCompiler::SetDepthStencilState(const D3D12_DEPTH_STENCIL_DESC
 	return true;
 }
 
-bool DX12GraphicPsoCompiler::SetRenderTargetFormat(DXGI_FORMAT fmt0)
-{
-	m_PsoDesc.NumRenderTargets = 1;
-	m_PsoDesc.RTVFormats[0] = fmt0;
-	return true;
-}
-
-bool DX12GraphicPsoCompiler::SetRenderTargetFormat(DXGI_FORMAT fmt0, DXGI_FORMAT fmt1)
-{
-	m_PsoDesc.NumRenderTargets = 2;
-	m_PsoDesc.RTVFormats[0] = fmt0;
-	m_PsoDesc.RTVFormats[1] = fmt1;
-	return true;
-}
-
-bool DX12GraphicPsoCompiler::SetRenderTargetFormat(DXGI_FORMAT fmt0, DXGI_FORMAT fmt1, DXGI_FORMAT fmt2)
-{
-	m_PsoDesc.NumRenderTargets = 3;
-	m_PsoDesc.RTVFormats[0] = fmt0;
-	m_PsoDesc.RTVFormats[1] = fmt1;
-	m_PsoDesc.RTVFormats[2] = fmt2;
-	return true;
-}
-
 bool DX12GraphicPsoCompiler::SetRenderTargetFormats(uint32_t numRenderTargets, DXGI_FORMAT* fmts)
 {
 	assert(numRenderTargets < DX12MaxRenderTargetsCount);
@@ -158,6 +132,13 @@ bool DX12GraphicPsoCompiler::SetInputLayout(uint32_t numElements, const D3D12_IN
 std::shared_ptr<DX12PipelineState> DX12GraphicPsoCompiler::Compile(DX12Device* device)
 {
 	return std::make_shared<DX12PipelineState>(device->CreateGraphicsPipelineState(&m_PsoDesc));
+}
+
+bool DX12GraphicPsoCompiler::SetRenderTargetFormatInternal(DXGI_FORMAT fmt)
+{
+    m_PsoDesc.RTVFormats[m_PsoDesc.NumRenderTargets] = fmt;
+    m_PsoDesc.NumRenderTargets += 1;
+    return true;
 }
 
 ComPtr<ID3DBlob> DX12GraphicPsoCompiler::CompileShader(const wchar_t* file, const char* entry, const char* profile) const
