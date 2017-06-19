@@ -149,9 +149,6 @@ void DX12SponzaDemo::CreateDevice()
 	EngineTuning::Initialize();
 
 	m_GraphicsManager = DX12GraphicsManager::GetInstance();
-
-	m_GraphicsManager->CreateGraphicCommandQueues();
-
 }
 
 // Allocate all memory resources that change on a window SizeChanged event.

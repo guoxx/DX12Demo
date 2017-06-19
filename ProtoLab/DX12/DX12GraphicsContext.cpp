@@ -82,6 +82,11 @@ void DX12GraphicsContext::PIXSetMarker(const wchar_t* label)
 #endif
 }
 
+void DX12GraphicsContext::SetName(const wchar_t* name)
+{
+    DX::SetName(m_CommandList.Get(), name);
+}
+
 void DX12GraphicsContext::IASetIndexBuffer(const DX12IndexBuffer* pIndexBuffer)
 {
 	m_CommandList->IASetIndexBuffer(&pIndexBuffer->GetView());

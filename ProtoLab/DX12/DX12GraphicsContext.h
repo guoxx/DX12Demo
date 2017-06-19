@@ -28,6 +28,8 @@ public:
 
 	void PIXSetMarker(const wchar_t* label);
 
+    void SetName(const wchar_t* name);
+
 	void IASetIndexBuffer(const DX12IndexBuffer* pIndexBuffer);
 
 	void IASetPrimitiveTopology(D3D12_PRIMITIVE_TOPOLOGY primitiveTopology);

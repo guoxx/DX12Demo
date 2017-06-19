@@ -92,7 +92,7 @@ namespace DX
 	}
 
 	// Assign a name to the object to aid with debugging.
-#if defined(_DEBUG)
+#ifndef NDEBUG
 	inline void SetName(ID3D12Object* pObject, LPCWSTR name)
 	{
 		pObject->SetName(name);

@@ -27,7 +27,7 @@ DX12SwapChain::DX12SwapChain(DX12Device* device, const GFX_HWND hwnd, uint32_t b
 #ifdef _XBOX_ONE
 	m_SwapChain = device->CreateSwapChain(&swapChainDesc, hwnd);
 #else
-	m_SwapChain = device->CreateSwapChain(&swapChainDesc, hwnd, DX12GraphicsManager::GetInstance()->GetSwapChainCommandQueue());
+	m_SwapChain = device->CreateSwapChain(&swapChainDesc, hwnd, DX12GraphicsManager::GetInstance()->GetGraphicsQueue());
 #endif
 
 	m_BackBufferIdx = 0;
@@ -49,7 +49,7 @@ DX12SwapChain::~DX12SwapChain()
 
 void DX12SwapChain::Begin()
 {
-	DX12ScopedSwapChainContext pGfxContext;
+    DX12ScopedGraphicsContext pGfxContext{L"SwapChain::Begin"};
 
 	pGfxContext->ResourceTransitionBarrier(GetBackBuffer(), D3D12_RESOURCE_STATE_RENDER_TARGET);
 }
@@ -62,7 +62,7 @@ DX12ColorSurface * DX12SwapChain::GetBackBuffer() const
 void DX12SwapChain::Flip()
 {
 	{
-		DX12ScopedSwapChainContext pGfxContext;
+		DX12ScopedGraphicsContext pGfxContext{L"SwapChain::Flip"};
 
 		pGfxContext->ResourceTransitionBarrier(GetBackBuffer(), D3D12_RESOURCE_STATE_PRESENT);
 	}

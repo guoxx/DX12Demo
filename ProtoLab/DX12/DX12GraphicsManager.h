@@ -25,7 +25,7 @@ public:
 
 	DX12DescriptorManager* GetDescriptorManager() const { return m_DescriptorManager.get(); }
 
-	ID3D12CommandQueue* GetSwapChainCommandQueue() const { return m_SwapChainCommandQueue.Get(); }
+	ID3D12CommandQueue* GetGraphicsQueue() const { return m_GraphicsQueue.Get(); }
 
 	void Flip();
 
@@ -34,13 +34,10 @@ public:
 	void Resume();
 #endif
 
-	void CreateGraphicCommandQueues(uint32_t cnt = 1);
-
 	// graphic context execution
-	DX12GraphicsContext* BegineGraphicsContext();
+	DX12GraphicsContext* BegineGraphicsContext(const wchar_t* name);
 	void EndGraphicsContext(DX12GraphicsContext* ctx);
 	void ExecuteGraphicsContext(DX12GraphicsContext* ctx);
-	void ExecuteGraphicsContextInQueue(DX12GraphicsContext* ctx, ID3D12CommandQueue* pQueue);
 
 	// resource binding
 	DX12DescriptorHandle RegisterResourceInDescriptorHeap(ID3D12Resource* resource, D3D12_DESCRIPTOR_HEAP_TYPE type);
@@ -55,9 +52,10 @@ private:
 	DX12GraphicsManager();
 	~DX12GraphicsManager();
 
+	void CreateGraphicCommandQueues();
+
 	std::unique_ptr<DX12Device> m_Device;
-	std::vector<ComPtr<ID3D12CommandQueue>> m_GraphicQueues;
-	ComPtr<ID3D12CommandQueue> m_SwapChainCommandQueue;
+	ComPtr<ID3D12CommandQueue> m_GraphicsQueue;
 
 	uint32_t m_GraphicContextParallelBits;
 

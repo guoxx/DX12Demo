@@ -68,9 +68,7 @@ DX12GraphicsManager::DX12GraphicsManager()
 	m_ConstantsBuffer = m_Device->CreatePlacedResource(m_ConstantsBufferHeap.Get(), 0, &CD3DX12_RESOURCE_DESC::Buffer(DX12ConstantsBufferHeapSizeInBytes), D3D12_RESOURCE_STATE_GENERIC_READ, nullptr);
 	m_ConstantsBuffer->Map(0, nullptr, (void**)&m_ConstantsBufferBeginPtr);
 
-#ifndef _XBOX_ONE
-	m_SwapChainCommandQueue = m_Device->CreateGraphicCommandQueue(0, D3D12_COMMAND_QUEUE_FLAG_NONE, 0);
-#endif
+    CreateGraphicCommandQueues();
 }
 
 DX12GraphicsManager::~DX12GraphicsManager()
@@ -86,34 +84,22 @@ void DX12GraphicsManager::Flip()
 #ifdef _XBOX_ONE
 void DX12GraphicsManager::Suspend()
 {
-	for (auto queue : m_GraphicQueues)
-	{
-		queue->SuspendX(0);
-	}
+	m_GraphicsQueue->SuspendX(0);
 }
 
 void DX12GraphicsManager::Resume()
 {
-	for (auto queue : m_GraphicQueues)
-	{
-		queue->ResumeX();
-	}
+	m_GraphicsQueue->ResumeX();
 }
 #endif
 
-void DX12GraphicsManager::CreateGraphicCommandQueues(uint32_t cnt)
+void DX12GraphicsManager::CreateGraphicCommandQueues()
 {
-	for (uint32_t i = 0; i < cnt; ++i)
-	{
-		m_GraphicQueues.push_back(ComPtr<ID3D12CommandQueue>{ m_Device->CreateGraphicCommandQueue(0, D3D12_COMMAND_QUEUE_FLAG_NONE, 0) });
-	}
-
-#ifdef _XBOX_ONE
-	m_SwapChainCommandQueue = m_GraphicQueues[0];
-#endif
+    m_GraphicsQueue = ComPtr<ID3D12CommandQueue>{m_Device->CreateGraphicCommandQueue(0, D3D12_COMMAND_QUEUE_FLAG_NONE, 0)};
+    DX::SetName(m_GraphicsQueue.Get(), L"GraphicsQueue");
 }
 
-DX12GraphicsContext* DX12GraphicsManager::BegineGraphicsContext()
+DX12GraphicsContext* DX12GraphicsManager::BegineGraphicsContext(const wchar_t* name)
 {
 	int32_t parallelId = DX12ParallelIdInvalid;
 	for (int32_t i = 0; i < DX12MaxGraphicContextsInParallel; ++i)
@@ -133,6 +119,7 @@ DX12GraphicsContext* DX12GraphicsManager::BegineGraphicsContext()
 	std::shared_ptr<DX12GraphicsContext> ctx = m_GraphicContexts[idx];
 	ctx->Reset();
 	ctx->SetParallelId(parallelId);
+    ctx->SetName(name);
 
 	m_DescriptorManager->SetupHeapsForCommandList(ctx.get());
 
@@ -154,13 +141,8 @@ void DX12GraphicsManager::EndGraphicsContext(DX12GraphicsContext * ctx)
 
 void DX12GraphicsManager::ExecuteGraphicsContext(DX12GraphicsContext* ctx)
 {
-	ExecuteGraphicsContextInQueue(ctx, m_GraphicQueues[0].Get());
-}
-
-void DX12GraphicsManager::ExecuteGraphicsContextInQueue(DX12GraphicsContext* ctx, ID3D12CommandQueue* pQueue)
-{
 	PIXBeginEvent(0, L"ExecuteCommandList");
-	ctx->ExecuteInQueue(pQueue);
+	ctx->ExecuteInQueue(m_GraphicsQueue.Get());
 	PIXEndEvent();
 }
 
