@@ -191,6 +191,7 @@
     <ClCompile Include="3DEngine\Filters\ConvertEVSMFilter2D.cpp" />
     <ClCompile Include="3DEngine\Filters\DirectionalLightFilter2D.cpp" />
     <ClCompile Include="3DEngine\Filters\Filter2D.cpp" />
+    <ClCompile Include="3DEngine\Filters\ImageProcessing.cpp" />
     <ClCompile Include="3DEngine\Filters\PointLightFilter2D.cpp" />
     <ClCompile Include="3DEngine\Filters\ResolveToSwapChainFilter2D.cpp" />
     <ClCompile Include="3DEngine\Filters\ToneMapFilter2D.cpp" />
@@ -247,6 +248,7 @@
     <ClInclude Include="3DEngine\Filters\AntiAliasingFilter2D.h" />
     <ClInclude Include="3DEngine\Filters\ComputeProcessing.h" />
     <ClInclude Include="3DEngine\Filters\ConvertEVSMFilter2D.h" />
+    <ClInclude Include="3DEngine\Filters\ImageProcessing.h" />
     <ClInclude Include="3DEngine\Filters\ResolveToSwapChainFilter2D.h" />
     <ClInclude Include="3DEngine\GraphicsEngineDefinition.h" />
     <ClInclude Include="3DEngine\Actor.h" />

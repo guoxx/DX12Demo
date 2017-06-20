@@ -201,6 +201,9 @@
     <ClCompile Include="3DEngine\Filters\ResolveToSwapChainFilter2D.cpp">
       <Filter>3DEngine\Filters</Filter>
     </ClCompile>
+    <ClCompile Include="3DEngine\Filters\ImageProcessing.cpp">
+      <Filter>3DEngine\Filters</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DX12\DX12PipelineState.h">
@@ -415,6 +418,9 @@
     </ClInclude>
     <ClInclude Include="DX12\DX12ScopedGraphicsContext.h">
       <Filter>DX12\Public</Filter>
+    </ClInclude>
+    <ClInclude Include="3DEngine\Filters\ImageProcessing.h">
+      <Filter>3DEngine\Filters</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
