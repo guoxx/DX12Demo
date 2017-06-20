@@ -15,22 +15,8 @@ DX12PipelineState::~DX12PipelineState()
 }
 
 DX12GraphicPsoCompiler::DX12GraphicPsoCompiler()
+    : m_PsoDesc{D3D12_DEFAULT}
 {
-	std::memset(&m_PsoDesc, 0, sizeof(m_PsoDesc));
-
-	m_PsoDesc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
-	m_PsoDesc.SampleMask = UINT_MAX;
-	m_PsoDesc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
-	m_PsoDesc.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
-	m_PsoDesc.InputLayout = D3D12_INPUT_LAYOUT_DESC{ nullptr, 0 };
-	m_PsoDesc.IBStripCutValue = D3D12_INDEX_BUFFER_STRIP_CUT_VALUE_DISABLED;
-	m_PsoDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
-	m_PsoDesc.NumRenderTargets = 0;
-	m_PsoDesc.SampleDesc = { 1, 0 };
-	m_PsoDesc.NodeMask = 0;
-#ifdef _XBOX_ONE
-	m_PsoDesc.Flags = D3D12_PIPELINE_STATE_FLAG_TOOL_DEBUG;
-#endif
 }
 
 DX12GraphicPsoCompiler::~DX12GraphicPsoCompiler()

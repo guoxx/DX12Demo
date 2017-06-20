@@ -11,7 +11,7 @@ RenderContext::~RenderContext()
 {
 }
 
-DX12ColorSurface * RenderContext::AcquireRSMRadiantIntensitySurfaceForDirectionalLight(DirectionalLight * pDirLight)
+DX12ColorSurface * RenderContext::AcquireRSMRadiantIntensitySurfaceForDirectionalLight(const DirectionalLight * pDirLight)
 {
 	RenderableSurfaceHandle<DX12ColorSurface> handle;
 
@@ -30,7 +30,7 @@ DX12ColorSurface * RenderContext::AcquireRSMRadiantIntensitySurfaceForDirectiona
 	return handle.Get();
 }
 
-DX12ColorSurface * RenderContext::AcquireRSMNormalSurfaceForDirectionalLight(DirectionalLight * pDirLight)
+DX12ColorSurface * RenderContext::AcquireRSMNormalSurfaceForDirectionalLight(const DirectionalLight * pDirLight)
 {
 	RenderableSurfaceHandle<DX12ColorSurface> handle;
 
@@ -49,7 +49,7 @@ DX12ColorSurface * RenderContext::AcquireRSMNormalSurfaceForDirectionalLight(Dir
 	return handle.Get();
 }
 
-DX12ColorSurface * RenderContext::AcquireEVSMSurfaceForDirectionalLight(DirectionalLight * pDirLight)
+DX12ColorSurface * RenderContext::AcquireEVSMSurfaceForDirectionalLight(const DirectionalLight * pDirLight)
 {
 	RenderableSurfaceHandle<DX12ColorSurface> handle;
 
@@ -68,7 +68,7 @@ DX12ColorSurface * RenderContext::AcquireEVSMSurfaceForDirectionalLight(Directio
 	return handle.Get();
 }
 
-DX12DepthSurface*  RenderContext::AcquireDepthSurfaceForDirectionalLight(DirectionalLight* pDirLight)
+DX12DepthSurface*  RenderContext::AcquireDepthSurfaceForDirectionalLight(const DirectionalLight* pDirLight)
 {
 	RenderableSurfaceHandle<DX12DepthSurface> handle;
 
@@ -87,7 +87,7 @@ DX12DepthSurface*  RenderContext::AcquireDepthSurfaceForDirectionalLight(Directi
 	return handle.Get();
 }
 
-std::array<DX12ColorSurface*, 6> RenderContext::AcquireEVSMSurfaceForPointLight(PointLight * pPointLight)
+std::array<DX12ColorSurface*, 6> RenderContext::AcquireEVSMSurfaceForPointLight(const PointLight * pPointLight)
 {
 	std::array<RenderableSurfaceHandle<DX12ColorSurface>, 6> handles;
 
@@ -120,7 +120,7 @@ std::array<DX12ColorSurface*, 6> RenderContext::AcquireEVSMSurfaceForPointLight(
 	};
 }
 
-std::array<DX12ColorSurface*, 6> RenderContext::AcquireRSMRadiantIntensitySurfaceForPointLight(PointLight * pPointLight)
+std::array<DX12ColorSurface*, 6> RenderContext::AcquireRSMRadiantIntensitySurfaceForPointLight(const PointLight * pPointLight)
 {
 	std::array<RenderableSurfaceHandle<DX12ColorSurface>, 6> handles;
 
@@ -153,7 +153,7 @@ std::array<DX12ColorSurface*, 6> RenderContext::AcquireRSMRadiantIntensitySurfac
 	};
 }
 
-std::array<DX12ColorSurface*, 6> RenderContext::AcquireRSMNormalSurfaceForPointLight(PointLight * pPointLight)
+std::array<DX12ColorSurface*, 6> RenderContext::AcquireRSMNormalSurfaceForPointLight(const PointLight * pPointLight)
 {
 	std::array<RenderableSurfaceHandle<DX12ColorSurface>, 6> handles;
 
@@ -186,7 +186,7 @@ std::array<DX12ColorSurface*, 6> RenderContext::AcquireRSMNormalSurfaceForPointL
 	};
 }
 
-std::array<DX12DepthSurface*, 6> RenderContext::AcquireDepthSurfaceForPointLight(PointLight* pPointLight)
+std::array<DX12DepthSurface*, 6> RenderContext::AcquireDepthSurfaceForPointLight(const PointLight* pPointLight)
 {
 	std::array<RenderableSurfaceHandle<DX12DepthSurface>, 6> handles;
 

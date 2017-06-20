@@ -97,21 +97,21 @@ public:
 	ShadingConfiguration GetShadingCfg() const { return m_ShadingCfg; }
 	void SetShadingCfg(ShadingConfiguration shadingCfg) { m_ShadingCfg = shadingCfg; }
 
-	DX12ColorSurface* AcquireEVSMSurfaceForDirectionalLight(DirectionalLight* pDirLight);
+	DX12ColorSurface* AcquireEVSMSurfaceForDirectionalLight(const DirectionalLight* pDirLight);
 
-	DX12ColorSurface* AcquireRSMRadiantIntensitySurfaceForDirectionalLight(DirectionalLight* pDirLight);
+	DX12ColorSurface* AcquireRSMRadiantIntensitySurfaceForDirectionalLight(const DirectionalLight* pDirLight);
 
-	DX12ColorSurface* AcquireRSMNormalSurfaceForDirectionalLight(DirectionalLight* pDirLight);
+	DX12ColorSurface* AcquireRSMNormalSurfaceForDirectionalLight(const DirectionalLight* pDirLight);
 
-	DX12DepthSurface* AcquireDepthSurfaceForDirectionalLight(DirectionalLight* pDirLight);
+	DX12DepthSurface* AcquireDepthSurfaceForDirectionalLight(const DirectionalLight* pDirLight);
 
-	std::array<DX12ColorSurface*, 6> AcquireEVSMSurfaceForPointLight(PointLight* pPointLight);
+	std::array<DX12ColorSurface*, 6> AcquireEVSMSurfaceForPointLight(const PointLight* pPointLight);
 
-	std::array<DX12ColorSurface*, 6> AcquireRSMRadiantIntensitySurfaceForPointLight(PointLight* pPointLight);
+	std::array<DX12ColorSurface*, 6> AcquireRSMRadiantIntensitySurfaceForPointLight(const PointLight* pPointLight);
 
-	std::array<DX12ColorSurface*, 6> AcquireRSMNormalSurfaceForPointLight(PointLight* pPointLight);
+	std::array<DX12ColorSurface*, 6> AcquireRSMNormalSurfaceForPointLight(const PointLight* pPointLight);
 
-	std::array<DX12DepthSurface*, 6> AcquireDepthSurfaceForPointLight(PointLight* pPointLight);
+	std::array<DX12DepthSurface*, 6> AcquireDepthSurfaceForPointLight(const PointLight* pPointLight);
 
 	void ReleaseDepthSurfacesForAllLights();
 
@@ -133,15 +133,15 @@ private:
 	DirectX::XMMATRIX m_mModelViewProj;
 	DirectX::XMMATRIX m_mModelViewProjWithJitter;
 
-	std::map<DirectionalLight*, RenderableSurfaceHandle<DX12DepthSurface>> m_ShadowMapForDirLights;
-	std::map<PointLight*, std::array<RenderableSurfaceHandle<DX12DepthSurface>, 6>> m_ShadowMapForPointLights;
+	std::map<const DirectionalLight*, RenderableSurfaceHandle<DX12DepthSurface>> m_ShadowMapForDirLights;
+	std::map<const PointLight*, std::array<RenderableSurfaceHandle<DX12DepthSurface>, 6>> m_ShadowMapForPointLights;
 
-	std::map<DirectionalLight*, RenderableSurfaceHandle<DX12ColorSurface>> m_EVSMSurfaceForDirLights;
-	std::map<DirectionalLight*, RenderableSurfaceHandle<DX12ColorSurface>> m_RSMRadiantIntensitySurfaceForDirLights;
-	std::map<DirectionalLight*, RenderableSurfaceHandle<DX12ColorSurface>> m_RSMNormalSurfaceForDirLights;
-	std::map<PointLight*, std::array<RenderableSurfaceHandle<DX12ColorSurface>, 6>> m_EVSMSurfaceForPointLights;
-	std::map<PointLight*, std::array<RenderableSurfaceHandle<DX12ColorSurface>, 6>> m_RSMRadiantIntensitySurfaceForPointLights;
-	std::map<PointLight*, std::array<RenderableSurfaceHandle<DX12ColorSurface>, 6>> m_RSMNormalSurfaceForPointLights;
+	std::map<const DirectionalLight*, RenderableSurfaceHandle<DX12ColorSurface>> m_EVSMSurfaceForDirLights;
+	std::map<const DirectionalLight*, RenderableSurfaceHandle<DX12ColorSurface>> m_RSMRadiantIntensitySurfaceForDirLights;
+	std::map<const DirectionalLight*, RenderableSurfaceHandle<DX12ColorSurface>> m_RSMNormalSurfaceForDirLights;
+	std::map<const PointLight*, std::array<RenderableSurfaceHandle<DX12ColorSurface>, 6>> m_EVSMSurfaceForPointLights;
+	std::map<const PointLight*, std::array<RenderableSurfaceHandle<DX12ColorSurface>, 6>> m_RSMRadiantIntensitySurfaceForPointLights;
+	std::map<const PointLight*, std::array<RenderableSurfaceHandle<DX12ColorSurface>, 6>> m_RSMNormalSurfaceForPointLights;
 
 	const ILight* m_CurrentLightForRSM;
 

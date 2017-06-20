@@ -341,6 +341,12 @@ void DX12GraphicsContext::ClearDepthTarget(DX12DepthSurface* pDepthSurface, floa
     m_CommandList->ClearDepthStencilView(pDepthSurface->GetDSV().GetCpuHandle(), D3D12_CLEAR_FLAG_DEPTH, d, 0, 0, nullptr);
 }
 
+void DX12GraphicsContext::SetRenderTarget(DX12ColorSurface* pColorSurface)
+{
+    D3D12_CPU_DESCRIPTOR_HANDLE srvs[1] = {pColorSurface->GetRTV().GetCpuHandle()};
+	m_CommandList->OMSetRenderTargets(1, srvs, false, nullptr);
+}
+
 void DX12GraphicsContext::SetRenderTargets(uint32_t numColorSurfaces, DX12ColorSurface * pColorSurface[], DX12DepthSurface * pDepthSurface)
 {
 	D3D12_CPU_DESCRIPTOR_HANDLE srvs[DX12MaxRenderTargetsCount];

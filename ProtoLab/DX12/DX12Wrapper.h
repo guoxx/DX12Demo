@@ -689,3 +689,34 @@ namespace CD3DX12
 		return desc;
 	}
 }
+
+struct CD3D12_GRAPHICS_PIPELINE_STATE_DESC : public D3D12_GRAPHICS_PIPELINE_STATE_DESC
+{
+	CD3D12_GRAPHICS_PIPELINE_STATE_DESC() = default;
+	~CD3D12_GRAPHICS_PIPELINE_STATE_DESC() = default;
+
+    operator const CD3D12_GRAPHICS_PIPELINE_STATE_DESC&() const { return *this; }
+
+	explicit CD3D12_GRAPHICS_PIPELINE_STATE_DESC(const D3D12_GRAPHICS_PIPELINE_STATE_DESC& o) :
+		CD3D12_GRAPHICS_PIPELINE_STATE_DESC(o)
+	{}
+
+	explicit CD3D12_GRAPHICS_PIPELINE_STATE_DESC(CD3DX12_DEFAULT)
+	{
+        std::memset(this, 0x00, sizeof(this));
+
+	    BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
+	    SampleMask = UINT_MAX;
+	    RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
+	    DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
+	    InputLayout = D3D12_INPUT_LAYOUT_DESC{nullptr, 0};
+	    IBStripCutValue = D3D12_INDEX_BUFFER_STRIP_CUT_VALUE_DISABLED;
+	    PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+	    NumRenderTargets = 0;
+	    SampleDesc = {1, 0};
+	    NodeMask = 0;
+#ifdef _XBOX_ONE
+	    Flags = D3D12_PIPELINE_STATE_FLAG_TOOL_DEBUG;
+#endif
+	}
+};

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "DX12Constants.h"
+#include "DX12Wrapper.h"
 
 class DX12Device;
 class DX12RootSignature;
@@ -64,7 +65,7 @@ private:
 
 	ComPtr<ID3D12RootSignature> m_RootSig;
 	ComPtr<ID3DBlob> m_ShaderBins[DX12ShaderTypeMax];
-	D3D12_GRAPHICS_PIPELINE_STATE_DESC m_PsoDesc;
+	CD3D12_GRAPHICS_PIPELINE_STATE_DESC m_PsoDesc;
 };
 
 class DX12ComputePsoCompiler
