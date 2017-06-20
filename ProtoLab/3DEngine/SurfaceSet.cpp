@@ -2,7 +2,12 @@
 #include "SurfaceSet.h"
 
 
-void GBufferSurfaceSet::TransmitToRead(DX12GraphicsContext* pCtx)
+DX12ColorSurface* GBufferSurfaceSet::GetVelocityBuffer() const
+{
+    return m_GBuffer[3].Get();
+}
+
+void GBufferSurfaceSet::TransmitToRead(DX12GraphicsContext* pCtx) const
 {
     for (auto surf : m_GBuffer)
     {
@@ -11,7 +16,7 @@ void GBufferSurfaceSet::TransmitToRead(DX12GraphicsContext* pCtx)
     pCtx->ResourceTransitionBarrier(m_DepthSurface.Get(), D3D12_RESOURCE_STATE_GENERIC_READ);
 }
 
-void GBufferSurfaceSet::TransmitToWrite(DX12GraphicsContext* pCtx)
+void GBufferSurfaceSet::TransmitToWrite(DX12GraphicsContext* pCtx) const
 {
     for (auto surf : m_GBuffer)
     {
@@ -20,7 +25,7 @@ void GBufferSurfaceSet::TransmitToWrite(DX12GraphicsContext* pCtx)
     pCtx->ResourceTransitionBarrier(m_DepthSurface.Get(), D3D12_RESOURCE_STATE_DEPTH_WRITE);
 }
 
-uint32_t GBufferSurfaceSet::SetAsSRV(DX12GraphicsContext* pCtx, uint32_t rootParameterIndex, uint32_t offsetInTable)
+uint32_t GBufferSurfaceSet::SetAsSRV(DX12GraphicsContext* pCtx, uint32_t rootParameterIndex, uint32_t offsetInTable) const
 {
     auto idx = offsetInTable;
 
@@ -36,7 +41,18 @@ uint32_t GBufferSurfaceSet::SetAsSRV(DX12GraphicsContext* pCtx, uint32_t rootPar
     return idx;
 }
 
-void PointLightShadowMapSet::TransmitToRead(DX12GraphicsContext* pCtx)
+void GBufferSurfaceSet::SetAsRTV(DX12GraphicsContext* pCtx) const
+{
+	DX12ColorSurface* pColorSurfaces[] = {
+		m_GBuffer[0].Get(),
+		m_GBuffer[1].Get(),
+		m_GBuffer[2].Get(),
+		m_GBuffer[3].Get()
+	};
+    pCtx->SetRenderTargets(_countof(pColorSurfaces), pColorSurfaces, m_DepthSurface.Get());
+}
+
+void PointLightShadowMapSet::TransmitToRead(DX12GraphicsContext* pCtx) const
 {
     for (auto surf : m_ShadowMaps)
     {
@@ -44,7 +60,7 @@ void PointLightShadowMapSet::TransmitToRead(DX12GraphicsContext* pCtx)
     }
 }
 
-void PointLightShadowMapSet::TransmitToWrite(DX12GraphicsContext* pCtx)
+void PointLightShadowMapSet::TransmitToWrite(DX12GraphicsContext* pCtx) const
 {
     for (auto surf : m_ShadowMaps)
     {
@@ -52,7 +68,7 @@ void PointLightShadowMapSet::TransmitToWrite(DX12GraphicsContext* pCtx)
     }
 }
 
-uint32_t PointLightShadowMapSet::SetAsSRV(DX12GraphicsContext* pCtx, uint32_t rootParameterIndex, uint32_t offsetInTable)
+uint32_t PointLightShadowMapSet::SetAsSRV(DX12GraphicsContext* pCtx, uint32_t rootParameterIndex, uint32_t offsetInTable) const
 {
     auto idx = offsetInTable;
     for (auto surf : m_ShadowMaps)
