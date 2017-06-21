@@ -9,28 +9,27 @@ DX12PipelineState::DX12PipelineState(ComPtr<ID3D12PipelineState> pso)
 {
 }
 
-
 DX12PipelineState::~DX12PipelineState()
 {
 }
 
-DX12GraphicPsoCompiler::DX12GraphicPsoCompiler()
+DX12GraphicsPsoDesc::DX12GraphicsPsoDesc()
     : m_PsoDesc{D3D12_DEFAULT}
 {
 }
 
-DX12GraphicPsoCompiler::~DX12GraphicPsoCompiler()
+DX12GraphicsPsoDesc::~DX12GraphicsPsoDesc()
 {
 }
 
-bool DX12GraphicPsoCompiler::SetRoogSignature(DX12RootSignature * rootSig)
+bool DX12GraphicsPsoDesc::SetRoogSignature(DX12RootSignature * rootSig)
 {
 	m_RootSig = rootSig->GetSignature();
 	m_PsoDesc.pRootSignature = m_RootSig.Get();
 	return m_PsoDesc.pRootSignature != nullptr;
 }
 
-bool DX12GraphicPsoCompiler::SetShaderFromBin(DX12ShaderType shaderType, const void * pBinData, uint64_t dataSizeInBytes)
+bool DX12GraphicsPsoDesc::SetShaderFromBin(DX12ShaderType shaderType, const void * pBinData, uint64_t dataSizeInBytes)
 {
 	D3D12_SHADER_BYTECODE bytecode = { pBinData, dataSizeInBytes };
 	switch (shaderType)
@@ -53,46 +52,25 @@ bool DX12GraphicPsoCompiler::SetShaderFromBin(DX12ShaderType shaderType, const v
 	return true;
 }
 
-bool DX12GraphicPsoCompiler::SetShaderFromFile(DX12ShaderType shaderType, const wchar_t* file, const char* entry)
-{
-	assert(shaderType != DX12ShaderTypeCompute);
-
-	static char* profiles[DX12ShaderTypeMax] = {
-		"vs_5_1",
-		"gs_5_1",
-		"ps_5_1",
-		"cs_5_1",
-	};
-	ComPtr<ID3DBlob> bin = CompileShader(file, entry, profiles[shaderType]);
-	if (bin.Get() == nullptr)
-	{
-		assert(false);
-		return false;
-	}
-
-	m_ShaderBins[shaderType] = bin;
-	return SetShaderFromBin(shaderType, bin->GetBufferPointer(), bin->GetBufferSize());
-}
-
-bool DX12GraphicPsoCompiler::SetRasterizerState(const D3D12_RASTERIZER_DESC& rasterizerDesc)
+bool DX12GraphicsPsoDesc::SetRasterizerState(const D3D12_RASTERIZER_DESC& rasterizerDesc)
 {
 	m_PsoDesc.RasterizerState = rasterizerDesc;
 	return true;
 }
 
-bool DX12GraphicPsoCompiler::SetBlendState(const D3D12_BLEND_DESC& blendDesc)
+bool DX12GraphicsPsoDesc::SetBlendState(const D3D12_BLEND_DESC& blendDesc)
 {
 	m_PsoDesc.BlendState = blendDesc;
 	return true;
 }
 
-bool DX12GraphicPsoCompiler::SetDepthStencilState(const D3D12_DEPTH_STENCIL_DESC & depthStencilDesc)
+bool DX12GraphicsPsoDesc::SetDepthStencilState(const D3D12_DEPTH_STENCIL_DESC & depthStencilDesc)
 {
 	m_PsoDesc.DepthStencilState = depthStencilDesc;
 	return true;
 }
 
-bool DX12GraphicPsoCompiler::SetRenderTargetFormats(uint32_t numRenderTargets, DXGI_FORMAT* fmts)
+bool DX12GraphicsPsoDesc::SetRenderTargetFormats(uint32_t numRenderTargets, DXGI_FORMAT* fmts)
 {
 	assert(numRenderTargets < DX12MaxRenderTargetsCount);
 	m_PsoDesc.NumRenderTargets = numRenderTargets;
@@ -103,76 +81,54 @@ bool DX12GraphicPsoCompiler::SetRenderTargetFormats(uint32_t numRenderTargets, D
 	return true;
 }
 
-bool DX12GraphicPsoCompiler::SetDespthStencilFormat(DXGI_FORMAT fmt)
+bool DX12GraphicsPsoDesc::SetDespthStencilFormat(DXGI_FORMAT fmt)
 {
 	m_PsoDesc.DSVFormat = fmt;
 	return true;
 }
 
-bool DX12GraphicPsoCompiler::SetInputLayout(uint32_t numElements, const D3D12_INPUT_ELEMENT_DESC * pInputElementDescs)
+bool DX12GraphicsPsoDesc::SetInputLayout(uint32_t numElements, const D3D12_INPUT_ELEMENT_DESC * pInputElementDescs)
 {
 	m_PsoDesc.InputLayout = { pInputElementDescs, numElements };
 	return true;
 }
 
-std::shared_ptr<DX12PipelineState> DX12GraphicPsoCompiler::Compile(DX12Device* device)
-{
-	return std::make_shared<DX12PipelineState>(device->CreateGraphicsPipelineState(&m_PsoDesc));
-}
-
-bool DX12GraphicPsoCompiler::SetRenderTargetFormatInternal(DXGI_FORMAT fmt)
+bool DX12GraphicsPsoDesc::SetRenderTargetFormatInternal(DXGI_FORMAT fmt)
 {
     m_PsoDesc.RTVFormats[m_PsoDesc.NumRenderTargets] = fmt;
     m_PsoDesc.NumRenderTargets += 1;
     return true;
 }
 
-ComPtr<ID3DBlob> DX12GraphicPsoCompiler::CompileShader(const wchar_t* file, const char* entry, const char* profile) const
-{
-	ComPtr<ID3DBlob> shaderBlob = nullptr;
-	ComPtr<ID3DBlob> errBlob = nullptr;
-
-	uint32_t compileFlags = 0;
-	// TODO: fail to use those flags on X1
-#ifndef _XBOX_ONE
-#ifdef _DEBUG
-	compileFlags |= (D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION);
-#endif
-#endif
-	D3DCompileFromFile(file, nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, entry, profile, compileFlags, 0, &shaderBlob, &errBlob);
-	if (D3DCompileFromFile(file, nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, entry, profile, compileFlags, 0, &shaderBlob, &errBlob) != S_OK)
-	{
-		char* errMsg = static_cast<char*>(errBlob->GetBufferPointer());
-		DX::Print("%s\n", errMsg);
-	}
-	return shaderBlob;
-}
-
-
-DX12ComputePsoCompiler::DX12ComputePsoCompiler()
+DX12ComputePsoDesc::DX12ComputePsoDesc()
 {
 	std::memset(&m_PsoDesc, 0, sizeof(m_PsoDesc));
 }
 
-DX12ComputePsoCompiler::~DX12ComputePsoCompiler()
+DX12ComputePsoDesc::~DX12ComputePsoDesc()
 {
 }
 
-bool DX12ComputePsoCompiler::SetRoogSignature(DX12RootSignature * rootSig)
+bool DX12ComputePsoDesc::SetRoogSignature(DX12RootSignature * rootSig)
 {
 	m_RootSig = rootSig->GetSignature();
 	m_PsoDesc.pRootSignature = m_RootSig.Get();
 	return m_PsoDesc.pRootSignature != nullptr;
 }
 
-bool DX12ComputePsoCompiler::SetShaderFromBin(const void * pBinData, uint64_t dataSizeInBytes)
+bool DX12ComputePsoDesc::SetShaderFromBin(const void * pBinData, uint64_t dataSizeInBytes)
 {
 	D3D12_SHADER_BYTECODE bytecode = { pBinData, dataSizeInBytes };
 	m_PsoDesc.CS = bytecode;
 	return true;
 }
 
-std::shared_ptr<DX12PipelineState> DX12ComputePsoCompiler::Compile(DX12Device* device)
+std::shared_ptr<DX12PipelineState> DX12PsoCompiler::Compile(DX12Device* device, DX12GraphicsPsoDesc* pDesc)
 {
-	return std::make_shared<DX12PipelineState>(device->CreateComputePipelineState(&m_PsoDesc));
+	return std::make_shared<DX12PipelineState>(device->CreateGraphicsPipelineState(&pDesc->m_PsoDesc));
+}
+
+std::shared_ptr<DX12PipelineState> DX12PsoCompiler::Compile(DX12Device* device, DX12ComputePsoDesc* pDesc)
+{
+	return std::make_shared<DX12PipelineState>(device->CreateComputePipelineState(&pDesc->m_PsoDesc));
 }

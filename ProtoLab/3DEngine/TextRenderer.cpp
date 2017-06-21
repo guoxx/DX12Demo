@@ -242,16 +242,16 @@ void TextRenderer::Initialize( void )
 		{ "TEXCOORD", 0, DXGI_FORMAT_R16G16B16A16_UINT, 0, 8, D3D12_INPUT_CLASSIFICATION_PER_INSTANCE_DATA, 1 }
 	};
 
-	DX12GraphicPsoCompiler psoCompiler;
-	psoCompiler.SetRoogSignature(s_RootSignature.get());
-	psoCompiler.SetRasterizerState(CD3DX12::RasterizerTwoSided());
-	psoCompiler.SetBlendState(CD3DX12::BlendPreMultiplied());
-	psoCompiler.SetDepthStencilState(CD3DX12::DepthStateDisabled());
-	psoCompiler.SetInputLayout(_countof(vertElem), vertElem);
-	psoCompiler.SetShaderFromBin(DX12ShaderTypeVertex, g_TextRender_VS, sizeof(g_TextRender_VS));
-	psoCompiler.SetShaderFromBin(DX12ShaderTypePixel, g_TextRender_PS, sizeof(g_TextRender_PS));
-	psoCompiler.SetRenderTargetFormat(GFX_FORMAT_SWAPCHAIN.RTVFormat);
-	s_TextPSO = psoCompiler.Compile(device);
+	DX12GraphicsPsoDesc psoDesc;
+	psoDesc.SetRoogSignature(s_RootSignature.get());
+	psoDesc.SetRasterizerState(CD3DX12::RasterizerTwoSided());
+	psoDesc.SetBlendState(CD3DX12::BlendPreMultiplied());
+	psoDesc.SetDepthStencilState(CD3DX12::DepthStateDisabled());
+	psoDesc.SetInputLayout(_countof(vertElem), vertElem);
+	psoDesc.SetShaderFromBin(DX12ShaderTypeVertex, g_TextRender_VS, sizeof(g_TextRender_VS));
+	psoDesc.SetShaderFromBin(DX12ShaderTypePixel, g_TextRender_PS, sizeof(g_TextRender_PS));
+	psoDesc.SetRenderTargetFormat(GFX_FORMAT_SWAPCHAIN.RTVFormat);
+	s_TextPSO = DX12PsoCompiler::Compile(device, &psoDesc);
 }
 
 void TextRenderer::Shutdown( void )

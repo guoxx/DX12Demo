@@ -210,6 +210,9 @@
     <ClCompile Include="3DEngine\SurfaceSet.cpp">
       <Filter>3DEngine</Filter>
     </ClCompile>
+    <ClCompile Include="DX12\DX12ShaderCompiler.cpp">
+      <Filter>DX12\Private</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DX12\DX12PipelineState.h">
@@ -433,6 +436,9 @@
     </ClInclude>
     <ClInclude Include="3DEngine\SurfaceSet.h">
       <Filter>3DEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="DX12\DX12ShaderCompiler.h">
+      <Filter>DX12\Private</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -23,15 +23,15 @@ DirectionalLightFilter2D::DirectionalLightFilter2D(DX12Device* device)
     DX12RootSignatureDeserializer sigDeserialier{g_DirectionalLight_VS, sizeof(g_DirectionalLight_VS)};
 	m_RootSig = sigDeserialier.Deserialize(device);
 
-	DX12GraphicPsoCompiler psoCompiler;
-	psoCompiler.SetShaderFromBin(DX12ShaderTypeVertex, g_DirectionalLight_VS, sizeof(g_DirectionalLight_VS));
-	psoCompiler.SetShaderFromBin(DX12ShaderTypePixel, g_DirectionalLight_PS, sizeof(g_DirectionalLight_PS));
-	psoCompiler.SetRoogSignature(m_RootSig.get());
-	psoCompiler.SetRenderTargetFormat(GFX_FORMAT_HDR.RTVFormat);
-	psoCompiler.SetDespthStencilFormat(DXGI_FORMAT_UNKNOWN);
-	psoCompiler.SetBlendState(CD3DX12::BlendAdditive());
-	psoCompiler.SetDepthStencilState(CD3DX12::DepthStateDisabled());
-	m_PSO = psoCompiler.Compile(device);
+	DX12GraphicsPsoDesc psoDesc;
+	psoDesc.SetShaderFromBin(DX12ShaderTypeVertex, g_DirectionalLight_VS, sizeof(g_DirectionalLight_VS));
+	psoDesc.SetShaderFromBin(DX12ShaderTypePixel, g_DirectionalLight_PS, sizeof(g_DirectionalLight_PS));
+	psoDesc.SetRoogSignature(m_RootSig.get());
+	psoDesc.SetRenderTargetFormat(GFX_FORMAT_HDR.RTVFormat);
+	psoDesc.SetDespthStencilFormat(DXGI_FORMAT_UNKNOWN);
+	psoDesc.SetBlendState(CD3DX12::BlendAdditive());
+	psoDesc.SetDepthStencilState(CD3DX12::DepthStateDisabled());
+	m_PSO = DX12PsoCompiler::Compile(device, &psoDesc);
 }
 
 DirectionalLightFilter2D::~DirectionalLightFilter2D()

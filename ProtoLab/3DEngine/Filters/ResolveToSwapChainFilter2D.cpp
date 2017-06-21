@@ -19,14 +19,14 @@ ResolveToSwapChainFilter2D::ResolveToSwapChainFilter2D(DX12Device* device)
     DX12RootSignatureDeserializer sigDeserialier{g_IdentityFilter2D_VS, sizeof(g_IdentityFilter2D_VS)};
 	m_RootSig = sigDeserialier.Deserialize(device);
 
-	DX12GraphicPsoCompiler psoCompiler;
-	psoCompiler.SetShaderFromBin(DX12ShaderTypeVertex, g_IdentityFilter2D_VS, sizeof(g_IdentityFilter2D_VS));
-	psoCompiler.SetShaderFromBin(DX12ShaderTypePixel, g_IdentityFilter2D_PS, sizeof(g_IdentityFilter2D_PS));
-	psoCompiler.SetRoogSignature(m_RootSig.get());
-	psoCompiler.SetRenderTargetFormat(GFX_FORMAT_SWAPCHAIN.RTVFormat);
-	psoCompiler.SetDespthStencilFormat(DXGI_FORMAT_UNKNOWN);
-	psoCompiler.SetDepthStencilState(CD3DX12::DepthStateDisabled());
-	m_PSO = psoCompiler.Compile(DX12GraphicsManager::GetInstance()->GetDevice());
+	DX12GraphicsPsoDesc psoDesc;
+	psoDesc.SetShaderFromBin(DX12ShaderTypeVertex, g_IdentityFilter2D_VS, sizeof(g_IdentityFilter2D_VS));
+	psoDesc.SetShaderFromBin(DX12ShaderTypePixel, g_IdentityFilter2D_PS, sizeof(g_IdentityFilter2D_PS));
+	psoDesc.SetRoogSignature(m_RootSig.get());
+	psoDesc.SetRenderTargetFormat(GFX_FORMAT_SWAPCHAIN.RTVFormat);
+	psoDesc.SetDespthStencilFormat(DXGI_FORMAT_UNKNOWN);
+	psoDesc.SetDepthStencilState(CD3DX12::DepthStateDisabled());
+	m_PSO = DX12PsoCompiler::Compile(DX12GraphicsManager::GetInstance()->GetDevice(), &psoDesc);;
 }
 
 ResolveToSwapChainFilter2D::~ResolveToSwapChainFilter2D()

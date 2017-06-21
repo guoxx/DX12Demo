@@ -13,10 +13,10 @@ TiledShadingPass::TiledShadingPass(DX12Device* device)
 	DX12RootSignatureDeserializer sigDeserializer{g_TiledShading_CS, sizeof(g_TiledShading_CS)};
 	m_RootSig = sigDeserializer.Deserialize(device);
 
-	DX12ComputePsoCompiler psoCompiler;
-	psoCompiler.SetShaderFromBin(g_TiledShading_CS, sizeof(g_TiledShading_CS));
-	psoCompiler.SetRoogSignature(m_RootSig.get());
-	m_PSO = psoCompiler.Compile(device);
+	DX12ComputePsoDesc psoDesc;
+	psoDesc.SetShaderFromBin(g_TiledShading_CS, sizeof(g_TiledShading_CS));
+	psoDesc.SetRoogSignature(m_RootSig.get());
+	m_PSO = DX12PsoCompiler::Compile(device, &psoDesc);
 }
 
 TiledShadingPass::~TiledShadingPass()

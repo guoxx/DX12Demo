@@ -20,14 +20,14 @@ ImageProcessing::ImageProcessing(DX12Device* device,
     DX12RootSignatureDeserializer sigDeserialier{pVSBin, sizeof(vsDataSize)};
 	m_RootSig = sigDeserialier.Deserialize(device);
 
-	DX12GraphicPsoCompiler psoCompiler;
-	psoCompiler.SetShaderFromBin(DX12ShaderTypeVertex, pVSBin, vsDataSize);
-	psoCompiler.SetShaderFromBin(DX12ShaderTypePixel, pPSBin, psDataSize);
-	psoCompiler.SetRoogSignature(m_RootSig.get());
-	psoCompiler.SetRenderTargetFormat(renderTargetFmt);
-	psoCompiler.SetDespthStencilFormat(DXGI_FORMAT_UNKNOWN);
-	psoCompiler.SetDepthStencilState(CD3DX12::DepthStateDisabled());
-	m_PSO = psoCompiler.Compile(DX12GraphicsManager::GetInstance()->GetDevice());
+	DX12GraphicsPsoDesc psoDesc;
+	psoDesc.SetShaderFromBin(DX12ShaderTypeVertex, pVSBin, vsDataSize);
+	psoDesc.SetShaderFromBin(DX12ShaderTypePixel, pPSBin, psDataSize);
+	psoDesc.SetRoogSignature(m_RootSig.get());
+	psoDesc.SetRenderTargetFormat(renderTargetFmt);
+	psoDesc.SetDespthStencilFormat(DXGI_FORMAT_UNKNOWN);
+	psoDesc.SetDepthStencilState(CD3DX12::DepthStateDisabled());
+	m_PSO = DX12PsoCompiler::Compile(DX12GraphicsManager::GetInstance()->GetDevice(), &psoDesc);
 }
 
 ImageProcessing::~ImageProcessing()

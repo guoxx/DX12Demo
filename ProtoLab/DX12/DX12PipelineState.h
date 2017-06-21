@@ -5,6 +5,7 @@
 
 class DX12Device;
 class DX12RootSignature;
+class DX12PsoCompiler;
 
 class DX12PipelineState
 {
@@ -18,16 +19,15 @@ private:
 	ComPtr<ID3D12PipelineState> m_PSO;
 };
 
-class DX12GraphicPsoCompiler
+class DX12GraphicsPsoDesc
 {
 public:
-	DX12GraphicPsoCompiler();
-	~DX12GraphicPsoCompiler();
+	DX12GraphicsPsoDesc();
+	~DX12GraphicsPsoDesc();
 
 	bool SetRoogSignature(DX12RootSignature* rootSig);
 
 	bool SetShaderFromBin(DX12ShaderType shaderType, const void* pBinData, uint64_t dataSizeInBytes);
-	bool SetShaderFromFile(DX12ShaderType shaderType, const wchar_t* file, const char* entry);
 
 	// optional
 	bool SetRasterizerState(const D3D12_RASTERIZER_DESC& rasterizerDesc);
@@ -56,31 +56,36 @@ public:
 
 	bool SetInputLayout(uint32_t numElements, const D3D12_INPUT_ELEMENT_DESC* pInputElementDescs);
 
-	std::shared_ptr<DX12PipelineState> Compile(DX12Device* device);
-
 private:
 	bool SetRenderTargetFormatInternal(DXGI_FORMAT fmt);
-
-	ComPtr<ID3DBlob> CompileShader(const wchar_t* file, const char* entry, const char* profile) const;
 
 	ComPtr<ID3D12RootSignature> m_RootSig;
 	ComPtr<ID3DBlob> m_ShaderBins[DX12ShaderTypeMax];
 	CD3D12_GRAPHICS_PIPELINE_STATE_DESC m_PsoDesc;
+
+    friend DX12PsoCompiler;
 };
 
-class DX12ComputePsoCompiler
+class DX12ComputePsoDesc
 {
 public:
-	DX12ComputePsoCompiler();
-	~DX12ComputePsoCompiler();
+	DX12ComputePsoDesc();
+	~DX12ComputePsoDesc();
 
 	bool SetRoogSignature(DX12RootSignature* rootSig);
 
 	bool SetShaderFromBin(const void* pBinData, uint64_t dataSizeInBytes);
 
-	std::shared_ptr<DX12PipelineState> Compile(DX12Device* device);
-
 private:
 	ComPtr<ID3D12RootSignature> m_RootSig;
 	D3D12_COMPUTE_PIPELINE_STATE_DESC m_PsoDesc;
+
+    friend DX12PsoCompiler;
+};
+
+class DX12PsoCompiler
+{
+public:
+	static std::shared_ptr<DX12PipelineState> Compile(DX12Device* device, DX12GraphicsPsoDesc* pDesc);
+	static std::shared_ptr<DX12PipelineState> Compile(DX12Device* device, DX12ComputePsoDesc* pDesc);
 };

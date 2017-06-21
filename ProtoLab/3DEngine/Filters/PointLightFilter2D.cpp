@@ -23,15 +23,15 @@ PointLightFilter2D::PointLightFilter2D(DX12Device* device)
     DX12RootSignatureDeserializer sigDeserialier{g_PointLight_VS, sizeof(g_PointLight_VS)};
 	m_RootSig = sigDeserialier.Deserialize(device);
 
-	DX12GraphicPsoCompiler psoCompiler;
-	psoCompiler.SetShaderFromBin(DX12ShaderTypeVertex, g_PointLight_VS, sizeof(g_PointLight_VS));
-	psoCompiler.SetShaderFromBin(DX12ShaderTypePixel, g_PointLight_PS, sizeof(g_PointLight_PS));
-	psoCompiler.SetRoogSignature(m_RootSig.get());
-	psoCompiler.SetRenderTargetFormat(GFX_FORMAT_HDR.RTVFormat);
-	psoCompiler.SetDespthStencilFormat(DXGI_FORMAT_UNKNOWN);
-	psoCompiler.SetBlendState(CD3DX12::BlendAdditive());
-	psoCompiler.SetDepthStencilState(CD3DX12::DepthStateDisabled());
-	m_PSO = psoCompiler.Compile(device);
+	DX12GraphicsPsoDesc psoDesc;
+	psoDesc.SetShaderFromBin(DX12ShaderTypeVertex, g_PointLight_VS, sizeof(g_PointLight_VS));
+	psoDesc.SetShaderFromBin(DX12ShaderTypePixel, g_PointLight_PS, sizeof(g_PointLight_PS));
+	psoDesc.SetRoogSignature(m_RootSig.get());
+	psoDesc.SetRenderTargetFormat(GFX_FORMAT_HDR.RTVFormat);
+	psoDesc.SetDespthStencilFormat(DXGI_FORMAT_UNKNOWN);
+	psoDesc.SetBlendState(CD3DX12::BlendAdditive());
+	psoDesc.SetDepthStencilState(CD3DX12::DepthStateDisabled());
+	m_PSO = DX12PsoCompiler::Compile(device, &psoDesc);
 }
 
 PointLightFilter2D::~PointLightFilter2D()

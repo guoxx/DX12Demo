@@ -48,6 +48,8 @@ local function Compile(profile_name, shader_profile, entry)
 	local output_header_file = " /Fh " .. output_dir .. output_intermediate_dir .. new_filename .. ".h"
 	local output_pdb_file = " "
 	local specify_root_sig_ver = " /force_rootsig_ver rootsig_1_1"
+	-- TODO: not supported by WIN7
+	specify_root_sig_ver = ""
 	-- if debug_shader then
 	-- 	output_pdb_file = " /Fd " .. output_dir .. new_filename .. ".pdb"
 	-- end

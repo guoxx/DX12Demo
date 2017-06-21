@@ -229,6 +229,7 @@
     <ClCompile Include="DX12\DX12PipelineState.cpp" />
     <ClCompile Include="DX12\DX12RenderableSurface.cpp" />
     <ClCompile Include="DX12\DX12RootSignature.cpp" />
+    <ClCompile Include="DX12\DX12ShaderCompiler.cpp" />
     <ClCompile Include="DX12\DX12SwapChain.cpp" />
     <ClCompile Include="DX12\DX12Texture.cpp" />
     <ClCompile Include="DX12\Texture\DDSTextureLoader.cpp" />
@@ -299,6 +300,7 @@
     <ClInclude Include="DX12\DX12PipelineState.h" />
     <ClInclude Include="DX12\DX12RenderableSurface.h" />
     <ClInclude Include="DX12\DX12RootSignature.h" />
+    <ClInclude Include="DX12\DX12ShaderCompiler.h" />
     <ClInclude Include="DX12\DX12SwapChain.h" />
     <ClInclude Include="DX12\DX12Texture.h" />
     <ClInclude Include="DX12\DX12Wrapper.h" />
