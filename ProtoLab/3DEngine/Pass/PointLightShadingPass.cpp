@@ -12,10 +12,11 @@
 
 PointLightShadingPass::PointLightShadingPass(DX12Device* device)
 {
-    m_Processing = std::make_shared<ImageProcessing>(device,
-                                                     g_PointLight_VS, static_cast<uint32_t>(sizeof(g_PointLight_VS)),
-                                                     g_PointLight_PS, static_cast<uint32_t>(sizeof(g_PointLight_PS)),
-                                                     GFX_FORMAT_HDR.RTVFormat);
+    auto psoSetup = [](DX12GraphicsPsoDesc& desc)
+    {
+        desc.SetRenderTargetFormat(GFX_FORMAT_HDR.RTVFormat);
+    };
+    m_Processing = std::make_shared<ImageProcessing>(device, g_PointLight_VS_bytecode, g_PointLight_PS_bytecode, psoSetup);
 }
 
 PointLightShadingPass::~PointLightShadingPass()

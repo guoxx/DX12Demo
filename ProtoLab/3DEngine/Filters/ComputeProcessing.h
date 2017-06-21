@@ -5,7 +5,7 @@
 class ComputeProcessing
 {
 public:
-	ComputeProcessing(DX12Device* device, const void* pShaderBin, uint32_t dataSizeInBytes);
+	ComputeProcessing(DX12Device* device, D3D12_SHADER_BYTECODE shaderBin);
 	~ComputeProcessing();
 
 	void Apply(DX12GraphicsContext* pGfxContext);

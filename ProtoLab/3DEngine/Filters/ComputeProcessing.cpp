@@ -2,13 +2,13 @@
 #include "ComputeProcessing.h"
 
 
-ComputeProcessing::ComputeProcessing(DX12Device* device, const void* pCSBin, uint32_t dataSizeInBytes)
+ComputeProcessing::ComputeProcessing(DX12Device* device, D3D12_SHADER_BYTECODE shaderBin)
 {
-    DX12RootSignatureDeserializer sigDeserialier{{pCSBin, dataSizeInBytes}};
+    DX12RootSignatureDeserializer sigDeserialier{shaderBin};
 	m_RootSig = sigDeserialier.Deserialize(device);
 
 	DX12ComputePsoDesc psoDesc;
-    psoDesc.SetShaderFromBin({pCSBin, dataSizeInBytes});
+    psoDesc.SetShaderFromBin(shaderBin);
 	psoDesc.SetRoogSignature(m_RootSig.get());
 	m_PSO = DX12PsoCompiler::Compile(device, &psoDesc);
 }

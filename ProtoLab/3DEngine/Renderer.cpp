@@ -89,15 +89,9 @@ Renderer::Renderer(GFX_HWND hwnd, int32_t width, int32_t height)
 	m_LightCullingPass = std::make_shared<LightCullingPass>(pDevice);
 	m_TiledShadingPass = std::make_shared<TiledShadingPass>(pDevice);
 
-    m_ReduceLuminanceInitial = std::make_shared<ComputeProcessing>(pDevice,
-                                                                   g_LuminanceReductionInitial_CS,
-                                                                   static_cast<uint32_t>(sizeof(g_LuminanceReductionInitial_CS)));
-    m_ReduceLuminance = std::make_shared<ComputeProcessing>(pDevice,
-                                                            g_LuminanceReduction_CS,
-                                                            static_cast<uint32_t>(sizeof(g_LuminanceReduction_CS)));
-    m_ReduceLuminanceFinal = std::make_shared<ComputeProcessing>(pDevice,
-                                                                 g_LuminanceReductionFinal_CS,
-                                                                 static_cast<uint32_t>(sizeof(g_LuminanceReductionFinal_CS)));
+    m_ReduceLuminanceInitial = std::make_shared<ComputeProcessing>(pDevice, g_LuminanceReductionInitial_CS_bytecode);
+    m_ReduceLuminance = std::make_shared<ComputeProcessing>(pDevice, g_LuminanceReduction_CS_bytecode);
+    m_ReduceLuminanceFinal = std::make_shared<ComputeProcessing>(pDevice, g_LuminanceReductionFinal_CS_bytecode);
 }
 
 Renderer::~Renderer()

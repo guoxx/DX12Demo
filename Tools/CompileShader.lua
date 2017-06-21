@@ -44,7 +44,7 @@ end
 
 local function Compile(profile_name, shader_profile, entry)
 	local new_filename = shader_filename_without_ext .. "_" .. profile_name
-	local shader_varname = " /Vn g_" .. new_filename
+	local shader_varname = "g_" .. new_filename
 	local output_header_file = " /Fh " .. output_dir .. output_intermediate_dir .. new_filename .. ".h"
 	local output_pdb_file = " "
 	local specify_root_sig_ver = " /force_rootsig_ver rootsig_1_1"
@@ -61,7 +61,7 @@ local function Compile(profile_name, shader_profile, entry)
 	 			.. " " .. shader_file
 	 			.. output_header_file
 	 			.. output_pdb_file
-	 			.. shader_varname
+	 			.. " /Vn " .. shader_varname
 	 			.. specify_root_sig_ver
 
 	if verbose then
@@ -70,7 +70,11 @@ local function Compile(profile_name, shader_profile, entry)
 
 	os.execute(cmd)
 
-	return "#include \"" .. output_intermediate_dir .. new_filename .. ".h" .. "\""
+	local code = "#include \"" .. output_intermediate_dir .. new_filename .. ".h" .. "\""
+	code = code .. "\n"
+	code = code .. "static const D3D12_SHADER_BYTECODE " .. shader_varname .. "_bytecode = { " .. shader_varname .. ", sizeof(" .. shader_varname .. ") };"
+	code = code .. "\n"
+	return code
 end
 
 local all_profiles = {}
