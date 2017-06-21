@@ -4,11 +4,11 @@
 
 ComputeProcessing::ComputeProcessing(DX12Device* device, const void* pCSBin, uint32_t dataSizeInBytes)
 {
-    DX12RootSignatureDeserializer sigDeserialier{pCSBin, dataSizeInBytes};
+    DX12RootSignatureDeserializer sigDeserialier{{pCSBin, dataSizeInBytes}};
 	m_RootSig = sigDeserialier.Deserialize(device);
 
 	DX12ComputePsoDesc psoDesc;
-	psoDesc.SetShaderFromBin(pCSBin, dataSizeInBytes);
+    psoDesc.SetShaderFromBin({pCSBin, dataSizeInBytes});
 	psoDesc.SetRoogSignature(m_RootSig.get());
 	m_PSO = DX12PsoCompiler::Compile(device, &psoDesc);
 }

@@ -29,19 +29,18 @@ bool DX12GraphicsPsoDesc::SetRoogSignature(DX12RootSignature * rootSig)
 	return m_PsoDesc.pRootSignature != nullptr;
 }
 
-bool DX12GraphicsPsoDesc::SetShaderFromBin(DX12ShaderType shaderType, const void * pBinData, uint64_t dataSizeInBytes)
+bool DX12GraphicsPsoDesc::SetShaderFromBin(DX12ShaderType shaderType, D3D12_SHADER_BYTECODE shaderBin)
 {
-	D3D12_SHADER_BYTECODE bytecode = { pBinData, dataSizeInBytes };
 	switch (shaderType)
 	{
 	case DX12ShaderTypeVertex:
-		m_PsoDesc.VS = bytecode;
+		m_PsoDesc.VS = shaderBin;
 		break;
 	case DX12ShaderTypeGeometry:
-		m_PsoDesc.GS = bytecode;
+		m_PsoDesc.GS = shaderBin;
 		break;
 	case DX12ShaderTypePixel:
-		m_PsoDesc.PS = bytecode;
+		m_PsoDesc.PS = shaderBin;
 		break;
 	case DX12ShaderTypeCompute:
 		assert(false);
@@ -116,10 +115,9 @@ bool DX12ComputePsoDesc::SetRoogSignature(DX12RootSignature * rootSig)
 	return m_PsoDesc.pRootSignature != nullptr;
 }
 
-bool DX12ComputePsoDesc::SetShaderFromBin(const void * pBinData, uint64_t dataSizeInBytes)
+bool DX12ComputePsoDesc::SetShaderFromBin(D3D12_SHADER_BYTECODE shaderBin)
 {
-	D3D12_SHADER_BYTECODE bytecode = { pBinData, dataSizeInBytes };
-	m_PsoDesc.CS = bytecode;
+	m_PsoDesc.CS = shaderBin;
 	return true;
 }
 

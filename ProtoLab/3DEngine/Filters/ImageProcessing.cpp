@@ -17,12 +17,12 @@ ImageProcessing::ImageProcessing(DX12Device* device,
 	pGfxContext->UploadBuffer(m_IndexBuffer.get(), indices, sizeof(indices));
 	pGfxContext->ResourceTransitionBarrier(m_IndexBuffer.get(), D3D12_RESOURCE_STATE_GENERIC_READ);
 
-    DX12RootSignatureDeserializer sigDeserialier{pVSBin, sizeof(vsDataSize)};
+    DX12RootSignatureDeserializer sigDeserialier{{pVSBin, sizeof(vsDataSize)}};
 	m_RootSig = sigDeserialier.Deserialize(device);
 
 	DX12GraphicsPsoDesc psoDesc;
-	psoDesc.SetShaderFromBin(DX12ShaderTypeVertex, pVSBin, vsDataSize);
-	psoDesc.SetShaderFromBin(DX12ShaderTypePixel, pPSBin, psDataSize);
+    psoDesc.SetShaderFromBin(DX12ShaderTypeVertex, {pVSBin, vsDataSize});
+    psoDesc.SetShaderFromBin(DX12ShaderTypePixel, {pPSBin, psDataSize});
 	psoDesc.SetRoogSignature(m_RootSig.get());
 	psoDesc.SetRenderTargetFormat(renderTargetFmt);
 	psoDesc.SetDespthStencilFormat(DXGI_FORMAT_UNKNOWN);

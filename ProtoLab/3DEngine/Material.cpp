@@ -41,8 +41,8 @@ void Material::Load(DX12GraphicsContext* pGfxContext)
 		m_RootSig[shadingCfg] = sigCompiler.Compile(DX12GraphicsManager::GetInstance()->GetDevice());
 
 		DX12GraphicsPsoDesc psoDesc;
-		psoDesc.SetShaderFromBin(DX12ShaderTypeVertex, g_BaseMaterial_VS, sizeof(g_BaseMaterial_VS));
-		psoDesc.SetShaderFromBin(DX12ShaderTypePixel, g_BaseMaterial_PS, sizeof(g_BaseMaterial_PS));
+        psoDesc.SetShaderFromBin(DX12ShaderTypeVertex, {g_BaseMaterial_VS, sizeof(g_BaseMaterial_VS)});
+        psoDesc.SetShaderFromBin(DX12ShaderTypePixel, {g_BaseMaterial_PS, sizeof(g_BaseMaterial_PS)});
 		psoDesc.SetRoogSignature(m_RootSig[shadingCfg].get());
 		psoDesc.SetRenderTargetFormat(DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R16G16B16A16_FLOAT);
 		psoDesc.SetDespthStencilFormat(DXGI_FORMAT_D32_FLOAT);
@@ -62,7 +62,7 @@ void Material::Load(DX12GraphicsContext* pGfxContext)
 		m_RootSig[shadingCfg] = sigCompiler.Compile(DX12GraphicsManager::GetInstance()->GetDevice());
 
 		DX12GraphicsPsoDesc psoDesc;
-		psoDesc.SetShaderFromBin(DX12ShaderTypeVertex, g_BaseMaterial_DepthOnly_VS, sizeof(g_BaseMaterial_DepthOnly_VS));
+        psoDesc.SetShaderFromBin(DX12ShaderTypeVertex, {g_BaseMaterial_DepthOnly_VS, sizeof(g_BaseMaterial_DepthOnly_VS)});
 		psoDesc.SetRoogSignature(m_RootSig[shadingCfg].get());
 		psoDesc.SetDespthStencilFormat(DXGI_FORMAT_D32_FLOAT);
 		psoDesc.SetRasterizerState(CD3DX12::RasterizerShadow());
@@ -83,14 +83,14 @@ void Material::Load(DX12GraphicsContext* pGfxContext)
 		m_RootSig[shadingCfg] = sigCompiler.Compile(DX12GraphicsManager::GetInstance()->GetDevice());
 
 		DX12GraphicsPsoDesc psoDesc;
-		psoDesc.SetShaderFromBin(DX12ShaderTypeVertex, g_BaseMaterial_RSM_VS, sizeof(g_BaseMaterial_RSM_VS));
-		psoDesc.SetShaderFromBin(DX12ShaderTypePixel, g_BaseMaterial_RSM_PS, sizeof(g_BaseMaterial_RSM_PS));
+        psoDesc.SetShaderFromBin(DX12ShaderTypeVertex, {g_BaseMaterial_RSM_VS, sizeof(g_BaseMaterial_RSM_VS)});
+        psoDesc.SetShaderFromBin(DX12ShaderTypePixel, {g_BaseMaterial_RSM_PS, sizeof(g_BaseMaterial_RSM_PS)});
 		psoDesc.SetRoogSignature(m_RootSig[shadingCfg].get());
 		psoDesc.SetRenderTargetFormat(DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_R8G8B8A8_UNORM);
 		psoDesc.SetDespthStencilFormat(DXGI_FORMAT_D32_FLOAT);
 		psoDesc.SetRasterizerState(CD3DX12::RasterizerShadow());
 
-		m_PSO[shadingCfg] = DX12PsoCompiler::Compile(DX12GraphicsManager::GetInstance()->GetDevice(), &psoDesc);;
+		m_PSO[shadingCfg] = DX12PsoCompiler::Compile(DX12GraphicsManager::GetInstance()->GetDevice(), &psoDesc);
 	}
 
 	if (!m_AmbientTexName.empty())

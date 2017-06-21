@@ -18,12 +18,12 @@ ConvertEVSMFilter2D::ConvertEVSMFilter2D(DX12Device* device)
 	pGfxContext->UploadBuffer(m_IndexBuffer.get(), indices, sizeof(indices));
 	pGfxContext->ResourceTransitionBarrier(m_IndexBuffer.get(), D3D12_RESOURCE_STATE_GENERIC_READ);
 
-    DX12RootSignatureDeserializer sigDeserialier{g_EVSM_VS, sizeof(g_EVSM_VS)};
+    DX12RootSignatureDeserializer sigDeserialier{{g_EVSM_VS, sizeof(g_EVSM_VS)}};
 	m_RootSig = sigDeserialier.Deserialize(device);
 
 	DX12GraphicsPsoDesc psoDesc;
-	psoDesc.SetShaderFromBin(DX12ShaderTypeVertex, g_EVSM_VS, sizeof(g_EVSM_VS));
-	psoDesc.SetShaderFromBin(DX12ShaderTypePixel, g_EVSM_PS, sizeof(g_EVSM_PS));
+    psoDesc.SetShaderFromBin(DX12ShaderTypeVertex, {g_EVSM_VS, sizeof(g_EVSM_VS)});
+    psoDesc.SetShaderFromBin(DX12ShaderTypePixel, {g_EVSM_PS, sizeof(g_EVSM_PS)});
 	psoDesc.SetRoogSignature(m_RootSig.get());
 	psoDesc.SetRenderTargetFormat(GFX_FORMAT_R32G32B32A32_FLOAT.RTVFormat);
 	psoDesc.SetDespthStencilFormat(DXGI_FORMAT_UNKNOWN);

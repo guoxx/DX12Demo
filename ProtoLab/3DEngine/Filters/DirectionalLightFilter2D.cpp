@@ -20,12 +20,12 @@ DirectionalLightFilter2D::DirectionalLightFilter2D(DX12Device* device)
 	pGfxContext->UploadBuffer(m_IndexBuffer.get(), indices, sizeof(indices));
 	pGfxContext->ResourceTransitionBarrier(m_IndexBuffer.get(), D3D12_RESOURCE_STATE_GENERIC_READ);
 
-    DX12RootSignatureDeserializer sigDeserialier{g_DirectionalLight_VS, sizeof(g_DirectionalLight_VS)};
+    DX12RootSignatureDeserializer sigDeserialier{{g_DirectionalLight_VS, sizeof(g_DirectionalLight_VS)}};
 	m_RootSig = sigDeserialier.Deserialize(device);
 
 	DX12GraphicsPsoDesc psoDesc;
-	psoDesc.SetShaderFromBin(DX12ShaderTypeVertex, g_DirectionalLight_VS, sizeof(g_DirectionalLight_VS));
-	psoDesc.SetShaderFromBin(DX12ShaderTypePixel, g_DirectionalLight_PS, sizeof(g_DirectionalLight_PS));
+    psoDesc.SetShaderFromBin(DX12ShaderTypeVertex, {g_DirectionalLight_VS, sizeof(g_DirectionalLight_VS)});
+    psoDesc.SetShaderFromBin(DX12ShaderTypePixel, {g_DirectionalLight_PS, sizeof(g_DirectionalLight_PS)});
 	psoDesc.SetRoogSignature(m_RootSig.get());
 	psoDesc.SetRenderTargetFormat(GFX_FORMAT_HDR.RTVFormat);
 	psoDesc.SetDespthStencilFormat(DXGI_FORMAT_UNKNOWN);

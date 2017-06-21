@@ -10,11 +10,11 @@
 
 LightCullingPass::LightCullingPass(DX12Device* device)
 {
-    DX12RootSignatureDeserializer sigDeserialier{g_LightCulling_CS, sizeof(g_LightCulling_CS)};
+    DX12RootSignatureDeserializer sigDeserialier{{g_LightCulling_CS, sizeof(g_LightCulling_CS)}};
 	m_RootSig = sigDeserialier.Deserialize(device);
 
 	DX12ComputePsoDesc psoDesc;
-	psoDesc.SetShaderFromBin(g_LightCulling_CS, sizeof(g_LightCulling_CS));
+    psoDesc.SetShaderFromBin({g_LightCulling_CS, sizeof(g_LightCulling_CS)});
 	psoDesc.SetRoogSignature(m_RootSig.get());
 	m_PSO = DX12PsoCompiler::Compile(device, &psoDesc);
 }

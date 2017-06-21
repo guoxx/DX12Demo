@@ -248,8 +248,8 @@ void TextRenderer::Initialize( void )
 	psoDesc.SetBlendState(CD3DX12::BlendPreMultiplied());
 	psoDesc.SetDepthStencilState(CD3DX12::DepthStateDisabled());
 	psoDesc.SetInputLayout(_countof(vertElem), vertElem);
-	psoDesc.SetShaderFromBin(DX12ShaderTypeVertex, g_TextRender_VS, sizeof(g_TextRender_VS));
-	psoDesc.SetShaderFromBin(DX12ShaderTypePixel, g_TextRender_PS, sizeof(g_TextRender_PS));
+    psoDesc.SetShaderFromBin(DX12ShaderTypeVertex, {g_TextRender_VS, sizeof(g_TextRender_VS)});
+    psoDesc.SetShaderFromBin(DX12ShaderTypePixel, {g_TextRender_PS, sizeof(g_TextRender_PS)});
 	psoDesc.SetRenderTargetFormat(GFX_FORMAT_SWAPCHAIN.RTVFormat);
 	s_TextPSO = DX12PsoCompiler::Compile(device, &psoDesc);
 }

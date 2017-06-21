@@ -27,7 +27,7 @@ public:
 
 	bool SetRoogSignature(DX12RootSignature* rootSig);
 
-	bool SetShaderFromBin(DX12ShaderType shaderType, const void* pBinData, uint64_t dataSizeInBytes);
+	bool SetShaderFromBin(DX12ShaderType shaderType, D3D12_SHADER_BYTECODE shaderBin);
 
 	// optional
 	bool SetRasterizerState(const D3D12_RASTERIZER_DESC& rasterizerDesc);
@@ -74,7 +74,7 @@ public:
 
 	bool SetRoogSignature(DX12RootSignature* rootSig);
 
-	bool SetShaderFromBin(const void* pBinData, uint64_t dataSizeInBytes);
+	bool SetShaderFromBin(D3D12_SHADER_BYTECODE shaderBin);
 
 private:
 	ComPtr<ID3D12RootSignature> m_RootSig;

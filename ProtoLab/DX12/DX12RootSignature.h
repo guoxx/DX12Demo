@@ -85,7 +85,7 @@ private:
 class DX12RootSignatureDeserializer
 {
 public:
-	DX12RootSignatureDeserializer(const void* pShaderBin, uint32_t dataSize);
+	DX12RootSignatureDeserializer(D3D12_SHADER_BYTECODE shaderBin);
 	DX12RootSignatureDeserializer(ComPtr<ID3DBlob> blob);
 	~DX12RootSignatureDeserializer() = default;
 

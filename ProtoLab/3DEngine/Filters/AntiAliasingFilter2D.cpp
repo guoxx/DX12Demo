@@ -16,12 +16,12 @@ AntiAliasingFilter2D::AntiAliasingFilter2D(DX12Device* device)
 	pGfxContext->UploadBuffer(m_IndexBuffer.get(), indices, sizeof(indices));
 	pGfxContext->ResourceTransitionBarrier(m_IndexBuffer.get(), D3D12_RESOURCE_STATE_GENERIC_READ);
 
-    DX12RootSignatureDeserializer sigDeserialier{g_AntiAliasingFilter2D_VS, sizeof(g_AntiAliasingFilter2D_VS)};
+    DX12RootSignatureDeserializer sigDeserialier{{g_AntiAliasingFilter2D_VS, sizeof(g_AntiAliasingFilter2D_VS)}};
 	m_RootSig = sigDeserialier.Deserialize(device);
 
 	DX12GraphicsPsoDesc psoDesc;
-	psoDesc.SetShaderFromBin(DX12ShaderTypeVertex, g_AntiAliasingFilter2D_VS, sizeof(g_AntiAliasingFilter2D_VS));
-	psoDesc.SetShaderFromBin(DX12ShaderTypePixel, g_AntiAliasingFilter2D_PS, sizeof(g_AntiAliasingFilter2D_PS));
+    psoDesc.SetShaderFromBin(DX12ShaderTypeVertex, {g_AntiAliasingFilter2D_VS, sizeof(g_AntiAliasingFilter2D_VS)});
+    psoDesc.SetShaderFromBin(DX12ShaderTypePixel, {g_AntiAliasingFilter2D_PS, sizeof(g_AntiAliasingFilter2D_PS)});
 	psoDesc.SetRoogSignature(m_RootSig.get());
 	psoDesc.SetRenderTargetFormat(GFX_FORMAT_HDR.RTVFormat);
 	psoDesc.SetDespthStencilFormat(DXGI_FORMAT_UNKNOWN);

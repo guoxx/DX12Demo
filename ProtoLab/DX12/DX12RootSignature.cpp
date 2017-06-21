@@ -229,9 +229,9 @@ std::shared_ptr<DX12RootSignature> DX12RootSignatureCompiler::Compile(DX12Device
 	return d3dRootSig;
 }
 
-DX12RootSignatureDeserializer::DX12RootSignatureDeserializer(const void* pShaderBin, uint32_t dataSize)
+DX12RootSignatureDeserializer::DX12RootSignatureDeserializer(D3D12_SHADER_BYTECODE shaderBin)
 {
-    HRESULT ret = D3DGetBlobPart(pShaderBin, dataSize, D3D_BLOB_ROOT_SIGNATURE, 0, m_RootSigBlob.GetAddressOf());
+    HRESULT ret = D3DGetBlobPart(shaderBin.pShaderBytecode, shaderBin.BytecodeLength, D3D_BLOB_ROOT_SIGNATURE, 0, m_RootSigBlob.GetAddressOf());
     assert(ret == S_OK);
 }
 
