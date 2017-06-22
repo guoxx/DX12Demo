@@ -15,6 +15,7 @@ PointLightShadingPass::PointLightShadingPass(DX12Device* device)
     auto psoSetup = [](DX12GraphicsPsoDesc& desc)
     {
         desc.SetRenderTargetFormat(GFX_FORMAT_HDR.RTVFormat);
+	    desc.SetBlendState(CD3DX12::BlendAdditive());
     };
     m_Processing = std::make_shared<ImageProcessing>(device, g_PointLight_VS_bytecode, g_PointLight_PS_bytecode, psoSetup);
 }
