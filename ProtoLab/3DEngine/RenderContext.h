@@ -105,13 +105,13 @@ public:
 
 	DX12DepthSurface* AcquireDepthSurfaceForDirectionalLight(const DirectionalLight* pDirLight);
 
-	std::array<DX12ColorSurface*, 6> AcquireEVSMSurfaceForPointLight(const PointLight* pPointLight);
+	std::array<RenderableSurfaceHandle<DX12ColorSurface>, 6> AcquireEVSMSurfaceForPointLight(const PointLight* pPointLight);
 
-	std::array<DX12ColorSurface*, 6> AcquireRSMRadiantIntensitySurfaceForPointLight(const PointLight* pPointLight);
+	std::array<RenderableSurfaceHandle<DX12ColorSurface>, 6> AcquireRSMRadiantIntensitySurfaceForPointLight(const PointLight* pPointLight);
 
-	std::array<DX12ColorSurface*, 6> AcquireRSMNormalSurfaceForPointLight(const PointLight* pPointLight);
+	std::array<RenderableSurfaceHandle<DX12ColorSurface>, 6> AcquireRSMNormalSurfaceForPointLight(const PointLight* pPointLight);
 
-	std::array<DX12DepthSurface*, 6> AcquireDepthSurfaceForPointLight(const PointLight* pPointLight);
+	std::array<RenderableSurfaceHandle<DX12DepthSurface>, 6> AcquireDepthSurfaceForPointLight(const PointLight* pPointLight);
 
 	void ReleaseDepthSurfacesForAllLights();
 

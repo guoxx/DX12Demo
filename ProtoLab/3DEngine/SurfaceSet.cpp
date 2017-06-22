@@ -64,7 +64,7 @@ void PointLightShadowMapSet::TransmitToWrite(DX12GraphicsContext* pCtx) const
 {
     for (auto surf : m_ShadowMaps)
     {
-        pCtx->ResourceTransitionBarrier(surf.Get(), D3D12_RESOURCE_STATE_RENDER_TARGET);
+        pCtx->ResourceTransitionBarrier(surf.Get(), D3D12_RESOURCE_STATE_DEPTH_WRITE);
     }
 }
 

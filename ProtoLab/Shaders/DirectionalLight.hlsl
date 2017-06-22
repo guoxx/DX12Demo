@@ -121,5 +121,8 @@ float4 PSMain(VSOutput In) : SV_TARGET
 			g_RSMIntensityTexture, g_RSMNormalTexture, g_ShadowMap, g_StaticPointClampSampler);
 	}
 
+    // TODO - ambient
+    outRadiance += gbuffer.Diffuse * 0.1;
+
 	return float4(outRadiance, 1);
 }

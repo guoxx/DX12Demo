@@ -5,6 +5,7 @@
 #include "SurfaceSet.h"
 #include "RenderContext.h"
 #include "RenderableSurfaceManager.h"
+#include "Pass/PointLightShadingPass.h"
 
 class ILight;
 class Scene;
@@ -57,7 +58,8 @@ private:
 
     GBufferSurfaceSet m_GBuffer;
 
-	RenderableSurfaceHandle<DX12ColorSurface> m_LightingSurface;
+    PostProcessSurfaceSet m_PostProcessSurfaces;
+
 	RenderableSurfaceHandle<DX12ColorSurface> m_PostProcessSurface;
 	RenderableSurfaceHandle<DX12ColorSurface> m_HistoryLightingSurface;
 
@@ -80,6 +82,8 @@ private:
 	std::shared_ptr<DX12StructuredBuffer> m_AllPointLights;
 	std::shared_ptr<DX12StructuredBuffer> m_AllDirectionalLights;
 	std::shared_ptr<DX12StructuredBuffer> m_VisiblePointLights;
+
+    std::shared_ptr<PointLightShadingPass> m_PointLightShadingPass;
 
     std::shared_ptr<ComputeProcessing> m_ReduceLuminanceInitial;
     std::shared_ptr<ComputeProcessing> m_ReduceLuminance;
