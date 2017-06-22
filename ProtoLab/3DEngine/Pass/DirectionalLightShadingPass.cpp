@@ -1,49 +1,41 @@
 #include "pch.h"
-#include "DirectionalLightFilter2D.h"
+#include "DirectionalLightShadingPass.h"
 
 #include "../Camera.h"
 #include "../RenderContext.h"
 #include "../Lights/DirectionalLight.h"
 
+#include "3DEngine/Filters/ImageProcessing.h"
+
 #include "../../Shaders/CompiledShaders/DirectionalLight.h"
 
 
-DirectionalLightFilter2D::DirectionalLightFilter2D(DX12Device* device)
+DirectionalLightShadingPass::DirectionalLightShadingPass(DX12Device* device)
 {
-	uint32_t indices[] = {0, 2, 1, 1, 2, 3};
-
-	m_IndexBuffer = std::make_shared<DX12IndexBuffer>(device, sizeof(indices), 0, DXGI_FORMAT_R32_UINT);
-
-	DX12ScopedGraphicsContext pGfxContext;
-
-	pGfxContext->ResourceTransitionBarrier(m_IndexBuffer.get(), D3D12_RESOURCE_STATE_COPY_DEST);
-	pGfxContext->UploadBuffer(m_IndexBuffer.get(), indices, sizeof(indices));
-	pGfxContext->ResourceTransitionBarrier(m_IndexBuffer.get(), D3D12_RESOURCE_STATE_GENERIC_READ);
-
-    DX12RootSignatureDeserializer sigDeserialier{{g_DirectionalLight_VS, sizeof(g_DirectionalLight_VS)}};
-	m_RootSig = sigDeserialier.Deserialize(device);
-
-	DX12GraphicsPsoDesc psoDesc;
-    psoDesc.SetShaderFromBin(DX12ShaderTypeVertex, {g_DirectionalLight_VS, sizeof(g_DirectionalLight_VS)});
-    psoDesc.SetShaderFromBin(DX12ShaderTypePixel, {g_DirectionalLight_PS, sizeof(g_DirectionalLight_PS)});
-	psoDesc.SetRoogSignature(m_RootSig.get());
-	psoDesc.SetRenderTargetFormat(GFX_FORMAT_HDR.RTVFormat);
-	psoDesc.SetDespthStencilFormat(DXGI_FORMAT_UNKNOWN);
-	psoDesc.SetBlendState(CD3DX12::BlendAdditive());
-	psoDesc.SetDepthStencilState(CD3DX12::DepthStateDisabled());
-	m_PSO = DX12PsoCompiler::Compile(device, &psoDesc);
+    auto psoSetup = [](DX12GraphicsPsoDesc& desc)
+    {
+        desc.SetRenderTargetFormat(GFX_FORMAT_HDR.RTVFormat);
+	    desc.SetBlendState(CD3DX12::BlendAdditive());
+    };
+    m_Processing = std::make_shared<ImageProcessing>(device, g_DirectionalLight_VS_bytecode, g_DirectionalLight_PS_bytecode, psoSetup);
 }
 
-DirectionalLightFilter2D::~DirectionalLightFilter2D()
+DirectionalLightShadingPass::~DirectionalLightShadingPass()
 {
 }
 
-void DirectionalLightFilter2D::Apply(DX12GraphicsContext * pGfxContext, const RenderContext* pRenderContext, const DirectionalLight* pLight)
+void DirectionalLightShadingPass::Apply(DX12GraphicsContext* pGfxContext,
+                                  const RenderContext* pRenderContext,
+                                  const DirectionalLight* pLight,
+                                  GBufferSurfaceSet& gbuffer, DirectionalLightShadowMapSet& shadowmaps, PostProcessSurfaceSet& postProcessSurfSet)
 {
-	pGfxContext->SetGraphicsRootSignature(m_RootSig);
-	pGfxContext->SetPipelineState(m_PSO.get());
-	pGfxContext->IASetIndexBuffer(m_IndexBuffer.get());
-	pGfxContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    m_Processing->Apply(pGfxContext);
+
+    gbuffer.TransmitToRead(pGfxContext);
+    shadowmaps.TransmitToRead(pGfxContext);
+    pGfxContext->ResourceTransitionBarrier(postProcessSurfSet.m_HDRSurface.Get(), D3D12_RESOURCE_STATE_RENDER_TARGET);
+
+    pGfxContext->SetRenderTarget(postProcessSurfSet.m_HDRSurface.Get());
 
 	HLSL::DirectionalLightConstants constants;
 
@@ -93,9 +85,9 @@ void DirectionalLightFilter2D::Apply(DX12GraphicsContext * pGfxContext, const Re
 	constants.m_EVSM.m_VSMBias = g_VSMBias;
 
 	pGfxContext->SetGraphicsRootDynamicConstantBufferView(0, &constants, sizeof(constants));
-}
 
-void DirectionalLightFilter2D::Draw(DX12GraphicsContext* pGfxContext)
-{
-	pGfxContext->DrawIndexed(6, 0);
+    uint32_t offsetInTbl = gbuffer.SetAsSRV(pGfxContext, 1, 0);
+    offsetInTbl = shadowmaps.SetAsSRV(pGfxContext, 1, offsetInTbl);
+
+    m_Processing->Draw(pGfxContext);
 }

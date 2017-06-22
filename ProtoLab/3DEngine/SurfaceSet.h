@@ -23,6 +23,17 @@ struct PointLightShadowMapSet
     uint32_t SetAsSRV(DX12GraphicsContext* pCtx, uint32_t rootParameterIndex, uint32_t offsetInTable) const;
 };
 
+struct DirectionalLightShadowMapSet
+{
+    RenderableSurfaceHandle<DX12DepthSurface> m_ShadowMap;
+    RenderableSurfaceHandle<DX12ColorSurface> m_RSMIntensitySurface;
+    RenderableSurfaceHandle<DX12ColorSurface> m_RSMNormalSurface;
+    RenderableSurfaceHandle<DX12ColorSurface> m_EVSMSurface;
+
+    void TransmitToRead(DX12GraphicsContext* pCtx) const;
+    uint32_t SetAsSRV(DX12GraphicsContext* pCtx, uint32_t rootParameterIndex, uint32_t offsetInTable) const;
+};
+
 struct PostProcessSurfaceSet
 {
  	RenderableSurfaceHandle<DX12ColorSurface> m_HDRSurface;

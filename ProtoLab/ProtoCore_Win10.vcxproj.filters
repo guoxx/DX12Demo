@@ -150,14 +150,8 @@
     <ClCompile Include="3DEngine\Lights\DirectionalLight.cpp">
       <Filter>3DEngine\Lights</Filter>
     </ClCompile>
-    <ClCompile Include="3DEngine\Filters\DirectionalLightFilter2D.cpp">
-      <Filter>3DEngine\Filters</Filter>
-    </ClCompile>
     <ClCompile Include="3DEngine\RenderableSurfaceManager.cpp">
       <Filter>3DEngine</Filter>
-    </ClCompile>
-    <ClCompile Include="3DEngine\Filters\PointLightFilter2D.cpp">
-      <Filter>3DEngine\Filters</Filter>
     </ClCompile>
     <ClCompile Include="3DEngine\Pass\LightCullingPass.cpp">
       <Filter>3DEngine\Pass</Filter>
@@ -198,9 +192,6 @@
     <ClCompile Include="3DEngine\Filters\ComputeProcessing.cpp">
       <Filter>3DEngine\Filters</Filter>
     </ClCompile>
-    <ClCompile Include="3DEngine\Filters\ResolveToSwapChainFilter2D.cpp">
-      <Filter>3DEngine\Filters</Filter>
-    </ClCompile>
     <ClCompile Include="3DEngine\Filters\ImageProcessing.cpp">
       <Filter>3DEngine\Filters</Filter>
     </ClCompile>
@@ -212,6 +203,9 @@
     </ClCompile>
     <ClCompile Include="DX12\DX12ShaderCompiler.cpp">
       <Filter>DX12\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="3DEngine\Pass\DirectionalLightShadingPass.cpp">
+      <Filter>3DEngine\Pass</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -356,14 +350,8 @@
     <ClInclude Include="3DEngine\Lights\DirectionalLight.h">
       <Filter>3DEngine\Lights</Filter>
     </ClInclude>
-    <ClInclude Include="3DEngine\Filters\DirectionalLightFilter2D.h">
-      <Filter>3DEngine\Filters</Filter>
-    </ClInclude>
     <ClInclude Include="3DEngine\RenderableSurfaceManager.h">
       <Filter>3DEngine</Filter>
-    </ClInclude>
-    <ClInclude Include="3DEngine\Filters\PointLightFilter2D.h">
-      <Filter>3DEngine\Filters</Filter>
     </ClInclude>
     <ClInclude Include="3DEngine\Pass\LightCullingPass.h">
       <Filter>3DEngine\Pass</Filter>
@@ -422,9 +410,6 @@
     <ClInclude Include="3DEngine\Filters\ComputeProcessing.h">
       <Filter>3DEngine\Filters</Filter>
     </ClInclude>
-    <ClInclude Include="3DEngine\Filters\ResolveToSwapChainFilter2D.h">
-      <Filter>3DEngine\Filters</Filter>
-    </ClInclude>
     <ClInclude Include="DX12\DX12ScopedGraphicsContext.h">
       <Filter>DX12\Public</Filter>
     </ClInclude>
@@ -439,6 +424,9 @@
     </ClInclude>
     <ClInclude Include="DX12\DX12ShaderCompiler.h">
       <Filter>DX12\Private</Filter>
+    </ClInclude>
+    <ClInclude Include="3DEngine\Pass\DirectionalLightShadingPass.h">
+      <Filter>3DEngine\Pass</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

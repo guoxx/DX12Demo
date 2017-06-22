@@ -11,7 +11,7 @@ RenderContext::~RenderContext()
 {
 }
 
-DX12ColorSurface * RenderContext::AcquireRSMRadiantIntensitySurfaceForDirectionalLight(const DirectionalLight * pDirLight)
+RenderableSurfaceHandle<DX12ColorSurface> RenderContext::AcquireRSMRadiantIntensitySurfaceForDirectionalLight(const DirectionalLight * pDirLight)
 {
 	RenderableSurfaceHandle<DX12ColorSurface> handle;
 
@@ -27,10 +27,10 @@ DX12ColorSurface * RenderContext::AcquireRSMRadiantIntensitySurfaceForDirectiona
 		m_RSMRadiantIntensitySurfaceForDirLights.insert(std::make_pair(pDirLight, handle));
 	}
 
-	return handle.Get();
+	return handle;
 }
 
-DX12ColorSurface * RenderContext::AcquireRSMNormalSurfaceForDirectionalLight(const DirectionalLight * pDirLight)
+RenderableSurfaceHandle<DX12ColorSurface> RenderContext::AcquireRSMNormalSurfaceForDirectionalLight(const DirectionalLight * pDirLight)
 {
 	RenderableSurfaceHandle<DX12ColorSurface> handle;
 
@@ -46,10 +46,10 @@ DX12ColorSurface * RenderContext::AcquireRSMNormalSurfaceForDirectionalLight(con
 		m_RSMNormalSurfaceForDirLights.insert(std::make_pair(pDirLight, handle));
 	}
 
-	return handle.Get();
+	return handle;
 }
 
-DX12ColorSurface * RenderContext::AcquireEVSMSurfaceForDirectionalLight(const DirectionalLight * pDirLight)
+RenderableSurfaceHandle<DX12ColorSurface> RenderContext::AcquireEVSMSurfaceForDirectionalLight(const DirectionalLight * pDirLight)
 {
 	RenderableSurfaceHandle<DX12ColorSurface> handle;
 
@@ -65,10 +65,10 @@ DX12ColorSurface * RenderContext::AcquireEVSMSurfaceForDirectionalLight(const Di
 		m_EVSMSurfaceForDirLights.insert(std::make_pair(pDirLight, handle));
 	}
 
-	return handle.Get();
+	return handle;
 }
 
-DX12DepthSurface*  RenderContext::AcquireDepthSurfaceForDirectionalLight(const DirectionalLight* pDirLight)
+RenderableSurfaceHandle<DX12DepthSurface>  RenderContext::AcquireDepthSurfaceForDirectionalLight(const DirectionalLight* pDirLight)
 {
 	RenderableSurfaceHandle<DX12DepthSurface> handle;
 
@@ -84,7 +84,7 @@ DX12DepthSurface*  RenderContext::AcquireDepthSurfaceForDirectionalLight(const D
 		m_ShadowMapForDirLights.insert(std::make_pair(pDirLight, handle));
 	}
 
-	return handle.Get();
+	return handle;
 }
 
 std::array<RenderableSurfaceHandle<DX12ColorSurface>, 6> RenderContext::AcquireEVSMSurfaceForPointLight(const PointLight * pPointLight)

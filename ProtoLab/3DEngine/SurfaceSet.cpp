@@ -78,3 +78,20 @@ uint32_t PointLightShadowMapSet::SetAsSRV(DX12GraphicsContext* pCtx, uint32_t ro
     }
     return idx;
 }
+
+void DirectionalLightShadowMapSet::TransmitToRead(DX12GraphicsContext* pCtx) const
+{
+    pCtx->ResourceTransitionBarrier(m_ShadowMap.Get(), D3D12_RESOURCE_STATE_GENERIC_READ);
+    pCtx->ResourceTransitionBarrier(m_RSMIntensitySurface.Get(), D3D12_RESOURCE_STATE_GENERIC_READ);
+    pCtx->ResourceTransitionBarrier(m_RSMNormalSurface.Get(), D3D12_RESOURCE_STATE_GENERIC_READ);
+    pCtx->ResourceTransitionBarrier(m_EVSMSurface.Get(), D3D12_RESOURCE_STATE_GENERIC_READ);
+}
+
+uint32_t DirectionalLightShadowMapSet::SetAsSRV(DX12GraphicsContext* pCtx, uint32_t rootParameterIndex, uint32_t offsetInTable) const
+{
+    pCtx->SetGraphicsDynamicCbvSrvUav(rootParameterIndex, offsetInTable, m_ShadowMap->GetStagingSRV().GetCpuHandle());
+    pCtx->SetGraphicsDynamicCbvSrvUav(rootParameterIndex, offsetInTable + 1, m_RSMIntensitySurface->GetStagingSRV().GetCpuHandle());
+    pCtx->SetGraphicsDynamicCbvSrvUav(rootParameterIndex, offsetInTable + 2, m_RSMNormalSurface->GetStagingSRV().GetCpuHandle());
+    pCtx->SetGraphicsDynamicCbvSrvUav(rootParameterIndex, offsetInTable + 3, m_EVSMSurface->GetStagingSRV().GetCpuHandle());
+    return offsetInTable + 4;
+}

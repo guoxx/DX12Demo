@@ -97,13 +97,13 @@ public:
 	ShadingConfiguration GetShadingCfg() const { return m_ShadingCfg; }
 	void SetShadingCfg(ShadingConfiguration shadingCfg) { m_ShadingCfg = shadingCfg; }
 
-	DX12ColorSurface* AcquireEVSMSurfaceForDirectionalLight(const DirectionalLight* pDirLight);
+	RenderableSurfaceHandle<DX12ColorSurface> AcquireEVSMSurfaceForDirectionalLight(const DirectionalLight* pDirLight);
 
-	DX12ColorSurface* AcquireRSMRadiantIntensitySurfaceForDirectionalLight(const DirectionalLight* pDirLight);
+	RenderableSurfaceHandle<DX12ColorSurface> AcquireRSMRadiantIntensitySurfaceForDirectionalLight(const DirectionalLight* pDirLight);
 
-	DX12ColorSurface* AcquireRSMNormalSurfaceForDirectionalLight(const DirectionalLight* pDirLight);
+	RenderableSurfaceHandle<DX12ColorSurface> AcquireRSMNormalSurfaceForDirectionalLight(const DirectionalLight* pDirLight);
 
-	DX12DepthSurface* AcquireDepthSurfaceForDirectionalLight(const DirectionalLight* pDirLight);
+	RenderableSurfaceHandle<DX12DepthSurface> AcquireDepthSurfaceForDirectionalLight(const DirectionalLight* pDirLight);
 
 	std::array<RenderableSurfaceHandle<DX12ColorSurface>, 6> AcquireEVSMSurfaceForPointLight(const PointLight* pPointLight);
 
