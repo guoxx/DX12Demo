@@ -8,7 +8,6 @@
 #include "Lights/PointLight.h"
 #include "Lights/DirectionalLight.h"
 
-#include "Filters/ConvertEVSMFilter2D.h"
 #include "Filters/ComputeProcessing.h"
 #include "Filters/ImageProcessing.h"
 
@@ -19,6 +18,7 @@
 #include "Shaders/CompiledShaders/LuminanceReductionInitial.h"
 #include "Shaders/CompiledShaders/LuminanceReduction.h"
 #include "Shaders/CompiledShaders/LuminanceReductionFinal.h"
+#include <Shaders/CompiledShaders/EVSM.h>
 
 
 Renderer::Renderer(GFX_HWND hwnd, int32_t width, int32_t height)
@@ -42,7 +42,13 @@ Renderer::Renderer(GFX_HWND hwnd, int32_t width, int32_t height)
 
 	m_PostProcessSurfaces.m_LDRSurface = RenderableSurfaceManager::GetInstance()->AcquireColorSurface(RenderableSurfaceDesc(GFX_FORMAT_LDR, width, height));
 
-	m_ConvertEVSMFilter2D = std::make_shared<ConvertEVSMFilter2D>(pDevice);
+    {
+        auto psoSetup = [](DX12GraphicsPsoDesc& desc)
+        {
+            desc.SetRenderTargetFormat(GFX_FORMAT_R32G32B32A32_FLOAT.RTVFormat);
+        };
+        m_EVSM = std::make_shared<ImageProcessing>(pDevice, g_EVSM_VS_bytecode, g_EVSM_PS_bytecode, psoSetup);
+    }
 
     uint32_t lumReductionWidth = m_Width;
     uint32_t lumReductionHeight = m_Height;
@@ -208,18 +214,23 @@ void Renderer::RenderShadowMaps(const Camera* pCamera, Scene * pScene)
 			auto pDepthSurface = m_RenderContext.AcquireDepthSurfaceForDirectionalLight(directionalLight.get());
 			auto pEVSMSurface = m_RenderContext.AcquireEVSMSurfaceForDirectionalLight(directionalLight.get());
 
-			DX12ColorSurface* pColorSurfaces[] = { pEVSMSurface.Get() };
-			pGfxContext->SetRenderTargets(_countof(pColorSurfaces), pColorSurfaces, nullptr);
+			pGfxContext->SetRenderTarget(pEVSMSurface.Get());
 
 		    pGfxContext->SetViewport(0, 0, DX12DirectionalLightShadowMapSize, DX12DirectionalLightShadowMapSize);
 
 			pGfxContext->ResourceTransitionBarrier(pDepthSurface.Get(), D3D12_RESOURCE_STATE_GENERIC_READ);
+			pGfxContext->ResourceTransitionBarrier(pEVSMSurface.Get(), D3D12_RESOURCE_STATE_RENDER_TARGET);
 
-			m_ConvertEVSMFilter2D->Apply(pGfxContext.Get());
+			m_EVSM->Apply(pGfxContext.Get());
+		    HLSL::EVSMConstants constants;
+		    constants.m_EVSM.m_Enabled = g_EVSMEnabled ? 1 : 0;
+		    constants.m_EVSM.m_PositiveExponent = g_EVSMPositiveExponent;
+		    constants.m_EVSM.m_NegativeExponent = g_EVSMNegativeExponent;
+		    constants.m_EVSM.m_LightBleedingReduction = g_LightBleedingReduction;
+		    constants.m_EVSM.m_VSMBias = g_VSMBias;
+		    pGfxContext->SetGraphicsRootDynamicConstantBufferView(0, &constants, sizeof(constants));
 			pGfxContext->SetGraphicsDynamicCbvSrvUav(1, 0, pDepthSurface->GetStagingSRV().GetCpuHandle());
-			m_ConvertEVSMFilter2D->Draw(pGfxContext.Get());
-
-			pGfxContext->ResourceTransitionBarrier(pDepthSurface.Get(), D3D12_RESOURCE_STATE_DEPTH_WRITE);
+			m_EVSM->Draw(pGfxContext.Get());
 		}
 
 		pGfxContext->PIXEndEvent();

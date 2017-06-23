@@ -168,9 +168,6 @@
     <ClCompile Include="3DEngine\GraphicsEngineDefinition.cpp">
       <Filter>3DEngine</Filter>
     </ClCompile>
-    <ClCompile Include="3DEngine\Filters\ConvertEVSMFilter2D.cpp">
-      <Filter>3DEngine\Filters</Filter>
-    </ClCompile>
     <ClCompile Include="DX12\DX12GraphicsManager.cpp">
       <Filter>DX12\Private</Filter>
     </ClCompile>
@@ -379,9 +376,6 @@
     </ClInclude>
     <ClInclude Include="3DEngine\GraphicsEngineDefinition.h">
       <Filter>3DEngine</Filter>
-    </ClInclude>
-    <ClInclude Include="3DEngine\Filters\ConvertEVSMFilter2D.h">
-      <Filter>3DEngine\Filters</Filter>
     </ClInclude>
     <ClInclude Include="DX12\DX12Wrapper.h">
       <Filter>DX12\Public</Filter>

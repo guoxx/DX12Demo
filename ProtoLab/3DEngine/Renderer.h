@@ -13,7 +13,6 @@
 class ILight;
 class Scene;
 class Camera;
-class ConvertEVSMFilter2D;
 class LightCullingPass;
 class TiledShadingPass;
 class ComputeProcessing;
@@ -52,17 +51,10 @@ private:
     int32_t m_FrameIdx;
 
 	RenderContext m_RenderContext;	
-
     GBufferSurfaceSet m_GBuffer;
-
     PostProcessSurfaceSet m_PostProcessSurfaces;
 
-	RenderableSurfaceHandle<DX12ColorSurface> m_PostProcessSurface;
-	RenderableSurfaceHandle<DX12ColorSurface> m_HistoryLightingSurface;
-
 	std::shared_ptr<DX12SwapChain> m_SwapChain;
-
-	std::shared_ptr<ConvertEVSMFilter2D> m_ConvertEVSMFilter2D;
 
 	std::shared_ptr<LightCullingPass> m_LightCullingPass;
 	std::shared_ptr<TiledShadingPass> m_TiledShadingPass;
@@ -77,6 +69,8 @@ private:
     std::shared_ptr<ToneMappingPass> m_ToneMap;
 
     std::shared_ptr<ImageProcessing> m_ResolveToSwapChain;
+
+    std::shared_ptr<ImageProcessing> m_EVSM;
 
     std::shared_ptr<ComputeProcessing> m_ReduceLuminanceInitial;
     std::shared_ptr<ComputeProcessing> m_ReduceLuminance;
