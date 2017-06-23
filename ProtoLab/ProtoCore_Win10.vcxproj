@@ -189,7 +189,6 @@
     <ClCompile Include="3DEngine\Filters\AntiAliasingFilter2D.cpp" />
     <ClCompile Include="3DEngine\Filters\ComputeProcessing.cpp" />
     <ClCompile Include="3DEngine\Filters\ConvertEVSMFilter2D.cpp" />
-    <ClCompile Include="3DEngine\Filters\Filter2D.cpp" />
     <ClCompile Include="3DEngine\Filters\ImageProcessing.cpp" />
     <ClCompile Include="3DEngine\Filters\ToneMapFilter2D.cpp" />
     <ClCompile Include="3DEngine\GameInput.cpp" />
@@ -254,7 +253,6 @@
     <ClInclude Include="3DEngine\Actor.h" />
     <ClInclude Include="3DEngine\Camera.h" />
     <ClInclude Include="3DEngine\EngineTuning.h" />
-    <ClInclude Include="3DEngine\Filters\Filter2D.h" />
     <ClInclude Include="3DEngine\Filters\ToneMapFilter2D.h" />
     <ClInclude Include="3DEngine\GameInput.h" />
     <ClInclude Include="3DEngine\Lights\DirectionalLight.h" />

@@ -102,9 +102,6 @@
     <ClCompile Include="DX12SponzaDemo.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
-    <ClCompile Include="3DEngine\Filters\Filter2D.cpp">
-      <Filter>3DEngine\Filters</Filter>
-    </ClCompile>
     <ClCompile Include="3DEngine\Lights\ILight.cpp">
       <Filter>3DEngine\Lights</Filter>
     </ClCompile>
@@ -301,9 +298,6 @@
     </ClInclude>
     <ClInclude Include="DX12SponzaDemo.h">
       <Filter>Sources</Filter>
-    </ClInclude>
-    <ClInclude Include="3DEngine\Filters\Filter2D.h">
-      <Filter>3DEngine\Filters</Filter>
     </ClInclude>
     <ClInclude Include="3DEngine\Lights\ILight.h">
       <Filter>3DEngine\Lights</Filter>

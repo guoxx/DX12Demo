@@ -8,7 +8,6 @@
 #include "Lights/PointLight.h"
 #include "Lights/DirectionalLight.h"
 
-#include "Filters/Filter2D.h"
 #include "Filters/ToneMapFilter2D.h"
 #include "Filters/ConvertEVSMFilter2D.h"
 #include "Filters/AntiAliasingFilter2D.h"
@@ -45,7 +44,6 @@ Renderer::Renderer(GFX_HWND hwnd, int32_t width, int32_t height)
 
 	m_LDRSurface = RenderableSurfaceManager::GetInstance()->AcquireColorSurface(RenderableSurfaceDesc(GFX_FORMAT_LDR, width, height));
 
-	m_IdentityFilter2D = std::make_shared<Filter2D>(pDevice);
 	m_ToneMapFilter2D = std::make_shared<ToneMapFilter2D>(pDevice);
 
 	m_ConvertEVSMFilter2D = std::make_shared<ConvertEVSMFilter2D>(pDevice);
@@ -86,6 +84,14 @@ Renderer::Renderer(GFX_HWND hwnd, int32_t width, int32_t height)
 
     m_PointLightShadingPass = std::make_shared<PointLightShadingPass>(pDevice);
     m_DirectionalLightShadingPass = std::make_shared<DirectionalLightShadingPass>(pDevice);
+
+	{
+        auto psoSetup = [](DX12GraphicsPsoDesc& desc)
+        {
+            desc.SetRenderTargetFormat(GFX_FORMAT_R16G16B16A16_FLOAT.RTVFormat);
+        };
+        m_CopyFP16 = std::make_shared<ImageProcessing>(pDevice, g_IdentityFilter2D_VS_bytecode, g_IdentityFilter2D_PS_bytecode, psoSetup);
+	}
 
     {
         auto psoSetup = [](DX12GraphicsPsoDesc& desc)
@@ -561,7 +567,6 @@ void Renderer::ResolveToSwapChain()
     m_ResolveToSwapChain->Apply(pGfxContext.Get());
     pGfxContext->SetGraphicsRootDescriptorTable(0, m_LDRSurface->GetSRV());
     m_ResolveToSwapChain->Draw(pGfxContext.Get());
-    pGfxContext->ResourceTransitionBarrier(m_LDRSurface.Get(), D3D12_RESOURCE_STATE_RENDER_TARGET);
 
     pGfxContext->PIXEndEvent();
 }
@@ -606,18 +611,16 @@ void Renderer::AAFilter()
         pGfxContext->SetRenderTargets(_countof(pSurfaces), pSurfaces, nullptr);
         m_AntiAliasingFilter2D->Draw(pGfxContext.Get());
         pGfxContext->ResourceTransitionBarrier(m_PostProcessSurfaces.m_HDRSurface.Get(), D3D12_RESOURCE_STATE_RENDER_TARGET);
-        pGfxContext->ResourceTransitionBarrier(m_HistoryLightingSurface.Get(), D3D12_RESOURCE_STATE_RENDER_TARGET);
     }
 
     {
         pGfxContext->ResourceTransitionBarrier(m_PostProcessSurface.Get(), D3D12_RESOURCE_STATE_GENERIC_READ);
-        m_IdentityFilter2D->Apply(pGfxContext.Get());
-        pGfxContext->SetGraphicsDynamicCbvSrvUav(0, 0, m_PostProcessSurface->GetStagingSRV().GetCpuHandle());
-        DX12ColorSurface* pSurfaces[] = {m_HistoryLightingSurface.Get()};
-        pGfxContext->SetRenderTargets(_countof(pSurfaces), pSurfaces, nullptr);
-        m_IdentityFilter2D->Draw(pGfxContext.Get());
-        pGfxContext->ResourceTransitionBarrier(m_PostProcessSurface.Get(), D3D12_RESOURCE_STATE_RENDER_TARGET);
+        pGfxContext->ResourceTransitionBarrier(m_HistoryLightingSurface.Get(), D3D12_RESOURCE_STATE_RENDER_TARGET);
 
+        m_CopyFP16->Apply(pGfxContext.Get());
+        pGfxContext->SetGraphicsDynamicCbvSrvUav(0, 0, m_PostProcessSurface->GetStagingSRV().GetCpuHandle());
+        pGfxContext->SetRenderTarget(m_HistoryLightingSurface.Get());
+        m_CopyFP16->Draw(pGfxContext.Get());
     }
 
     pGfxContext->PIXEndEvent();

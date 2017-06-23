@@ -70,7 +70,6 @@ private:
 
 	std::shared_ptr<DX12SwapChain> m_SwapChain;
 
-	std::shared_ptr<Filter2D> m_IdentityFilter2D;
 	std::shared_ptr<ToneMapFilter2D> m_ToneMapFilter2D;
 	std::shared_ptr<ConvertEVSMFilter2D> m_ConvertEVSMFilter2D;
 	std::shared_ptr<AntiAliasingFilter2D> m_AntiAliasingFilter2D;
@@ -84,6 +83,7 @@ private:
     std::shared_ptr<PointLightShadingPass> m_PointLightShadingPass;
     std::shared_ptr<DirectionalLightShadingPass> m_DirectionalLightShadingPass;
 
+    std::shared_ptr<ImageProcessing> m_CopyFP16;
     std::shared_ptr<ImageProcessing> m_ResolveToSwapChain;
 
     std::shared_ptr<ComputeProcessing> m_ReduceLuminanceInitial;
