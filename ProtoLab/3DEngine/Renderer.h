@@ -7,14 +7,12 @@
 #include "RenderableSurfaceManager.h"
 #include "Pass/PointLightShadingPass.h"
 #include "Pass/DirectionalLightShadingPass.h"
+#include "Pass/ToneMappingPass.h"
 
 class ILight;
 class Scene;
 class Camera;
 class Filter2D;
-class ToneMapFilter2D;
-class PointLightFilter2D;
-class DirectionalLightFilter2D;
 class ConvertEVSMFilter2D;
 class AntiAliasingFilter2D;
 class ResolveToSwapChainFilter2D;
@@ -64,13 +62,8 @@ private:
 	RenderableSurfaceHandle<DX12ColorSurface> m_PostProcessSurface;
 	RenderableSurfaceHandle<DX12ColorSurface> m_HistoryLightingSurface;
 
-	std::vector<RenderableSurfaceHandle<DX12ColorSurface>> m_LuminanceSurfaces;
-
-	RenderableSurfaceHandle<DX12ColorSurface> m_LDRSurface;
-
 	std::shared_ptr<DX12SwapChain> m_SwapChain;
 
-	std::shared_ptr<ToneMapFilter2D> m_ToneMapFilter2D;
 	std::shared_ptr<ConvertEVSMFilter2D> m_ConvertEVSMFilter2D;
 	std::shared_ptr<AntiAliasingFilter2D> m_AntiAliasingFilter2D;
 
@@ -82,6 +75,8 @@ private:
 
     std::shared_ptr<PointLightShadingPass> m_PointLightShadingPass;
     std::shared_ptr<DirectionalLightShadingPass> m_DirectionalLightShadingPass;
+
+    std::shared_ptr<ToneMappingPass> m_ToneMap;
 
     std::shared_ptr<ImageProcessing> m_CopyFP16;
     std::shared_ptr<ImageProcessing> m_ResolveToSwapChain;

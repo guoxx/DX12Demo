@@ -165,9 +165,6 @@
     <ClCompile Include="3DEngine\TextRenderer.cpp">
       <Filter>3DEngine</Filter>
     </ClCompile>
-    <ClCompile Include="3DEngine\Filters\ToneMapFilter2D.cpp">
-      <Filter>3DEngine\Filters</Filter>
-    </ClCompile>
     <ClCompile Include="3DEngine\GraphicsEngineDefinition.cpp">
       <Filter>3DEngine</Filter>
     </ClCompile>
@@ -202,6 +199,9 @@
       <Filter>DX12\Private</Filter>
     </ClCompile>
     <ClCompile Include="3DEngine\Pass\DirectionalLightShadingPass.cpp">
+      <Filter>3DEngine\Pass</Filter>
+    </ClCompile>
+    <ClCompile Include="3DEngine\Pass\ToneMappingPass.cpp">
       <Filter>3DEngine\Pass</Filter>
     </ClCompile>
   </ItemGroup>
@@ -377,9 +377,6 @@
     <ClInclude Include="3DEngine\TextRenderer.h">
       <Filter>3DEngine</Filter>
     </ClInclude>
-    <ClInclude Include="3DEngine\Filters\ToneMapFilter2D.h">
-      <Filter>3DEngine\Filters</Filter>
-    </ClInclude>
     <ClInclude Include="3DEngine\GraphicsEngineDefinition.h">
       <Filter>3DEngine</Filter>
     </ClInclude>
@@ -420,6 +417,9 @@
       <Filter>DX12\Private</Filter>
     </ClInclude>
     <ClInclude Include="3DEngine\Pass\DirectionalLightShadingPass.h">
+      <Filter>3DEngine\Pass</Filter>
+    </ClInclude>
+    <ClInclude Include="3DEngine\Pass\ToneMappingPass.h">
       <Filter>3DEngine\Pass</Filter>
     </ClInclude>
   </ItemGroup>

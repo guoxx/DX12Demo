@@ -8,7 +8,6 @@
 #include "Lights/PointLight.h"
 #include "Lights/DirectionalLight.h"
 
-#include "Filters/ToneMapFilter2D.h"
 #include "Filters/ConvertEVSMFilter2D.h"
 #include "Filters/AntiAliasingFilter2D.h"
 #include "Filters/ComputeProcessing.h"
@@ -40,11 +39,9 @@ Renderer::Renderer(GFX_HWND hwnd, int32_t width, int32_t height)
 
 	m_PostProcessSurfaces.m_HDRSurface = RenderableSurfaceManager::GetInstance()->AcquireColorSurface(RenderableSurfaceDesc(GFX_FORMAT_HDR, width, height));
 	m_HistoryLightingSurface = RenderableSurfaceManager::GetInstance()->AcquireColorSurface(RenderableSurfaceDesc(GFX_FORMAT_HDR, width, height));
-	m_PostProcessSurface = RenderableSurfaceManager::GetInstance()->AcquireColorSurface(RenderableSurfaceDesc(GFX_FORMAT_HDR, width, height));
+	m_PostProcessSurfaces.m_AASurface = RenderableSurfaceManager::GetInstance()->AcquireColorSurface(RenderableSurfaceDesc(GFX_FORMAT_HDR, width, height));
 
-	m_LDRSurface = RenderableSurfaceManager::GetInstance()->AcquireColorSurface(RenderableSurfaceDesc(GFX_FORMAT_LDR, width, height));
-
-	m_ToneMapFilter2D = std::make_shared<ToneMapFilter2D>(pDevice);
+	m_PostProcessSurfaces.m_LDRSurface = RenderableSurfaceManager::GetInstance()->AcquireColorSurface(RenderableSurfaceDesc(GFX_FORMAT_LDR, width, height));
 
 	m_ConvertEVSMFilter2D = std::make_shared<ConvertEVSMFilter2D>(pDevice);
 
@@ -58,14 +55,14 @@ Renderer::Renderer(GFX_HWND hwnd, int32_t width, int32_t height)
         lumReductionHeight = DX::DivideByMultiple(lumReductionHeight, LUMINANCE_REDUCTION_THREAD_GROUP_SIZE);
 
 	    auto surf = RenderableSurfaceManager::GetInstance()->AcquireColorSurface(RenderableSurfaceDesc(GFX_FORMAT_R32_FLOAT, lumReductionWidth, lumReductionHeight));
-        m_LuminanceSurfaces.push_back(surf);
+        m_PostProcessSurfaces.m_LuminanceSurfaces.push_back(surf);
 
         if (lumReductionWidth == 1 && lumReductionHeight == 1)
         {
             break;
         }
     }
-    assert(m_LuminanceSurfaces.size() >= 2);
+    assert(m_PostProcessSurfaces.m_LuminanceSurfaces.size() >= 2);
 
 	uint32_t numTileX = DX::DivideByMultiple(m_Width, LIGHT_CULLING_NUM_THREADS_XY);
 	uint32_t numTileY = DX::DivideByMultiple(m_Height, LIGHT_CULLING_NUM_THREADS_XY);
@@ -84,6 +81,14 @@ Renderer::Renderer(GFX_HWND hwnd, int32_t width, int32_t height)
 
     m_PointLightShadingPass = std::make_shared<PointLightShadingPass>(pDevice);
     m_DirectionalLightShadingPass = std::make_shared<DirectionalLightShadingPass>(pDevice);
+
+    {
+        auto psoSetup = [](DX12GraphicsPsoDesc& desc)
+        {
+            desc.SetRenderTargetFormat(GFX_FORMAT_LDR.RTVFormat);
+        };
+        m_ToneMap = std::make_shared<ToneMappingPass>(pDevice);
+    }
 
 	{
         auto psoSetup = [](DX12GraphicsPsoDesc& desc)
@@ -563,9 +568,9 @@ void Renderer::ResolveToSwapChain()
 
 	pGfxContext->SetViewport(0, 0, m_Width, m_Height);
 
-    pGfxContext->ResourceTransitionBarrier(m_LDRSurface.Get(), D3D12_RESOURCE_STATE_GENERIC_READ);
+    pGfxContext->ResourceTransitionBarrier(m_PostProcessSurfaces.m_LDRSurface.Get(), D3D12_RESOURCE_STATE_GENERIC_READ);
     m_ResolveToSwapChain->Apply(pGfxContext.Get());
-    pGfxContext->SetGraphicsRootDescriptorTable(0, m_LDRSurface->GetSRV());
+    pGfxContext->SetGraphicsRootDescriptorTable(0, m_PostProcessSurfaces.m_LDRSurface->GetSRV());
     m_ResolveToSwapChain->Draw(pGfxContext.Get());
 
     pGfxContext->PIXEndEvent();
@@ -602,23 +607,23 @@ void Renderer::AAFilter()
         pGfxContext->ResourceTransitionBarrier(m_PostProcessSurfaces.m_HDRSurface.Get(), D3D12_RESOURCE_STATE_GENERIC_READ);
         pGfxContext->ResourceTransitionBarrier(m_HistoryLightingSurface.Get(), D3D12_RESOURCE_STATE_GENERIC_READ);
         pGfxContext->ResourceTransitionBarrier(m_GBuffer.GetVelocityBuffer(), D3D12_RESOURCE_STATE_GENERIC_READ);
-        pGfxContext->ResourceTransitionBarrier(m_PostProcessSurface.Get(), D3D12_RESOURCE_STATE_RENDER_TARGET);
+        pGfxContext->ResourceTransitionBarrier(m_PostProcessSurfaces.m_AASurface.Get(), D3D12_RESOURCE_STATE_RENDER_TARGET);
         m_AntiAliasingFilter2D->Apply(pGfxContext.Get());
         pGfxContext->SetGraphicsDynamicCbvSrvUav(0, 0, m_PostProcessSurfaces.m_HDRSurface->GetStagingSRV().GetCpuHandle());
         pGfxContext->SetGraphicsDynamicCbvSrvUav(0, 1, m_HistoryLightingSurface->GetStagingSRV().GetCpuHandle());
         pGfxContext->SetGraphicsDynamicCbvSrvUav(0, 2, m_GBuffer.GetVelocityBuffer()->GetStagingSRV().GetCpuHandle());
-        DX12ColorSurface* pSurfaces[] = {m_PostProcessSurface.Get()};
+        DX12ColorSurface* pSurfaces[] = {m_PostProcessSurfaces.m_AASurface.Get()};
         pGfxContext->SetRenderTargets(_countof(pSurfaces), pSurfaces, nullptr);
         m_AntiAliasingFilter2D->Draw(pGfxContext.Get());
         pGfxContext->ResourceTransitionBarrier(m_PostProcessSurfaces.m_HDRSurface.Get(), D3D12_RESOURCE_STATE_RENDER_TARGET);
     }
 
     {
-        pGfxContext->ResourceTransitionBarrier(m_PostProcessSurface.Get(), D3D12_RESOURCE_STATE_GENERIC_READ);
+        pGfxContext->ResourceTransitionBarrier(m_PostProcessSurfaces.m_AASurface.Get(), D3D12_RESOURCE_STATE_GENERIC_READ);
         pGfxContext->ResourceTransitionBarrier(m_HistoryLightingSurface.Get(), D3D12_RESOURCE_STATE_RENDER_TARGET);
 
         m_CopyFP16->Apply(pGfxContext.Get());
-        pGfxContext->SetGraphicsDynamicCbvSrvUav(0, 0, m_PostProcessSurface->GetStagingSRV().GetCpuHandle());
+        pGfxContext->SetGraphicsDynamicCbvSrvUav(0, 0, m_PostProcessSurfaces.m_AASurface->GetStagingSRV().GetCpuHandle());
         pGfxContext->SetRenderTarget(m_HistoryLightingSurface.Get());
         m_CopyFP16->Draw(pGfxContext.Get());
     }
@@ -633,20 +638,20 @@ void Renderer::CalcAvgLuminance(DX12ColorSurface* surf)
     pGfxContext->PIXBeginEvent(L"Average Luminance");
 
     pGfxContext->ResourceTransitionBarrier(surf, D3D12_RESOURCE_STATE_GENERIC_READ);
-    pGfxContext->ResourceTransitionBarrier((*m_LuminanceSurfaces.begin()).Get(), D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
+    pGfxContext->ResourceTransitionBarrier((*m_PostProcessSurfaces.m_LuminanceSurfaces.begin()).Get(), D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
     m_ReduceLuminanceInitial->Apply(pGfxContext.Get());
     pGfxContext->SetComputeDynamicCbvSrvUav(0, 0, surf->GetStagingSRV().GetCpuHandle());
-    pGfxContext->SetComputeDynamicCbvSrvUav(0, 1, (*m_LuminanceSurfaces.begin())->GetStagingUAV().GetCpuHandle());
-    m_ReduceLuminanceInitial->Dispatch(pGfxContext.Get(), (*m_LuminanceSurfaces.begin())->GetWidth(), (*m_LuminanceSurfaces.begin())->GetHeight());
+    pGfxContext->SetComputeDynamicCbvSrvUav(0, 1, (*m_PostProcessSurfaces.m_LuminanceSurfaces.begin())->GetStagingUAV().GetCpuHandle());
+    m_ReduceLuminanceInitial->Dispatch(pGfxContext.Get(), (*m_PostProcessSurfaces.m_LuminanceSurfaces.begin())->GetWidth(), (*m_PostProcessSurfaces.m_LuminanceSurfaces.begin())->GetHeight());
     pGfxContext->ResourceTransitionBarrier(surf, D3D12_RESOURCE_STATE_RENDER_TARGET);
 
-    for (int32_t i = 1; i < m_LuminanceSurfaces.size(); ++i)
+    for (int32_t i = 1; i < m_PostProcessSurfaces.m_LuminanceSurfaces.size(); ++i)
     {
-        DX12ColorSurface* preSurf = m_LuminanceSurfaces[i - 1].Get();
-        DX12ColorSurface* curSurf = m_LuminanceSurfaces[i].Get();
+        DX12ColorSurface* preSurf = m_PostProcessSurfaces.m_LuminanceSurfaces[i - 1].Get();
+        DX12ColorSurface* curSurf = m_PostProcessSurfaces.m_LuminanceSurfaces[i].Get();
 
         std::shared_ptr<ComputeProcessing> curProcessing;
-        if (i == (m_LuminanceSurfaces.size() - 1))
+        if (i == (m_PostProcessSurfaces.m_LuminanceSurfaces.size() - 1))
         {
             curProcessing = m_ReduceLuminanceFinal;
         }
@@ -669,33 +674,5 @@ void Renderer::CalcAvgLuminance(DX12ColorSurface* surf)
 void Renderer::ToneMap()
 {
 	DX12ScopedGraphicsContext pGfxContext{L"ToneMap"};
-
-    pGfxContext->PIXBeginEvent(L"ToneMap");
-
-    // Clear the views.
-	DX12ColorSurface* pColorSurfaces[] = { m_LDRSurface.Get() };
-    pGfxContext->SetRenderTargets(_countof(pColorSurfaces), pColorSurfaces, nullptr);
-
-	pGfxContext->SetViewport(0, 0, m_Width, m_Height);
-
-    pGfxContext->ResourceTransitionBarrier(m_PostProcessSurface.Get(), D3D12_RESOURCE_STATE_GENERIC_READ);
-    pGfxContext->ResourceTransitionBarrier(m_LuminanceSurfaces.back().Get(), D3D12_RESOURCE_STATE_GENERIC_READ);
-    pGfxContext->ResourceTransitionBarrier(m_LDRSurface.Get(), D3D12_RESOURCE_STATE_RENDER_TARGET);
-    m_ToneMapFilter2D->Apply(pGfxContext.Get());
-
-    HLSL::CameraSettings constants;
-    constants.m_ToneMapEnabled = g_ToneMapping;
-    constants.m_ExposureMode = ExposureModes_Automatic;
-    constants.m_KeyValue = g_ToneMapTargetLuminance;
-    pGfxContext->SetGraphicsRootDynamicConstantBufferView(0, &constants, sizeof(constants));
-
-    pGfxContext->SetGraphicsDynamicCbvSrvUav(1, 0, m_PostProcessSurface->GetStagingSRV().GetCpuHandle());
-    pGfxContext->SetGraphicsDynamicCbvSrvUav(1, 1, m_LuminanceSurfaces.back()->GetStagingSRV().GetCpuHandle());
-
-    m_ToneMapFilter2D->Draw(pGfxContext.Get());
-
-	pGfxContext->ResourceTransitionBarrier(m_PostProcessSurface.Get(), D3D12_RESOURCE_STATE_RENDER_TARGET);
-    pGfxContext->ResourceTransitionBarrier(m_LDRSurface.Get(), D3D12_RESOURCE_STATE_GENERIC_READ);
-
-    pGfxContext->PIXEndEvent();
+    m_ToneMap->Apply(pGfxContext.Get(), &m_RenderContext, m_PostProcessSurfaces);
 }

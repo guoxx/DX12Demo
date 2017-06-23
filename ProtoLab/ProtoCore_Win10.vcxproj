@@ -190,7 +190,6 @@
     <ClCompile Include="3DEngine\Filters\ComputeProcessing.cpp" />
     <ClCompile Include="3DEngine\Filters\ConvertEVSMFilter2D.cpp" />
     <ClCompile Include="3DEngine\Filters\ImageProcessing.cpp" />
-    <ClCompile Include="3DEngine\Filters\ToneMapFilter2D.cpp" />
     <ClCompile Include="3DEngine\GameInput.cpp" />
     <ClCompile Include="3DEngine\GraphicsEngineDefinition.cpp" />
     <ClCompile Include="3DEngine\Lights\DirectionalLight.cpp" />
@@ -205,6 +204,7 @@
     <ClCompile Include="3DEngine\Pass\LightCullingPass.cpp" />
     <ClCompile Include="3DEngine\Pass\PointLightShadingPass.cpp" />
     <ClCompile Include="3DEngine\Pass\TiledShadingPass.cpp" />
+    <ClCompile Include="3DEngine\Pass\ToneMappingPass.cpp" />
     <ClCompile Include="3DEngine\Primitive.cpp" />
     <ClCompile Include="3DEngine\RenderContext.cpp" />
     <ClCompile Include="3DEngine\Renderer.cpp" />
@@ -253,7 +253,6 @@
     <ClInclude Include="3DEngine\Actor.h" />
     <ClInclude Include="3DEngine\Camera.h" />
     <ClInclude Include="3DEngine\EngineTuning.h" />
-    <ClInclude Include="3DEngine\Filters\ToneMapFilter2D.h" />
     <ClInclude Include="3DEngine\GameInput.h" />
     <ClInclude Include="3DEngine\Lights\DirectionalLight.h" />
     <ClInclude Include="3DEngine\Lights\ILight.h" />
@@ -266,6 +265,7 @@
     <ClInclude Include="3DEngine\Pass\LightCullingPass.h" />
     <ClInclude Include="3DEngine\Pass\PointLightShadingPass.h" />
     <ClInclude Include="3DEngine\Pass\TiledShadingPass.h" />
+    <ClInclude Include="3DEngine\Pass\ToneMappingPass.h" />
     <ClInclude Include="3DEngine\Primitive.h" />
     <ClInclude Include="3DEngine\RenderableSurfaceManager.h" />
     <ClInclude Include="3DEngine\RenderContext.h" />
