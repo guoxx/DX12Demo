@@ -180,9 +180,6 @@
     <ClCompile Include="RayTracing\PathTracer.cpp">
       <Filter>RayTracing</Filter>
     </ClCompile>
-    <ClCompile Include="3DEngine\Filters\AntiAliasingFilter2D.cpp">
-      <Filter>3DEngine\Filters</Filter>
-    </ClCompile>
     <ClCompile Include="3DEngine\Filters\ComputeProcessing.cpp">
       <Filter>3DEngine\Filters</Filter>
     </ClCompile>
@@ -202,6 +199,9 @@
       <Filter>3DEngine\Pass</Filter>
     </ClCompile>
     <ClCompile Include="3DEngine\Pass\ToneMappingPass.cpp">
+      <Filter>3DEngine\Pass</Filter>
+    </ClCompile>
+    <ClCompile Include="3DEngine\Pass\TemporalAAPass.cpp">
       <Filter>3DEngine\Pass</Filter>
     </ClCompile>
   </ItemGroup>
@@ -395,9 +395,6 @@
     <ClInclude Include="RayTracing\PathTracer.h">
       <Filter>RayTracing</Filter>
     </ClInclude>
-    <ClInclude Include="3DEngine\Filters\AntiAliasingFilter2D.h">
-      <Filter>3DEngine\Filters</Filter>
-    </ClInclude>
     <ClInclude Include="3DEngine\Filters\ComputeProcessing.h">
       <Filter>3DEngine\Filters</Filter>
     </ClInclude>
@@ -420,6 +417,9 @@
       <Filter>3DEngine\Pass</Filter>
     </ClInclude>
     <ClInclude Include="3DEngine\Pass\ToneMappingPass.h">
+      <Filter>3DEngine\Pass</Filter>
+    </ClInclude>
+    <ClInclude Include="3DEngine\Pass\TemporalAAPass.h">
       <Filter>3DEngine\Pass</Filter>
     </ClInclude>
   </ItemGroup>

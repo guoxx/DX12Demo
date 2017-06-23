@@ -37,6 +37,7 @@ struct DirectionalLightShadowMapSet
 struct PostProcessSurfaceSet
 {
  	RenderableSurfaceHandle<DX12ColorSurface> m_HDRSurface;
+ 	RenderableSurfaceHandle<DX12ColorSurface> m_HistoryHDRSurface;
 	RenderableSurfaceHandle<DX12ColorSurface> m_LDRSurface;
  	RenderableSurfaceHandle<DX12ColorSurface> m_AASurface;
 	std::vector<RenderableSurfaceHandle<DX12ColorSurface>> m_LuminanceSurfaces;

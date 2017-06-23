@@ -8,14 +8,12 @@
 #include "Pass/PointLightShadingPass.h"
 #include "Pass/DirectionalLightShadingPass.h"
 #include "Pass/ToneMappingPass.h"
+#include "Pass/TemporalAAPass.h"
 
 class ILight;
 class Scene;
 class Camera;
-class Filter2D;
 class ConvertEVSMFilter2D;
-class AntiAliasingFilter2D;
-class ResolveToSwapChainFilter2D;
 class LightCullingPass;
 class TiledShadingPass;
 class ComputeProcessing;
@@ -65,7 +63,6 @@ private:
 	std::shared_ptr<DX12SwapChain> m_SwapChain;
 
 	std::shared_ptr<ConvertEVSMFilter2D> m_ConvertEVSMFilter2D;
-	std::shared_ptr<AntiAliasingFilter2D> m_AntiAliasingFilter2D;
 
 	std::shared_ptr<LightCullingPass> m_LightCullingPass;
 	std::shared_ptr<TiledShadingPass> m_TiledShadingPass;
@@ -76,9 +73,9 @@ private:
     std::shared_ptr<PointLightShadingPass> m_PointLightShadingPass;
     std::shared_ptr<DirectionalLightShadingPass> m_DirectionalLightShadingPass;
 
+    std::shared_ptr<TemporalAAPass> m_TemporalAA;
     std::shared_ptr<ToneMappingPass> m_ToneMap;
 
-    std::shared_ptr<ImageProcessing> m_CopyFP16;
     std::shared_ptr<ImageProcessing> m_ResolveToSwapChain;
 
     std::shared_ptr<ComputeProcessing> m_ReduceLuminanceInitial;
