@@ -7,6 +7,9 @@
 
 #include "MaterialManager.h"
 
+#include "assimp/Importer.hpp"
+#include "assimp/postprocess.h"
+
 #pragma warning(push)
 #pragma warning(disable:4201)
 #pragma warning(disable:4706)
@@ -37,6 +40,23 @@ void Model::_LoadMTLMaterial(void* materialData, Material* pMaterial, DX12Graphi
 	pMaterial->m_AlphaTexName = pMaterialData->alpha_texname;
 	pMaterial->m_UnknownParameters = pMaterialData->unknown_parameter;
 	pMaterial->Load(pGfxContext);
+}
+
+std::vector<std::shared_ptr<Model>> Model::LoadFromFile(DX12Device* device, DX12GraphicsContext* pGfxContext, const char* filename)
+{
+    Assimp::Importer importer;
+    uint32_t flags = 0;
+    flags |= aiProcess_ConvertToLeftHanded;
+    flags |= aiProcessPreset_TargetRealtime_Fast;
+    const aiScene* pScene = importer.ReadFile(filename, flags);
+    if (!pScene)
+    {
+        DX::Print(importer.GetErrorString());
+        assert(false);
+    }
+
+	std::vector<std::shared_ptr<Model>> models;
+    return models;
 }
 
 std::vector<std::shared_ptr<Model>> Model::LoadOBJ(DX12Device* device, DX12GraphicsContext* pGfxContext, const char* objFilename, const char* mtlBasepath)
