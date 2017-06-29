@@ -9,6 +9,7 @@
 
 #include "assimp/Importer.hpp"
 #include "assimp/postprocess.h"
+#include "assimp/scene.h"
 
 #pragma warning(push)
 #pragma warning(disable:4201)
@@ -48,14 +49,36 @@ std::vector<std::shared_ptr<Model>> Model::LoadFromFile(DX12Device* device, DX12
     uint32_t flags = 0;
     flags |= aiProcess_ConvertToLeftHanded;
     flags |= aiProcessPreset_TargetRealtime_Fast;
-    const aiScene* pScene = importer.ReadFile(filename, flags);
-    if (!pScene)
+    const aiScene* scene = importer.ReadFile(filename, flags);
+    if (!scene)
     {
         DX::Print(importer.GetErrorString());
         assert(false);
     }
 
+    assert(scene->mNumMeshes != 0);
+    assert(scene->mNumMaterials != 0);
+    assert(scene->mRootNode->mNumMeshes == 0);
+
 	std::vector<std::shared_ptr<Model>> models;
+
+    for (uint32_t i = 0; i < scene->mRootNode->mNumChildren; ++i)
+    {
+        std::shared_ptr<Model> mod = std::make_shared<Model>();
+        models.push_back(mod);
+
+        const aiNode* node = scene->mRootNode->mChildren[i];
+        mod->m_Name = node->mName.C_Str();
+		mod->m_wName = DX::UTF8StrToUTF16(mod->m_Name);
+
+        assert(node->mNumMeshes == 1);
+        const aiMesh* mesh = scene->mMeshes[node->mMeshes[0]];
+        assert(mesh->mPrimitiveTypes == aiPrimitiveType_TRIANGLE);
+
+        mod->m_Mesh = std::make_shared<Mesh>();
+
+    }
+
     return models;
 }
 

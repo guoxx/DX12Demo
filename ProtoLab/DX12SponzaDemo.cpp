@@ -167,7 +167,8 @@ void DX12SponzaDemo::LoadAssets()
 	DX12ScopedGraphicsContext pGfxContext;
 
 	m_Scene = std::make_shared<Scene>();
-	std::vector<std::shared_ptr<Model>> models = Model::LoadOBJ(m_GraphicsManager->GetDevice(), pGfxContext.Get(), "crytek-sponza/sponza.obj", "crytek-sponza/");
+	std::vector<std::shared_ptr<Model>> models = Model::LoadFromFile(m_GraphicsManager->GetDevice(), pGfxContext.Get(), "Sponza/Sponza.fbx");
+	//std::vector<std::shared_ptr<Model>> models = Model::LoadOBJ(m_GraphicsManager->GetDevice(), pGfxContext.Get(), "crytek-sponza/sponza.obj", "crytek-sponza/");
 	//std::vector<std::shared_ptr<Model>> models = Model::LoadOBJ(m_GraphicsManager->GetDevice(), pGfxContext, "cornell-box/CornellBox-Glossy.obj", "cornell-box/");
 	for (auto m : models)
 	{
