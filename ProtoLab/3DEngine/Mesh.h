@@ -7,6 +7,15 @@ class Primitive;
 class Camera;
 class RenderContext;
 
+struct VertexLayout
+{
+    float3 Position;
+    float3 Normal;
+    float3 Tangent;
+    float3 Bitangent;
+    float2 UV0;
+};
+
 class Mesh
 {
 	friend class Model;
