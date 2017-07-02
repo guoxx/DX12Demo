@@ -16,13 +16,10 @@ public:
 	~Model();
 
 	static std::vector<std::shared_ptr<Model>> LoadFromFile(DX12Device* device, DX12GraphicsContext* pGfxContext, const char* filename);
-	static std::vector<std::shared_ptr<Model>> LoadOBJ(DX12Device* device, DX12GraphicsContext* pGfxContext, const char* objFilename, const char* mtlBasepath);
 
 	void DrawPrimitives(RenderContext* pRenderContext, DX12GraphicsContext* pGfxContext);
 
 private:
-	static void Model::_LoadMTLMaterial(void* materialData, Material* pMaterial, DX12GraphicsContext* pGfxContext);
-
 	std::string m_Name;
 	std::wstring m_wName;
 

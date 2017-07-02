@@ -93,47 +93,23 @@ void Material::Load(DX12GraphicsContext* pGfxContext)
 		m_PSO[shadingCfg] = DX12PsoCompiler::Compile(DX12GraphicsManager::GetInstance()->GetDevice(), &psoDesc);
 	}
 
-	if (!m_AmbientTexName.empty())
-	{
-		m_AmbientTexture = LoadTexture(pGfxContext, m_AmbientTexName, true);
-	}
-	if (!m_DiffuseTexName.empty())
-	{
-		m_DiffuseTexture = LoadTexture(pGfxContext, m_DiffuseTexName, true);
-	}
-	if (!m_SpecularTexName.empty())
-	{
-		m_SpecularTexture = LoadTexture(pGfxContext, m_SpecularTexName, true);
-	}
-	if (!m_SpecularHighlightTexName.empty())
-	{
-		m_SpecularHighlightTexture = LoadTexture(pGfxContext, m_SpecularHighlightTexName, true);
-	}
-	if (!m_BumpTexName.empty())
-	{
-		m_BumpTexture = LoadTexture(pGfxContext, m_BumpTexName, false);
-	}
-	if (!m_DisplacementTexName.empty())
-	{
-		m_DisplacementTexture = LoadTexture(pGfxContext, m_DisplacementTexName, false);
-	}
-	if (!m_AlphaTexName.empty())
-	{
-		m_AlphaTexture = LoadTexture(pGfxContext, m_AlphaTexName, false);
-	}
+    m_DiffuseMap = LoadTexture(pGfxContext, m_DiffuseMapName, true);
+    m_NormalMap = LoadTexture(pGfxContext, m_NormalMapName, false);
+    m_RoughnessMap = LoadTexture(pGfxContext, m_RoughnessMapName, false);
+    m_MetallicMap = LoadTexture(pGfxContext, m_MetallicMapName, false);
 }
 
-std::shared_ptr<DX12Texture> Material::LoadTexture(DX12GraphicsContext* pGfxContext, std::string texname, bool sRGB)
+std::shared_ptr<DX12Texture> Material::LoadTexture(DX12GraphicsContext* pGfxContext, std::string texname, bool forceSRGB)
 {
 	std::shared_ptr<DX12Texture> tex = std::shared_ptr<DX12Texture>();
 	std::string ext = texname.substr(texname.length() - 4, 4);
 	if (ext == ".tga")
 	{
-		tex.reset(DX12Texture::LoadFromTGAFile(DX12GraphicsManager::GetInstance()->GetDevice(), pGfxContext, texname.c_str(), sRGB));
+		tex.reset(DX12Texture::LoadFromTGAFile(DX12GraphicsManager::GetInstance()->GetDevice(), pGfxContext, texname.c_str(), forceSRGB));
 	}
 	else
 	{
-		tex.reset(DX12Texture::LoadFromDDSFile(DX12GraphicsManager::GetInstance()->GetDevice(), pGfxContext, texname.c_str(), sRGB));
+		tex.reset(DX12Texture::LoadFromDDSFile(DX12GraphicsManager::GetInstance()->GetDevice(), pGfxContext, texname.c_str(), forceSRGB));
 	}
 	return tex;	
 }
@@ -187,25 +163,25 @@ void Material::Apply(RenderContext* pRenderContext, DX12GraphicsContext* pGfxCon
 	    };
 
 		BaseMaterial baseMaterial;
-		baseMaterial.Ambient = DirectX::XMFLOAT4{ m_Ambient.x, m_Ambient.y, m_Ambient.z, 0.0f };
-		baseMaterial.Diffuse = DirectX::XMFLOAT4{ m_Diffuse.x, m_Diffuse.y, m_Diffuse.z, 0.0f };
-		baseMaterial.Specular = DirectX::XMFLOAT4{ m_Specular.x, m_Specular.y, m_Specular.z, 0.0f };
-		baseMaterial.Transmittance = DirectX::XMFLOAT4{ m_Transmittance.x, m_Transmittance.y, m_Transmittance.z, 0.0f };
-		baseMaterial.Emission = DirectX::XMFLOAT4{ m_Emission.x, m_Emission.y, m_Emission.z, 0.0f };
-		baseMaterial.Shininess = DirectX::XMFLOAT4{ m_Shininess, m_Shininess, m_Shininess, m_Shininess };
-		baseMaterial.Ior = DirectX::XMFLOAT4{ m_Ior, m_Ior, m_Ior, m_Ior };
-		baseMaterial.Dissolve = DirectX::XMFLOAT4{ m_Dissolve, m_Dissolve, m_Dissolve, m_Dissolve };
+		//baseMaterial.Ambient = DirectX::XMFLOAT4{ m_Ambient.x, m_Ambient.y, m_Ambient.z, 0.0f };
+		//baseMaterial.Diffuse = DirectX::XMFLOAT4{ m_Diffuse.x, m_Diffuse.y, m_Diffuse.z, 0.0f };
+		//baseMaterial.Specular = DirectX::XMFLOAT4{ m_Specular.x, m_Specular.y, m_Specular.z, 0.0f };
+		//baseMaterial.Transmittance = DirectX::XMFLOAT4{ m_Transmittance.x, m_Transmittance.y, m_Transmittance.z, 0.0f };
+		//baseMaterial.Emission = DirectX::XMFLOAT4{ m_Emission.x, m_Emission.y, m_Emission.z, 0.0f };
+		//baseMaterial.Shininess = DirectX::XMFLOAT4{ m_Shininess, m_Shininess, m_Shininess, m_Shininess };
+		//baseMaterial.Ior = DirectX::XMFLOAT4{ m_Ior, m_Ior, m_Ior, m_Ior };
+		//baseMaterial.Dissolve = DirectX::XMFLOAT4{ m_Dissolve, m_Dissolve, m_Dissolve, m_Dissolve };
 
 		pGfxContext->SetGraphicsRootDynamicConstantBufferView(1, &view, sizeof(view));
 		pGfxContext->SetGraphicsRootDynamicConstantBufferView(2, &baseMaterial, sizeof(baseMaterial));
 
-		if (m_DiffuseTexture.get() == nullptr)
+		if (m_DiffuseMap.get() == nullptr)
 		{
 			pGfxContext->SetGraphicsRootDescriptorTable(3, m_NullDescriptorHandle);
 		}
 		else
 		{
-			pGfxContext->SetGraphicsRootDescriptorTable(3, m_DiffuseTexture->GetSRV());
+			pGfxContext->SetGraphicsRootDescriptorTable(3, m_DiffuseMap->GetSRV());
 		}
 	}
 	else if (shadingCfg == ShadingConfiguration_DepthOnly)
@@ -250,13 +226,13 @@ void Material::Apply(RenderContext* pRenderContext, DX12GraphicsContext* pGfxCon
 
 		pGfxContext->SetGraphicsRootDynamicConstantBufferView(1, &constants, sizeof(constants));
 
-		if (m_DiffuseTexture.get() == nullptr)
+		if (m_DiffuseMap.get() == nullptr)
 		{
 			pGfxContext->SetGraphicsRootDescriptorTable(2, m_NullDescriptorHandle);
 		}
 		else
 		{
-			pGfxContext->SetGraphicsRootDescriptorTable(2, m_DiffuseTexture->GetSRV());
+			pGfxContext->SetGraphicsRootDescriptorTable(2, m_DiffuseMap->GetSRV());
 		}
 	}
 	else
