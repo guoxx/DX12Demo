@@ -10,6 +10,7 @@ packages/
 
 ProtoLab/Shaders/CompiledShaders/*.h
 ProtoLab/Shaders/CompiledShaders/Temp/
+ThirdParty/DirectXTex/DirectXTex/Shaders/Compiled/
 
 sponza.exr
 sponza*.mip
