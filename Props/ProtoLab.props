@@ -10,7 +10,7 @@
 
   <ItemDefinitionGroup>
     <ClCompile>
-      <AdditionalIncludeDirectories>$(SolutionDir)ProtoLab\;$(SolutionDir)ThirdParty\embree\include\;$(SolutionDir)ThirdParty\assimp\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)ProtoLab\;$(SolutionDir)ThirdParty\embree\include\;$(SolutionDir)ThirdParty\assimp\include\;$(SolutionDir)ThirdParty\DirectXTex\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalDependencies>embree.lib;assimp-vc140-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
