@@ -19,6 +19,7 @@
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>ProtoCore</RootNamespace>
     <ProjectName>ProtoCore_Win10</ProjectName>
+    <WindowsTargetPlatformVersion>10.0.10586.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
@@ -375,6 +376,12 @@
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ThirdParty\assimp\assimp.vcxproj">
+      <Project>{4b4bf558-3414-4154-aa8a-bb52ad0189b6}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\ThirdParty\DirectXTex\DirectXTex\DirectXTex_Desktop_2015_Win10.vcxproj">
+      <Project>{371b9fa9-4c90-4ac6-a123-aced756d6c77}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\ThirdParty\embree\embree.vcxproj">
       <Project>{01abbc96-b193-4467-8e1e-6fd4df051ac7}</Project>
     </ProjectReference>
