@@ -10,6 +10,7 @@
 #include "../Shaders/CompiledShaders/BaseMaterial.h"
 #include "../Shaders/CompiledShaders/BaseMaterial_DepthOnly.h"
 #include "../Shaders/CompiledShaders/BaseMaterial_RSM.h"
+#include <filesystem>
 
 
 Material::Material()
@@ -22,10 +23,9 @@ Material::~Material()
 
 void Material::Load(DX12GraphicsContext* pGfxContext)
 {
-	CD3DX12_SHADER_RESOURCE_VIEW_DESC nullSrvDesc = CD3DX12_SHADER_RESOURCE_VIEW_DESC::Tex2DView(D3D12_SRV_DIMENSION_TEXTURE2D, DXGI_FORMAT_R8G8B8A8_UNORM);
-
-	m_NullDescriptorHandle = DX12GraphicsManager::GetInstance()->RegisterResourceInDescriptorHeap(nullptr, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-	DX12GraphicsManager::GetInstance()->GetDevice()->CreateShaderResourceView(nullptr, &nullSrvDesc, m_NullDescriptorHandle.GetCpuHandle());
+	//CD3DX12_SHADER_RESOURCE_VIEW_DESC nullSrvDesc = CD3DX12_SHADER_RESOURCE_VIEW_DESC::Tex2DView(D3D12_SRV_DIMENSION_TEXTURE2D, DXGI_FORMAT_R8G8B8A8_UNORM);
+	//m_NullDescriptorHandle = DX12GraphicsManager::GetInstance()->RegisterResourceInDescriptorHeap(nullptr, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	//DX12GraphicsManager::GetInstance()->GetDevice()->CreateShaderResourceView(nullptr, &nullSrvDesc, m_NullDescriptorHandle.GetCpuHandle());
 
 	{
 		ShadingConfiguration shadingCfg = ShadingConfiguration_GBuffer;
@@ -102,15 +102,7 @@ void Material::Load(DX12GraphicsContext* pGfxContext)
 std::shared_ptr<DX12Texture> Material::LoadTexture(DX12GraphicsContext* pGfxContext, std::string texname, bool forceSRGB)
 {
 	std::shared_ptr<DX12Texture> tex = std::shared_ptr<DX12Texture>();
-	std::string ext = texname.substr(texname.length() - 4, 4);
-	if (ext == ".tga")
-	{
-		tex.reset(DX12Texture::LoadFromTGAFile(DX12GraphicsManager::GetInstance()->GetDevice(), pGfxContext, texname.c_str(), forceSRGB));
-	}
-	else
-	{
-		tex.reset(DX12Texture::LoadFromDDSFile(DX12GraphicsManager::GetInstance()->GetDevice(), pGfxContext, texname.c_str(), forceSRGB));
-	}
+    tex.reset(DX12Texture::LoadFromFile(DX12GraphicsManager::GetInstance()->GetDevice(), pGfxContext, texname.c_str(), forceSRGB));
 	return tex;	
 }
 
@@ -175,14 +167,7 @@ void Material::Apply(RenderContext* pRenderContext, DX12GraphicsContext* pGfxCon
 		pGfxContext->SetGraphicsRootDynamicConstantBufferView(1, &view, sizeof(view));
 		pGfxContext->SetGraphicsRootDynamicConstantBufferView(2, &baseMaterial, sizeof(baseMaterial));
 
-		if (m_DiffuseMap.get() == nullptr)
-		{
-			pGfxContext->SetGraphicsRootDescriptorTable(3, m_NullDescriptorHandle);
-		}
-		else
-		{
-			pGfxContext->SetGraphicsRootDescriptorTable(3, m_DiffuseMap->GetSRV());
-		}
+		pGfxContext->SetGraphicsRootDescriptorTable(3, m_DiffuseMap->GetSRV());
 	}
 	else if (shadingCfg == ShadingConfiguration_DepthOnly)
 	{
@@ -226,14 +211,7 @@ void Material::Apply(RenderContext* pRenderContext, DX12GraphicsContext* pGfxCon
 
 		pGfxContext->SetGraphicsRootDynamicConstantBufferView(1, &constants, sizeof(constants));
 
-		if (m_DiffuseMap.get() == nullptr)
-		{
-			pGfxContext->SetGraphicsRootDescriptorTable(2, m_NullDescriptorHandle);
-		}
-		else
-		{
-			pGfxContext->SetGraphicsRootDescriptorTable(2, m_DiffuseMap->GetSRV());
-		}
+		pGfxContext->SetGraphicsRootDescriptorTable(2, m_DiffuseMap->GetSRV());
 	}
 	else
 	{

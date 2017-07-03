@@ -8,6 +8,8 @@ public:
 	DX12Device();
 	~DX12Device();
 
+    ID3D12Device* GetD3DDevice() const { return m_d3dDevice.Get(); };
+
 	ComPtr<ID3D12CommandQueue> CreateGraphicCommandQueue(int32_t priority, D3D12_COMMAND_QUEUE_FLAGS flags, uint32_t nodeMask);
 
 	ComPtr<ID3D12CommandAllocator> CreateGraphicCommandAllocator();

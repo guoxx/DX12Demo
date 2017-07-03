@@ -5,10 +5,8 @@
 #include "DX12GraphicsContext.h"
 #include "DX12GraphicsManager.h"
 
-#include "Texture/LoaderHelpers.h"
-#include "Texture/TextureLoaderTga.h"
-#include "Texture/DDSTextureLoader.h"
-
+#include "DirectXTex/DirectXTex.h"
+#include <filesystem>
 
 DX12Texture::DX12Texture(DX12Device* device, DXGI_FORMAT fmt, uint32_t width, uint32_t height)
 	: m_Format{ fmt }
@@ -46,57 +44,46 @@ DX12Texture::~DX12Texture()
 {
 }
 
-DX12Texture* DX12Texture::LoadFromTGAFile(DX12Device* device, DX12GraphicsContext* pGfxContext, const char * filename, bool sRGB)
+DX12Texture* DX12Texture::LoadFromFile(DX12Device* device, DX12GraphicsContext* pGfxContext, const char* filename, bool forceSRGB)
 {
-	TextureLoaderTga texLoader{ };
-	texLoader.LoadTga(filename);
+    std::experimental::filesystem::path filePath{filename};
+    std::experimental::filesystem::path fileExt = filePath.extension();
 
-	DX12Texture* pTex = new DX12Texture(device,
-		sRGB ? DXGI_FORMAT_R8G8B8A8_UNORM_SRGB : DXGI_FORMAT_R8G8B8A8_UNORM,
-		texLoader.GetWidth(),
-		texLoader.GetHeight());
 
-	size_t NumBytes = 0;
-	size_t RowBytes = 0;
-	DirectX::LoaderHelpers::GetSurfaceInfo(texLoader.GetWidth(),
-		texLoader.GetHeight(),
-		sRGB ? DXGI_FORMAT_R8G8B8A8_UNORM_SRGB : DXGI_FORMAT_R8G8B8A8_UNORM,
-		&NumBytes,
-		&RowBytes,
-		nullptr);
+    HRESULT result = S_OK;
 
-	D3D12_SUBRESOURCE_DATA subesources;
-	subesources.pData = texLoader.GetData();
-	subesources.RowPitch = RowBytes;
-	subesources.SlicePitch = NumBytes;
+    // load data
+    TexMetadata metadata;
+    ScratchImage scratchImg;
+    if (fileExt == "dds")
+    {
+        result = LoadFromDDSFile(filePath.wstring().c_str(), DDS_FLAGS_NONE, &metadata, scratchImg);
+    }
+    else
+    {
+        result = LoadFromWICFile(filePath.wstring().c_str(), WIC_FLAGS_NONE, &metadata, scratchImg);
+    }
+    assert(result == S_OK);
 
-	pGfxContext->ResourceTransitionBarrier(pTex, D3D12_RESOURCE_STATE_COPY_DEST);
-	pGfxContext->UploadGpuResource(pTex, 0, 1, &subesources);
-	pGfxContext->ResourceTransitionBarrier(pTex, D3D12_RESOURCE_STATE_GENERIC_READ);
+    // create d3d resource
+	ComPtr<ID3D12Resource> d3dResoure;
+    result = CreateTextureEx(device->GetD3DDevice(), metadata, D3D12_RESOURCE_FLAG_ALLOW_SIMULTANEOUS_ACCESS, forceSRGB, d3dResoure.ReleaseAndGetAddressOf());
+    assert(result == S_OK);
 
-	return pTex;
-}
-
-DX12Texture* DX12Texture::LoadFromDDSFile(DX12Device* device, DX12GraphicsContext* pGfxContext, const char* filename, bool sRGB)
-{
-	ComPtr<ID3D12Resource> res;
-	std::unique_ptr<uint8_t[]> ddsData;
+    // prepare upload texture data description
 	std::vector<D3D12_SUBRESOURCE_DATA> subesources;
+    result = PrepareUpload(device->GetD3DDevice(), scratchImg.GetImages(), scratchImg.GetImageCount(), metadata, subesources);
+    assert(result == S_OK);
 
-	size_t maxsize = 0;
-	D3D12_RESOURCE_FLAGS resFlags = D3D12_RESOURCE_FLAG_NONE;
-	unsigned int loadFlags = sRGB ? DirectX::DDS_LOADER_FORCE_SRGB : DirectX::DDS_LOADER_DEFAULT;
-
-	DirectX::LoadDDSTextureFromFileEx(device, DX::UTF8StrToUTF16(filename).c_str(), maxsize, resFlags, loadFlags, res, ddsData, subesources);
-
-	DX12Texture* pTex = new DX12Texture(device, res, D3D12_RESOURCE_STATE_COPY_DEST);
+    // create texture and upload resources
+	DX12Texture* pTex = new DX12Texture(device, d3dResoure, D3D12_RESOURCE_STATE_COPY_DEST);
 	pGfxContext->ResourceTransitionBarrier(pTex, D3D12_RESOURCE_STATE_COPY_DEST);
 	pGfxContext->UploadGpuResource(pTex, 0, static_cast<uint32_t>(subesources.size()), subesources.data());
 	pGfxContext->ResourceTransitionBarrier(pTex, D3D12_RESOURCE_STATE_GENERIC_READ);
 
-	if (sRGB)
+	if (forceSRGB)
 	{
-		assert(DirectX::LoaderHelpers::MakeSRGB(pTex->m_Format) == pTex->m_Format);
+		assert(DirectX::MakeSRGB(pTex->m_Format) == pTex->m_Format);
 	}
 
 	return pTex;
@@ -109,7 +96,7 @@ DX12Texture * DX12Texture::LoadFromBin(DX12Device * device, DX12GraphicsContext 
 
 	size_t NumBytes = 0;
 	size_t RowBytes = 0;
-	DirectX::LoaderHelpers::GetSurfaceInfo(width, height, format, &NumBytes, &RowBytes, nullptr);
+	DirectX::GetSurfaceInfo(width, height, format, &NumBytes, &RowBytes, nullptr);
 
 	D3D12_SUBRESOURCE_DATA subesources;
 	subesources.pData = pBinData;

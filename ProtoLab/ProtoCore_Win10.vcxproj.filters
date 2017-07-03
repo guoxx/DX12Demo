@@ -19,9 +19,6 @@
     <Filter Include="Utils">
       <UniqueIdentifier>{1ba50b8e-9252-4ea4-b985-d10d18d45260}</UniqueIdentifier>
     </Filter>
-    <Filter Include="DX12\Private\Texture">
-      <UniqueIdentifier>{d2b7f395-cf18-42a8-94d8-613e34191950}</UniqueIdentifier>
-    </Filter>
     <Filter Include="3DEngine">
       <UniqueIdentifier>{daa8cb02-6fd2-4d8a-8516-1e21102b0094}</UniqueIdentifier>
     </Filter>
@@ -96,9 +93,6 @@
     <ClCompile Include="DX12\DX12DepthSurface.cpp">
       <Filter>DX12\Private</Filter>
     </ClCompile>
-    <ClCompile Include="DX12\Texture\tga_reader.cpp">
-      <Filter>DX12\Private\Texture</Filter>
-    </ClCompile>
     <ClCompile Include="DX12SponzaDemo.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
@@ -155,9 +149,6 @@
     </ClCompile>
     <ClCompile Include="3DEngine\Pass\TiledShadingPass.cpp">
       <Filter>3DEngine\Pass</Filter>
-    </ClCompile>
-    <ClCompile Include="DX12\Texture\DDSTextureLoader.cpp">
-      <Filter>DX12\Private\Texture</Filter>
     </ClCompile>
     <ClCompile Include="3DEngine\EngineTuning.cpp">
       <Filter>3DEngine</Filter>
@@ -284,12 +275,6 @@
     <ClInclude Include="DX12\DX12RenderableSurface.h">
       <Filter>DX12\Private</Filter>
     </ClInclude>
-    <ClInclude Include="DX12\Texture\TextureLoaderTga.h">
-      <Filter>DX12\Private\Texture</Filter>
-    </ClInclude>
-    <ClInclude Include="DX12\Texture\tga_reader.h">
-      <Filter>DX12\Private\Texture</Filter>
-    </ClInclude>
     <ClInclude Include="Utils\Helpers.h">
       <Filter>Utils</Filter>
     </ClInclude>
@@ -352,18 +337,6 @@
     </ClInclude>
     <ClInclude Include="Shaders\Inc\HLSLShared.h">
       <Filter>Shaders\Inc</Filter>
-    </ClInclude>
-    <ClInclude Include="DX12\Texture\PlatformHelpers.h">
-      <Filter>DX12\Private\Texture</Filter>
-    </ClInclude>
-    <ClInclude Include="DX12\Texture\dds.h">
-      <Filter>DX12\Private\Texture</Filter>
-    </ClInclude>
-    <ClInclude Include="DX12\Texture\DDSTextureLoader.h">
-      <Filter>DX12\Private\Texture</Filter>
-    </ClInclude>
-    <ClInclude Include="DX12\Texture\LoaderHelpers.h">
-      <Filter>DX12\Private\Texture</Filter>
     </ClInclude>
     <ClInclude Include="Utils\Color.h">
       <Filter>Utils</Filter>
