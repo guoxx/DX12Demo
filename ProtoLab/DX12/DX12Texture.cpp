@@ -58,12 +58,17 @@ DX12Texture* DX12Texture::LoadFromFile(DX12Device* device, DX12GraphicsContext* 
     if (fileExt == "dds")
     {
         result = LoadFromDDSFile(filePath.wstring().c_str(), DDS_FLAGS_NONE, &metadata, scratchImg);
+        assert(result == S_OK);
     }
     else
     {
-        result = LoadFromWICFile(filePath.wstring().c_str(), WIC_FLAGS_NONE, &metadata, scratchImg);
+        ScratchImage rawScratchImg;
+        result = LoadFromWICFile(filePath.wstring().c_str(), WIC_FLAGS_NONE, &metadata, rawScratchImg);
+        assert(result == S_OK);
+
+        result = GenerateMipMaps(*rawScratchImg.GetImage(0, 0, 0), TEX_FILTER_DEFAULT, 0, scratchImg, true);
+        assert(result == S_OK);
     }
-    assert(result == S_OK);
 
     // create d3d resource
 	ComPtr<ID3D12Resource> d3dResoure;
