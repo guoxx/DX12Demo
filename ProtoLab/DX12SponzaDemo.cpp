@@ -54,7 +54,7 @@ void DX12SponzaDemo::OnUpdate(DX::StepTimer const& timer)
 	GameInput::Update(elapsedTime);
 	EngineTuning::Update(elapsedTime);
 
-	float speedScale = 150;
+	float speedScale = 1.5;
 	float forward = (GameInput::GetTimeCorrectedAnalogInput(GameInput::kAnalogLeftStickY)) +
 		(GameInput::IsPressed(GameInput::kKey_w) ? elapsedTime : 0.0f) +
 		(GameInput::IsPressed(GameInput::kKey_s) ? -elapsedTime : 0.0f);
@@ -161,8 +161,9 @@ void DX12SponzaDemo::LoadAssets()
 {
 	m_Camera = std::make_shared<Camera>();
 	//m_Camera->LookAt(DirectX::XMVECTOR{0, 1000, 40}, DirectX::XMVECTOR{0, 0, 0}, DirectX::XMVECTOR{0, 1, 0});
-	m_Camera->LookAt(DirectX::XMVECTOR{100, 400, -40}, DirectX::XMVECTOR{0, 400, -40}, DirectX::XMVECTOR{0, 1, 0});
-	m_Camera->SetViewParams(45, m_Width * 1.0f / m_Height, 0.1f, 2000.0f);
+	//m_Camera->LookAt(DirectX::XMVECTOR{100, 400, -40}, DirectX::XMVECTOR{0, 400, -40}, DirectX::XMVECTOR{0, 1, 0});
+	m_Camera->LookAt(DirectX::XMVECTOR{1.0f, 4.0f, -0.4f}, DirectX::XMVECTOR{0.0f, 4.0f, -0.4f}, DirectX::XMVECTOR{0, 1, 0});
+	m_Camera->SetViewParams(45, m_Width * 1.0f / m_Height, 0.1f, 50.0f);
 
 	DX12ScopedGraphicsContext pGfxContext;
 
@@ -184,19 +185,19 @@ void DX12SponzaDemo::LoadAssets()
 
 	{
 		std::shared_ptr<PointLight> light = std::make_shared<PointLight>();
-		light->SetRadius(320.0f);
+		light->SetRadius(3.2f);
         light->SetColor(1, 1, 1);
 		light->SetRadiantPower(640000);
-		light->SetTranslation(DirectX::XMVECTOR{ -400.0f, 180.0f, -100.0f, 0.0f });
+		light->SetTranslation(DirectX::XMVECTOR{ -4.0f, 1.8f, -1.0f, 0.0f });
 		m_Scene->AttachPointLight(light);
 	}
 
 	{
 		std::shared_ptr<PointLight> light = std::make_shared<PointLight>();
-		light->SetRadius(320.0f);
+		light->SetRadius(3.2f);
         light->SetColor(1, 1, 1);
 		light->SetRadiantPower(640000);
-		light->SetTranslation(DirectX::XMVECTOR{ -1200.0f, 180.0f, -250.0f, 0.0f });
+		light->SetTranslation(DirectX::XMVECTOR{ -12.0f, 1.8f, -2.5f, 0.0f });
 		m_Scene->AttachPointLight(light);
 	}
 }

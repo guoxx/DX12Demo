@@ -16,6 +16,10 @@ HWND Win32Application::m_hwnd = nullptr;
 
 int Win32Application::Run(DXSample* pSample, HINSTANCE hInstance, int nCmdShow)
 {
+    // Initialize COM
+    HRESULT hr = CoInitializeEx(nullptr, 0);
+    assert(hr == S_OK);
+
 	// Parse the command line parameters
 	int argc;
 	LPWSTR* argv = CommandLineToArgvW(GetCommandLineW(), &argc);
@@ -67,6 +71,9 @@ int Win32Application::Run(DXSample* pSample, HINSTANCE hInstance, int nCmdShow)
 	}
 
 	pSample->OnDestroy();
+
+    // Uninitialize COM
+    CoUninitialize();
 
 	// Return this part of the WM_QUIT message to Windows.
 	return static_cast<char>(msg.wParam);

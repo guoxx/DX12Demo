@@ -11,14 +11,8 @@
 #include "assimp/postprocess.h"
 #include "assimp/scene.h"
 
-#include <experimental/filesystem>
+#include <filesystem>
 
-#pragma warning(push)
-#pragma warning(disable:4201)
-#pragma warning(disable:4706)
-#define TINYOBJLOADER_IMPLEMENTATION
-#include "tiny_obj_loader.h"
-#pragma warning(pop)
 
 std::vector<std::shared_ptr<Model>> Model::LoadFromFile(DX12Device* device, DX12GraphicsContext* pGfxContext, const char* filename)
 {
@@ -94,9 +88,9 @@ std::vector<std::shared_ptr<Model>> Model::LoadFromFile(DX12Device* device, DX12
         for (uint32_t faceIdx = 0; faceIdx < mesh->mNumFaces; ++faceIdx)
         {
             assert(mesh->mFaces[faceIdx].mNumIndices == 3);
-            pIdxData[faceIdx + 3 + 0] = mesh->mFaces[faceIdx].mIndices[0];
-            pIdxData[faceIdx + 3 + 1] = mesh->mFaces[faceIdx].mIndices[1];
-            pIdxData[faceIdx + 3 + 2] = mesh->mFaces[faceIdx].mIndices[2];
+            pIdxData[faceIdx * 3 + 0] = mesh->mFaces[faceIdx].mIndices[0];
+            pIdxData[faceIdx * 3 + 1] = mesh->mFaces[faceIdx].mIndices[1];
+            pIdxData[faceIdx * 3 + 2] = mesh->mFaces[faceIdx].mIndices[2];
         }
 
         mod->m_Mesh = std::make_shared<Mesh>();
@@ -150,7 +144,7 @@ std::vector<std::shared_ptr<Model>> Model::LoadFromFile(DX12Device* device, DX12
             }
             else
             {
-                prim->m_Material->m_NormalMapName = std::experimental::filesystem::current_path().append("Textures/DefaultNormalMap.dds ").string();
+                prim->m_Material->m_NormalMapName = std::experimental::filesystem::current_path().append("Textures/DefaultNormalMap.dds").string();
             }
 
             if (material->GetTexture(aiTextureType_SHININESS, 0, &roughnessMapPath) == aiReturn_SUCCESS)
@@ -161,7 +155,7 @@ std::vector<std::shared_ptr<Model>> Model::LoadFromFile(DX12Device* device, DX12
             }
             else
             {
-                prim->m_Material->m_RoughnessMapName = std::experimental::filesystem::current_path().append("Textures/DefaultRoughness.dds ").string();
+                prim->m_Material->m_RoughnessMapName = std::experimental::filesystem::current_path().append("Textures/DefaultRoughness.dds").string();
             }
 
             if (material->GetTexture(aiTextureType_AMBIENT, 0, &metallicMapPath) == aiReturn_SUCCESS)
@@ -172,7 +166,7 @@ std::vector<std::shared_ptr<Model>> Model::LoadFromFile(DX12Device* device, DX12
             }
             else
             {
-                prim->m_Material->m_MetallicMapName = std::experimental::filesystem::current_path().append("Textures/DefaultBlack.dds ").string();
+                prim->m_Material->m_MetallicMapName = std::experimental::filesystem::current_path().append("Textures/DefaultBlack.dds").string();
             }
 
             prim->m_Material->Load(pGfxContext);

@@ -49,13 +49,12 @@ DX12Texture* DX12Texture::LoadFromFile(DX12Device* device, DX12GraphicsContext* 
     std::experimental::filesystem::path filePath{filename};
     std::experimental::filesystem::path fileExt = filePath.extension();
 
-
     HRESULT result = S_OK;
 
     // load data
     TexMetadata metadata;
     ScratchImage scratchImg;
-    if (fileExt == "dds")
+    if (fileExt == ".dds")
     {
         result = LoadFromDDSFile(filePath.wstring().c_str(), DDS_FLAGS_NONE, &metadata, scratchImg);
         assert(result == S_OK);
@@ -68,6 +67,7 @@ DX12Texture* DX12Texture::LoadFromFile(DX12Device* device, DX12GraphicsContext* 
 
         result = GenerateMipMaps(*rawScratchImg.GetImage(0, 0, 0), TEX_FILTER_DEFAULT, 0, scratchImg, true);
         assert(result == S_OK);
+        metadata = scratchImg.GetMetadata();
     }
 
     // create d3d resource
