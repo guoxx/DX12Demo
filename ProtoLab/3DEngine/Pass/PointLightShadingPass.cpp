@@ -7,7 +7,7 @@
 
 #include "3DEngine/Filters/ImageProcessing.h"
 
-#include "../../Shaders/CompiledShaders/PointLight.h"
+#include "../../Shaders/CompiledShaders/PointLightShading.h"
 
 
 PointLightShadingPass::PointLightShadingPass(DX12Device* device)
@@ -17,7 +17,7 @@ PointLightShadingPass::PointLightShadingPass(DX12Device* device)
         desc.SetRenderTargetFormat(GFX_FORMAT_HDR.RTVFormat);
 	    desc.SetBlendState(CD3DX12::BlendAdditive());
     };
-    m_Processing = std::make_shared<ImageProcessing>(device, g_PointLight_VS_bytecode, g_PointLight_PS_bytecode, psoSetup);
+    m_Processing = std::make_shared<ImageProcessing>(device, g_PointLightShading_VS_bytecode, g_PointLightShading_PS_bytecode, psoSetup);
 }
 
 PointLightShadingPass::~PointLightShadingPass()

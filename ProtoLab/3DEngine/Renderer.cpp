@@ -14,7 +14,7 @@
 #include "Pass/LightCullingPass.h"
 #include "Pass/TiledShadingPass.h"
 
-#include "Shaders/CompiledShaders/IdentityFilter2D.h"
+#include "Shaders/CompiledShaders/Passthrough.h"
 #include "Shaders/CompiledShaders/LuminanceReductionInitial.h"
 #include "Shaders/CompiledShaders/LuminanceReduction.h"
 #include "Shaders/CompiledShaders/LuminanceReductionFinal.h"
@@ -93,7 +93,7 @@ Renderer::Renderer(GFX_HWND hwnd, int32_t width, int32_t height)
         {
             desc.SetRenderTargetFormat(GFX_FORMAT_SWAPCHAIN.RTVFormat);
         };
-        m_ResolveToSwapChain = std::make_shared<ImageProcessing>(pDevice, g_IdentityFilter2D_VS_bytecode, g_IdentityFilter2D_PS_bytecode, psoSetup);
+        m_ResolveToSwapChain = std::make_shared<ImageProcessing>(pDevice, g_Passthrough_VS_bytecode, g_Passthrough_PS_bytecode, psoSetup);
     }
 
     m_ReduceLuminanceInitial = std::make_shared<ComputeProcessing>(pDevice, g_LuminanceReductionInitial_CS_bytecode);

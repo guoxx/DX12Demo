@@ -4,7 +4,7 @@
 #include "3DEngine/Filters/ImageProcessing.h"
 #include "3DEngine/GraphicsEngineDefinition.h"
 
-#include "../../Shaders/CompiledShaders/ToneMapFilter2D.h"
+#include "../../Shaders/CompiledShaders/ToneMapping.h"
 
 ToneMappingPass::ToneMappingPass(DX12Device* device)
 {
@@ -12,7 +12,7 @@ ToneMappingPass::ToneMappingPass(DX12Device* device)
     {
         desc.SetRenderTargetFormat(GFX_FORMAT_LDR.RTVFormat);
     };
-    m_Processing = std::make_shared<ImageProcessing>(device, g_ToneMapFilter2D_VS_bytecode, g_ToneMapFilter2D_PS_bytecode, psoSetup);
+    m_Processing = std::make_shared<ImageProcessing>(device, g_ToneMapping_VS_bytecode, g_ToneMapping_PS_bytecode, psoSetup);
 }
 
 ToneMappingPass::~ToneMappingPass()

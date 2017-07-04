@@ -7,7 +7,7 @@
 
 #include "3DEngine/Filters/ImageProcessing.h"
 
-#include "../../Shaders/CompiledShaders/DirectionalLight.h"
+#include "../../Shaders/CompiledShaders/DirectionalLightShading.h"
 
 
 DirectionalLightShadingPass::DirectionalLightShadingPass(DX12Device* device)
@@ -17,7 +17,7 @@ DirectionalLightShadingPass::DirectionalLightShadingPass(DX12Device* device)
         desc.SetRenderTargetFormat(GFX_FORMAT_HDR.RTVFormat);
 	    desc.SetBlendState(CD3DX12::BlendAdditive());
     };
-    m_Processing = std::make_shared<ImageProcessing>(device, g_DirectionalLight_VS_bytecode, g_DirectionalLight_PS_bytecode, psoSetup);
+    m_Processing = std::make_shared<ImageProcessing>(device, g_DirectionalLightShading_VS_bytecode, g_DirectionalLightShading_PS_bytecode, psoSetup);
 }
 
 DirectionalLightShadingPass::~DirectionalLightShadingPass()

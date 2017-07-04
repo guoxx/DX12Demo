@@ -421,19 +421,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="Shaders\PointLight.hlsl">
-      <Filter>Shaders</Filter>
-    </CustomBuild>
     <CustomBuild Include="Shaders\BaseMaterial.hlsl">
       <Filter>Shaders</Filter>
     </CustomBuild>
     <CustomBuild Include="Shaders\BaseMaterial_DepthOnly.hlsl">
-      <Filter>Shaders</Filter>
-    </CustomBuild>
-    <CustomBuild Include="Shaders\DirectionalLight.hlsl">
-      <Filter>Shaders</Filter>
-    </CustomBuild>
-    <CustomBuild Include="Shaders\IdentityFilter2D.hlsl">
       <Filter>Shaders</Filter>
     </CustomBuild>
     <CustomBuild Include="Shaders\LightCulling.hlsl">
@@ -445,16 +436,10 @@
     <CustomBuild Include="Shaders\TextRender.hlsl">
       <Filter>Shaders</Filter>
     </CustomBuild>
-    <CustomBuild Include="Shaders\ToneMapFilter2D.hlsl">
-      <Filter>Shaders</Filter>
-    </CustomBuild>
     <CustomBuild Include="Shaders\BaseMaterial_RSM.hlsl">
       <Filter>Shaders</Filter>
     </CustomBuild>
     <CustomBuild Include="Shaders\EVSM.hlsl">
-      <Filter>Shaders</Filter>
-    </CustomBuild>
-    <CustomBuild Include="Shaders\AntiAliasingFilter2D.hlsl">
       <Filter>Shaders</Filter>
     </CustomBuild>
     <CustomBuild Include="Shaders\LuminanceReductionFinal.hlsl">
@@ -464,6 +449,21 @@
       <Filter>Shaders</Filter>
     </CustomBuild>
     <CustomBuild Include="Shaders\LuminanceReductionInitial.hlsl">
+      <Filter>Shaders</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Shaders\Passthrough.hlsl">
+      <Filter>Shaders</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Shaders\PointLightShading.hlsl">
+      <Filter>Shaders</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Shaders\DirectionalLightShading.hlsl">
+      <Filter>Shaders</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Shaders\ToneMapping.hlsl">
+      <Filter>Shaders</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Shaders\AntiAliasingFilter.hlsl">
       <Filter>Shaders</Filter>
     </CustomBuild>
   </ItemGroup>

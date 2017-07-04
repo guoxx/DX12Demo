@@ -327,13 +327,13 @@
     <CustomBuild Include="Shaders\BaseMaterial_DepthOnly.hlsl">
       <FileType>Document</FileType>
     </CustomBuild>
-    <CustomBuild Include="Shaders\DirectionalLight.hlsl">
+    <CustomBuild Include="Shaders\DirectionalLightShading.hlsl">
       <FileType>Document</FileType>
     </CustomBuild>
-    <CustomBuild Include="Shaders\IdentityFilter2D.hlsl">
+    <CustomBuild Include="Shaders\Passthrough.hlsl">
       <FileType>Document</FileType>
     </CustomBuild>
-    <CustomBuild Include="Shaders\PointLight.hlsl">
+    <CustomBuild Include="Shaders\PointLightShading.hlsl">
       <FileType>Document</FileType>
     </CustomBuild>
   </ItemGroup>
@@ -353,7 +353,7 @@
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="Shaders\ToneMapFilter2D.hlsl">
+    <CustomBuild Include="Shaders\ToneMapping.hlsl">
       <FileType>Document</FileType>
     </CustomBuild>
   </ItemGroup>
@@ -379,7 +379,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="Shaders\AntiAliasingFilter2D.hlsl">
+    <CustomBuild Include="Shaders\AntiAliasingFilter.hlsl">
       <FileType>Document</FileType>
     </CustomBuild>
   </ItemGroup>

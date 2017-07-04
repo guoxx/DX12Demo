@@ -4,8 +4,8 @@
 #include "3DEngine/Filters/ImageProcessing.h"
 #include "3DEngine/GraphicsEngineDefinition.h"
 
-#include <Shaders/CompiledShaders/AntiAliasingFilter2D.h>
-#include <Shaders/CompiledShaders/IdentityFilter2D.h>
+#include <Shaders/CompiledShaders/AntiAliasingFilter.h>
+#include <Shaders/CompiledShaders/Passthrough.h>
 
 TemporalAAPass::TemporalAAPass(DX12Device* device)
 {
@@ -14,7 +14,7 @@ TemporalAAPass::TemporalAAPass(DX12Device* device)
         {
             desc.SetRenderTargetFormat(GFX_FORMAT_HDR.RTVFormat);
         };
-        m_TAA = std::make_shared<ImageProcessing>(device, g_AntiAliasingFilter2D_VS_bytecode, g_AntiAliasingFilter2D_PS_bytecode, psoSetup);
+        m_TAA = std::make_shared<ImageProcessing>(device, g_AntiAliasingFilter_VS_bytecode, g_AntiAliasingFilter_PS_bytecode, psoSetup);
     }
 
 	{
@@ -22,7 +22,7 @@ TemporalAAPass::TemporalAAPass(DX12Device* device)
         {
             desc.SetRenderTargetFormat(GFX_FORMAT_HDR.RTVFormat);
         };
-        m_CopyFP16 = std::make_shared<ImageProcessing>(device, g_IdentityFilter2D_VS_bytecode, g_IdentityFilter2D_PS_bytecode, psoSetup);
+        m_CopyFP16 = std::make_shared<ImageProcessing>(device, g_Passthrough_VS_bytecode, g_Passthrough_PS_bytecode, psoSetup);
 	}
 }
 
