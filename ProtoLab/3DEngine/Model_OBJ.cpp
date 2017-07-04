@@ -77,9 +77,9 @@ std::vector<std::shared_ptr<Model>> Model::LoadFromFile(DX12Device* device, DX12
             pVtxData[vtxIdx].Tangent.y = mesh->mTangents[vtxIdx].y;
             pVtxData[vtxIdx].Tangent.z = mesh->mTangents[vtxIdx].z;
             
-            pVtxData[vtxIdx].Bitangent.x = mesh->mBitangents[vtxIdx].x;
-            pVtxData[vtxIdx].Bitangent.y = mesh->mBitangents[vtxIdx].y;
-            pVtxData[vtxIdx].Bitangent.z = mesh->mBitangents[vtxIdx].z;
+            pVtxData[vtxIdx].Bitangent.x = -mesh->mBitangents[vtxIdx].x;
+            pVtxData[vtxIdx].Bitangent.y = -mesh->mBitangents[vtxIdx].y;
+            pVtxData[vtxIdx].Bitangent.z = -mesh->mBitangents[vtxIdx].z;
 
             pVtxData[vtxIdx].UV0.x = mesh->mTextureCoords[0][vtxIdx].x;
             pVtxData[vtxIdx].UV0.y = mesh->mTextureCoords[0][vtxIdx].y;

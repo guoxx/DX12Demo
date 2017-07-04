@@ -30,15 +30,8 @@ void Material::Load(DX12GraphicsContext* pGfxContext)
 	{
 		ShadingConfiguration shadingCfg = ShadingConfiguration_GBuffer;
 
-		DX12RootSignatureCompiler sigCompiler;
-		sigCompiler.Begin(4);
-		sigCompiler.End();
-		sigCompiler[0].InitAsShaderResourceView(0, 0, D3D12_SHADER_VISIBILITY_VERTEX);
-		sigCompiler[1].InitAsConstantBufferView(0);
-		sigCompiler[2].InitAsConstantBufferView(1);
-		sigCompiler.InitDescriptorTable(3, 1, D3D12_SHADER_VISIBILITY_PIXEL);
-		sigCompiler.SetupDescriptorRange(3, 0, CD3DX12_DESCRIPTOR_RANGE{D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 1});
-		m_RootSig[shadingCfg] = sigCompiler.Compile(DX12GraphicsManager::GetInstance()->GetDevice());
+		DX12RootSignatureDeserializer sigDeserializer{g_BaseMaterial_VS_bytecode};
+		m_RootSig[shadingCfg] = sigDeserializer.Deserialize(DX12GraphicsManager::GetInstance()->GetDevice());
 
 		DX12GraphicsPsoDesc psoDesc;
         psoDesc.SetShaderFromBin(DX12ShaderTypeVertex, {g_BaseMaterial_VS, sizeof(g_BaseMaterial_VS)});
@@ -54,12 +47,8 @@ void Material::Load(DX12GraphicsContext* pGfxContext)
 	{
 		ShadingConfiguration shadingCfg = ShadingConfiguration_DepthOnly;
 
-		DX12RootSignatureCompiler sigCompiler;
-		sigCompiler.Begin(2);
-		sigCompiler.End();
-		sigCompiler[0].InitAsShaderResourceView(0, 0, D3D12_SHADER_VISIBILITY_VERTEX);
-		sigCompiler[1].InitAsConstantBufferView(0);
-		m_RootSig[shadingCfg] = sigCompiler.Compile(DX12GraphicsManager::GetInstance()->GetDevice());
+        DX12RootSignatureDeserializer sigDeserializer{ g_BaseMaterial_DepthOnly_VS_bytecode };
+        m_RootSig[shadingCfg] = sigDeserializer.Deserialize(DX12GraphicsManager::GetInstance()->GetDevice());
 
 		DX12GraphicsPsoDesc psoDesc;
         psoDesc.SetShaderFromBin(DX12ShaderTypeVertex, {g_BaseMaterial_DepthOnly_VS, sizeof(g_BaseMaterial_DepthOnly_VS)});
@@ -73,14 +62,8 @@ void Material::Load(DX12GraphicsContext* pGfxContext)
 	{
 		ShadingConfiguration shadingCfg = ShadingConfiguration_RSM;
 
-		DX12RootSignatureCompiler sigCompiler;
-		sigCompiler.Begin(3);
-		sigCompiler.End();
-		sigCompiler[0].InitAsShaderResourceView(0, 0, D3D12_SHADER_VISIBILITY_VERTEX);
-		sigCompiler[1].InitAsConstantBufferView(0);
-		sigCompiler.InitDescriptorTable(2, 1, D3D12_SHADER_VISIBILITY_PIXEL);
-		sigCompiler.SetupDescriptorRange(2, 0, CD3DX12_DESCRIPTOR_RANGE{D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 1});
-		m_RootSig[shadingCfg] = sigCompiler.Compile(DX12GraphicsManager::GetInstance()->GetDevice());
+        DX12RootSignatureDeserializer sigDeserializer{ g_BaseMaterial_RSM_VS_bytecode };
+        m_RootSig[shadingCfg] = sigDeserializer.Deserialize(DX12GraphicsManager::GetInstance()->GetDevice());
 
 		DX12GraphicsPsoDesc psoDesc;
         psoDesc.SetShaderFromBin(DX12ShaderTypeVertex, {g_BaseMaterial_RSM_VS, sizeof(g_BaseMaterial_RSM_VS)});
