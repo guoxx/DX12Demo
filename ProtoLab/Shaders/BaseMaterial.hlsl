@@ -101,8 +101,7 @@ GBufferOutput PSMain(VSOutput In)
     normalTS.z = sqrt(1.0f - saturate(normalTS.x * normalTS.x + normalTS.y * normalTS.y));
     gbuffer.Normal = normalize(mul(normalTS, tangentToWorld));
 
-    float sqrtRoughness = g_RoughnessMap.Sample(g_StaticAnisoWrapSampler, In.Texcoord);
-    gbuffer.Roughness = sqrtRoughness * sqrtRoughness;
+    gbuffer.Roughness = g_RoughnessMap.Sample(g_StaticAnisoWrapSampler, In.Texcoord);
 
     float4 posNdc = In.PositionClipSpace;
     posNdc /= posNdc.w;
