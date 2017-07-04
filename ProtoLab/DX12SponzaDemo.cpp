@@ -178,26 +178,26 @@ void DX12SponzaDemo::LoadAssets()
 
 	{
 		std::shared_ptr<DirectionalLight> light = std::make_shared<DirectionalLight>();
-		light->SetDirection(-0.8f, -0.6f, 0.05f);
+		light->SetDirection(0.58f, -0.75f, -0.31f);
 		light->SetIrradiance(4.0, 4.0, 4.0);
 		m_Scene->AttachDirectionalLight(light);
 	}
 
-	{
-		std::shared_ptr<PointLight> light = std::make_shared<PointLight>();
-		light->SetRadius(3.2f);
-        light->SetColor(1, 1, 1);
-		light->SetRadiantPower(640000);
-		light->SetTranslation(DirectX::XMVECTOR{ -4.0f, 1.8f, -1.0f, 0.0f });
-		m_Scene->AttachPointLight(light);
-	}
+	//{
+	//	std::shared_ptr<PointLight> light = std::make_shared<PointLight>();
+	//	light->SetRadius(3.2f);
+ //       light->SetColor(1, 1, 1);
+	//	light->SetRadiantPower(640000);
+	//	light->SetTranslation(DirectX::XMVECTOR{ -4.0f, 1.8f, -1.0f, 0.0f });
+	//	m_Scene->AttachPointLight(light);
+	//}
 
-	{
-		std::shared_ptr<PointLight> light = std::make_shared<PointLight>();
-		light->SetRadius(3.2f);
-        light->SetColor(1, 1, 1);
-		light->SetRadiantPower(640000);
-		light->SetTranslation(DirectX::XMVECTOR{ -12.0f, 1.8f, -2.5f, 0.0f });
-		m_Scene->AttachPointLight(light);
-	}
+	//{
+	//	std::shared_ptr<PointLight> light = std::make_shared<PointLight>();
+	//	light->SetRadius(3.2f);
+ //       light->SetColor(1, 1, 1);
+	//	light->SetRadiantPower(640000);
+	//	light->SetTranslation(DirectX::XMVECTOR{ -12.0f, 1.8f, -2.5f, 0.0f });
+	//	m_Scene->AttachPointLight(light);
+	//}
 }
