@@ -128,11 +128,11 @@ std::vector<std::shared_ptr<Model>> Model::LoadFromFile(DX12Device* device, DX12
             {
                 auto filepath = directory;
                 filepath /= diffuseTexPath.C_Str();
-                prim->m_Material->m_DiffuseMapName = filepath.string();
+                prim->m_Material->m_AlbedoMapName = filepath.string();
             }
             else
             {
-                prim->m_Material->m_DiffuseMapName = std::experimental::filesystem::current_path().append("Textures/Default.dds").string();
+                prim->m_Material->m_AlbedoMapName = std::experimental::filesystem::current_path().append("Textures/Default.dds").string();
             }
 
             if (material->GetTexture(aiTextureType_NORMALS, 0, &normalMapPath) == aiReturn_SUCCESS ||

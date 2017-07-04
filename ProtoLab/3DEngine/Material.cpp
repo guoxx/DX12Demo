@@ -93,7 +93,7 @@ void Material::Load(DX12GraphicsContext* pGfxContext)
 		m_PSO[shadingCfg] = DX12PsoCompiler::Compile(DX12GraphicsManager::GetInstance()->GetDevice(), &psoDesc);
 	}
 
-    m_DiffuseMap = LoadTexture(pGfxContext, m_DiffuseMapName, true);
+    m_AlbedoMap = LoadTexture(pGfxContext, m_AlbedoMapName, true);
     m_NormalMap = LoadTexture(pGfxContext, m_NormalMapName, false);
     m_RoughnessMap = LoadTexture(pGfxContext, m_RoughnessMapName, false);
     m_MetallicMap = LoadTexture(pGfxContext, m_MetallicMapName, false);
@@ -120,7 +120,7 @@ void Material::Apply(RenderContext* pRenderContext, DX12GraphicsContext* pGfxCon
 		{
 		    float4x4 mModelViewProj;
 		    float4x4 mModelViewProjLastFrame;
-		    float4x4 mInverseTransposeModel;
+		    float4x4 mModel;
 		    float4 JitterOffset;
 		};
 
@@ -136,12 +136,11 @@ void Material::Apply(RenderContext* pRenderContext, DX12GraphicsContext* pGfxCon
 			float4 Dissolve;
 		};
 
-		DirectX::XMMATRIX mModel = pRenderContext->GetModelMatrix();
-		DirectX::XMMATRIX mInverseModel = DirectX::XMMatrixInverse(nullptr, mModel);
-		DirectX::XMMATRIX mInverseTransposeModel = DirectX::XMMatrixTranspose(mInverseModel);
 		View view;
+
+		DirectX::XMMATRIX mModel = pRenderContext->GetModelMatrix();
 		DirectX::XMStoreFloat4x4(&view.mModelViewProj, DirectX::XMMatrixTranspose(pRenderContext->GetModelViewProjMatrixWithJitter()));
-		DirectX::XMStoreFloat4x4(&view.mInverseTransposeModel, mInverseTransposeModel);
+		DirectX::XMStoreFloat4x4(&view.mModel, DirectX::XMMatrixTranspose(mModel));
         // TODO: camera motion only for now
         DirectX::XMMATRIX mModelViewProjLastFrame = DirectX::XMMatrixMultiply(mModel, pRenderContext->m_mViewProjLastFrame);
 		DirectX::XMStoreFloat4x4(&view.mModelViewProjLastFrame, XMMatrixTranspose(mModelViewProjLastFrame));
@@ -167,7 +166,10 @@ void Material::Apply(RenderContext* pRenderContext, DX12GraphicsContext* pGfxCon
 		pGfxContext->SetGraphicsRootDynamicConstantBufferView(1, &view, sizeof(view));
 		pGfxContext->SetGraphicsRootDynamicConstantBufferView(2, &baseMaterial, sizeof(baseMaterial));
 
-		pGfxContext->SetGraphicsRootDescriptorTable(3, m_DiffuseMap->GetSRV());
+		pGfxContext->SetGraphicsDynamicCbvSrvUav(3, 0, m_AlbedoMap->GetStagingSRV().GetCpuHandle());
+		pGfxContext->SetGraphicsDynamicCbvSrvUav(3, 1, m_NormalMap->GetStagingSRV().GetCpuHandle());
+		pGfxContext->SetGraphicsDynamicCbvSrvUav(3, 2, m_RoughnessMap->GetStagingSRV().GetCpuHandle());
+		pGfxContext->SetGraphicsDynamicCbvSrvUav(3, 3, m_MetallicMap->GetStagingSRV().GetCpuHandle());
 	}
 	else if (shadingCfg == ShadingConfiguration_DepthOnly)
 	{
@@ -183,6 +185,9 @@ void Material::Apply(RenderContext* pRenderContext, DX12GraphicsContext* pGfxCon
 	}
 	else if (shadingCfg == ShadingConfiguration_RSM)
 	{
+        // TODO: legacy feature, will work out something better
+        assert(false);
+
 		HLSL::BaseMaterialRSMConstants constants;
 
 		DirectX::XMMATRIX mModel = pRenderContext->GetModelMatrix();
@@ -211,7 +216,7 @@ void Material::Apply(RenderContext* pRenderContext, DX12GraphicsContext* pGfxCon
 
 		pGfxContext->SetGraphicsRootDynamicConstantBufferView(1, &constants, sizeof(constants));
 
-		pGfxContext->SetGraphicsRootDescriptorTable(2, m_DiffuseMap->GetSRV());
+		pGfxContext->SetGraphicsRootDescriptorTable(2, m_AlbedoMap->GetSRV());
 	}
 	else
 	{

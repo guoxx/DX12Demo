@@ -24,7 +24,6 @@ struct VSOutput
 struct View
 {
 	float4x4 mModelViewProj;
-	float4x4 mInverseTransposeModel;
 };
 HLSLConstantBuffer(View, 0, g_View);
 

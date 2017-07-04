@@ -23,12 +23,12 @@ private:
 
 	std::string m_Name;
 
-    std::string m_DiffuseMapName;
+    std::string m_AlbedoMapName;
     std::string m_NormalMapName;
     std::string m_RoughnessMapName;
     std::string m_MetallicMapName;
 
-    std::shared_ptr<DX12Texture> m_DiffuseMap;
+    std::shared_ptr<DX12Texture> m_AlbedoMap;
     std::shared_ptr<DX12Texture> m_NormalMap;
     std::shared_ptr<DX12Texture> m_RoughnessMap;
     std::shared_ptr<DX12Texture> m_MetallicMap;
