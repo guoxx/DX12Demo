@@ -6,7 +6,7 @@
 
 
 DirectionalLight::DirectionalLight()
-    : m_PSSMSplitWeight{0.2f}
+    : m_PSSMSplitWeight{0.8f}
 {
 }
 
