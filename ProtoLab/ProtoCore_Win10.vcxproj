@@ -258,6 +258,7 @@
     <ClInclude Include="3DEngine\Lights\HosekWilkie_SkylightModel\ArHosekSkyModelData_Spectral.h" />
     <ClInclude Include="3DEngine\Lights\ILight.h" />
     <ClInclude Include="3DEngine\Lights\PointLight.h" />
+    <ClInclude Include="3DEngine\Lights\SunModel.h" />
     <ClInclude Include="3DEngine\Material.h" />
     <ClInclude Include="3DEngine\MaterialManager.h" />
     <ClInclude Include="3DEngine\Mesh.h" />

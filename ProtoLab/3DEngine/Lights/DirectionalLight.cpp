@@ -2,6 +2,7 @@
 #include "DirectionalLight.h"
 
 #include "../Camera.h"
+#include "3DEngine/Lights/SunModel.h"
 
 
 DirectionalLight::DirectionalLight()

@@ -413,6 +413,9 @@
     <ClInclude Include="3DEngine\Spectrum.h">
       <Filter>3DEngine</Filter>
     </ClInclude>
+    <ClInclude Include="3DEngine\Lights\SunModel.h">
+      <Filter>3DEngine\Lights</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\Inc\BRDF.hlsli">
