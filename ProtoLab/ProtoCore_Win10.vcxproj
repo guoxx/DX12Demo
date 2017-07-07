@@ -210,6 +210,7 @@
     <ClCompile Include="3DEngine\Renderer.cpp" />
     <ClCompile Include="3DEngine\RenderableSurfaceManager.cpp" />
     <ClCompile Include="3DEngine\Scene.cpp" />
+    <ClCompile Include="3DEngine\Spectrum.cpp" />
     <ClCompile Include="3DEngine\SurfaceSet.cpp" />
     <ClCompile Include="3DEngine\TextRenderer.cpp" />
     <ClCompile Include="DX12SponzaDemo.cpp" />
@@ -272,6 +273,7 @@
     <ClInclude Include="3DEngine\RenderContext.h" />
     <ClInclude Include="3DEngine\Renderer.h" />
     <ClInclude Include="3DEngine\Scene.h" />
+    <ClInclude Include="3DEngine\Spectrum.h" />
     <ClInclude Include="3DEngine\SurfaceSet.h" />
     <ClInclude Include="3DEngine\TextRenderer.h" />
     <ClInclude Include="3DEngine\tiny_obj_loader.h" />

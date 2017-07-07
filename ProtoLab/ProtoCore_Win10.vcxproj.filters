@@ -198,6 +198,9 @@
     <ClCompile Include="3DEngine\Lights\HosekWilkie_SkylightModel\ArHosekSkyModel.cpp">
       <Filter>3DEngine\Lights\HosekWilkie_SkylightModel</Filter>
     </ClCompile>
+    <ClCompile Include="3DEngine\Spectrum.cpp">
+      <Filter>3DEngine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DX12\DX12PipelineState.h">
@@ -406,6 +409,9 @@
     </ClInclude>
     <ClInclude Include="3DEngine\Lights\HosekWilkie_SkylightModel\ArHosekSkyModelData_Spectral.h">
       <Filter>3DEngine\Lights\HosekWilkie_SkylightModel</Filter>
+    </ClInclude>
+    <ClInclude Include="3DEngine\Spectrum.h">
+      <Filter>3DEngine</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
