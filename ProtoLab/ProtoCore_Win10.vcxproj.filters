@@ -40,6 +40,9 @@
     <Filter Include="RayTracing">
       <UniqueIdentifier>{bf5f4190-fa97-4bb6-ace5-970486e8ea3d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="3DEngine\Lights\HosekWilkie_SkylightModel">
+      <UniqueIdentifier>{cb77d28d-8097-4142-ac4d-d7e3da89379b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DX12\DX12Buffer.cpp">
@@ -191,6 +194,9 @@
     </ClCompile>
     <ClCompile Include="3DEngine\Pass\TemporalAAPass.cpp">
       <Filter>3DEngine\Pass</Filter>
+    </ClCompile>
+    <ClCompile Include="3DEngine\Lights\HosekWilkie_SkylightModel\ArHosekSkyModel.cpp">
+      <Filter>3DEngine\Lights\HosekWilkie_SkylightModel</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -389,6 +395,18 @@
     <ClInclude Include="3DEngine\Pass\TemporalAAPass.h">
       <Filter>3DEngine\Pass</Filter>
     </ClInclude>
+    <ClInclude Include="3DEngine\Lights\HosekWilkie_SkylightModel\ArHosekSkyModel.h">
+      <Filter>3DEngine\Lights\HosekWilkie_SkylightModel</Filter>
+    </ClInclude>
+    <ClInclude Include="3DEngine\Lights\HosekWilkie_SkylightModel\ArHosekSkyModelData_CIEXYZ.h">
+      <Filter>3DEngine\Lights\HosekWilkie_SkylightModel</Filter>
+    </ClInclude>
+    <ClInclude Include="3DEngine\Lights\HosekWilkie_SkylightModel\ArHosekSkyModelData_RGB.h">
+      <Filter>3DEngine\Lights\HosekWilkie_SkylightModel</Filter>
+    </ClInclude>
+    <ClInclude Include="3DEngine\Lights\HosekWilkie_SkylightModel\ArHosekSkyModelData_Spectral.h">
+      <Filter>3DEngine\Lights\HosekWilkie_SkylightModel</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\Inc\BRDF.hlsli">
@@ -466,5 +484,10 @@
     <CustomBuild Include="Shaders\AntiAliasingFilter.hlsl">
       <Filter>Shaders</Filter>
     </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="3DEngine\Lights\HosekWilkie_SkylightModel\README.txt">
+      <Filter>3DEngine\Lights\HosekWilkie_SkylightModel</Filter>
+    </Text>
   </ItemGroup>
 </Project>

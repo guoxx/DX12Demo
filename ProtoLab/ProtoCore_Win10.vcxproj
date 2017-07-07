@@ -191,6 +191,7 @@
     <ClCompile Include="3DEngine\GameInput.cpp" />
     <ClCompile Include="3DEngine\GraphicsEngineDefinition.cpp" />
     <ClCompile Include="3DEngine\Lights\DirectionalLight.cpp" />
+    <ClCompile Include="3DEngine\Lights\HosekWilkie_SkylightModel\ArHosekSkyModel.cpp" />
     <ClCompile Include="3DEngine\Lights\ILight.cpp" />
     <ClCompile Include="3DEngine\Lights\PointLight.cpp" />
     <ClCompile Include="3DEngine\Material.cpp" />
@@ -250,6 +251,10 @@
     <ClInclude Include="3DEngine\EngineTuning.h" />
     <ClInclude Include="3DEngine\GameInput.h" />
     <ClInclude Include="3DEngine\Lights\DirectionalLight.h" />
+    <ClInclude Include="3DEngine\Lights\HosekWilkie_SkylightModel\ArHosekSkyModel.h" />
+    <ClInclude Include="3DEngine\Lights\HosekWilkie_SkylightModel\ArHosekSkyModelData_CIEXYZ.h" />
+    <ClInclude Include="3DEngine\Lights\HosekWilkie_SkylightModel\ArHosekSkyModelData_RGB.h" />
+    <ClInclude Include="3DEngine\Lights\HosekWilkie_SkylightModel\ArHosekSkyModelData_Spectral.h" />
     <ClInclude Include="3DEngine\Lights\ILight.h" />
     <ClInclude Include="3DEngine\Lights\PointLight.h" />
     <ClInclude Include="3DEngine\Material.h" />
@@ -393,6 +398,9 @@
     <CustomBuild Include="Shaders\LuminanceReductionInitial.hlsl">
       <FileType>Document</FileType>
     </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="3DEngine\Lights\HosekWilkie_SkylightModel\README.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
