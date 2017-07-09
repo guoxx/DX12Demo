@@ -41,9 +41,10 @@ namespace Math
 const float FloatInfinity = std::numeric_limits<float>::infinity();
 
 // Spectrum Utility Declarations
-static const int SampledLambdaStart = 400;
-static const int SampledLambdaEnd = 700;
-static const int NumSpectralSamples = 60;
+static constexpr int SampledLambdaStart = 380;
+static constexpr int SampledLambdaEnd = 780;
+static constexpr int NumSpectralSamples = 80;
+static constexpr int SpectrumSamplesStep = (SampledLambdaEnd - SampledLambdaStart) / NumSpectralSamples;
 extern bool SpectrumSamplesSorted(const float *lambda, const float *vals,
                                   int n);
 extern void SortSpectrumSamples(float *lambda, float *vals, int n);
@@ -407,7 +408,7 @@ class SampledSpectrum : public CoefficientSpectrum<NumSpectralSamples> {
     SampledSpectrum(const RGBSpectrum &r,
                     SpectrumType type = SpectrumType::Reflectance);
 
-  private:
+  public:
     // SampledSpectrum Private Data
     static SampledSpectrum X, Y, Z;
     static SampledSpectrum rgbRefl2SpectWhite, rgbRefl2SpectCyan;
@@ -444,6 +445,11 @@ class RGBSpectrum : public CoefficientSpectrum<3> {
         rgb[0] = c[0];
         rgb[1] = c[1];
         rgb[2] = c[2];
+    }
+    float3 ToRGB() const {
+        float rgb[3];
+        ToRGB(rgb);
+        return float3(rgb[0], rgb[1], rgb[2]);
     }
     const RGBSpectrum &ToRGBSpectrum() const { return *this; }
     void ToXYZ(float xyz[3]) const { RGBToXYZ(c, xyz); }

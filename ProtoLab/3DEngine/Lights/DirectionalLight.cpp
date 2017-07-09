@@ -5,8 +5,14 @@
 #include "3DEngine/Lights/SunModel.h"
 
 
+/* Apparent radius of the sun as seen from the earth (in degrees).
+This is an approximation--the actual value is somewhere between
+0.526 and 0.545 depending on the time of year */
+#define SUN_APP_RADIUS 0.5358
+
 DirectionalLight::DirectionalLight()
-    : m_PSSMSplitWeight{0.8f}
+    : m_PSSMSplitWeight{0.75f}
+    , m_Turbidity{2.0f}
 {
 }
 
@@ -92,20 +98,13 @@ void DirectionalLight::PrepareForShadowPass(const Camera* pCamera)
     }
 }
 
-
-void DirectionalLight::SetIrradiance(float r, float g, float b)
-{
-	//r = DX::Clamp(r, 0.0f, 1.0f);
-	//g = DX::Clamp(g, 0.0f, 1.0f);
-	//b = DX::Clamp(b, 0.0f, 1.0f);
-	m_Irradiance = DirectX::XMFLOAT4{r, g, b, 0};
-}
-
 void DirectionalLight::SetDirection(float x, float y, float z)
 {
 	DirectX::XMVECTOR dir{ x, y, z, 0 };
 	DirectX::XMVECTOR normalizedDir = DirectX::XMVector4Normalize(dir);
 	DirectX::XMStoreFloat4(&m_Direction, normalizedDir);
+
+    UpdateLightingInfo();
 }
 
 void DirectionalLight::GetViewAndProjMatrix(int32_t cascadeIdx, DirectX::XMMATRIX* mView, DirectX::XMMATRIX* mProj) const
@@ -114,4 +113,32 @@ void DirectionalLight::GetViewAndProjMatrix(int32_t cascadeIdx, DirectX::XMMATRI
 
     *mView = DirectX::XMLoadFloat4x4(&m_mView[cascadeIdx]);
     *mProj = DirectX::XMLoadFloat4x4(&m_mProj[cascadeIdx]);
+}
+
+void DirectionalLight::UpdateLightingInfo()
+{
+    float azimuth = std::atan2(-m_Direction.x, m_Direction.z);
+    float elevation = std::acos(-m_Direction.y);
+    if (azimuth < 0)
+        azimuth += 2 * HLSL::PI;
+
+    Math::SampledSpectrum sunRadianceSPD = computeSunRadiance(elevation, m_Turbidity);
+
+    double sunRadiance = 0;
+    double sunLuminance = 0;
+    for (int i = 0; i < Math::NumSpectralSamples; ++i)
+    {
+        sunRadiance += sunRadianceSPD[i] * Math::SpectrumSamplesStep;
+        sunLuminance += sunRadianceSPD[i] * 683 * Math::SampledSpectrum::Y[i] * Math::SpectrumSamplesStep;
+    }
+    double  luminousEfficiency = sunLuminance / sunRadiance;
+
+    float theta = DirectX::XMConvertToRadians(SUN_APP_RADIUS * 0.5f);
+    float solidAngle = 2 * HLSL::PI * (1 - std::cos(theta));
+
+    Math::RGBSpectrum radiance = sunRadianceSPD.ToRGBSpectrum();
+    Math::RGBSpectrum luminance = radiance * luminousEfficiency;
+    Math::RGBSpectrum illuminance = luminance * solidAngle;
+
+    m_Irradiance = float4{ illuminance[0], illuminance[1], illuminance[2], 0 };
 }

@@ -17,6 +17,7 @@
 #include "3DEngine/GameInput.h"
 #include "3DEngine/TextRenderer.h"
 #include "3DEngine/EngineTuning.h"
+#include "3DEngine/Spectrum.h"
 
 #ifdef _XBOX_ONE
 using namespace Windows::Xbox::Input;
@@ -147,6 +148,7 @@ void DX12SponzaDemo::CreateDevice()
 	GameInput::Initialize(m_Hwnd);
 	TextRenderer::Initialize();
 	EngineTuning::Initialize();
+    Math::SampledSpectrum::Init();
 
 	m_GraphicsManager = DX12GraphicsManager::GetInstance();
 }
@@ -179,7 +181,6 @@ void DX12SponzaDemo::LoadAssets()
 	{
 		std::shared_ptr<DirectionalLight> light = std::make_shared<DirectionalLight>();
 		light->SetDirection(0.58f, -0.75f, -0.31f);
-		light->SetIrradiance(4.0, 4.0, 4.0);
 		m_Scene->AttachDirectionalLight(light);
 	}
 
