@@ -41,9 +41,9 @@ namespace Math
 const float FloatInfinity = std::numeric_limits<float>::infinity();
 
 // Spectrum Utility Declarations
-static constexpr int SampledLambdaStart = 380;
-static constexpr int SampledLambdaEnd = 780;
-static constexpr int NumSpectralSamples = 80;
+static constexpr int SampledLambdaStart = 400;
+static constexpr int SampledLambdaEnd = 700;
+static constexpr int NumSpectralSamples = 60;
 static constexpr int SpectrumSamplesStep = (SampledLambdaEnd - SampledLambdaStart) / NumSpectralSamples;
 extern bool SpectrumSamplesSorted(const float *lambda, const float *vals,
                                   int n);

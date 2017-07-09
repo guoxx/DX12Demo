@@ -89,7 +89,7 @@ void DirectionalLight::PrepareForShadowPass(const Camera* pCamera)
         DirectX::XMVECTOR centerPosWS = DirectX::XMVector4Transform(centerPos, mInvLightViewTemp);
         DirectX::XMMATRIX mView = DirectX::XMMatrixLookToRH(centerPosWS, lightDir, upDir);
 
-        float depthBound = 4000;
+        float depthBound = 100;
         DirectX::XMVECTOR dim = DirectX::XMVectorSubtract(aabbMax, aabbMin);
         DirectX::XMMATRIX mProj = DirectX::XMMatrixOrthographicRH(DirectX::XMVectorGetX(dim), DirectX::XMVectorGetY(dim), -depthBound, depthBound);
 
@@ -131,14 +131,14 @@ void DirectionalLight::UpdateLightingInfo()
         sunRadiance += sunRadianceSPD[i] * Math::SpectrumSamplesStep;
         sunLuminance += sunRadianceSPD[i] * 683 * Math::SampledSpectrum::Y[i] * Math::SpectrumSamplesStep;
     }
-    double  luminousEfficiency = sunLuminance / sunRadiance;
+    double luminousEfficiency = sunLuminance / sunRadiance;
 
     float theta = DirectX::XMConvertToRadians(SUN_APP_RADIUS * 0.5f);
     float solidAngle = 2 * HLSL::PI * (1 - std::cos(theta));
 
     Math::RGBSpectrum radiance = sunRadianceSPD.ToRGBSpectrum();
-    Math::RGBSpectrum luminance = radiance * luminousEfficiency;
+    Math::RGBSpectrum luminance = radiance * Math::CIE_Y_integral * luminousEfficiency;
     Math::RGBSpectrum illuminance = luminance * solidAngle;
 
-    m_Irradiance = float4{ illuminance[0], illuminance[1], illuminance[2], 0 };
+    m_Irradiance = float4{illuminance[0], illuminance[1], illuminance[2], 0};
 }
