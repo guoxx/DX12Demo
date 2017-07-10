@@ -52,31 +52,7 @@ float Log2Exposure(in CameraSettings cameraSettings, in float avgLuminance)
 {
     float exposure = 0.0f;
 
-    if (cameraSettings.m_ExposureMode == ExposureModes_Automatic)
-    {
-#if 0
-        // Use geometric mean        
-        avgLuminance = max(avgLuminance, 0.001f);
-
-        float keyValue = 0;
-        keyValue = 1.03f - (2.0f / (2 + log10(avgLuminance + 1)));
-
-        float linearExposure = (keyValue / avgLuminance);
-        exposure = log2(max(linearExposure, 0.0001f));
-#endif
-
-#if 1
-        avgLuminance = max(avgLuminance, 0.00001f);
-        float linearExposure = (cameraSettings.m_KeyValue / avgLuminance);
-        exposure = log2(max(linearExposure, 0.00001f));
-#endif
-
-#if 0
-        float autoEV100 = computeEV100FromAvgLuminance(avgLuminance);
-        exposure = log2(convertEV100ToExposure(autoEV100));
-#endif
-    }
-    else if (cameraSettings.m_ExposureMode == ExposureModes_Manual_SBS)
+    if (cameraSettings.m_ExposureMode == ExposureModes_Manual_SBS)
     {
         exposure = log2(getSaturationBasedExposure(cameraSettings.m_Aperture, cameraSettings.m_ShutterSpeed, cameraSettings.m_ISO));
     }
@@ -86,7 +62,8 @@ float Log2Exposure(in CameraSettings cameraSettings, in float avgLuminance)
     }
     else
     {
-        exposure = cameraSettings.m_ManualExposure;
+        float autoEV100 = computeEV100FromAvgLuminance(avgLuminance);
+        exposure = log2(convertEV100ToExposure(autoEV100));
     }
 
     return exposure;

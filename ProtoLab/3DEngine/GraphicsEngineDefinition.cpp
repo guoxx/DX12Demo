@@ -1,6 +1,12 @@
 #include "pch.h"
 #include "GraphicsEngineDefinition.h"
 
+static const char* StrExposureModes[NumExposureModeEnum] = {
+    "Saturation-based Speed",
+    "Standard output sensitivity",
+    "Automatic",
+};
+
 static const char* StrShutterSpeed[NumShutterSpeedEnum] = {
     "1s",
     "1/2s",
@@ -17,7 +23,7 @@ static const char* StrShutterSpeed[NumShutterSpeedEnum] = {
     "1/4000s",
 };
 
-static const char* StrFStops[NumFStopsEnum] = {
+static const char* StrFStops[NumFStopEnum] = {
     "f/1.8",
     "f/2.0",
     "f/2.2",
@@ -43,17 +49,17 @@ static const char* StrFStops[NumFStopsEnum] = {
     "f/22.0",
 };
 
-static const char* StrISORatings[NumISORatingsEnum] = {
+static const char* StrISORatings[NumISORatingEnum] = {
     "ISO100",
     "ISO200",
     "ISO400",
     "ISO800",
 };
 
+
 BoolVar g_TiledShading("Graphics/Tiled Shading", true);
 
 BoolVar g_ToneMapping("Graphics/HDR/Tone Mapping", true);
-NumVar g_ToneMapTargetLuminance("Graphics/HDR/Key", 0.08f, 0.01f, 0.99f, 0.01f);
 
 BoolVar g_RSMEnabled("Graphics/RSM/Enable", false);
 NumVar g_RSMSampleRadius("Graphics/RSM/Sample Radius", 0.005f, 0.0f, 1.0f, 0.001f);
@@ -66,6 +72,7 @@ NumVar g_EVSMNegativeExponent("Graphics/EVSM/Negative Exponent", 5.0000f, 0.0000
 NumVar g_LightBleedingReduction("Graphics/EVSM/Light Bleeding Reduction", 0.0000f, 0.0000f, 1.0000f, 0.0100f);
 NumVar g_VSMBias("Graphics/EVSM/VSM Bias (x100)", 0.0100f, 0.0000f, 100.0000f, 0.0010f);
 
-EnumVar g_ShutterSpeed("CameraControls/Shutter Speed", ShutterSpeed1Over1, NumShutterSpeedEnum, StrShutterSpeed);
-EnumVar g_Aperture("CameraControls/Aperture", FStop1Point8, NumFStopsEnum, StrFStops);
-EnumVar g_ISORating("CameraControls/ISO Rating", ISO100, NumISORatingsEnum, StrISORatings);
+EnumVar g_ExposureMode("CameraControls/Expsure Mode", ManualExposure_SOS, NumExposureModeEnum, StrExposureModes);
+EnumVar g_ShutterSpeed("CameraControls/Shutter Speed", ShutterSpeed1Over30, NumShutterSpeedEnum, StrShutterSpeed);
+EnumVar g_Aperture("CameraControls/Aperture", FStop20Point0, NumFStopEnum, StrFStops);
+EnumVar g_ISORating("CameraControls/ISO Rating", ISO100, NumISORatingEnum, StrISORatings);

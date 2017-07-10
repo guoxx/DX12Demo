@@ -1,6 +1,8 @@
 #pragma once
 
 #include "EngineTuning.h"
+#include "Shaders/Inc/HLSLShared.h"
+#include <stdlib.h>
 
 enum ShadingConfiguration
 {
@@ -8,6 +10,15 @@ enum ShadingConfiguration
 	ShadingConfiguration_DepthOnly,
 	ShadingConfiguration_RSM,
 	ShadingConfiguration_Max,
+};
+
+enum ExposureModeEnum
+{
+    ManualExposure_SBS = ExposureModes_Manual_SBS,
+    ManualExposure_SOS = ExposureModes_Manual_SOS,
+    AutomaticExposure = ExposureModes_Automatic,
+
+    NumExposureModeEnum,
 };
 
 enum ShutterSpeedEnum
@@ -29,7 +40,7 @@ enum ShutterSpeedEnum
     NumShutterSpeedEnum
 };
 
-enum FStopsEnum
+enum FStopEnum
 {
     FStop1Point8 = 0,
     FStop2Point0,
@@ -55,18 +66,53 @@ enum FStopsEnum
     FStop20Point0,
     FStop22Point0,
 
-    NumFStopsEnum,
+    NumFStopEnum,
 };
 
-enum ISORatingsEnum
+enum ISORatingEnum
 {
     ISO100 = 0,
     ISO200,
     ISO400,
     ISO800,
 
-    NumISORatingsEnum
+    NumISORatingEnum
 };
+
+inline float GetApertureFNumber(int32_t v)
+{
+    static const float FNumbers[] =
+    {
+        1.8f, 2.0f, 2.2f, 2.5f, 2.8f, 3.2f, 3.5f, 4.0f, 4.5f, 5.0f, 5.6f, 6.3f, 7.1f, 8.0f,
+        9.0f, 10.0f, 11.0f, 13.0f, 14.0f, 16.0f, 18.0f, 20.0f, 22.0f
+    };
+    static_assert(_countof(FNumbers) == NumFStopEnum, "");
+
+    return FNumbers[int(v)];
+}
+
+inline float GetShutterSpeedValue(int32_t v)
+{
+    static const float ShutterSpeedValues[] =
+    {
+        1.0f / 1.0f, 1.0f / 2.0f, 1.0f / 4.0f, 1.0f / 8.0f, 1.0f / 15.0f, 1.0f / 30.0f,
+        1.0f / 60.0f, 1.0f / 125.0f, 1.0f / 250.0f, 1.0f / 500.0f, 1.0f / 1000.0f, 1.0f / 2000.0f, 1.0f / 4000.0f,
+    };
+    static_assert(_countof(ShutterSpeedValues) == NumShutterSpeedEnum, "");
+
+    return ShutterSpeedValues[int(v)];
+}
+
+inline float GetISORatingValue(int32_t v)
+{
+    static const float ISOValues[] =
+    {
+        100.0f, 200.0f, 400.0f, 800.0f
+    };
+    static_assert(_countof(ISOValues) == NumISORatingEnum, "");
+
+    return ISOValues[int(v)];
+}
 
 extern BoolVar g_TiledShading;
 
@@ -84,6 +130,7 @@ extern NumVar g_EVSMNegativeExponent;
 extern NumVar g_LightBleedingReduction;
 extern NumVar g_VSMBias;
 
+extern EnumVar g_ExposureMode;
 extern EnumVar g_ShutterSpeed;
 extern EnumVar g_Aperture;
 extern EnumVar g_ISORating;

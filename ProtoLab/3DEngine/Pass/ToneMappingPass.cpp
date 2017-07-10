@@ -37,8 +37,10 @@ void ToneMappingPass::Apply(DX12GraphicsContext* pGfxContext,
 
     HLSL::CameraSettings constants;
     constants.m_ToneMapEnabled = g_ToneMapping;
-    constants.m_ExposureMode = ExposureModes_Automatic;
-    constants.m_KeyValue = g_ToneMapTargetLuminance;
+    constants.m_ExposureMode = g_ExposureMode;
+    constants.m_ShutterSpeed = GetShutterSpeedValue(g_ShutterSpeed);
+    constants.m_Aperture = GetApertureFNumber(g_Aperture);
+    constants.m_ISO = GetISORatingValue(g_ISORating);
     pGfxContext->SetGraphicsRootDynamicConstantBufferView(0, &constants, sizeof(constants));
 
     pGfxContext->SetGraphicsDynamicCbvSrvUav(1, 0, postProcessSurfSet.m_AASurface->GetStagingSRV().GetCpuHandle());

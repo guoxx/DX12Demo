@@ -28,10 +28,9 @@
 #define LUMINANCE_REDUCTION_THREAD_GROUP_SIZE 16
 #define LUMINANCE_REDUCTION_NUM_THREADS (LUMINANCE_REDUCTION_THREAD_GROUP_SIZE * LUMINANCE_REDUCTION_THREAD_GROUP_SIZE)
 
-static const int ExposureModes_ManualSimple = 0;
-static const int ExposureModes_Manual_SBS = 1;
-static const int ExposureModes_Manual_SOS = 2;
-static const int ExposureModes_Automatic = 3;
+static const int ExposureModes_Manual_SBS = 0;
+static const int ExposureModes_Manual_SOS = 1;
+static const int ExposureModes_Automatic = 2;
 
 #ifndef __cplusplus
 	#if 0
@@ -182,9 +181,9 @@ struct CameraSettings
     float m_ShutterSpeed;
     float m_ISO;
 
-    float m_KeyValue;
-    float m_ManualExposure;
+    float m_Dummy0;
     float m_Dummy1;
+    float m_Dummy2;
 };
 
 #ifdef __cplusplus
