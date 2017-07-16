@@ -64,13 +64,15 @@ RootSigDeclaration
 float4 PSMain(VSOutput In) : SV_TARGET
 {
 	float4 hdrColor = g_Texture.Sample(g_StaticPointClampSampler, In.Texcoord);
-    if (!g_CameraSettings.m_ToneMapEnabled)
-        return hdrColor;
 
     float avgLuminance = GetAvgLuminance(g_AvgLuminanceTex);
+
     float exposure;
     float3 exposuredColor = CalcExposedColor(g_CameraSettings, hdrColor.xyz, avgLuminance, 0, exposure);
-    float3 sdrColor = ToneMapFilmicALU(exposuredColor);
 
+    if (!g_CameraSettings.m_ToneMapEnabled)
+        return float4(exposuredColor, saturate(hdrColor.a));
+
+    float3 sdrColor = ACESFilm(exposuredColor);
 	return float4(sdrColor, saturate(hdrColor.a));
 }
