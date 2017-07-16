@@ -2,25 +2,6 @@
 
 #include "../DX12/DX12.h"
 
-class RenderableSurfaceManager;
-
-struct RenderableSurfaceDesc
-{
-	RenderableSurfaceDesc(GFX_FORMAT_SET format, uint32_t width, uint32_t height)
-		: m_Format{ format }
-		, m_Width{ width }
-		, m_Height{ height }
-	{
-	}
-
-	~RenderableSurfaceDesc() = default;
-
-	GFX_FORMAT_SET m_Format;
-	uint32_t m_Width;
-	uint32_t m_Height;
-};
-
-
 template <typename T>
 struct RenderableSurfaceHandle
 {

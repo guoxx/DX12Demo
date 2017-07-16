@@ -1,8 +1,30 @@
 #pragma once
 
 #include "DX12GpuResource.h"
+#include "DX12Wrapper.h"
 
 class DX12Device;
+
+struct RenderableSurfaceDesc
+{
+    RenderableSurfaceDesc(GFX_FORMAT_SET format, uint32_t width, uint32_t height, uint32_t mipLevels = 1, uint32_t sampleCount = 1)
+        : m_Format{ format }
+        , m_Width{ width }
+        , m_Height{ height }
+        , m_MipLevels{ mipLevels }
+        , m_SampleCount{ sampleCount }
+    {
+    }
+
+    ~RenderableSurfaceDesc() = default;
+
+    GFX_FORMAT_SET m_Format;
+    uint32_t m_Width;
+    uint32_t m_Height;
+    uint32_t m_MipLevels;
+    uint32_t m_SampleCount;
+};
+
 
 class DX12RenderableSurface : public DX12GpuResource
 {

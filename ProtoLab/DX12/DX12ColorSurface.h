@@ -10,8 +10,7 @@ public:
 	DX12ColorSurface();
 	virtual ~DX12ColorSurface();
 
-	void InitAs2dSurface(DX12Device* device, GFX_FORMAT_SET fmt, uint32_t width, uint32_t height);
-	void InitAs2dSurface(DX12Device* device, GFX_FORMAT_SET fmt, uint32_t width, uint32_t height, uint32_t mipLevels);
+	void InitAs2dSurface(DX12Device* device, const RenderableSurfaceDesc& desc);
 	void InitAs2dSurface(DX12Device* device, ComPtr<ID3D12Resource> pResource, GFX_FORMAT_SET fmt, D3D12_RESOURCE_STATES initialtate);
 
 	DX12DescriptorHandle GetSRV() const { return m_SRV; };

@@ -13,28 +13,22 @@ DX12ColorSurface::~DX12ColorSurface()
 {
 }
 
-void DX12ColorSurface::InitAs2dSurface(DX12Device * device, GFX_FORMAT_SET fmt, uint32_t width, uint32_t height)
-{
-	InitAs2dSurface(device, fmt, width, height, 1);
-}
-
-void DX12ColorSurface::InitAs2dSurface(DX12Device* device, GFX_FORMAT_SET fmt, uint32_t width, uint32_t height, uint32_t mipLevels)
+void DX12ColorSurface::InitAs2dSurface(DX12Device* device, const RenderableSurfaceDesc& desc)
 {
 	uint32_t arraySize = 1;
-	uint32_t sampleCount = 1;
 	uint32_t sampleQuality = 0;
 	D3D12_RESOURCE_FLAGS flags = D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET | D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
 	D3D12_RESOURCE_STATES initialState = D3D12_RESOURCE_STATE_RENDER_TARGET;
 
 	D3D12_CLEAR_VALUE optimizedClearValue;
-	optimizedClearValue.Format = fmt.RTVFormat;
+	optimizedClearValue.Format = desc.m_Format.RTVFormat;
 	optimizedClearValue.Color[0] = 0.0f;
 	optimizedClearValue.Color[1] = 0.0f;
 	optimizedClearValue.Color[2] = 0.0f;
 	optimizedClearValue.Color[3] = 0.0f;
-	Init(device, fmt.BaseFormat, width, height, arraySize, mipLevels, sampleCount, sampleQuality, flags, &optimizedClearValue, initialState);
+	Init(device, desc.m_Format.BaseFormat, desc.m_Width, desc.m_Height, arraySize, desc.m_MipLevels, desc.m_SampleCount, sampleQuality, flags, &optimizedClearValue, initialState);
 
-	Create2DView(device, fmt);
+	Create2DView(device, desc.m_Format);
 }
 
 void DX12ColorSurface::InitAs2dSurface(DX12Device* device, ComPtr<ID3D12Resource> pResource, GFX_FORMAT_SET fmt, D3D12_RESOURCE_STATES initialState)

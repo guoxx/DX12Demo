@@ -12,8 +12,7 @@ public:
 	DX12DepthSurface();
 	virtual ~DX12DepthSurface();
 
-	void InitAs2dSurface(DX12Device* device, GFX_FORMAT_SET fmt, uint32_t width, uint32_t height);
-	void InitAs2dSurface(DX12Device* device, GFX_FORMAT_SET fmt, uint32_t width, uint32_t height, uint32_t mipLevels);
+	void InitAs2dSurface(DX12Device* device, const RenderableSurfaceDesc& desc);
 
 	DX12DescriptorHandle GetSRV() const { return m_SRV; };
 	DX12DescriptorHandle GetDSV() const { return m_DSV; };

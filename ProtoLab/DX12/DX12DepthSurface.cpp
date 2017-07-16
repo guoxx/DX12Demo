@@ -14,26 +14,20 @@ DX12DepthSurface::~DX12DepthSurface()
 {
 }
 
-void DX12DepthSurface::InitAs2dSurface(DX12Device * device, GFX_FORMAT_SET fmt, uint32_t width, uint32_t height)
-{
-	InitAs2dSurface(device, fmt, width, height, 1);
-}
-
-void DX12DepthSurface::InitAs2dSurface(DX12Device * device, GFX_FORMAT_SET fmt, uint32_t width, uint32_t height, uint32_t mipLevels)
+void DX12DepthSurface::InitAs2dSurface(DX12Device * device, const RenderableSurfaceDesc& desc)
 {
 	uint32_t arraySize = 1;
-	uint32_t sampleCount = 1;
 	uint32_t sampleQuality = 0;
 	D3D12_RESOURCE_FLAGS flags = D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;
 	D3D12_RESOURCE_STATES initialState = D3D12_RESOURCE_STATE_DEPTH_WRITE;
 
 	D3D12_CLEAR_VALUE optimizedClearValue;
-	optimizedClearValue.Format = fmt.DSVFormat;
+	optimizedClearValue.Format = desc.m_Format.DSVFormat;
 	optimizedClearValue.DepthStencil.Depth = 1.0f;
 	optimizedClearValue.DepthStencil.Stencil = 0;
-	Init(device, fmt.BaseFormat, width, height, arraySize, mipLevels, sampleCount, sampleQuality, flags, &optimizedClearValue, initialState);
+	Init(device, desc.m_Format.BaseFormat, desc.m_Width, desc.m_Height, arraySize, desc.m_MipLevels, desc.m_SampleCount, sampleQuality, flags, &optimizedClearValue, initialState);
 
-	Create2DView(device, fmt);
+	Create2DView(device, desc.m_Format);
 }
 
 void DX12DepthSurface::Create2DView(DX12Device * device, GFX_FORMAT_SET fmt)
