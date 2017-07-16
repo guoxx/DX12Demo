@@ -69,6 +69,13 @@ bool DX12GraphicsPsoDesc::SetDepthStencilState(const D3D12_DEPTH_STENCIL_DESC & 
 	return true;
 }
 
+bool DX12GraphicsPsoDesc::SetSampleDesc(uint32_t sampleCount, uint32_t sampleQuality)
+{
+    m_PsoDesc.SampleDesc.Count = sampleCount;
+    m_PsoDesc.SampleDesc.Quality = sampleQuality;
+    return true;
+}
+
 bool DX12GraphicsPsoDesc::SetRenderTargetFormats(uint32_t numRenderTargets, DXGI_FORMAT* fmts)
 {
 	assert(numRenderTargets < DX12MaxRenderTargetsCount);

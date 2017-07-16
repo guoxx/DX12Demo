@@ -55,6 +55,7 @@ void Material::Load(DX12GraphicsContext* pGfxContext)
 		psoDesc.SetRoogSignature(m_RootSig[shadingCfg].get());
 		psoDesc.SetDespthStencilFormat(DXGI_FORMAT_D32_FLOAT);
 		psoDesc.SetRasterizerState(CD3DX12::RasterizerShadow());
+        psoDesc.SetSampleDesc(DX12EVSMSampleCount);
 
 		m_PSO[shadingCfg] = DX12PsoCompiler::Compile(DX12GraphicsManager::GetInstance()->GetDevice(), &psoDesc);
 	}

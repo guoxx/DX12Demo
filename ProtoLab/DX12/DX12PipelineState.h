@@ -36,6 +36,8 @@ public:
 
 	bool SetDepthStencilState(const D3D12_DEPTH_STENCIL_DESC& depthStencilDesc);
 
+    bool SetSampleDesc(uint32_t sampleCount, uint32_t sampleQuality = 0);
+
 	bool SetRenderTargetFormat(DXGI_FORMAT fmt)
 	{
         SetRenderTargetFormatInternal(fmt);
