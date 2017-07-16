@@ -211,6 +211,8 @@ void Renderer::RenderShadowMaps(const Camera* pCamera, Scene * pScene)
 
 		if (g_EVSMEnabled)
 		{
+            pGfxContext->PIXBeginEvent(L"EVSM");
+
 			auto pDepthSurface = m_RenderContext.AcquireDepthSurfaceForDirectionalLight(directionalLight.get());
 			auto pEVSMSurface = m_RenderContext.AcquireEVSMSurfaceForDirectionalLight(directionalLight.get());
 
@@ -231,6 +233,8 @@ void Renderer::RenderShadowMaps(const Camera* pCamera, Scene * pScene)
 		    pGfxContext->SetGraphicsRootDynamicConstantBufferView(0, &constants, sizeof(constants));
 			pGfxContext->SetGraphicsDynamicCbvSrvUav(1, 0, pDepthSurface->GetStagingSRV().GetCpuHandle());
 			m_EVSM->Draw(pGfxContext.Get());
+
+            pGfxContext->PIXEndEvent();
 		}
 
 		pGfxContext->PIXEndEvent();

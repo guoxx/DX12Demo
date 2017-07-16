@@ -9,7 +9,9 @@ RootSigEnd
 
 HLSLConstantBuffer(EVSMConstants, 0, g_Constants);
 
-Texture2D<float> g_DepthTexure : register(t0);
+#define SAMPLE_COUNT 4
+
+Texture2DMS<float> g_DepthTexure : register(t0);
 
 struct VSOutput
 {
@@ -39,6 +41,12 @@ RootSigDeclaration
 float4 PSMain(VSOutput In) : SV_TARGET
 {
 	uint2 coords = uint2(In.Position.xy);
-	float d = g_DepthTexure[coords];
-	return ConvertToEVSM(d, g_Constants.m_EVSM.m_PositiveExponent, g_Constants.m_EVSM.m_NegativeExponent, SMFormat32Bit);
+
+    float4 average = float4(0.0f, 0.0f, 0.0f, 0.0f);
+    for (uint i = 0; i < SAMPLE_COUNT; ++i)
+    {
+	    float d = g_DepthTexure.Load(coords, i);
+        average += ConvertToEVSM(d, g_Constants.m_EVSM.m_PositiveExponent, g_Constants.m_EVSM.m_NegativeExponent, SMFormat32Bit);
+    }
+    return average / SAMPLE_COUNT;
 }
