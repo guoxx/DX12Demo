@@ -151,7 +151,7 @@ void Renderer::RenderShadowMaps(const Camera* pCamera, Scene * pScene)
 	{
 		pGfxContext->PIXBeginEvent(L"ShadowMap - DirectionalLight");
 
-        directionalLight->PrepareForShadowPass(pCamera);
+        directionalLight->PrepareForShadowPass(pCamera, DX12DirectionalLightShadowMapSize);
 
 		if (g_RSMEnabled)
 		{

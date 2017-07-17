@@ -13,7 +13,7 @@ public:
 	DirectionalLight();
 	virtual ~DirectionalLight();
 
-    void PrepareForShadowPass(const Camera* pCamera);
+    void PrepareForShadowPass(const Camera* pCamera, uint32_t shadowMapSize);
 
 	DirectX::XMFLOAT4 GetIrradiance() const { return m_Irradiance; }
 

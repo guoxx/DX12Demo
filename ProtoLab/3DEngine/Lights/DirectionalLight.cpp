@@ -5,6 +5,27 @@
 #include "3DEngine/Lights/SunModel.h"
 
 
+DirectX::XMMATRIX GetCascadeRoundingMatrix(const DirectX::XMMATRIX& shadowViewProjMatrix, float shadowMapSize)
+{
+    // code from here https://www.gamedev.net/topic/497259-stable-cascaded-shadow-maps/
+    DirectX::XMVECTOR origin = DirectX::XMVectorSet(0, 0, 0, 1);
+    DirectX::XMVECTOR shadowOrigin = DirectX::XMVector4Transform(origin, shadowViewProjMatrix);
+    shadowOrigin /= DirectX::XMVectorGetW(shadowOrigin);
+
+    // Find nearest shadow map texel. The 0.5f is because x,y are in the 
+    // range -1 .. 1 and we need them in the range 0 .. 1
+    shadowOrigin = shadowOrigin * (shadowMapSize / 2.0f);
+
+    DirectX::XMVECTOR roundedOrigin = DirectX::XMVectorRound(shadowOrigin);
+    DirectX::XMVECTOR roundOffset = roundedOrigin - shadowOrigin;
+    roundOffset = roundOffset * (2.0f / shadowMapSize);
+    roundOffset = DirectX::XMVectorSetZ(roundOffset, 0);
+    roundOffset = DirectX::XMVectorSetW(roundOffset, 0);
+
+    DirectX::XMMATRIX translation = DirectX::XMMatrixTranslationFromVector(roundOffset);
+    return translation;
+}
+
 /* Apparent radius of the sun as seen from the earth (in degrees).
 This is an approximation--the actual value is somewhere between
 0.526 and 0.545 depending on the time of year */
@@ -20,7 +41,7 @@ DirectionalLight::~DirectionalLight()
 {
 }
 
-void DirectionalLight::PrepareForShadowPass(const Camera* pCamera)
+void DirectionalLight::PrepareForShadowPass(const Camera* pCamera, uint32_t shadowMapSize)
 {
 	const DirectX::XMVECTOR eyePos = DirectX::XMVectorZero();
 	const DirectX::XMVECTOR lightDir = DirectX::XMLoadFloat4(&m_Direction);
@@ -102,8 +123,11 @@ void DirectionalLight::PrepareForShadowPass(const Camera* pCamera)
         float depthBound = 100;
         DirectX::XMMATRIX mProj = DirectX::XMMatrixOrthographicRH(2.0f * sphereRadius, 2.0f * sphereRadius, -depthBound, depthBound);
 
+        DirectX::XMMATRIX mViewProj = DirectX::XMMatrixMultiply(mView, mProj);
+        DirectX::XMMATRIX mRounding = GetCascadeRoundingMatrix(mViewProj, shadowMapSize / 2.0f);
+
         DirectX::XMStoreFloat4x4(&m_mView[cascadeIdx], mView);
-        DirectX::XMStoreFloat4x4(&m_mProj[cascadeIdx], mProj);
+        DirectX::XMStoreFloat4x4(&m_mProj[cascadeIdx], DirectX::XMMatrixMultiply(mProj, mRounding));
     }
 }
 
