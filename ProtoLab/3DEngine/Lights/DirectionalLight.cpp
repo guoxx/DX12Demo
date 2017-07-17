@@ -65,6 +65,7 @@ void DirectionalLight::PrepareForShadowPass(const Camera* pCamera)
         float farX = farY * aspectRatio;
 
         DirectX::XMVECTOR frustumPoints[8];
+        DirectX::XMVECTOR frustumPointsInLightSpace[8];
         frustumPoints[0] = DirectX::XMVECTOR{-nearX, -nearY, -localNearZ, 1}; // Near Left Bottom
         frustumPoints[1] = DirectX::XMVECTOR{nearX, -nearY, -localNearZ, 1}; // Near Right Bottom
         frustumPoints[2] = DirectX::XMVECTOR{nearX, nearY, -localNearZ, 1}; // Near Right Top
@@ -81,6 +82,7 @@ void DirectionalLight::PrepareForShadowPass(const Camera* pCamera)
             DirectX::XMVECTOR p = DirectX::XMVector4Transform(frustumPoints[i], mCameraToLight);
             aabbMin = DirectX::XMVectorMin(aabbMin, p);
             aabbMax = DirectX::XMVectorMax(aabbMax, p);
+            frustumPointsInLightSpace[i] = p;
         }
 
         DirectX::XMVECTOR centerPos = DirectX::XMVectorAdd(aabbMin, aabbMax);
@@ -89,9 +91,16 @@ void DirectionalLight::PrepareForShadowPass(const Camera* pCamera)
         DirectX::XMVECTOR centerPosWS = DirectX::XMVector4Transform(centerPos, mInvLightViewTemp);
         DirectX::XMMATRIX mView = DirectX::XMMatrixLookToRH(centerPosWS, lightDir, upDir);
 
+        float sphereRadius = 0.0f;
+        for (int32_t i = 0; i < _countof(frustumPoints); ++i)
+        {
+            float l = DirectX::XMVectorGetX(DirectX::XMVector3Length(DirectX::XMVectorSubtract(frustumPointsInLightSpace[i], centerPos)));
+            sphereRadius = std::max(sphereRadius, l);
+            sphereRadius = std::ceilf(sphereRadius / 2.0f) * 2.0f;
+        }
+
         float depthBound = 100;
-        DirectX::XMVECTOR dim = DirectX::XMVectorSubtract(aabbMax, aabbMin);
-        DirectX::XMMATRIX mProj = DirectX::XMMatrixOrthographicRH(DirectX::XMVectorGetX(dim), DirectX::XMVectorGetY(dim), -depthBound, depthBound);
+        DirectX::XMMATRIX mProj = DirectX::XMMatrixOrthographicRH(2.0f * sphereRadius, 2.0f * sphereRadius, -depthBound, depthBound);
 
         DirectX::XMStoreFloat4x4(&m_mView[cascadeIdx], mView);
         DirectX::XMStoreFloat4x4(&m_mProj[cascadeIdx], mProj);
