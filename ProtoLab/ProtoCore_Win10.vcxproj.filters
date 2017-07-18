@@ -493,6 +493,9 @@
     <CustomBuild Include="Shaders\AntiAliasingFilter.hlsl">
       <Filter>Shaders</Filter>
     </CustomBuild>
+    <CustomBuild Include="Shaders\ScreenSpaceShadows.hlsl">
+      <Filter>Shaders</Filter>
+    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <Text Include="3DEngine\Lights\HosekWilkie_SkylightModel\README.txt">

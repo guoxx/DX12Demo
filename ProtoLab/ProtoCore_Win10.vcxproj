@@ -405,6 +405,11 @@
   <ItemGroup>
     <Text Include="3DEngine\Lights\HosekWilkie_SkylightModel\README.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="Shaders\ScreenSpaceShadows.hlsl">
+      <FileType>Document</FileType>
+    </CustomBuild>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
     <Import Project="..\packages\WinPixEventRuntime.1.0.170126001\build\WinPixEventRuntime.targets" Condition="Exists('..\packages\WinPixEventRuntime.1.0.170126001\build\WinPixEventRuntime.targets')" />

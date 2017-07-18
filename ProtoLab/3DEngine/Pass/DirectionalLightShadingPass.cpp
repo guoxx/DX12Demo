@@ -43,6 +43,9 @@ void DirectionalLightShadingPass::Apply(DX12GraphicsContext* pGfxContext,
 	DirectX::XMMATRIX mInvProj = DirectX::XMMatrixInverse(nullptr, pRenderContext->GetProjMatrix());
 	DirectX::XMStoreFloat4x4(&constants.mInvView, DirectX::XMMatrixTranspose(mInvView));
 	DirectX::XMStoreFloat4x4(&constants.mInvProj, DirectX::XMMatrixTranspose(mInvProj));
+    DirectX::XMMATRIX mViewProj = DirectX::XMMatrixMultiply(pRenderContext->GetViewMatrix(), pRenderContext->GetProjMatrix());
+    DirectX::XMMATRIX mInvViewProj = DirectX::XMMatrixInverse(nullptr, mViewProj);
+	DirectX::XMStoreFloat4x4(&constants.mInvViewProj, DirectX::XMMatrixTranspose(mInvViewProj));
 	DirectX::XMStoreFloat4(&constants.CameraPosition, pRenderContext->GetCamera()->GetTranslation());
 
 	DirectX::XMFLOAT4 direction = pLight->GetDirection();

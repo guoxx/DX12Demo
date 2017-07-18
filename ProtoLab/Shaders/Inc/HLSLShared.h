@@ -161,6 +161,7 @@ struct DirectionalLightConstants
 {
 	float4x4 mInvView;
 	float4x4 mInvProj;
+    float4x4 mInvViewProj;
 	float4 CameraPosition;
 
 	DirectionalLight	m_DirLight;
