@@ -36,6 +36,8 @@ Renderer::Renderer(GFX_HWND hwnd, int32_t width, int32_t height)
 	m_GBuffer.m_GBuffer[3] = RenderableSurfaceManager::GetInstance()->AcquireColorSurface(RenderableSurfaceDesc(GFX_FORMAT_R16G16B16A16_FLOAT, width, height));
 	m_GBuffer.m_DepthSurface = RenderableSurfaceManager::GetInstance()->AcquireDepthSurface(RenderableSurfaceDesc(GFX_FORMAT_D32_FLOAT, width, height));
 
+    m_PostProcessSurfaces.m_ScreenSpaceShadowsSurface = RenderableSurfaceManager::GetInstance()->AcquireColorSurface(RenderableSurfaceDesc(GFX_FORMAT_R32_FLOAT, width, height));
+
 	m_PostProcessSurfaces.m_HDRSurface = RenderableSurfaceManager::GetInstance()->AcquireColorSurface(RenderableSurfaceDesc(GFX_FORMAT_HDR, width, height));
 	m_PostProcessSurfaces.m_HistoryHDRSurface = RenderableSurfaceManager::GetInstance()->AcquireColorSurface(RenderableSurfaceDesc(GFX_FORMAT_HDR, width, height));
 	m_PostProcessSurfaces.m_AASurface = RenderableSurfaceManager::GetInstance()->AcquireColorSurface(RenderableSurfaceDesc(GFX_FORMAT_HDR, width, height));

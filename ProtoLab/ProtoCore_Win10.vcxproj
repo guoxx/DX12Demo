@@ -202,6 +202,7 @@
     <ClCompile Include="3DEngine\Pass\DirectionalLightShadingPass.cpp" />
     <ClCompile Include="3DEngine\Pass\LightCullingPass.cpp" />
     <ClCompile Include="3DEngine\Pass\PointLightShadingPass.cpp" />
+    <ClCompile Include="3DEngine\Pass\ScreenSpaceShadowsPass.cpp" />
     <ClCompile Include="3DEngine\Pass\TemporalAAPass.cpp" />
     <ClCompile Include="3DEngine\Pass\TiledShadingPass.cpp" />
     <ClCompile Include="3DEngine\Pass\ToneMappingPass.cpp" />
@@ -266,6 +267,7 @@
     <ClInclude Include="3DEngine\Pass\DirectionalLightShadingPass.h" />
     <ClInclude Include="3DEngine\Pass\LightCullingPass.h" />
     <ClInclude Include="3DEngine\Pass\PointLightShadingPass.h" />
+    <ClInclude Include="3DEngine\Pass\ScreenSpaceShadowsPass.h" />
     <ClInclude Include="3DEngine\Pass\TemporalAAPass.h" />
     <ClInclude Include="3DEngine\Pass\TiledShadingPass.h" />
     <ClInclude Include="3DEngine\Pass\ToneMappingPass.h" />

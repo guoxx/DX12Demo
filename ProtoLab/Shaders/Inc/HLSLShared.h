@@ -169,6 +169,13 @@ struct DirectionalLightConstants
 	EVSMParam			m_EVSM;
 };
 
+struct ScreenSpaceShadowsConstants
+{
+    float4x4 mInvViewProj;
+	float4x4 m_mCascadeViewProj[4];
+	EVSMParam m_EVSM;    
+};
+
 struct EVSMConstants
 {
 	EVSMParam			m_EVSM;

@@ -201,6 +201,9 @@
     <ClCompile Include="3DEngine\Spectrum.cpp">
       <Filter>3DEngine</Filter>
     </ClCompile>
+    <ClCompile Include="3DEngine\Pass\ScreenSpaceShadowsPass.cpp">
+      <Filter>3DEngine\Pass</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DX12\DX12PipelineState.h">
@@ -415,6 +418,9 @@
     </ClInclude>
     <ClInclude Include="3DEngine\Lights\SunModel.h">
       <Filter>3DEngine\Lights</Filter>
+    </ClInclude>
+    <ClInclude Include="3DEngine\Pass\ScreenSpaceShadowsPass.h">
+      <Filter>3DEngine\Pass</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
