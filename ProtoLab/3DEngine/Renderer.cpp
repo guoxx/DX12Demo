@@ -84,6 +84,7 @@ Renderer::Renderer(GFX_HWND hwnd, int32_t width, int32_t height)
 	m_LightCullingPass = std::make_shared<LightCullingPass>(pDevice);
 	m_TiledShadingPass = std::make_shared<TiledShadingPass>(pDevice);
 
+    m_ScreenSpaceShadowPass = std::make_shared<ScreenSpaceShadowsPass>(pDevice);
     m_PointLightShadingPass = std::make_shared<PointLightShadingPass>(pDevice);
     m_DirectionalLightShadingPass = std::make_shared<DirectionalLightShadingPass>(pDevice);
 
@@ -122,6 +123,7 @@ void Renderer::Render(const Camera* pCamera, Scene* pScene)
 
 	RenderShadowMaps(pCamera, pScene);
 	RenderGBuffer(pCamera, pScene);
+    ScreenSpaceShadows(pCamera, pScene);
 	DeferredLighting(pCamera, pScene);
     PostProcess(pCamera, pScene);
 	ResolveToSwapChain();
@@ -304,6 +306,7 @@ void Renderer::DeferredLighting(const Camera* pCamera, Scene* pScene)
 {
 	DX12ScopedGraphicsContext pGfxContext{L"DeferredLighting"};
 
+    pGfxContext->ResourceTransitionBarrier(m_PostProcessSurfaces.m_ScreenSpaceShadowsSurface.Get(), D3D12_RESOURCE_STATE_GENERIC_READ);
 
 	if (g_TiledShading)
 	{
@@ -416,7 +419,8 @@ void Renderer::DeferredLighting(const Camera* pCamera, Scene* pScene)
 			pGfxContext->SetComputeRootStructuredBuffer(2, m_AllPointLights.get());
 			pGfxContext->SetComputeRootStructuredBuffer(3, m_VisiblePointLights.get());
             m_GBuffer.SetAsSRV(pGfxContext.Get(), 4, 0);
-			pGfxContext->SetComputeDynamicCbvSrvUav(4, 5, m_PostProcessSurfaces.m_HDRSurface->GetStagingUAV().GetCpuHandle());
+            pGfxContext->SetComputeDynamicCbvSrvUav(4, 5, m_PostProcessSurfaces.m_ScreenSpaceShadowsSurface->GetStagingSRV().GetCpuHandle());
+			pGfxContext->SetComputeDynamicCbvSrvUav(4, 6, m_PostProcessSurfaces.m_HDRSurface->GetStagingUAV().GetCpuHandle());
 			int firstTextureId = 0;
 			for (int i = 0; i < pScene->GetDirectionalLights().size(); ++i)
 			{
@@ -645,4 +649,31 @@ void Renderer::ToneMap()
 {
 	DX12ScopedGraphicsContext pGfxContext{L"ToneMap"};
     m_ToneMap->Apply(pGfxContext.Get(), &m_RenderContext, m_PostProcessSurfaces);
+}
+
+void Renderer::ScreenSpaceShadows(const Camera* pCamera, Scene* pScene)
+{
+    DX12ScopedGraphicsContext pGfxContext{ L"ScreenSpaceShadows" };
+
+    pGfxContext->PIXBeginEvent(L"ScreenSpaceShadows");
+
+    pGfxContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    pGfxContext->SetViewport(0, 0, m_Width, m_Height);
+
+    std::shared_ptr<DirectionalLight> sunLight = pScene->GetDirectionalLights()[0];
+
+    auto pShadowMapForDirLight = m_RenderContext.AcquireDepthSurfaceForDirectionalLight(sunLight.get());
+    auto pRSMIntensitySurface = m_RenderContext.AcquireRSMRadiantIntensitySurfaceForDirectionalLight(sunLight.get());
+    auto pRSMNormalSurface = m_RenderContext.AcquireRSMNormalSurfaceForDirectionalLight(sunLight.get());
+    auto pEVSMSurface = m_RenderContext.AcquireEVSMSurfaceForDirectionalLight(sunLight.get());
+    DirectionalLightShadowMapSet shadowmapSet{pShadowMapForDirLight, pRSMIntensitySurface, pRSMNormalSurface, pEVSMSurface};
+
+    m_ScreenSpaceShadowPass->Apply(pGfxContext.Get(),
+        &m_RenderContext,
+        sunLight.get(),
+        m_GBuffer,
+        shadowmapSet,
+        m_PostProcessSurfaces);
+
+    pGfxContext->PIXEndEvent();
 }

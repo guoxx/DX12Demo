@@ -5,6 +5,7 @@
 #include "SurfaceSet.h"
 #include "RenderContext.h"
 #include "RenderableSurfaceManager.h"
+#include "Pass/ScreenSpaceShadowsPass.h"
 #include "Pass/PointLightShadingPass.h"
 #include "Pass/DirectionalLightShadingPass.h"
 #include "Pass/ToneMappingPass.h"
@@ -46,7 +47,9 @@ private:
 
     void ToneMap();
 
-	int32_t m_Width;
+    void ScreenSpaceShadows(const Camera* pCamera, Scene* pScene);
+
+    int32_t m_Width;
 	int32_t m_Height;
     int32_t m_FrameIdx;
 
@@ -62,6 +65,7 @@ private:
 	std::shared_ptr<DX12StructuredBuffer> m_AllDirectionalLights;
 	std::shared_ptr<DX12StructuredBuffer> m_VisiblePointLights;
 
+    std::shared_ptr<ScreenSpaceShadowsPass> m_ScreenSpaceShadowPass;
     std::shared_ptr<PointLightShadingPass> m_PointLightShadingPass;
     std::shared_ptr<DirectionalLightShadingPass> m_DirectionalLightShadingPass;
 

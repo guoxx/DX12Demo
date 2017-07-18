@@ -10,7 +10,7 @@ RootSigBegin \
 ", SRV(t0) " \
 ", SRV(t1) " \
 ", SRV(t2) " \
-", DescriptorTable(SRV(t3, numDescriptors=5), UAV(u0))" \
+", DescriptorTable(SRV(t3, numDescriptors=6), UAV(u0))" \
 ", DescriptorTable(SRV(t16, numDescriptors=unbounded))" \
 RootSigEnd
 
@@ -25,6 +25,7 @@ Texture2D<float4> g_GBuffer1 : register(t4);
 Texture2D<float4> g_GBuffer2 : register(t5);
 Texture2D<float4> g_GBuffer3 : register(t6);
 Texture2D<float> g_DepthTexture : register(t7);
+Texture2D<float> g_ScreenSpaceShadowMap : register(t8);
 
 Texture2D g_ShadowMaps[] : register(t16);
 
@@ -33,56 +34,11 @@ RWTexture2D<float4> g_LightingSurface : register(u0);
 groupshared uint gs_NumLightsPerTile;
 groupshared uint gs_LightIdxPerTile[MAX_LIGHT_NODES_PER_TILE];
 
-float3 ShadeDirectionalLight(GBuffer gbuffer, DirectionalLight directionalLight)
+float3 ShadeDirectionalLight(float2 uv, GBuffer gbuffer, DirectionalLight directionalLight)
 {
 	float3 outRadiance = 0.0f;
 
-    // TODO: don't hardcore the size
-    float2 shadowMapsSize = float2(2048, 2048);
-
-	float3 shadowPos;
-	float2 shadowUV;
-
-    int cascadeIdx = 3;
-    for (int i = 3; i >=0; --i)
-    {
-	    float3 pos = mul(float4(gbuffer.Position, 1), directionalLight.m_mViewProj[i]).xyz;
-	    float2 uv = float2((pos.x + 1.0f) * 0.5f, (-pos.y + 1.0f) * 0.5f);
-        float border = 4;
-        if (all(abs(pos.xy) < ((shadowMapsSize / 4 - border) / (shadowMapsSize / 4))))
-        {
-            cascadeIdx = i;
-            shadowPos = pos;
-
-            int x = cascadeIdx & 0x01;
-            int y = (cascadeIdx & 0x02) > 1;
-
-            shadowUV.x = x * 0.5 + uv.x * 0.5;
-            shadowUV.y = y * 0.5 + uv.y * 0.5;
-        }
-    }
-
-	float shadowMask = 1.0f;
-	if (g_Constants.m_EVSM.m_Enabled)
-	{
-		float2 exponents = GetEVSMExponents(g_Constants.m_EVSM.m_PositiveExponent, g_Constants.m_EVSM.m_NegativeExponent, SMFormat32Bit);
-		float2 warpedDepth = WarpDepth(shadowPos.z, exponents);
-
-		float4 occluder = g_ShadowMaps[directionalLight.m_EVSMTexId].SampleLevel(g_StaticAnisoClampSampler, shadowUV, 0);
-
-		// Derivative of warping at depth
-		float2 depthScale = g_Constants.m_EVSM.m_VSMBias * 0.01f * exponents * warpedDepth;
-		float2 minVariance = depthScale * depthScale;
-
-		float posContrib = ChebyshevUpperBound(occluder.xz, warpedDepth.x, minVariance.x, g_Constants.m_EVSM.m_LightBleedingReduction);
-		float negContrib = ChebyshevUpperBound(occluder.yw, warpedDepth.y, minVariance.y, g_Constants.m_EVSM.m_LightBleedingReduction);
-		shadowMask = min(posContrib, negContrib);
-	}
-	else
-	{
-		float occluderDepth = g_ShadowMaps[directionalLight.m_ShadowMapTexId].SampleLevel(g_StaticPointClampSampler, shadowUV, 0);
-		shadowMask = occluderDepth < shadowPos.z ? 0.0f : 1.0f;
-	}
+	float shadowMask = g_ScreenSpaceShadowMap.SampleLevel(g_StaticPointClampSampler, uv, 0);
 
 	float3 L = -directionalLight.m_Direction.xyz;
 	float3 V = normalize(g_Constants.m_CameraPosition.xyz - gbuffer.Position);
@@ -176,7 +132,7 @@ void CSMain(uint3 Gid : SV_GroupID, uint3 GTid : SV_GroupThreadID, uint3 DTid : 
 
 	for (uint visDirectionalLightIdx = 0; visDirectionalLightIdx < g_Constants.m_NumDirectionalLights; ++visDirectionalLightIdx)
 	{
-		outRadiance += ShadeDirectionalLight(gbuffer, g_DirectionalLights[visDirectionalLightIdx]);
+		outRadiance += ShadeDirectionalLight(uv, gbuffer, g_DirectionalLights[visDirectionalLightIdx]);
 	}
 
 	for (uint visPointLightIdx = 0; visPointLightIdx < gs_NumLightsPerTile; ++visPointLightIdx)

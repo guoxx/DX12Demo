@@ -7,7 +7,7 @@ RootSigBegin \
 ", DescriptorTable(SRV(t0, numDescriptors=3), visibility=SHADER_VISIBILITY_PIXEL)" \
 RootSigEnd
 
-HLSLConstantBuffer(DirectionalLightConstants, 0, g_Constants);
+HLSLConstantBuffer(ScreenSpaceShadowsConstants, 0, g_Constants);
 
 Texture2D<float> g_DepthTexture : register(t0);
 Texture2D<float> g_ShadowMap : register(t1);
@@ -47,7 +47,7 @@ float ShadowMask(float3 positionWS)
 
     for (int i = 3; i >=0; --i)
     {
-	    float3 pos = mul(float4(positionWS, 1), g_Constants.m_DirLight.m_mViewProj[i]).xyz;
+	    float3 pos = mul(float4(positionWS, 1), g_Constants.m_mCascadeViewProj[i]).xyz;
         shadowPos[i] = pos;
 
         float border = 4;
@@ -108,9 +108,9 @@ float4 PSMain(VSOutput In) : SV_TARGET
 {
     float depth = g_DepthTexture.SampleLevel(g_StaticPointClampSampler, In.Texcoord, 0);
 
-	float3 ndcPos = float3(In.Texcoord * (2, -2) + (-1, 1), depth);
+	float3 ndcPos = float3(In.Texcoord * float2(2, -2) + float2(-1, 1), depth);
 	float4 positionWS = mul(float4(ndcPos, 1), g_Constants.mInvViewProj);
 	positionWS /= positionWS.w;
 
-    return ShadowMask(positionWS);
+    return ShadowMask(positionWS.xyz);
 }

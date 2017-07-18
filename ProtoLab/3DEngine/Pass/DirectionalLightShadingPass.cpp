@@ -91,6 +91,8 @@ void DirectionalLightShadingPass::Apply(DX12GraphicsContext* pGfxContext,
 
     uint32_t offsetInTbl = gbuffer.SetAsSRV(pGfxContext, 1, 0);
     offsetInTbl = shadowmaps.SetAsSRV(pGfxContext, 1, offsetInTbl);
+    pGfxContext->SetGraphicsDynamicCbvSrvUav(1, offsetInTbl, postProcessSurfSet.m_ScreenSpaceShadowsSurface->GetStagingSRV().GetCpuHandle());
+    offsetInTbl += 1;
 
     m_Processing->Draw(pGfxContext);
 }
