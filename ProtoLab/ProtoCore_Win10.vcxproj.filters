@@ -126,9 +126,6 @@
     <ClCompile Include="3DEngine\Model.cpp">
       <Filter>3DEngine</Filter>
     </ClCompile>
-    <ClCompile Include="3DEngine\Model_OBJ.cpp">
-      <Filter>3DEngine</Filter>
-    </ClCompile>
     <ClCompile Include="3DEngine\Primitive.cpp">
       <Filter>3DEngine</Filter>
     </ClCompile>
@@ -330,9 +327,6 @@
       <Filter>3DEngine</Filter>
     </ClInclude>
     <ClInclude Include="3DEngine\Scene.h">
-      <Filter>3DEngine</Filter>
-    </ClInclude>
-    <ClInclude Include="3DEngine\tiny_obj_loader.h">
       <Filter>3DEngine</Filter>
     </ClInclude>
     <ClInclude Include="3DEngine\Lights\DirectionalLight.h">
