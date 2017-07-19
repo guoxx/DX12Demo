@@ -7,11 +7,12 @@ class DX12Device;
 
 struct RenderableSurfaceDesc
 {
-    RenderableSurfaceDesc(GFX_FORMAT_SET format, uint32_t width, uint32_t height, uint32_t mipLevels = 1, uint32_t sampleCount = 1)
+    RenderableSurfaceDesc(GFX_FORMAT_SET format, uint32_t width, uint32_t height, uint32_t mipLevels = 1, uint32_t arraySize = 1, uint32_t sampleCount = 1)
         : m_Format{ format }
         , m_Width{ width }
         , m_Height{ height }
         , m_MipLevels{ mipLevels }
+        , m_ArraySize{ arraySize }
         , m_SampleCount{ sampleCount }
     {
     }
@@ -22,6 +23,7 @@ struct RenderableSurfaceDesc
     uint32_t m_Width;
     uint32_t m_Height;
     uint32_t m_MipLevels;
+    uint32_t m_ArraySize;
     uint32_t m_SampleCount;
 };
 

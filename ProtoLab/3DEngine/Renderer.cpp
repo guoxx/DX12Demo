@@ -157,46 +157,21 @@ void Renderer::RenderShadowMaps(const Camera* pCamera, Scene * pScene)
 
         directionalLight->PrepareForShadowPass(pCamera, DX12DirectionalLightShadowMapSize);
 
-		if (g_RSMEnabled)
-		{
-			m_RenderContext.SetCurrentLightForRSM(directionalLight.get());
+        RenderableSurfaceHandle<DX12DepthSurface> pDepthSurface = m_RenderContext.AcquireDepthSurfaceForDirectionalLight(directionalLight.get());
 
-			auto pIntensitySurface = m_RenderContext.AcquireRSMRadiantIntensitySurfaceForDirectionalLight(directionalLight.get());
-			auto pNormalSurface = m_RenderContext.AcquireRSMNormalSurfaceForDirectionalLight(directionalLight.get());
-			auto pDepthSurface = m_RenderContext.AcquireDepthSurfaceForDirectionalLight(directionalLight.get());
-
-			pGfxContext->ResourceTransitionBarrier(pDepthSurface.Get(), D3D12_RESOURCE_STATE_DEPTH_WRITE);
-
-			pGfxContext->ClearRenderTarget(pIntensitySurface.Get(), 0, 0, 0, 0);
-			pGfxContext->ClearRenderTarget(pNormalSurface.Get(), 1, 0, 0, 0);
-			pGfxContext->ClearDepthTarget(pDepthSurface.Get(), 1.0f);
-
-			DX12ColorSurface* pSurfaces[] = { pIntensitySurface.Get(), pNormalSurface.Get() };
-			pGfxContext->SetRenderTargets(_countof(pSurfaces), pSurfaces, pDepthSurface.Get());
-		}
-		else
-		{
-			auto pDepthSurface = m_RenderContext.AcquireDepthSurfaceForDirectionalLight(directionalLight.get());
-			pGfxContext->ResourceTransitionBarrier(pDepthSurface.Get(), D3D12_RESOURCE_STATE_DEPTH_WRITE);
-
-			pGfxContext->ClearDepthTarget(pDepthSurface.Get(), 1.0f);
-			pGfxContext->SetRenderTargets(0, nullptr, pDepthSurface.Get());
-		}
+	    pGfxContext->ResourceTransitionBarrier(pDepthSurface.Get(), D3D12_RESOURCE_STATE_DEPTH_WRITE);
 
         for (int32_t cascadeIdx = 0; cascadeIdx < DirectionalLight::NUM_CASCADED_SHADOW_MAP; ++cascadeIdx)
         {
+            pGfxContext->ClearDepthTarget(pDepthSurface->GetDSV(cascadeIdx), 1.0f);
+            pGfxContext->SetRenderTargets(0, nullptr, &pDepthSurface->GetDSV(cascadeIdx));
+
             static_assert(DirectionalLight::NUM_CASCADED_SHADOW_MAP == 4, "");
             static const wchar_t* markers[4] = {L"Cascade - 0", L"Cascade - 1", L"Cascade - 2", L"Cascade - 3"};
             GPU_MARKER_NAMED(pGfxContext, markers[cascadeIdx]);
 
-            int32_t tileX = cascadeIdx & 0x01;
-            int32_t tileY = (cascadeIdx & 0x02) > 1;
-
             pGfxContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-            pGfxContext->SetViewport(tileX * DX12DirectionalLightShadowMapSize / 2,
-                                     tileY * DX12DirectionalLightShadowMapSize / 2,
-                                     DX12DirectionalLightShadowMapSize / 2,
-                                     DX12DirectionalLightShadowMapSize / 2);
+            pGfxContext->SetViewport(0, 0, DX12DirectionalLightShadowMapSize, DX12DirectionalLightShadowMapSize);
 
             m_RenderContext.SetModelMatrix(DirectX::XMMatrixIdentity());
             DirectX::XMMATRIX mLightView;

@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "RenderContext.h"
+#include "Lights/DirectionalLight.h"
 
 
 RenderContext::RenderContext()
@@ -79,7 +80,12 @@ RenderableSurfaceHandle<DX12DepthSurface>  RenderContext::AcquireDepthSurfaceFor
 	}
 	else
 	{
-		RenderableSurfaceDesc desc{ GFX_FORMAT_D32_FLOAT, DX12DirectionalLightShadowMapSize, DX12DirectionalLightShadowMapSize, 1, DX12EVSMSampleCount };
+	    RenderableSurfaceDesc desc(GFX_FORMAT_D32_FLOAT,
+	                               DX12DirectionalLightShadowMapSize,
+	                               DX12DirectionalLightShadowMapSize,
+	                               1,
+	                               DirectionalLight::NUM_CASCADED_SHADOW_MAP,
+	                               DX12EVSMSampleCount);
 		handle = RenderableSurfaceManager::GetInstance()->AcquireDepthSurface(desc);
 		m_ShadowMapForDirLights.insert(std::make_pair(pDirLight, handle));
 	}

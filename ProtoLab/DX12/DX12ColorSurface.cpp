@@ -26,7 +26,7 @@ void DX12ColorSurface::InitAs2dSurface(DX12Device* device, const RenderableSurfa
 	optimizedClearValue.Color[1] = 0.0f;
 	optimizedClearValue.Color[2] = 0.0f;
 	optimizedClearValue.Color[3] = 0.0f;
-	Init(device, desc.m_Format.BaseFormat, desc.m_Width, desc.m_Height, arraySize, desc.m_MipLevels, desc.m_SampleCount, sampleQuality, flags, &optimizedClearValue, initialState);
+	Init(device, desc.m_Format.BaseFormat, desc.m_Width, desc.m_Height, desc.m_ArraySize, desc.m_MipLevels, desc.m_SampleCount, sampleQuality, flags, &optimizedClearValue, initialState);
 
 	Create2DView(device, desc.m_Format);
 }
