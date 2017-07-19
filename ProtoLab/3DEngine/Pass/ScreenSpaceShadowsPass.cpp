@@ -17,7 +17,7 @@ ScreenSpaceShadowsPass::ScreenSpaceShadowsPass(DX12Device* device)
                                                      g_ScreenSpaceShadows_PS_bytecode,
                                                      [](DX12GraphicsPsoDesc& desc)
                                                  {
-                                                     desc.SetRenderTargetFormat(GFX_FORMAT_R32_FLOAT.RTVFormat);
+                                                     desc.SetRenderTargetFormat(GFX_FORMAT_R8G8B8A8_UNORM.RTVFormat);
                                                  });
 }
 
