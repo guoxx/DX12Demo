@@ -34,7 +34,7 @@ void TemporalAAPass::Apply(DX12GraphicsContext* pGfxContext,
                             const RenderContext* pRenderContext,
                             GBufferSurfaceSet& gbuffer, PostProcessSurfaceSet& postProcessSurfSet)
 {
-    pGfxContext->PIXBeginEvent(L"TemporalAA");
+    GPU_MARKER(pGfxContext, TemporalAA);
 
     pGfxContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
     pGfxContext->SetViewport(0, 0, postProcessSurfSet.m_AASurface->GetWidth(), postProcessSurfSet.m_AASurface->GetHeight());
@@ -63,6 +63,4 @@ void TemporalAAPass::Apply(DX12GraphicsContext* pGfxContext,
         pGfxContext->SetRenderTarget(postProcessSurfSet.m_HistoryHDRSurface.Get());
         m_CopyFP16->Draw(pGfxContext);
     }
-
-    pGfxContext->PIXEndEvent();
 }

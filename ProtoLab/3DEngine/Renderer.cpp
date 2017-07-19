@@ -153,7 +153,7 @@ void Renderer::RenderShadowMaps(const Camera* pCamera, Scene * pScene)
 
 	for (auto directionalLight : pScene->GetDirectionalLights())
 	{
-		pGfxContext->PIXBeginEvent(L"ShadowMap - DirectionalLight");
+		GPU_MARKER(pGfxContext, ShadowMap_DirectionalLight);
 
         directionalLight->PrepareForShadowPass(pCamera, DX12DirectionalLightShadowMapSize);
 
@@ -187,7 +187,7 @@ void Renderer::RenderShadowMaps(const Camera* pCamera, Scene * pScene)
         {
             static_assert(DirectionalLight::NUM_CASCADED_SHADOW_MAP == 4, "");
             static const wchar_t* markers[4] = {L"Cascade - 0", L"Cascade - 1", L"Cascade - 2", L"Cascade - 3"};
-            pGfxContext->PIXBeginEvent(markers[cascadeIdx]);
+            GPU_MARKER_NAMED(pGfxContext, markers[cascadeIdx]);
 
             int32_t tileX = cascadeIdx & 0x01;
             int32_t tileY = (cascadeIdx & 0x02) > 1;
@@ -209,13 +209,11 @@ void Renderer::RenderShadowMaps(const Camera* pCamera, Scene * pScene)
             {
                 model->DrawPrimitives(&m_RenderContext, pGfxContext.Get());
             }
-
-            pGfxContext->PIXEndEvent();
         }
 
 		if (g_EVSMEnabled)
 		{
-            pGfxContext->PIXBeginEvent(L"EVSM");
+            GPU_MARKER(pGfxContext, EVSM);
 
 			auto pDepthSurface = m_RenderContext.AcquireDepthSurfaceForDirectionalLight(directionalLight.get());
 			auto pEVSMSurface = m_RenderContext.AcquireEVSMSurfaceForDirectionalLight(directionalLight.get());
@@ -237,23 +235,19 @@ void Renderer::RenderShadowMaps(const Camera* pCamera, Scene * pScene)
 		    pGfxContext->SetGraphicsRootDynamicConstantBufferView(0, &constants, sizeof(constants));
 			pGfxContext->SetGraphicsDynamicCbvSrvUav(1, 0, pDepthSurface->GetStagingSRV().GetCpuHandle());
 			m_EVSM->Draw(pGfxContext.Get());
-
-            pGfxContext->PIXEndEvent();
 		}
-
-		pGfxContext->PIXEndEvent();
 	}
 
 	for (auto pointLight : pScene->GetPointLights())
 	{
-		pGfxContext->PIXBeginEvent(L"ShadowMap - PointLight");
+		GPU_MARKER(pGfxContext, ShadowMap_PointLight);
 
         pointLight->PrepareForShadowPass(pCamera, DX12PointLightShadowMapSize);
 
 		for (int i = 0; i < 6; ++i)
 		{
 			wchar_t* axisNames[] = { L"POSITIVE_X", L"NEGATIVE_X", L"POSITIVE_Y", L"NEGATIVE_Y", L"POSITIVE_Z", L"NEGATIVE_Z" };
-			pGfxContext->PIXBeginEvent(axisNames[i]);
+			GPU_MARKER_NAMED(pGfxContext, axisNames[i]);
 
 			if (g_RSMEnabled)
 			{
@@ -295,10 +289,7 @@ void Renderer::RenderShadowMaps(const Camera* pCamera, Scene * pScene)
 			{
 				model->DrawPrimitives(&m_RenderContext, pGfxContext.Get());
 			}
-
-			pGfxContext->PIXEndEvent();
 		}
-		pGfxContext->PIXEndEvent();
 	}
 }
 
@@ -311,7 +302,7 @@ void Renderer::DeferredLighting(const Camera* pCamera, Scene* pScene)
 	if (g_TiledShading)
 	{
 		{
-			pGfxContext->PIXBeginEvent(L"LightCulling");
+			GPU_MARKER(pGfxContext, LightCulling);
 
 			int32_t firstTextureId = 0;
 
@@ -381,12 +372,10 @@ void Renderer::DeferredLighting(const Camera* pCamera, Scene* pScene)
 			m_LightCullingPass->Exec(pGfxContext.Get());
 
 			pGfxContext->ResourceTransitionBarrier(m_VisiblePointLights.get(), D3D12_RESOURCE_STATE_GENERIC_READ);
-
-			pGfxContext->PIXEndEvent();
 		}
 
 		{
-			pGfxContext->PIXBeginEvent(L"TiledShading");
+			GPU_MARKER(pGfxContext, TiledShading);
 
             m_GBuffer.TransmitToRead(pGfxContext.Get());
 			pGfxContext->ResourceTransitionBarrier(m_PostProcessSurfaces.m_HDRSurface.Get(), D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
@@ -473,13 +462,11 @@ void Renderer::DeferredLighting(const Camera* pCamera, Scene* pScene)
 					pGfxContext->ResourceTransitionBarrier(pShadowMapsForPointLight[j].Get(), D3D12_RESOURCE_STATE_DEPTH_WRITE);
 				}
 			}
-
-			pGfxContext->PIXEndEvent();
 		}
 	}
 	else
 	{
-		pGfxContext->PIXBeginEvent(L"DeferredLighting");
+        GPU_MARKER(pGfxContext, DeferredLighting);
 
         pGfxContext->ResourceTransitionBarrier(m_PostProcessSurfaces.m_HDRSurface.Get(), D3D12_RESOURCE_STATE_RENDER_TARGET);
 		pGfxContext->ClearRenderTarget(m_PostProcessSurfaces.m_HDRSurface.Get(), 0, 0, 0, 0);
@@ -509,8 +496,6 @@ void Renderer::DeferredLighting(const Camera* pCamera, Scene* pScene)
             PointLightShadowMapSet shadowmapSet{pShadowMapsForPointLight};
             m_PointLightShadingPass->Apply(pGfxContext.Get(), &m_RenderContext, pointLight.get(), m_GBuffer, shadowmapSet, m_PostProcessSurfaces);
 		}
-
-		pGfxContext->PIXEndEvent();
 	}
 }
 
@@ -520,7 +505,7 @@ void Renderer::RenderGBuffer(const Camera* pCamera, Scene* pScene)
 
 	DX12ScopedGraphicsContext pGfxContext{L"RenderGBuffer"};
 
-	pGfxContext->PIXBeginEvent(L"G-Buffer");
+	GPU_MARKER(pGfxContext, G_Buffer);
 
     m_GBuffer.TransmitToWrite(pGfxContext.Get());
 
@@ -546,8 +531,6 @@ void Renderer::RenderGBuffer(const Camera* pCamera, Scene* pScene)
 		model->DrawPrimitives(&m_RenderContext, pGfxContext.Get());
 	}
 
-	pGfxContext->PIXEndEvent();
-
     m_RenderContext.SaveInfoForNextFrame();
 }
 
@@ -564,7 +547,7 @@ void Renderer::ResolveToSwapChain()
 
 	DX12ScopedGraphicsContext pGfxContext{L"ResolveToSwapChain"};
 
-    pGfxContext->PIXBeginEvent(L"ResolveToSwapChain");
+    GPU_MARKER(pGfxContext, ResolveToSwapChain);
 
     // Clear the views.
 	DX12ColorSurface* pColorSurface = m_SwapChain->GetBackBuffer();
@@ -577,15 +560,13 @@ void Renderer::ResolveToSwapChain()
     m_ResolveToSwapChain->Apply(pGfxContext.Get());
     pGfxContext->SetGraphicsRootDescriptorTable(0, m_PostProcessSurfaces.m_LDRSurface->GetSRV());
     m_ResolveToSwapChain->Draw(pGfxContext.Get());
-
-    pGfxContext->PIXEndEvent();
 }
 
 void Renderer::RenderDebugMenu()
 {
 	DX12ScopedGraphicsContext pGfxContext{L"RenderDebugMenu"};
 
-	pGfxContext->PIXBeginEvent(L"DebugMenu");
+	GPU_MARKER(pGfxContext, DebugMenu);
 
     // Clear the views.
 	DX12ColorSurface* pColorSurface = m_SwapChain->GetBackBuffer();
@@ -595,8 +576,6 @@ void Renderer::RenderDebugMenu()
 	pGfxContext->SetViewport(0, 0, m_Width, m_Height);
 
 	EngineTuning::Display(*pGfxContext, 10.0f, 40.0f, 1900.0f, 1040.0f);
-
-	pGfxContext->PIXEndEvent();
 }
 
 void Renderer::AAFilter()
@@ -609,7 +588,7 @@ void Renderer::CalcAvgLuminance(DX12ColorSurface* surf)
 {
     DX12ScopedGraphicsContext pGfxContext{L"CalcAvgLuminance"};
 
-    pGfxContext->PIXBeginEvent(L"Average Luminance");
+    GPU_MARKER(pGfxContext, Average_Luminance);
 
     pGfxContext->ResourceTransitionBarrier(surf, D3D12_RESOURCE_STATE_GENERIC_READ);
     pGfxContext->ResourceTransitionBarrier((*m_PostProcessSurfaces.m_LuminanceSurfaces.begin()).Get(), D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
@@ -641,8 +620,6 @@ void Renderer::CalcAvgLuminance(DX12ColorSurface* surf)
         pGfxContext->SetComputeDynamicCbvSrvUav(0, 1, curSurf->GetStagingUAV().GetCpuHandle());
         curProcessing->Dispatch(pGfxContext.Get(), curSurf->GetWidth(), curSurf->GetHeight());        
     }
-
-    pGfxContext->PIXEndEvent();
 }
 
 void Renderer::ToneMap()

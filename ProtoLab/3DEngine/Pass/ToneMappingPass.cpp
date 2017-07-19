@@ -23,7 +23,7 @@ void ToneMappingPass::Apply(DX12GraphicsContext* pGfxContext,
                             const RenderContext* pRenderContext,
                             PostProcessSurfaceSet& postProcessSurfSet)
 {
-    pGfxContext->PIXBeginEvent(L"ToneMap");
+    GPU_MARKER(pGfxContext, ToneMap);
 
     m_Processing->Apply(pGfxContext);
 
@@ -47,6 +47,4 @@ void ToneMappingPass::Apply(DX12GraphicsContext* pGfxContext,
     pGfxContext->SetGraphicsDynamicCbvSrvUav(1, 1, postProcessSurfSet.m_LuminanceSurfaces.back()->GetStagingSRV().GetCpuHandle());
 
     m_Processing->Draw(pGfxContext);
-
-    pGfxContext->PIXEndEvent();
 }

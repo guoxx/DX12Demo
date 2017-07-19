@@ -40,3 +40,30 @@ public:
 private:
 	DX12GraphicsContext*  m_Ctx;
 };
+
+class DX12ScopedGpuMarker: public Heaponly, Noncopyable, Nonmovable
+{
+public:
+	DX12ScopedGpuMarker(DX12ScopedGraphicsContext& a_Ctx, const wchar_t* evt)
+        : m_Ctx{a_Ctx.Get()}
+	{
+        m_Ctx->PIXBeginEvent(evt);
+	}
+
+	DX12ScopedGpuMarker(DX12GraphicsContext* a_Ctx, const wchar_t* evt)
+        : m_Ctx{a_Ctx}
+	{
+        m_Ctx->PIXBeginEvent(evt);
+	}
+
+	~DX12ScopedGpuMarker()
+	{
+        m_Ctx->PIXEndEvent();
+	}
+
+private:
+	DX12GraphicsContext*  m_Ctx;
+};
+
+#define GPU_MARKER(a_Ctx, a_Event) DX12ScopedGpuMarker scopedGpuMarker_##a_Event{a_Ctx, L#a_Event};
+#define GPU_MARKER_NAMED(a_Ctx, a_Name) DX12ScopedGpuMarker scopedGpuMarker_##a_Event{a_Ctx, a_Name};

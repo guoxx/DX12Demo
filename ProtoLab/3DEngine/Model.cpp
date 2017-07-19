@@ -16,10 +16,6 @@ Model::~Model()
 
 void Model::DrawPrimitives(RenderContext* pRenderContext, DX12GraphicsContext* pGfxContext)
 {
-	//pGfxContext->PIXBeginEvent(m_wName.c_str());
-
 	pRenderContext->SetModelMatrix(GetWorldMatrix());
 	m_Mesh->DrawPrimitives(pRenderContext, pGfxContext);
-
-	//pGfxContext->PIXEndEvent();
 }
