@@ -44,6 +44,9 @@ protected:
 	int64_t m_Frame;
 	DX::StepTimer m_Timer;
 
+    bool m_RenderDoc;
+    bool m_DebugGfx;
+
 private:
 	// Window title.
 	std::wstring m_Title;

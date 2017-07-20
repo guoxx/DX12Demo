@@ -8,6 +8,8 @@ DXSample::DXSample(UINT width, UINT height, std::wstring name)
 	, m_Height(height)
 	, m_Title(name)
 	, m_Frame(0)
+    , m_RenderDoc(false)
+    , m_DebugGfx(false)
 {
 	m_AspectRatio = static_cast<float>(width) / static_cast<float>(height);
 }
@@ -47,6 +49,14 @@ void DXSample::ParseCommandLineArgs(WCHAR* argv[], int argc)
 			_wcsnicmp(argv[i], L"/renderdoc", wcslen(argv[i])) == 0)
 		{
 			m_Title = m_Title + L" (RenderDoc)";
+            m_RenderDoc = true;
+		}
+
+		if (_wcsnicmp(argv[i], L"-debuggfx", wcslen(argv[i])) == 0 || 
+			_wcsnicmp(argv[i], L"/debuggfx", wcslen(argv[i])) == 0)
+		{
+			m_Title = m_Title + L" (DebugGfx)";
+            m_DebugGfx = true;
 		}
 	}
 }

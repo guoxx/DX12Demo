@@ -14,7 +14,13 @@ class DX12FenceManager;
 class DX12GraphicsManager
 {
 public:
-	static void Initialize();
+    struct Options
+    {
+        bool m_RenderDoc;        
+        bool m_ApiValidation;
+    };
+
+	static void Initialize(Options options);
 	static void Finalize();
 
 	static DX12GraphicsManager* GetInstance() { return s_GfxManager; }
@@ -49,7 +55,7 @@ public:
 	void AllocateConstantsBuffer(uint32_t sizeInBytes, uint32_t alignInBytes, void** pCpuWrittablePtr, D3D12_GPU_VIRTUAL_ADDRESS* pGpuVirtualAddress);
 
 private:
-	DX12GraphicsManager();
+	DX12GraphicsManager(Options options);
 	~DX12GraphicsManager();
 
 	void CreateGraphicCommandQueues();

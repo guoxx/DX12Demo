@@ -142,7 +142,7 @@ void DX12SponzaDemo::OnResuming()
 // These are the resources that depend on the device.
 void DX12SponzaDemo::CreateDevice()
 {
-	DX12GraphicsManager::Initialize();
+	DX12GraphicsManager::Initialize({m_RenderDoc, m_DebugGfx});
 	MaterialManager::Initialize();
 	RenderableSurfaceManager::Initialize();
 	GameInput::Initialize(m_Hwnd);

@@ -7,12 +7,13 @@
 #include "DX12Fence.h"
 #include "DX12GpuResource.h"
 #include "DX12Texture.h"
+#include "3DEngine/RenderDoc/RenderDoc.h"
 
 DX12GraphicsManager* DX12GraphicsManager::s_GfxManager = nullptr;
 
-void DX12GraphicsManager::Initialize()
+void DX12GraphicsManager::Initialize(Options options)
 {
-	s_GfxManager = new DX12GraphicsManager();
+	s_GfxManager = new DX12GraphicsManager(options);
 }
 
 void DX12GraphicsManager::Finalize()
@@ -21,21 +22,25 @@ void DX12GraphicsManager::Finalize()
 	s_GfxManager = nullptr;
 }
 
-DX12GraphicsManager::DX12GraphicsManager()
+DX12GraphicsManager::DX12GraphicsManager(Options options)
 	: m_UploadHeapAllocator{ 0, DX12UploadHeapSizeInBytes }
 	, m_ConstantsBufferAllocator{ 0, DX12ConstantsBufferHeapSizeInBytes }
 	, m_TempResourcePoolIdx{ 0 }
 {
-#ifndef NDEBUG
-    // Enable the D3D12 debug layer.
+    if (options.m_RenderDoc)
     {
+        RenderDoc::initialize(options.m_ApiValidation);
+    }
+
+    if (options.m_ApiValidation)
+    {
+        // Enable the D3D12 debug layer.
         ComPtr<ID3D12Debug> debugController;
         if (SUCCEEDED(D3D12GetDebugInterface(IID_GRAPHICS_PPV_ARGS(debugController.GetAddressOf()))))
         {
             debugController->EnableDebugLayer();
         }
     }
-#endif
 
 	m_Device = std::make_unique<DX12Device>();
 

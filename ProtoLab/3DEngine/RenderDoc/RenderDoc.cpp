@@ -17,9 +17,8 @@ void RenderDoc::initialize(bool debug)
 	s_renderdoc->SetLogFilePathTemplate("renderdoc/");
 	if (debug)
 	{
-		s_renderdoc->SetCaptureOptionU32(eRENDERDOC_Option_DebugDeviceMode, 1);
+		s_renderdoc->SetCaptureOptionU32(eRENDERDOC_Option_APIValidation, 1);
 		s_renderdoc->SetCaptureOptionU32(eRENDERDOC_Option_DebugOutputMute, 0);
-		s_renderdoc->SetCaptureOptionU32(eRENDERDOC_Option_VerifyMapWrites, 1);
 	}
 
 	RENDERDOC_InputButton k = eRENDERDOC_Key_PrtScrn;
