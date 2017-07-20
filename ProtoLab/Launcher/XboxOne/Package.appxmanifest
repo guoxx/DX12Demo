@@ -8,10 +8,10 @@
             Version="1.0.0.0" />
 
   <Properties>
-    <DisplayName>DX12Demo</DisplayName>
+    <DisplayName>ProtoLabNG</DisplayName>
     <PublisherDisplayName>PublisherDisplayName</PublisherDisplayName>
-    <Logo>XboxOne\Resources\StoreLogo.png</Logo>
-    <Description>DX12Demo</Description>
+    <Logo>Launcher\XboxOne\Resources\StoreLogo.png</Logo>
+    <Description>ProtoLabNG</Description>
   </Properties>
 
   <Prerequisites>
@@ -26,15 +26,15 @@
   <Applications>
     <Application Id="App"
         Executable="$targetnametoken$.exe"
-        EntryPoint="DX12Demo.App">
+        EntryPoint="ProtoLabNG.App">
       <VisualElements
-          DisplayName="DX12Demo"
-          Logo="XboxOne\Resources\Logo.png"
-          SmallLogo="XboxOne\Resources\SmallLogo.png"
-          Description="DX12Demo"
+          DisplayName="ProtoLabNG"
+          Logo="Launcher\XboxOne\Resources\Logo.png"
+          SmallLogo="Launcher\XboxOne\Resources\SmallLogo.png"
+          Description="ProtoLabNG"
           ForegroundText="light"
           BackgroundColor="#464646">
-        <SplashScreen Image="XboxOne\Resources\SplashScreen.png" />
+        <SplashScreen Image="Launcher\XboxOne\Resources\SplashScreen.png" />
       </VisualElements>
       <Extensions>
         <mx:Extension Category="xbox.system.resources">

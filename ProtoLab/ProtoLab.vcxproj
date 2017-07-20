@@ -211,7 +211,6 @@
     <ClCompile Include="3DEngine\Spectrum.cpp" />
     <ClCompile Include="3DEngine\SurfaceSet.cpp" />
     <ClCompile Include="3DEngine\TextRenderer.cpp" />
-    <ClCompile Include="DX12SponzaDemo.cpp" />
     <ClCompile Include="DX12\DX12Buffer.cpp" />
     <ClCompile Include="DX12\DX12ColorSurface.cpp" />
     <ClCompile Include="DX12\DX12CommandContext.cpp" />
@@ -228,7 +227,10 @@
     <ClCompile Include="DX12\DX12ShaderCompiler.cpp" />
     <ClCompile Include="DX12\DX12SwapChain.cpp" />
     <ClCompile Include="DX12\DX12Texture.cpp" />
-    <ClCompile Include="DXSample.cpp" />
+    <ClCompile Include="Launcher\DX12SponzaDemo.cpp" />
+    <ClCompile Include="Launcher\DXSample.cpp" />
+    <ClCompile Include="Launcher\Win10\Main.cpp" />
+    <ClCompile Include="Launcher\Win10\Win32Application.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Development|x64'">Create</PrecompiledHeader>
@@ -238,8 +240,6 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.h</PrecompiledHeaderFile>
     </ClCompile>
     <ClCompile Include="RayTracing\PathTracer.cpp" />
-    <ClCompile Include="Win10\Main.cpp" />
-    <ClCompile Include="Win10\Win32Application.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="3DEngine\Filters\ComputeProcessing.h" />
@@ -277,7 +277,6 @@
     <ClInclude Include="3DEngine\Spectrum.h" />
     <ClInclude Include="3DEngine\SurfaceSet.h" />
     <ClInclude Include="3DEngine\TextRenderer.h" />
-    <ClInclude Include="DX12SponzaDemo.h" />
     <ClInclude Include="DX12\d3dx12.h" />
     <ClInclude Include="DX12\DX12.h" />
     <ClInclude Include="DX12\DX12Buffer.h" />
@@ -302,18 +301,19 @@
     <ClInclude Include="DX12\DX12Texture.h" />
     <ClInclude Include="DX12\DX12Wrapper.h" />
     <ClInclude Include="DX12\Hash.h" />
-    <ClInclude Include="DXSample.h" />
+    <ClInclude Include="Launcher\DX12SponzaDemo.h" />
+    <ClInclude Include="Launcher\DXSample.h" />
+    <ClInclude Include="Launcher\StepTimer.h" />
+    <ClInclude Include="Launcher\Win10\Win32Application.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="RayTracing\PathTracer.h" />
     <ClInclude Include="Shaders\Inc\HLSLShared.h" />
-    <ClInclude Include="StepTimer.h" />
     <ClInclude Include="Utils\Color.h" />
     <ClInclude Include="Utils\Heaponly.h" />
     <ClInclude Include="Utils\Helpers.h" />
     <ClInclude Include="Utils\Noncopyable.h" />
     <ClInclude Include="Utils\Nonmovable.h" />
     <ClInclude Include="Utils\RingBufferAllocator.h" />
-    <ClInclude Include="Win10\Win32Application.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

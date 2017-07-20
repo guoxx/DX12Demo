@@ -4,17 +4,11 @@
     <Filter Include="DX12">
       <UniqueIdentifier>{a9ca38fd-7ef6-4951-8f3d-319972f94bb4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sources">
-      <UniqueIdentifier>{4af178de-a3fd-4b7b-bb3f-f8f0535b5c52}</UniqueIdentifier>
-    </Filter>
     <Filter Include="DX12\Private">
       <UniqueIdentifier>{f650b4bd-8daa-4cdd-839f-f8e197d404a1}</UniqueIdentifier>
     </Filter>
     <Filter Include="DX12\Public">
       <UniqueIdentifier>{5ffa3523-8f23-423f-9631-9513b69e0ba9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Sources\Win10">
-      <UniqueIdentifier>{ed07c81a-6536-47f6-8705-1a44d232767f}</UniqueIdentifier>
     </Filter>
     <Filter Include="Utils">
       <UniqueIdentifier>{1ba50b8e-9252-4ea4-b985-d10d18d45260}</UniqueIdentifier>
@@ -46,6 +40,12 @@
     <Filter Include="3DEngine\RenderDoc">
       <UniqueIdentifier>{f575f638-f3bd-46ad-a46c-014587de848b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Launcher">
+      <UniqueIdentifier>{59eaace4-7c2e-4284-bd22-d589f68289c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Launcher\Win10">
+      <UniqueIdentifier>{45ccfde5-3d79-472d-a863-e5c4182d4f35}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DX12\DX12Buffer.cpp">
@@ -65,18 +65,6 @@
     </ClCompile>
     <ClCompile Include="DX12\DX12Texture.cpp">
       <Filter>DX12\Private</Filter>
-    </ClCompile>
-    <ClCompile Include="pch.cpp">
-      <Filter>Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="Win10\Main.cpp">
-      <Filter>Sources\Win10</Filter>
-    </ClCompile>
-    <ClCompile Include="Win10\Win32Application.cpp">
-      <Filter>Sources\Win10</Filter>
-    </ClCompile>
-    <ClCompile Include="DXSample.cpp">
-      <Filter>Sources</Filter>
     </ClCompile>
     <ClCompile Include="DX12\DX12DescriptorManager.cpp">
       <Filter>DX12\Private</Filter>
@@ -98,9 +86,6 @@
     </ClCompile>
     <ClCompile Include="DX12\DX12DepthSurface.cpp">
       <Filter>DX12\Private</Filter>
-    </ClCompile>
-    <ClCompile Include="DX12SponzaDemo.cpp">
-      <Filter>Sources</Filter>
     </ClCompile>
     <ClCompile Include="3DEngine\Lights\ILight.cpp">
       <Filter>3DEngine\Lights</Filter>
@@ -207,6 +192,19 @@
     <ClCompile Include="3DEngine\RenderDoc\RenderDoc.cpp">
       <Filter>3DEngine\RenderDoc</Filter>
     </ClCompile>
+    <ClCompile Include="Launcher\Win10\Main.cpp">
+      <Filter>Launcher\Win10</Filter>
+    </ClCompile>
+    <ClCompile Include="Launcher\Win10\Win32Application.cpp">
+      <Filter>Launcher\Win10</Filter>
+    </ClCompile>
+    <ClCompile Include="Launcher\DX12SponzaDemo.cpp">
+      <Filter>Launcher</Filter>
+    </ClCompile>
+    <ClCompile Include="Launcher\DXSample.cpp">
+      <Filter>Launcher</Filter>
+    </ClCompile>
+    <ClCompile Include="pch.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DX12\DX12PipelineState.h">
@@ -230,20 +228,8 @@
     <ClInclude Include="DX12\DX12Device.h">
       <Filter>DX12\Private</Filter>
     </ClInclude>
-    <ClInclude Include="pch.h">
-      <Filter>Sources</Filter>
-    </ClInclude>
-    <ClInclude Include="StepTimer.h">
-      <Filter>Sources</Filter>
-    </ClInclude>
     <ClInclude Include="DX12\d3dx12.h">
       <Filter>DX12\Public</Filter>
-    </ClInclude>
-    <ClInclude Include="Win10\Win32Application.h">
-      <Filter>Sources\Win10</Filter>
-    </ClInclude>
-    <ClInclude Include="DXSample.h">
-      <Filter>Sources</Filter>
     </ClInclude>
     <ClInclude Include="Utils\Heaponly.h">
       <Filter>Utils</Filter>
@@ -292,9 +278,6 @@
     </ClInclude>
     <ClInclude Include="Utils\Helpers.h">
       <Filter>Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="DX12SponzaDemo.h">
-      <Filter>Sources</Filter>
     </ClInclude>
     <ClInclude Include="3DEngine\Lights\ILight.h">
       <Filter>3DEngine\Lights</Filter>
@@ -425,6 +408,19 @@
     <ClInclude Include="3DEngine\RenderDoc\RenderDoc.h">
       <Filter>3DEngine\RenderDoc</Filter>
     </ClInclude>
+    <ClInclude Include="Launcher\Win10\Win32Application.h">
+      <Filter>Launcher\Win10</Filter>
+    </ClInclude>
+    <ClInclude Include="Launcher\DX12SponzaDemo.h">
+      <Filter>Launcher</Filter>
+    </ClInclude>
+    <ClInclude Include="Launcher\DXSample.h">
+      <Filter>Launcher</Filter>
+    </ClInclude>
+    <ClInclude Include="Launcher\StepTimer.h">
+      <Filter>Launcher</Filter>
+    </ClInclude>
+    <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\Inc\BRDF.hlsli">
