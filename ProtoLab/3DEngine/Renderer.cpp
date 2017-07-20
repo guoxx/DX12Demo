@@ -631,8 +631,7 @@ void Renderer::ToneMap()
 void Renderer::ScreenSpaceShadows(const Camera* pCamera, Scene* pScene)
 {
     DX12ScopedGraphicsContext pGfxContext{ L"ScreenSpaceShadows" };
-
-    pGfxContext->PIXBeginEvent(L"ScreenSpaceShadows");
+    GPU_MARKER(pGfxContext, ScreenSpaceShadows);
 
     pGfxContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
     pGfxContext->SetViewport(0, 0, m_Width, m_Height);
@@ -651,6 +650,4 @@ void Renderer::ScreenSpaceShadows(const Camera* pCamera, Scene* pScene)
         m_GBuffer,
         shadowmapSet,
         m_PostProcessSurfaces);
-
-    pGfxContext->PIXEndEvent();
 }
