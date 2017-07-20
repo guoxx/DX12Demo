@@ -43,6 +43,9 @@
     <Filter Include="3DEngine\Lights\HosekWilkie_SkylightModel">
       <UniqueIdentifier>{cb77d28d-8097-4142-ac4d-d7e3da89379b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="3DEngine\RenderDoc">
+      <UniqueIdentifier>{f575f638-f3bd-46ad-a46c-014587de848b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DX12\DX12Buffer.cpp">
@@ -200,6 +203,9 @@
     </ClCompile>
     <ClCompile Include="3DEngine\Pass\ScreenSpaceShadowsPass.cpp">
       <Filter>3DEngine\Pass</Filter>
+    </ClCompile>
+    <ClCompile Include="3DEngine\RenderDoc\RenderDoc.cpp">
+      <Filter>3DEngine\RenderDoc</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -415,6 +421,9 @@
     </ClInclude>
     <ClInclude Include="3DEngine\Pass\ScreenSpaceShadowsPass.h">
       <Filter>3DEngine\Pass</Filter>
+    </ClInclude>
+    <ClInclude Include="3DEngine\RenderDoc\RenderDoc.h">
+      <Filter>3DEngine\RenderDoc</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

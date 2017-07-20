@@ -103,8 +103,7 @@
       </Command>
     </PreBuildEvent>
     <PostBuildEvent>
-      <Command>
-      </Command>
+      <Command>if not exist "$(OutDir)renderdoc\" mkdir "$(OutDir)renderdoc\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Development|x64'">
@@ -140,8 +139,7 @@
       </Command>
     </PreBuildEvent>
     <PostBuildEvent>
-      <Command>
-      </Command>
+      <Command>if not exist "$(OutDir)renderdoc\" mkdir "$(OutDir)renderdoc\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -178,8 +176,7 @@
       </Command>
     </PreBuildEvent>
     <PostBuildEvent>
-      <Command>
-      </Command>
+      <Command>if not exist "$(OutDir)renderdoc\" mkdir "$(OutDir)renderdoc\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -207,6 +204,7 @@
     <ClCompile Include="3DEngine\Pass\ToneMappingPass.cpp" />
     <ClCompile Include="3DEngine\Primitive.cpp" />
     <ClCompile Include="3DEngine\RenderContext.cpp" />
+    <ClCompile Include="3DEngine\RenderDoc\RenderDoc.cpp" />
     <ClCompile Include="3DEngine\Renderer.cpp" />
     <ClCompile Include="3DEngine\RenderableSurfaceManager.cpp" />
     <ClCompile Include="3DEngine\Scene.cpp" />
@@ -273,6 +271,7 @@
     <ClInclude Include="3DEngine\Primitive.h" />
     <ClInclude Include="3DEngine\RenderableSurfaceManager.h" />
     <ClInclude Include="3DEngine\RenderContext.h" />
+    <ClInclude Include="3DEngine\RenderDoc\RenderDoc.h" />
     <ClInclude Include="3DEngine\Renderer.h" />
     <ClInclude Include="3DEngine\Scene.h" />
     <ClInclude Include="3DEngine\Spectrum.h" />
@@ -384,6 +383,9 @@
     </ProjectReference>
     <ProjectReference Include="..\ThirdParty\embree\embree.vcxproj">
       <Project>{01abbc96-b193-4467-8e1e-6fd4df051ac7}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\ThirdParty\RenderDoc\RenderDoc.vcxproj">
+      <Project>{5b9f813d-6ac9-45f3-bda7-330e1051f2b0}</Project>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
