@@ -208,6 +208,7 @@
     <ClCompile Include="3DEngine\Renderer.cpp" />
     <ClCompile Include="3DEngine\RenderableSurfaceManager.cpp" />
     <ClCompile Include="3DEngine\Scene.cpp" />
+    <ClCompile Include="3DEngine\Sky.cpp" />
     <ClCompile Include="3DEngine\Spectrum.cpp" />
     <ClCompile Include="3DEngine\SphericalCoordinates.cpp" />
     <ClCompile Include="3DEngine\SurfaceSet.cpp" />
@@ -275,6 +276,7 @@
     <ClInclude Include="3DEngine\RenderDoc\RenderDoc.h" />
     <ClInclude Include="3DEngine\Renderer.h" />
     <ClInclude Include="3DEngine\Scene.h" />
+    <ClInclude Include="3DEngine\Sky.h" />
     <ClInclude Include="3DEngine\Spectrum.h" />
     <ClInclude Include="3DEngine\SphericalCoordinates.h" />
     <ClInclude Include="3DEngine\SurfaceSet.h" />

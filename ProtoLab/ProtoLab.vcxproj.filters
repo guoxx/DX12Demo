@@ -208,6 +208,9 @@
     <ClCompile Include="3DEngine\SphericalCoordinates.cpp">
       <Filter>3DEngine</Filter>
     </ClCompile>
+    <ClCompile Include="3DEngine\Sky.cpp">
+      <Filter>3DEngine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DX12\DX12PipelineState.h">
@@ -425,6 +428,9 @@
     </ClInclude>
     <ClInclude Include="pch.h" />
     <ClInclude Include="3DEngine\SphericalCoordinates.h">
+      <Filter>3DEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="3DEngine\Sky.h">
       <Filter>3DEngine</Filter>
     </ClInclude>
   </ItemGroup>
