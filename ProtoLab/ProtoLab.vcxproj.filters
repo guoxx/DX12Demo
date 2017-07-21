@@ -205,6 +205,9 @@
       <Filter>Launcher</Filter>
     </ClCompile>
     <ClCompile Include="pch.cpp" />
+    <ClCompile Include="3DEngine\SphericalCoordinates.cpp">
+      <Filter>3DEngine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DX12\DX12PipelineState.h">
@@ -421,6 +424,9 @@
       <Filter>Launcher</Filter>
     </ClInclude>
     <ClInclude Include="pch.h" />
+    <ClInclude Include="3DEngine\SphericalCoordinates.h">
+      <Filter>3DEngine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\Inc\BRDF.hlsli">
