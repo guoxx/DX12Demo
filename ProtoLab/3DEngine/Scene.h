@@ -1,4 +1,6 @@
 #pragma once
+#include "Sky.h"
+#include "SphericalCoordinates.h"
 
 class Model;
 class PointLight;
@@ -9,6 +11,8 @@ class Scene
 public:
 	Scene();
 	~Scene();
+
+    std::shared_ptr<Sky> GetSky() const;
 
 	std::vector<std::shared_ptr<Model>> GetModels() const;
 	std::vector<std::shared_ptr<PointLight>> GetPointLights() const;
@@ -26,6 +30,12 @@ public:
 	void Update(double delta);
 
 private:
+    float m_Turbidity;
+    Color m_GroundAlbedo;
+    SphericalCoordinates m_SunCoord;
+
+    std::shared_ptr<Sky> m_Sky;
+
 	std::vector<std::shared_ptr<PointLight>> m_PointLights;
 	std::vector<std::shared_ptr<DirectionalLight>> m_DirectionalLights;
 	std::vector<std::shared_ptr<Model>> m_Models;

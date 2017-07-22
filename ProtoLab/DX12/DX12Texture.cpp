@@ -94,6 +94,34 @@ DX12Texture* DX12Texture::LoadFromFile(DX12Device* device, DX12GraphicsContext* 
 	return pTex;
 }
 
+DX12Texture* DX12Texture::LoadFromScratchImage(DX12Device* device, DX12GraphicsContext* pGfxContext, ScratchImage& img, bool forceSRGB)
+{
+    HRESULT result = S_OK;
+
+    // create d3d resource
+    ComPtr<ID3D12Resource> d3dResoure;
+    result = CreateTextureEx(device->GetD3DDevice(), img.GetMetadata(), D3D12_RESOURCE_FLAG_ALLOW_SIMULTANEOUS_ACCESS, forceSRGB, d3dResoure.ReleaseAndGetAddressOf());
+    assert(result == S_OK);
+
+    // prepare upload texture data description
+    std::vector<D3D12_SUBRESOURCE_DATA> subesources;
+    result = PrepareUpload(device->GetD3DDevice(), img.GetImages(), img.GetImageCount(), img.GetMetadata(), subesources);
+    assert(result == S_OK);
+
+    // create texture and upload resources
+    DX12Texture* pTex = new DX12Texture(device, d3dResoure, D3D12_RESOURCE_STATE_COPY_DEST);
+    pGfxContext->ResourceTransitionBarrier(pTex, D3D12_RESOURCE_STATE_COPY_DEST);
+    pGfxContext->UploadGpuResource(pTex, 0, static_cast<uint32_t>(subesources.size()), subesources.data());
+    pGfxContext->ResourceTransitionBarrier(pTex, D3D12_RESOURCE_STATE_GENERIC_READ);
+
+    if (forceSRGB)
+    {
+        assert(DirectX::MakeSRGB(pTex->m_Format) == pTex->m_Format);
+    }
+
+    return pTex;
+}
+
 DX12Texture * DX12Texture::LoadFromBin(DX12Device * device, DX12GraphicsContext * pGfxContext, const uint8_t * pBinData,
 	DXGI_FORMAT format, uint32_t width, uint32_t height)
 {

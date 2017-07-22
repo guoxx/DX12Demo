@@ -19,6 +19,7 @@
 #include "Shaders/CompiledShaders/LuminanceReduction.h"
 #include "Shaders/CompiledShaders/LuminanceReductionFinal.h"
 #include <Shaders/CompiledShaders/EVSM.h>
+#include <Shaders/CompiledShaders/Sky.h>
 
 
 Renderer::Renderer(GFX_HWND hwnd, int32_t width, int32_t height)
@@ -51,6 +52,14 @@ Renderer::Renderer(GFX_HWND hwnd, int32_t width, int32_t height)
         };
         m_EVSM = std::make_shared<ImageProcessing>(pDevice, g_EVSM_VS_bytecode, g_EVSM_PS_bytecode, psoSetup);
     }
+
+    m_RenderSky = std::make_shared<ImageProcessing>(pDevice, g_Sky_VS_bytecode, g_Sky_PS_bytecode,
+                                                    [](DX12GraphicsPsoDesc& desc)
+                                                {
+                                                    desc.SetRenderTargetFormat(GFX_FORMAT_HDR.RTVFormat);
+                                                    desc.SetDespthStencilFormat(DXGI_FORMAT_D32_FLOAT);
+                                                    desc.SetDepthStencilState(CD3DX12::DepthStateReadOnlyReversed());
+                                                });
 
     uint32_t lumReductionWidth = m_Width;
     uint32_t lumReductionHeight = m_Height;
@@ -125,6 +134,7 @@ void Renderer::Render(const Camera* pCamera, Scene* pScene)
 	RenderGBuffer(pCamera, pScene);
     ScreenSpaceShadows(pCamera, pScene);
 	DeferredLighting(pCamera, pScene);
+    SkyDome(pCamera, pScene);
     PostProcess(pCamera, pScene);
 	ResolveToSwapChain();
 	RenderDebugMenu();
@@ -497,6 +507,32 @@ void Renderer::DeferredLighting(const Camera* pCamera, Scene* pScene)
             m_PointLightShadingPass->Apply(pGfxContext.Get(), &m_RenderContext, pointLight.get(), m_GBuffer, shadowmapSet, m_PostProcessSurfaces);
 		}
 	}
+}
+
+void Renderer::SkyDome(const Camera* pCamera, Scene* pScene)
+{
+    DX12ScopedGraphicsContext pGfxContext{ L"SkyDome" };
+    GPU_MARKER(pGfxContext, SkyDome);
+
+    pGfxContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    pGfxContext->SetViewport(0, 0, m_Width, m_Height);
+
+    pGfxContext->ResourceTransitionBarrier(m_GBuffer.m_DepthSurface.Get(), D3D12_RESOURCE_STATE_DEPTH_READ);
+    pGfxContext->ResourceTransitionBarrier(m_PostProcessSurfaces.m_HDRSurface.Get(), D3D12_RESOURCE_STATE_RENDER_TARGET);
+
+    pGfxContext->SetRenderTarget(m_PostProcessSurfaces.m_HDRSurface.Get(), m_GBuffer.m_DepthSurface.Get());
+
+    m_RenderSky->Apply(pGfxContext.Get());
+
+    HLSL::SkyConstants constants;
+    DirectX::XMMATRIX mViewProj = DirectX::XMMatrixMultiply(m_RenderContext.GetViewMatrix(), m_RenderContext.GetProjMatrix());
+    DirectX::XMMATRIX mInvViewProj = DirectX::XMMatrixInverse(nullptr, mViewProj);
+    DirectX::XMStoreFloat4x4(&constants.m_mInvViewProj, DirectX::XMMatrixTranspose(mInvViewProj));
+    pGfxContext->SetGraphicsRootDynamicConstantBufferView(0, &constants, sizeof(constants));
+
+    pGfxContext->SetGraphicsDynamicCbvSrvUav(1, 0, pScene->GetSky()->GetEnvironmentMap()->GetStagingSRV().GetCpuHandle());
+
+    m_RenderSky->Draw(pGfxContext.Get());
 }
 
 void Renderer::RenderGBuffer(const Camera* pCamera, Scene* pScene)

@@ -90,6 +90,8 @@ public:
 
 	void SetRenderTarget(DX12ColorSurface* pColorSurface);
 
+    void SetRenderTarget(DX12ColorSurface* pColorSurface, DX12DepthSurface* pDepthSurface);
+
 	void SetRenderTargets(uint32_t numColorSurfaces, DX12ColorSurface* pColorSurface[], DX12DepthSurface* pDepthSurface);
 
 	void SetViewport(uint32_t topLeftX, uint32_t topLeftY, uint32_t width, uint32_t height, float minDepth = 0.0f, float maxDepth = 1.0f);

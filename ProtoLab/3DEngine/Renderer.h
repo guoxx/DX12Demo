@@ -33,6 +33,8 @@ private:
 
 	void DeferredLighting(const Camera* pCamera, Scene* pScene);
 
+    void SkyDome(const Camera* pCamera, Scene* pScene);
+
 	void RenderGBuffer(const Camera* pCamera, Scene* pScene);
 
     void PostProcess(const Camera* pCamera, Scene* pScene);
@@ -75,6 +77,8 @@ private:
     std::shared_ptr<ImageProcessing> m_ResolveToSwapChain;
 
     std::shared_ptr<ImageProcessing> m_EVSM;
+
+    std::shared_ptr<ImageProcessing> m_RenderSky;
 
     std::shared_ptr<ComputeProcessing> m_ReduceLuminanceInitial;
     std::shared_ptr<ComputeProcessing> m_ReduceLuminance;

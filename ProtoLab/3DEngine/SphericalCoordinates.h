@@ -27,8 +27,6 @@ public:
     }
 
 private:
-    SphericalCoordinates() = default;
-
     float m_Elevation;
     float m_Azimuth;
 };

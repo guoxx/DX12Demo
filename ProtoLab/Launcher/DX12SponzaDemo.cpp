@@ -55,7 +55,7 @@ void DX12SponzaDemo::OnUpdate(DX::StepTimer const& timer)
 	GameInput::Update(elapsedTime);
 	EngineTuning::Update(elapsedTime);
 
-	float speedScale = 1.5;
+	float speedScale = 2;
 	float forward = (GameInput::GetTimeCorrectedAnalogInput(GameInput::kAnalogLeftStickY)) +
 		(GameInput::IsPressed(GameInput::kKey_w) ? elapsedTime : 0.0f) +
 		(GameInput::IsPressed(GameInput::kKey_s) ? -elapsedTime : 0.0f);
@@ -180,7 +180,7 @@ void DX12SponzaDemo::LoadAssets()
 
 	{
 		std::shared_ptr<DirectionalLight> light = std::make_shared<DirectionalLight>();
-		light->SetDirection(0.58f, -0.75f, -0.31f);
+		//light->SetDirection(0.58f, -0.75f, -0.31f);
 		m_Scene->AttachDirectionalLight(light);
 	}
 

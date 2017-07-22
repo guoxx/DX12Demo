@@ -141,6 +141,11 @@ struct TiledShadingConstants
 	EVSMParam	m_EVSM;
 };
 
+struct SkyConstants
+{
+    float4x4 m_mInvViewProj;
+};
+
 struct BaseMaterialRSMConstants
 {
 	float4x4 mModelViewProj;

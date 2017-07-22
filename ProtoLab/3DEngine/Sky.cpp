@@ -3,18 +3,16 @@
 #include "SphericalCoordinates.h"
 #include "Lights/HosekWilkie_SkylightModel/ArHosekSkyModel.h"
 #include "DirectXTex/directxtex.h"
+#include "DX12/DX12.h"
 
 Sky::Sky()
 {
 }
 
-void Sky::UpdateEnvironmentMap()
+void Sky::UpdateEnvironmentMap(float turbidity, Color groundAlbedo, SphericalCoordinates sunCoord)
 {
-    SphericalCoordinates sunCoord = SphericalCoordinates::FromThetaAndPhi(DirectX::XMConvertToRadians(45), DirectX::XMConvertToRadians(45));
     DirectX::XMVECTOR sunDir = SphericalCoordinates::ToSphere(sunCoord);
 
-    double turbidity = 2;
-    double groundAlbedo[3] = {1, 1, 0};
     int32_t resolution = 2048;
 
     int32_t nTheta = resolution;
@@ -68,6 +66,7 @@ void Sky::UpdateEnvironmentMap()
                 radiance[c] = arhosek_tristim_skymodel_radiance(stateRGB[c], theta, gamma, c);
                 // Multiply by standard luminous efficacy of 683 lm/W to bring us in line with the photometric
                 // units used during rendering
+                // TODO: a better way to calculate luminance
                 // approx luminous efficiency as 0.29 
                 radiance[c] *= 683.0f * 0.29;
             }
@@ -76,6 +75,13 @@ void Sky::UpdateEnvironmentMap()
         }
     }
     
+    ScratchImage envImg;
+    GenerateMipMaps(*img.GetImage(0, 0, 0), TEX_FILTER_DEFAULT, 0, envImg, true);
+
+    DX12Device* pDevice = DX12GraphicsManager::GetInstance()->GetDevice();
+    DX12ScopedGraphicsContext pGfxContext;
+    m_EnvMap.reset(DX12Texture::LoadFromScratchImage(pDevice, pGfxContext.Get(), envImg));
+
     for (int i = 0; i < _countof(stateRGB); ++i)
     {
         arhosekskymodelstate_free(stateRGB[i]);
