@@ -4,10 +4,7 @@ A DirectX 12 based renderer for prototype.
 
 ## How to setup the projects
 
-ProtoLabNG.sln is for XBone, I don't maintain it anymore, will be delete later.   
-ProtoLabNG_Win10.sln is working for now and will be maintained in future.  
-
-Before you launch this project, here are few steps that you need to do.
+Here are few steps to setup the project.
 
 1. Set working directory as $(OutDir)
 
