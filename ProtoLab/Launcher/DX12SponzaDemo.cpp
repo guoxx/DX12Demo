@@ -9,7 +9,6 @@
 #include "3DEngine/Model.h"
 #include "3DEngine/Camera.h"
 #include "3DEngine/Lights/PointLight.h"
-#include "3DEngine/Lights/DirectionalLight.h"
 #include "3DEngine/Renderer.h"
 
 #include "3DEngine/MaterialManager.h"
@@ -176,12 +175,6 @@ void DX12SponzaDemo::LoadAssets()
 	for (auto m : models)
 	{
 		m_Scene->AttachModel(m);
-	}
-
-	{
-		std::shared_ptr<DirectionalLight> light = std::make_shared<DirectionalLight>();
-		//light->SetDirection(0.58f, -0.75f, -0.31f);
-		m_Scene->AttachDirectionalLight(light);
 	}
 
 	//{

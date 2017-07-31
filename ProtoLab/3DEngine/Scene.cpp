@@ -14,6 +14,10 @@ Scene::Scene()
 
     m_Sky = std::make_shared<Sky>();
     m_Sky->UpdateEnvironmentMap(m_Turbidity, m_GroundAlbedo, m_SunCoord);
+
+    m_SunLight = std::make_shared<DirectionalLight>();
+    DirectX::XMVECTOR sunDir = SphericalCoordinates::ToSphere(m_SunCoord);
+    m_SunLight->SetDirection(-DirectX::XMVectorGetX(sunDir), -DirectX::XMVectorGetY(sunDir), -DirectX::XMVectorGetZ(sunDir));
 }
 
 Scene::~Scene()
@@ -33,6 +37,11 @@ std::shared_ptr<Sky> Scene::GetSky() const
     return m_Sky;
 }
 
+std::shared_ptr<DirectionalLight> Scene::GetSunLight() const
+{
+	return m_SunLight;
+}
+
 std::vector<std::shared_ptr<Model>> Scene::GetModels() const
 {
 	return m_Models;
@@ -41,11 +50,6 @@ std::vector<std::shared_ptr<Model>> Scene::GetModels() const
 std::vector<std::shared_ptr<PointLight>> Scene::GetPointLights() const
 {
 	return m_PointLights;
-}
-
-std::vector<std::shared_ptr<DirectionalLight>> Scene::GetDirectionalLights() const
-{
-	return m_DirectionalLights;
 }
 
 void Scene::AttachModel(std::shared_ptr<Model> model)
@@ -67,15 +71,3 @@ void Scene::DetachPointLight(std::shared_ptr<PointLight> light)
 {
 	// TODO:
 }
-
-void Scene::AttachDirectionalLight(std::shared_ptr<DirectionalLight> light)
-{
-    DirectX::XMVECTOR sunDir = SphericalCoordinates::ToSphere(m_SunCoord);
-    light->SetDirection(-DirectX::XMVectorGetX(sunDir), -DirectX::XMVectorGetY(sunDir), -DirectX::XMVectorGetZ(sunDir));
-	m_DirectionalLights.push_back(light);
-}
-
-void Scene::DetachDirectionalLight(std::shared_ptr<DirectionalLight> light)
-{
-}
-

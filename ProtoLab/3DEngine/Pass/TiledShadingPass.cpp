@@ -36,7 +36,7 @@ void TiledShadingPass::Apply(DX12GraphicsContext * pGfxContext, const RenderCont
 	constants.m_NumTileY = m_NumTileY;
 	constants.m_ScreenWidth = pRenderContext->GetScreenWidth();
 	constants.m_ScreenHeight = pRenderContext->GetScreenHeight();
-	constants.m_NumDirectionalLights = static_cast<uint32_t>(pScene->GetDirectionalLights().size());
+	constants.m_NumDirectionalLights = 1;
 	DirectX::XMStoreFloat4(&constants.m_CameraPosition, pRenderContext->GetCamera()->GetTranslation());
 
 	DirectX::XMMATRIX mInvView = DirectX::XMMatrixInverse(nullptr, pRenderContext->GetViewMatrix());

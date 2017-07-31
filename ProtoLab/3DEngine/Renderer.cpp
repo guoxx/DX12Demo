@@ -161,19 +161,20 @@ void Renderer::RenderShadowMaps(const Camera* pCamera, Scene * pScene)
 		m_RenderContext.SetShadingCfg(ShadingConfiguration_DepthOnly);
 	}
 
-	for (auto directionalLight : pScene->GetDirectionalLights())
 	{
-		GPU_MARKER(pGfxContext, ShadowMap_DirectionalLight);
+		GPU_MARKER(pGfxContext, ShadowMap_SunLight);
 
-        directionalLight->PrepareForShadowPass(pCamera, DX12DirectionalLightShadowMapSize);
+        std::shared_ptr<DirectionalLight> sunLight = pScene->GetSunLight();
+
+        sunLight->PrepareForShadowPass(pCamera, DX12DirectionalLightShadowMapSize);
 
 		if (g_RSMEnabled)
 		{
-			m_RenderContext.SetCurrentLightForRSM(directionalLight.get());
+			m_RenderContext.SetCurrentLightForRSM(sunLight.get());
 
-			auto pIntensitySurface = m_RenderContext.AcquireRSMRadiantIntensitySurfaceForDirectionalLight(directionalLight.get());
-			auto pNormalSurface = m_RenderContext.AcquireRSMNormalSurfaceForDirectionalLight(directionalLight.get());
-			auto pDepthSurface = m_RenderContext.AcquireDepthSurfaceForDirectionalLight(directionalLight.get());
+			auto pIntensitySurface = m_RenderContext.AcquireRSMRadiantIntensitySurfaceForDirectionalLight(sunLight.get());
+			auto pNormalSurface = m_RenderContext.AcquireRSMNormalSurfaceForDirectionalLight(sunLight.get());
+			auto pDepthSurface = m_RenderContext.AcquireDepthSurfaceForDirectionalLight(sunLight.get());
 
 			pGfxContext->ResourceTransitionBarrier(pDepthSurface.Get(), D3D12_RESOURCE_STATE_DEPTH_WRITE);
 
@@ -186,7 +187,7 @@ void Renderer::RenderShadowMaps(const Camera* pCamera, Scene * pScene)
 		}
 		else
 		{
-			auto pDepthSurface = m_RenderContext.AcquireDepthSurfaceForDirectionalLight(directionalLight.get());
+			auto pDepthSurface = m_RenderContext.AcquireDepthSurfaceForDirectionalLight(sunLight.get());
 			pGfxContext->ResourceTransitionBarrier(pDepthSurface.Get(), D3D12_RESOURCE_STATE_DEPTH_WRITE);
 
 			pGfxContext->ClearDepthTarget(pDepthSurface.Get(), 1.0f);
@@ -211,7 +212,7 @@ void Renderer::RenderShadowMaps(const Camera* pCamera, Scene * pScene)
             m_RenderContext.SetModelMatrix(DirectX::XMMatrixIdentity());
             DirectX::XMMATRIX mLightView;
             DirectX::XMMATRIX mLightProj;
-            directionalLight->GetViewAndProjMatrix(cascadeIdx, &mLightView, &mLightProj);
+            sunLight->GetViewAndProjMatrix(cascadeIdx, &mLightView, &mLightProj);
             m_RenderContext.SetViewMatrix(mLightView);
             m_RenderContext.SetProjMatrix(mLightProj);
 
@@ -225,8 +226,8 @@ void Renderer::RenderShadowMaps(const Camera* pCamera, Scene * pScene)
 		{
             GPU_MARKER(pGfxContext, EVSM);
 
-			auto pDepthSurface = m_RenderContext.AcquireDepthSurfaceForDirectionalLight(directionalLight.get());
-			auto pEVSMSurface = m_RenderContext.AcquireEVSMSurfaceForDirectionalLight(directionalLight.get());
+			auto pDepthSurface = m_RenderContext.AcquireDepthSurfaceForDirectionalLight(sunLight.get());
+			auto pEVSMSurface = m_RenderContext.AcquireEVSMSurfaceForDirectionalLight(sunLight.get());
 
 			pGfxContext->SetRenderTarget(pEVSMSurface.Get());
 
@@ -316,18 +317,17 @@ void Renderer::DeferredLighting(const Camera* pCamera, Scene* pScene)
 
 			int32_t firstTextureId = 0;
 
-			assert(pScene->GetDirectionalLights().size() <= MAX_DIRECTIONAL_LIGHTS_PER_FRAME);
 			assert(pScene->GetPointLights().size() <= MAX_POINT_LIGHTS_PER_FRAME);
 
 			// upload directional lights data
 			HLSL::DirectionalLight* pDirLightData;
 			m_AllDirectionalLights->MapResource(0, (void**)&pDirLightData);
-			for (int i = 0; i < pScene->GetDirectionalLights().size(); ++i)
+			for (int i = 0; i < 1; ++i)
 			{
-				auto directionalLight = pScene->GetDirectionalLights()[i];
+				auto sunLight = pScene->GetSunLight();
 
-				DirectX::XMFLOAT4 direction = directionalLight->GetDirection();
-				DirectX::XMFLOAT4 irradiance = directionalLight->GetIrradiance();
+				DirectX::XMFLOAT4 direction = sunLight->GetDirection();
+				DirectX::XMFLOAT4 irradiance = sunLight->GetIrradiance();
 				pDirLightData[i].m_Direction = DirectX::XMFLOAT3{ direction.x, direction.y, direction.z };
 				pDirLightData[i].m_Irradiance = DirectX::XMFLOAT3{ irradiance.x, irradiance.y, irradiance.z };
 
@@ -335,7 +335,7 @@ void Renderer::DeferredLighting(const Camera* pCamera, Scene* pScene)
                 {
                     DirectX::XMMATRIX mLightView;
                     DirectX::XMMATRIX mLightProj;
-                    directionalLight->GetViewAndProjMatrix(cascadeIdx, &mLightView, &mLightProj);
+                    sunLight->GetViewAndProjMatrix(cascadeIdx, &mLightView, &mLightProj);
                     DirectX::XMMATRIX mLightViewProj = DirectX::XMMatrixMultiply(mLightView, mLightProj);
                     DirectX::XMStoreFloat4x4(&pDirLightData[i].m_mViewProj[cascadeIdx], DirectX::XMMatrixTranspose(mLightViewProj));
                     DirectX::XMMATRIX mInvLightViewProj = DirectX::XMMatrixInverse(nullptr, mLightViewProj);
@@ -390,19 +390,14 @@ void Renderer::DeferredLighting(const Camera* pCamera, Scene* pScene)
             m_GBuffer.TransmitToRead(pGfxContext.Get());
 			pGfxContext->ResourceTransitionBarrier(m_PostProcessSurfaces.m_HDRSurface.Get(), D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
 
-			for (int i = 0; i < pScene->GetDirectionalLights().size(); ++i)
-			{
-				auto directionalLight = pScene->GetDirectionalLights()[i];
+            auto sunLight = pScene->GetSunLight();
+            auto pShadowMapForSunLight = m_RenderContext.AcquireDepthSurfaceForDirectionalLight(sunLight.get());
+            auto pRSMIntensitySurface = m_RenderContext.AcquireRSMRadiantIntensitySurfaceForDirectionalLight(sunLight.get());
+            auto pRSMNormalSurface = m_RenderContext.AcquireRSMNormalSurfaceForDirectionalLight(sunLight.get());
+            auto pEVSMSurface = m_RenderContext.AcquireEVSMSurfaceForDirectionalLight(sunLight.get());
+            DirectionalLightShadowMapSet sunShadowmapSet{ pShadowMapForSunLight, pRSMIntensitySurface, pRSMNormalSurface, pEVSMSurface };
 
-				auto pShadowMapForDirLight = m_RenderContext.AcquireDepthSurfaceForDirectionalLight(directionalLight.get());
-				auto pRSMIntensitySurface = m_RenderContext.AcquireRSMRadiantIntensitySurfaceForDirectionalLight(directionalLight.get());
-				auto pRSMNormalSurface = m_RenderContext.AcquireRSMNormalSurfaceForDirectionalLight(directionalLight.get());
-				auto pEVSMSurface = m_RenderContext.AcquireEVSMSurfaceForDirectionalLight(directionalLight.get());
-				pGfxContext->ResourceTransitionBarrier(pShadowMapForDirLight.Get(), D3D12_RESOURCE_STATE_GENERIC_READ);
-				pGfxContext->ResourceTransitionBarrier(pRSMIntensitySurface.Get(), D3D12_RESOURCE_STATE_GENERIC_READ);
-				pGfxContext->ResourceTransitionBarrier(pRSMNormalSurface.Get(), D3D12_RESOURCE_STATE_GENERIC_READ);
-				pGfxContext->ResourceTransitionBarrier(pEVSMSurface.Get(), D3D12_RESOURCE_STATE_GENERIC_READ);
-			}
+            sunShadowmapSet.TransmitToRead(pGfxContext.Get());
 			for (int i = 0; i < pScene->GetPointLights().size(); ++i)
 			{
 				auto pointLight = pScene->GetPointLights()[i];
@@ -421,21 +416,7 @@ void Renderer::DeferredLighting(const Camera* pCamera, Scene* pScene)
             pGfxContext->SetComputeDynamicCbvSrvUav(4, 5, m_PostProcessSurfaces.m_ScreenSpaceShadowsSurface->GetStagingSRV().GetCpuHandle());
 			pGfxContext->SetComputeDynamicCbvSrvUav(4, 6, m_PostProcessSurfaces.m_HDRSurface->GetStagingUAV().GetCpuHandle());
 			int firstTextureId = 0;
-			for (int i = 0; i < pScene->GetDirectionalLights().size(); ++i)
-			{
-				auto directionalLight = pScene->GetDirectionalLights()[i];
-
-				auto pShadowMapForDirLight = m_RenderContext.AcquireDepthSurfaceForDirectionalLight(directionalLight.get());
-				auto pRSMIntensitySurface = m_RenderContext.AcquireRSMRadiantIntensitySurfaceForDirectionalLight(directionalLight.get());
-				auto pRSMNormalSurface = m_RenderContext.AcquireRSMNormalSurfaceForDirectionalLight(directionalLight.get());
-				auto pEVSMSurface = m_RenderContext.AcquireEVSMSurfaceForDirectionalLight(directionalLight.get());
-				pGfxContext->SetComputeDynamicCbvSrvUav(5, firstTextureId, pShadowMapForDirLight->GetStagingSRV().GetCpuHandle());
-				pGfxContext->SetComputeDynamicCbvSrvUav(5, firstTextureId + 1, pRSMIntensitySurface->GetStagingSRV().GetCpuHandle());
-				pGfxContext->SetComputeDynamicCbvSrvUav(5, firstTextureId + 2, pRSMNormalSurface->GetStagingSRV().GetCpuHandle());
-				pGfxContext->SetComputeDynamicCbvSrvUav(5, firstTextureId + 3, pEVSMSurface->GetStagingSRV().GetCpuHandle());
-
-				firstTextureId += 4;
-			}
+            firstTextureId = sunShadowmapSet.SetAsSRV(pGfxContext.Get(), 5, firstTextureId);
 			for (int i = 0; i < pScene->GetPointLights().size(); ++i)
 			{
 				auto pointLight = pScene->GetPointLights()[i];
@@ -447,31 +428,6 @@ void Renderer::DeferredLighting(const Camera* pCamera, Scene* pScene)
 				}
 			}
 			m_TiledShadingPass->Exec(pGfxContext.Get());
-
-			pGfxContext->ResourceTransitionBarrier(m_PostProcessSurfaces.m_HDRSurface.Get(), D3D12_RESOURCE_STATE_RENDER_TARGET);
-
-			for (int i = 0; i < pScene->GetDirectionalLights().size(); ++i)
-			{
-				auto directionalLight = pScene->GetDirectionalLights()[i];
-
-				auto pShadowMapForDirLight = m_RenderContext.AcquireDepthSurfaceForDirectionalLight(directionalLight.get());
-				auto pRSMIntensitySurface = m_RenderContext.AcquireRSMRadiantIntensitySurfaceForDirectionalLight(directionalLight.get());
-				auto pRSMNormalSurface = m_RenderContext.AcquireRSMNormalSurfaceForDirectionalLight(directionalLight.get());
-				auto pEVSMSurface = m_RenderContext.AcquireEVSMSurfaceForDirectionalLight(directionalLight.get());
-				pGfxContext->ResourceTransitionBarrier(pShadowMapForDirLight.Get(), D3D12_RESOURCE_STATE_DEPTH_WRITE);
-				pGfxContext->ResourceTransitionBarrier(pRSMIntensitySurface.Get(), D3D12_RESOURCE_STATE_RENDER_TARGET);
-				pGfxContext->ResourceTransitionBarrier(pRSMNormalSurface.Get(), D3D12_RESOURCE_STATE_RENDER_TARGET);
-				pGfxContext->ResourceTransitionBarrier(pEVSMSurface.Get(), D3D12_RESOURCE_STATE_RENDER_TARGET);
-			}
-			for (int i = 0; i < pScene->GetPointLights().size(); ++i)
-			{
-				auto pointLight = pScene->GetPointLights()[i];
-				auto pShadowMapsForPointLight = m_RenderContext.AcquireDepthSurfaceForPointLight(pointLight.get());
-				for (int j = 0; j < pShadowMapsForPointLight.size(); ++j)
-				{
-					pGfxContext->ResourceTransitionBarrier(pShadowMapsForPointLight[j].Get(), D3D12_RESOURCE_STATE_DEPTH_WRITE);
-				}
-			}
 		}
 	}
 	else
@@ -489,15 +445,15 @@ void Renderer::DeferredLighting(const Camera* pCamera, Scene* pScene)
 		m_RenderContext.SetViewMatrix(pCamera->GetViewMatrix());
 		m_RenderContext.SetProjMatrix(pCamera->GetProjectionMatrix());
 
-		for (auto directionalLight : pScene->GetDirectionalLights())
 		{
-			auto pShadowMapForDirLight = m_RenderContext.AcquireDepthSurfaceForDirectionalLight(directionalLight.get());
-			auto pRSMIntensitySurface = m_RenderContext.AcquireRSMRadiantIntensitySurfaceForDirectionalLight(directionalLight.get());
-			auto pRSMNormalSurface = m_RenderContext.AcquireRSMNormalSurfaceForDirectionalLight(directionalLight.get());
-			auto pEVSMSurface = m_RenderContext.AcquireEVSMSurfaceForDirectionalLight(directionalLight.get());
+            auto sunLight = pScene->GetSunLight();
+			auto pShadowMapForSunLight = m_RenderContext.AcquireDepthSurfaceForDirectionalLight(sunLight.get());
+			auto pRSMIntensitySurface = m_RenderContext.AcquireRSMRadiantIntensitySurfaceForDirectionalLight(sunLight.get());
+			auto pRSMNormalSurface = m_RenderContext.AcquireRSMNormalSurfaceForDirectionalLight(sunLight.get());
+			auto pEVSMSurface = m_RenderContext.AcquireEVSMSurfaceForDirectionalLight(sunLight.get());
 
-            DirectionalLightShadowMapSet shadowmapSet{pShadowMapForDirLight, pRSMIntensitySurface, pRSMNormalSurface, pEVSMSurface};
-            m_DirectionalLightShadingPass->Apply(pGfxContext.Get(), &m_RenderContext, directionalLight.get(), m_GBuffer, shadowmapSet, m_PostProcessSurfaces);
+            DirectionalLightShadowMapSet shadowmapSet{ pShadowMapForSunLight, pRSMIntensitySurface, pRSMNormalSurface, pEVSMSurface};
+            m_DirectionalLightShadingPass->Apply(pGfxContext.Get(), &m_RenderContext, sunLight.get(), m_GBuffer, shadowmapSet, m_PostProcessSurfaces);
 		}
 
 		for (auto pointLight : pScene->GetPointLights())
@@ -672,7 +628,7 @@ void Renderer::ScreenSpaceShadows(const Camera* pCamera, Scene* pScene)
     pGfxContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
     pGfxContext->SetViewport(0, 0, m_Width, m_Height);
 
-    std::shared_ptr<DirectionalLight> sunLight = pScene->GetDirectionalLights()[0];
+    std::shared_ptr<DirectionalLight> sunLight = pScene->GetSunLight();
 
     auto pShadowMapForDirLight = m_RenderContext.AcquireDepthSurfaceForDirectionalLight(sunLight.get());
     auto pRSMIntensitySurface = m_RenderContext.AcquireRSMRadiantIntensitySurfaceForDirectionalLight(sunLight.get());
